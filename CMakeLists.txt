@@ -6,7 +6,7 @@ project(lp3_nnd3d CXX)
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 add_library(Lp3_NND3d
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/dummy.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/World.cpp
 )
 
 target_include_directories(Lp3_NND3d

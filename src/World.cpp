@@ -1,0 +1,71 @@
+#include "World.hpp"
+#include <algorithm>
+
+namespace nnd3d {
+
+World::World()
+:   Gravity(0),
+    clock(0),
+    screen(),
+    drawOrder(),
+    LemonTime(false),
+    cranBerry(0),
+    lasttime(0),
+    frRate(0),
+    frRate2(0),
+    gpRate(0),
+    gpRate2(0),
+    cranBerry2(0),
+    debugOn(false),
+    sFactor(0),
+    CameraX(0),
+    CameraY(0),
+    CameraWidth(0),
+    CameraHeight(0),
+    cameraStopX(0),
+    cameraStopY(0),
+    gotFocus(0),
+    Sprite(),
+    bgWidth(0),
+    bgHeight(0),
+    STOPGAME(false),
+    RealWidth(0),
+    RealHeight(0),
+    SimulatedWidth(0),
+    SimulatedHeight(0),
+    upKey({}),
+    DownKEY({}),
+    LeftKEY({}),
+    RightKEY({}),
+    SelectKey({}),
+    AttackKey({}),
+    AttackKeyRelease({}),
+    CancelKey({}),
+    JumpKey({}),
+    normColor(0),
+    maskColor(0),
+    spritesInUse(0),
+    ponkoMonkey(0),
+    dojoMonkey(0),
+    KeyUp({}),
+    KeyDown({}),
+    KeyLeft({}),
+    KeyRight({}),
+    KeyAttack({}),
+    KeyJump({}),
+    FilePath(),
+    numberPlayers(0),
+    playerName({}),
+    lives({}),
+    continues(0),
+    ThreeWay({}),
+    slicer({}),
+    GradeUp({}),
+    weapon({}),
+    currentScreen()
+{
+    std::fill(drawOrder.begin(), drawOrder.end(), 0);
+    std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
+}
+
+}   // end namespace

@@ -2,9 +2,7 @@
 #define NND3D_ANIMATIONFRAME_HPP
 #pragma once
 
-namespace NND3d {
-
-~namespace nnd32;
+namespace nnd3d {
 
 struct AnimationFrame
 {

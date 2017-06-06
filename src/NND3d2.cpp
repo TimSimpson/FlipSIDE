@@ -2,38 +2,10 @@
 
 
 // SUPER DUPER DIRECT X 8 MODULE
-const int FULLSCREENWIDTH = 640;
-const int FULLSCREENHEIGHT = 480;
-
-Const NUMSPRITES = 150
-
-Dim Gravity As Double
-Dim clock As Double
-Dim screen As String
-Dim drawOrder(NUMSPRITES) As Integer
-
-Dim LemonTime As Boolean // a fun stupid cheat code that when set to true ups speed by 2.
-Dim cranBerry As Double // Used to gage frame rate
-Dim lasttime As Double
-Dim frRate As Integer
-Dim frRate2 As Integer
-Dim gpRate As Integer
-Dim gpRate2 As Integer
-Dim cranBerry2 As Double
-Dim debugOn As Boolean
-Dim sFactor As Double // makes objects move at speeds irrelevent to frame rate
-Const tRate = 125 // The target frame rate
 
 Const FVF = D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE Or D3DFVF_SPECULAR
 
 
-Dim CameraX As Integer
-Dim CameraY As Integer
-Dim CameraWidth As Integer
-Dim CameraHeight As Integer
-Dim cameraStopX As Integer // this is where the cameraHALTS!
-Dim cameraStopY As Integer // this is where the cameraHALTS! for y
-Dim gotFocus As Integer
 
 Public Type CinemaType
   frame1 As Integer
@@ -64,8 +36,6 @@ Dim d3d As Direct3D8
 Dim dev As Direct3DDevice8
 Dim d3dx As D3DX8 // Direct 3d x 8 object (?)
 Dim bgtexture As Direct3DTexture8
-Dim bgWidth As Integer
-Dim bgHeight As Integer
 
 Dim bgSurface As Direct3DSurface8
 
@@ -89,56 +59,6 @@ Dim m_d3dcaps As D3DCAPS8
 // Don't know if I need this... oh wait I do
 Dim m_d3ddm As D3DDISPLAYMODE
 
-// Used to get the heck out of a never ending do loop
-Dim STOPGAME As Boolean
-
-// Used to figure out are width and heighth
-Dim RealWidth As Integer
-Dim RealHeight As Integer
-// Simulated resolution (of course, the real resolution)
-Dim SimulatedWidth As Integer
-Dim SimulatedHeight As Integer
-
-
-// Keyboard key states
-Dim upKey(2) As Boolean
-Dim DownKEY(2) As Boolean
-Dim LeftKEY(2) As Boolean
-Dim RightKEY(2) As Boolean
-Dim SelectKey(2) As Boolean
-Dim AttackKey(2) As Boolean
-Dim AttackKeyRelease(2) As Boolean
-Dim CancelKey(2) As Boolean
-Dim JumpKey(2) As Boolean
-
-
-Dim normColor
-Dim maskColor
-Dim spritesInUse As Integer
-
-Dim ponkoMonkey As Integer
-Dim dojoMonkey As Integer
-
-Dim KeyUp(2) As String
-Dim KeyDown(2) As String
-Dim KeyLeft(2) As String
-Dim KeyRight(2) As String
-Dim KeyAttack(2) As String
-Dim KeyJump(2) As String
-
-Dim FilePath As String
-
-// GAME PLAY MULTIPLE PLAYERS DATA
-Dim numberPlayers As Integer
-Dim playerName(2) As String
-Dim lives(2) As Integer
-Dim continues As Integer
-Dim ThreeWay(2) As Boolean
-Dim slicer(2) As Boolean
-Dim GradeUp(2) As Integer
-Dim weapon(2) As String
-
-Dim currentScreen As String
 
 Private Declare Function GetTickCount Lib "kernel32" () As Long
 
@@ -3014,30 +2934,31 @@ For j = goatorg To penguin
      .color = normColor
 
 
-    With .SpriteVerts(0)
-      .x = Sprite(j).x
-      .y = Sprite(j).y + Sprite(j).high
-      .tu = 0: .tv = 0.5
-      .rhw = 1
-    End With
-    With .SpriteVerts(1)
-      .x = Sprite(j).x
-      .y = Sprite(j).y
-      .tu = 0: .tv = 0
-      .rhw = 1
-    End With
-    With .SpriteVerts(2)
-      .x = Sprite(j).x + Sprite(j).wide
-      .y = Sprite(j).y + Sprite(j).high
-      .tu = 0.5: .tv = 0.5
-      .rhw = 1
-    End With
-    With .SpriteVerts(3)
-      .x = Sprite(j).x + Sprite(j).wide
-      .y = Sprite(j).y
-      .tu = 0.5: .tv = 0
-      .rhw = 1
-    End With
+    //NOTE(2017): Should happen in CharacterSprite constructor now.
+    // With .SpriteVerts(0)
+    //   .x = Sprite(j).x
+    //   .y = Sprite(j).y + Sprite(j).high
+    //   .tu = 0: .tv = 0.5
+    //   .rhw = 1
+    // End With
+    // With .SpriteVerts(1)
+    //   .x = Sprite(j).x
+    //   .y = Sprite(j).y
+    //   .tu = 0: .tv = 0
+    //   .rhw = 1
+    // End With
+    // With .SpriteVerts(2)
+    //   .x = Sprite(j).x + Sprite(j).wide
+    //   .y = Sprite(j).y + Sprite(j).high
+    //   .tu = 0.5: .tv = 0.5
+    //   .rhw = 1
+    // End With
+    // With .SpriteVerts(3)
+    //   .x = Sprite(j).x + Sprite(j).wide
+    //   .y = Sprite(j).y
+    //   .tu = 0.5: .tv = 0
+    //   .rhw = 1
+    // End With
 
  End With
 Next j
