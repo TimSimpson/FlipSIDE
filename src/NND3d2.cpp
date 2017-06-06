@@ -1,3 +1,6 @@
+#include "AnimationFrame.hpp"
+#include "Vertex.hpp"
+
 // SUPER DUPER DIRECT X 8 MODULE
 const int FULLSCREENWIDTH = 640;
 const int FULLSCREENHEIGHT = 480;
@@ -22,13 +25,6 @@ Dim sFactor As Double // makes objects move at speeds irrelevent to frame rate
 Const tRate = 125 // The target frame rate
 
 Const FVF = D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE Or D3DFVF_SPECULAR
-
-Private Type animationFrame
-   x As Integer
-   y As Integer
-   x2 As Integer
-   y2 As Integer
-End Type
 
 
 Dim CameraX As Integer
@@ -56,7 +52,7 @@ Public Type characterSprite
      srcx2 As Integer
      srcy2 As Integer
 
-     Aframe(20) As animationFrame
+     Aframe(20) As AnimationFrame
 
      seekx As Integer
      seeky As Integer
