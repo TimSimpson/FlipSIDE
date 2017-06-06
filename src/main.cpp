@@ -19,7 +19,7 @@ int _main(core::PlatformLoop & loop) {
 
     gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 
-    nnd3d::View view(media);
+	nnd3d::View view{ media };
 	nnd3d::Sound sound;
 	(void)sound;
 
@@ -42,6 +42,7 @@ int _main(core::PlatformLoop & loop) {
         LP3_LOG_DEBUG("FPS: %d\tAvg FPS: %d",
                       frame_timer.get_fps(),
                       frame_timer.get_average_fps());
+        window.render(std::ref(view));
         return !quit;
     });
 }
