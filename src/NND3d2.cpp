@@ -1,6 +1,6 @@
 Attribute VB_Name = "Module1"
 
-'SUPER DUPER DIRECT X 8 MODULE
+// SUPER DUPER DIRECT X 8 MODULE
 Option Explicit
 
 Const FULLSCREENWIDTH = 640
@@ -13,8 +13,8 @@ Dim clock As Double
 Dim screen As String
 Dim drawOrder(NUMSPRITES) As Integer
 
-Dim LemonTime As Boolean ' a fun stupid cheat code that when set to true ups speed by 2.
-Dim cranBerry As Double 'Used to gage frame rate
+Dim LemonTime As Boolean // a fun stupid cheat code that when set to true ups speed by 2.
+Dim cranBerry As Double // Used to gage frame rate
 Dim lasttime As Double
 Dim frRate As Integer
 Dim frRate2 As Integer
@@ -22,8 +22,8 @@ Dim gpRate As Integer
 Dim gpRate2 As Integer
 Dim cranBerry2 As Double
 Dim debugOn As Boolean
-Dim sFactor As Double 'makes objects move at speeds irrelevent to frame rate
-Const tRate = 125 'The target frame rate
+Dim sFactor As Double // makes objects move at speeds irrelevent to frame rate
+Const tRate = 125 // The target frame rate
 
 Const FVF = D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE Or D3DFVF_SPECULAR
 
@@ -50,19 +50,19 @@ Dim CameraX As Integer
 Dim CameraY As Integer
 Dim CameraWidth As Integer
 Dim CameraHeight As Integer
-Dim cameraStopX As Integer 'this is where the cameraHALTS!
-Dim cameraStopY As Integer 'this is where the cameraHALTS! for y
+Dim cameraStopX As Integer // this is where the cameraHALTS!
+Dim cameraStopY As Integer // this is where the cameraHALTS! for y
 Dim gotFocus As Integer
 
 
 Public Type characterSprite
-     x As Double 'Integer
-     y As Double 'Integer
+     x As Double // Integer
+     y As Double // Integer
      lastX As Double
      lastY As Double
      z As Integer
-     wide As Double 'Integer 'width and height
-     high As Double 'Integer
+     wide As Double // Integer 'width and height
+     high As Double // Integer
      length As Integer
      dir As String
 
@@ -75,48 +75,48 @@ Public Type characterSprite
 
      seekx As Integer
      seeky As Integer
-     speed As Double  'this is tricky.  Every time this amount of seconds pass, its little routine is updated.
-     time As Double ' this marks the time until the sprite can do its thing again.
-     mph As Integer 'refers to how many pixels the thing can haul
+     speed As Double  // this is tricky.  Every time this amount of seconds pass, its little routine is updated.
+     time As Double // this marks the time until the sprite can do its thing again.
+     mph As Integer // refers to how many pixels the thing can haul
      texture As Integer
 
      visible As Boolean
-     parent As Integer 'whose their parent sprite (what is the reason for their existence?) are they a fireball cast by sprite 0, perhaps
+     parent As Integer // whose their parent sprite (what is the reason for their existence?) are they a fireball cast by sprite 0, perhaps
      SpriteVerts(3) As TLVERTEX
-     'Location As D3DVECTOR2
+     // Location As D3DVECTOR2
      frame As Integer
      name As String
 
-     hp As Double 'hp!
+     hp As Double // hp!
      mhp As Double
 
-     jumpStart As Integer  'These are for jumping
+     jumpStart As Integer  // These are for jumping
      jumpStrength As Integer
      jumpTime As Double
      lastJump As Integer
      multiJump As Integer
-     maxJump As Integer 'max # of jumps
+     maxJump As Integer // max # of jumps
 
-     flickerTime As Double 'Lets them flicker until then
+     flickerTime As Double // Lets them flicker until then
      flickOn As Boolean
      trueVisible As Integer
-     invTime As Double 'how many seconds they flicker when hit
+     invTime As Double // how many seconds they flicker when hit
 
-     mode As String 'which mode are they in?
-     kind As Integer 'if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
-     deathType As String 'how do they die?
-     miscTime As Double ' they must wait this long to do misc. actions
-     color As Double 'lets throw some color into the mix
+     mode As String // which mode are they in?
+     kind As Integer // if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
+     deathType As String // how do they die?
+     miscTime As Double // they must wait this long to do misc. actions
+     color As Double // lets throw some color into the mix
 
-     soundFile As String 'sound files
+     soundFile As String // sound files
 
-     zOrder As Integer 'higher numbers are drawn last.
-     drawTrue As Boolean 'used in the draw ordering subprogram
+     zOrder As Integer // higher numbers are drawn last.
+     drawTrue As Boolean // used in the draw ordering subprogram
 
      mover As Boolean
 
-     reverse As Boolean 'to flip bitmap or not TRUE for transposing from left to right
-     target As Integer ' it is who they are attacking
+     reverse As Boolean // to flip bitmap or not TRUE for transposing from left to right
+     target As Integer // it is who they are attacking
 
      jumpM As Double
 End Type
@@ -134,21 +134,21 @@ Public Type CinemaType
   miscTime As Double
 End Type
 
-Dim cinema(40) As CinemaType  'Dialogue!
+Dim cinema(40) As CinemaType  // Dialogue!
 Dim cinemaCounter As Integer
-Dim cinemaMax As Integer 'how many lines of dialogue per cinema
+Dim cinemaMax As Integer // how many lines of dialogue per cinema
 
-Dim exitS As String 'whenever this is set to things, stuff happens
+Dim exitS As String // whenever this is set to things, stuff happens
 
 
 Dim Sprite(NUMSPRITES) As characterSprite
 
 
-'IT'S TIME FOR DIRECT X ACTION!
+// IT'S TIME FOR DIRECT X ACTION!
 Dim DX As DirectX8
 Dim d3d As Direct3D8
 Dim dev As Direct3DDevice8
-Dim d3dx As D3DX8 'Direct 3d x 8 object (?)
+Dim d3dx As D3DX8 // Direct 3d x 8 object (?)
 Dim bgtexture As Direct3DTexture8
 Dim bgWidth As Integer
 Dim bgHeight As Integer
@@ -163,7 +163,7 @@ Dim texHeight(9) As Integer
 
 Dim m_d3dpp As D3DPRESENT_PARAMETERS
 
-'Background vertices
+// Background vertices
 Dim bgverts(3) As TLVERTEX
 
 Dim windowedMode As Boolean
@@ -172,21 +172,21 @@ Dim levelPath As String
 
 Dim m_d3dcaps As D3DCAPS8
 
-'Don't know if I need this... oh wait I do
+// Don't know if I need this... oh wait I do
 Dim m_d3ddm As D3DDISPLAYMODE
 
-'Used to get the heck out of a never ending do loop
+// Used to get the heck out of a never ending do loop
 Dim STOPGAME As Boolean
 
-'Used to figure out are width and heighth
+// Used to figure out are width and heighth
 Dim RealWidth As Integer
 Dim RealHeight As Integer
-'Simulated resolution (of course, the real resolution)
+// Simulated resolution (of course, the real resolution)
 Dim SimulatedWidth As Integer
 Dim SimulatedHeight As Integer
 
 
-'Keyboard key states
+// Keyboard key states
 Dim upKey(2) As Boolean
 Dim DownKEY(2) As Boolean
 Dim LeftKEY(2) As Boolean
@@ -214,7 +214,7 @@ Dim KeyJump(2) As String
 
 Dim FilePath As String
 
-'GAME PLAY MULTIPLE PLAYERS DATA
+// GAME PLAY MULTIPLE PLAYERS DATA
 Dim numberPlayers As Integer
 Dim playerName(2) As String
 Dim lives(2) As Integer
@@ -235,19 +235,19 @@ Private Declare Function GetTickCount Lib "kernel32" () As Long
 
 
 Sub Startup()
-'numberPlayers = 2
+// numberPlayers = 2
 
 debugOn = False
 
 FilePath = App.Path + "\"
 levelPath = App.Path + "\"
 
-'KeyUp(0) = "up"
-'KeyDown(0) = "down"
-'KeyLeft(0) = "left"
-'KeyRight(0) = "right"
-'KeyAttack(0) = "A"
-'KeyJump(0) = "S"
+// KeyUp(0) = "up"
+// KeyDown(0) = "down"
+// KeyLeft(0) = "left"
+// KeyRight(0) = "right"
+// KeyAttack(0) = "A"
+// KeyJump(0) = "S"
 
 KeyUp(0) = "W"
 KeyDown(0) = "S"
@@ -263,20 +263,20 @@ KeyRight(1) = "right"
 KeyAttack(1) = "O"
 KeyJump(1) = "P"
 
-'KeyUp(2) = "I"
-'KeyDown(2) = "K"
-'KeyLeft(2) = "J"
-'KeyRight(2) = "L"
-'KeyAttack(2) = "Y"
-'KeyJump(2) = "U"
+// KeyUp(2) = "I"
+// KeyDown(2) = "K"
+// KeyLeft(2) = "J"
+// KeyRight(2) = "L"
+// KeyAttack(2) = "Y"
+// KeyJump(2) = "U"
 
 
-'KeyUp = "W"
-'KeyDown = "S"
-'KeyLeft = "A"
-'KeyRight = "D"
-'KeyAttack = " "
-'KeyJump = "J"
+// KeyUp = "W"
+// KeyDown = "S"
+// KeyLeft = "A"
+// KeyRight = "D"
+// KeyAttack = " "
+// KeyJump = "J"
 
 normColor = &HFFFFFF
 maskColor = &HFF000000
@@ -294,15 +294,15 @@ Next j
 
 
 Dim CrazyError As Long
-'Time to get this show going, bodanky
+// Time to get this show going, bodanky
      RealWidth = Form1.ScaleWidth
      RealHeight = Form1.ScaleHeight
         SimulatedWidth = FULLSCREENWIDTH
         SimulatedHeight = FULLSCREENHEIGHT
 
     CrazyError = StartUpDX(DX, d3d, dev, Form1.hwnd, True)
-    'windowedMode = False
-  '  switchWindowedMode
+    // windowedMode = False
+  //   switchWindowedMode
 
     If CrazyError Then
         InputBox ("DAMN YOUR BLACK HEART, CRAZY ERROR!")
@@ -322,21 +322,21 @@ End Sub
 
 
 Private Function StartUpDX(DX As DirectX8, d3d As Direct3D8, dev As Direct3DDevice8, ByVal hwnd As Long, Optional ByVal bWindowed As Boolean = True) As Long
-'ALL YOUR CODE ARE BELONG TO MICROSOFT DONUTS!
+// ALL YOUR CODE ARE BELONG TO MICROSOFT DONUTS!
 Dim devtype As CONST_D3DDEVTYPE
 Dim i As Long, lCount As Long, lErrNum As Long, format As Long
 Dim bFoundMode As Boolean
 
 On Local Error Resume Next
-windowedMode = bWindowed 'Store windowed mode that was passed in
+windowedMode = bWindowed // Store windowed mode that was passed in
 If windowedMode = True Then Form1.MousePointer = 1 Else Form1.MousePointer = 99
 
-'This initializes dx8
+// This initializes dx8
 Set DX = New DirectX8
 
     If Err.Number Then
 
-        'There were problems creating the dx object. Return the error number.
+        // There were problems creating the dx object. Return the error number.
         StartUpDX = Err.Number
         Exit Function
 
@@ -346,34 +346,34 @@ Set d3d = DX.Direct3DCreate
 
     If Err.Number Then
 
-        'There were problems creating the d3d object. Return the error number.
+        // There were problems creating the d3d object. Return the error number.
         StartUpDX = Err.Number
         Exit Function
 
     End If
 
-'Attempts to CREATE HAL> Good morning dave.
+// Attempts to CREATE HAL> Good morning dave.
 devtype = D3DDEVTYPE_HAL
 
-    '"Get the capabilities of the Direct3D device that we specify. In this case,
-    'we'll be using the adapter default (the primiary card on the system)."
-    '                           Donuts, 2000
-    '           I couldn't have said it better myself.
+    // "Get the capabilities of the Direct3D device that we specify. In this case,
+    // we'll be using the adapter default (the primiary card on the system)."
+    //                            Donuts, 2000
+    //            I couldn't have said it better myself.
     Call d3d.GetDeviceCaps(D3DADAPTER_DEFAULT, devtype, m_d3dcaps)
 
-    'Donuts also told me this:
-    '"Check for errors. If there is an error, the card more than likely doesn't support at least DX7,
-    'so get the caps of the reference device instead."
-    '          Donuts, you're so funny when you're drunk!
+    // Donuts also told me this:
+    // "Check for errors. If there is an error, the card more than likely doesn't support at least DX7,
+    // so get the caps of the reference device instead."
+    //           Donuts, you're so funny when you're drunk!
     If Err.Number Then
 
-        Err.Clear  ' If theres an error, heeeeeeeey, relax guy
-        devtype = D3DDEVTYPE_REF   'get whatever old hal recommended.  Stupid sleazy hal!
+        Err.Clear  //  If theres an error, heeeeeeeey, relax guy
+        devtype = D3DDEVTYPE_REF   // get whatever old hal recommended.  Stupid sleazy hal!
         Call d3d.GetDeviceCaps(D3DADAPTER_DEFAULT, devtype, m_d3dcaps)
 
-        'If there is *still* an error, then the driver has problems. We'll
-        'have to exit at this point, because there isn't anything else we can
-        'do.
+        // If there is *still* an error, then the driver has problems. We'll
+        // have to exit at this point, because there isn't anything else we can
+        // do.
         If Err.Number Then
             StartUpDX = D3DERR_NOTAVAILABLE
             Exit Function
@@ -381,37 +381,37 @@ devtype = D3DDEVTYPE_HAL
 
     End If
 
-'Gets some info about the display mode.
+// Gets some info about the display mode.
         Call d3d.GetAdapterDisplayMode(D3DADAPTER_DEFAULT, m_d3ddm)
-'Apparently, we are now filling the D3DPRESENT_PARAMETERS type.
+// Apparently, we are now filling the D3DPRESENT_PARAMETERS type.
 With m_d3dpp
 
      If windowedMode Then
-           'Make sure there are more than 8-bits per pixel.
-           'What losers use eight bits per pixel?  Lame brains! Hywark! Hywark!
+           // Make sure there are more than 8-bits per pixel.
+           // What losers use eight bits per pixel?  Lame brains! Hywark! Hywark!
            If m_d3ddm.format = D3DFMT_P8 Or m_d3ddm.format = D3DFMT_A8P8 Then
-           'Device is running an 8bit variation format of some kind
+           // Device is running an 8bit variation format of some kind
            MsgBox ("Make no in 8bit")
            StartUpDX = D3DERR_INVALIDDEVICE
            Exit Function
         Else
-           'Device is more than 8-bits (thank JESUS). Set format variable to current display format so we can make a note of it.
+           // Device is more than 8-bits (thank JESUS). Set format variable to current display format so we can make a note of it.
            format = m_d3ddm.format
         End If
 
-        'Donuts sayz "For Windowed mode, we just discard information instead of flipping it."
-        'What the hell does that mean?
+        // Donuts sayz "For Windowed mode, we just discard information instead of flipping it."
+        // What the hell does that mean?
         .SwapEffect = D3DSWAPEFFECT_DISCARD
 
-        'Set windowed mode to true
+        // Set windowed mode to true
         .Windowed = 1
 
-    Else  'Enough with the windowed mode crap, its full screen time baby!
+    Else  // Enough with the windowed mode crap, its full screen time baby!
 
-        'Call a sub to find the first suitable full screen format
+        // Call a sub to find the first suitable full screen format
         lErrNum = FindMode(FULLSCREENWIDTH, FULLSCREENHEIGHT, format)
 
-                    'If unable to find a suitable mode, the app will have to exit.
+                    // If unable to find a suitable mode, the app will have to exit.
             If lErrNum Then
                 MsgBox " Your computer sucks. ", vbCritical
                 StartUpDX = D3DERR_INVALIDDEVICE
@@ -428,28 +428,28 @@ With m_d3dpp
 .BackBufferFormat = format
 End With
 
-'Now that all that craps done, its time to set the DEVICE OF DEATH!
+// Now that all that craps done, its time to set the DEVICE OF DEATH!
 
-'  Set dev = d3d.CreateDevice(D3DADAPTER_DEFAULT, devtype, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, m_d3dpp)
+//   Set dev = d3d.CreateDevice(D3DADAPTER_DEFAULT, devtype, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, m_d3dpp)
    Set dev = d3d.CreateDevice(D3DADAPTER_DEFAULT, devtype, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, m_d3dpp)
 
- 'If the creation above failed, try to create a REF device instead.
+ // If the creation above failed, try to create a REF device instead.
     If Err.Number Then
 
-       ' Err.Clear
-'        Set dev = d3d.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, m_d3dpp)
+       //  Err.Clear
+//         Set dev = d3d.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, m_d3dpp)
         Set dev = d3d.CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_REF, hwnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, m_d3dpp)
 
         If Err.Number Then
                     MsgBox ("Monkey Turd")
-            'The app still hit an error. Both HAL and REF devices weren't created. The app will have to exit at this point.
+            // The app still hit an error. Both HAL and REF devices weren't created. The app will have to exit at this point.
             StartUpDX = Err.Number
             Exit Function
 
         End If
     End If
 
-'Store dimensions
+// Store dimensions
 If windowedMode Then
   RealWidth = Form1.ScaleWidth
   RealHeight = Form1.ScaleHeight
@@ -470,7 +470,7 @@ End Function
 
 Function FindMode(ByVal w As Long, ByVal h As Long, fmt As Long) As Long
 
-'ALL YOUR CODE ARE BELONG TO DONUTS!
+// ALL YOUR CODE ARE BELONG TO DONUTS!
 
   Dim i  As Long, lCount As Long
     Dim d3ddm As D3DDISPLAYMODE
@@ -478,39 +478,39 @@ Function FindMode(ByVal w As Long, ByVal h As Long, fmt As Long) As Long
 
     i = 0
 
-    'Get the number of adapter modes this adapter supports.
+    // Get the number of adapter modes this adapter supports.
     lCount = d3d.GetAdapterModeCount(D3DADAPTER_DEFAULT) - 1
 
-    'If we encounter an error, return an error code and exit the function.
+    // If we encounter an error, return an error code and exit the function.
     If Err.Number Then
         FindMode = D3DERR_INVALIDCALL
         Exit Function
     End If
 
-    'Next, loop through all the display modes until we find one
-    'that matches the parameters passed in.
+    // Next, loop through all the display modes until we find one
+    // that matches the parameters passed in.
     For i = 0 To lCount
 
         Call d3d.EnumAdapterModes(D3DADAPTER_DEFAULT, i, d3ddm)
 
-        'Again, catch any unexpected errors.
+        // Again, catch any unexpected errors.
         If Err.Number Then
             FindMode = Err.Number
             Exit Function
         End If
 
-        'Check to see if this mode matches what is being sought.
+        // Check to see if this mode matches what is being sought.
         If d3ddm.Width = w And d3ddm.Height = h Then
 
-            'Now see if this mode is either a 32bpp or 16bpp mode
+            // Now see if this mode is either a 32bpp or 16bpp mode
             If d3ddm.format = D3DFMT_R8G8B8 Or _
                 d3ddm.format = D3DFMT_R5G6B5 Then
 
-                'We've found a suitable display. Set the flag
-                'to reflect this, and exit. No need to look further.
+                // We've found a suitable display. Set the flag
+                // to reflect this, and exit. No need to look further.
                 bFoundMode = True
 
-                'Set the fmt to the format that was found.
+                // Set the fmt to the format that was found.
                 fmt = d3ddm.format
 
                 Exit For
@@ -520,12 +520,12 @@ Function FindMode(ByVal w As Long, ByVal h As Long, fmt As Long) As Long
 
     If bFoundMode Then
 
-        'Everything checked out OK
+        // Everything checked out OK
         Exit Function
 
     Else
 
-        'Return an error
+        // Return an error
         FindMode = D3DERR_INVALIDDEVICE
 
     End If
@@ -559,9 +559,9 @@ Dim j As Integer
 Static madeShapes As Boolean
 
 
-'This makes shapes
+// This makes shapes
 With bgverts(0)
-    .x = 0: .y = 480 ' RealHeight
+    .x = 0: .y = 480 //  RealHeight
     .tu = 0: .tv = 1
     .rhw = 1
     .color = normColor
@@ -575,7 +575,7 @@ With bgverts(1)
 End With
 
 With bgverts(2)
-    .x = 640: .y = 480 ' RealWidth: .y = RealHeight
+    .x = 640: .y = 480 //  RealWidth: .y = RealHeight
     .tu = 1: .tv = 1
     .rhw = 1
     .color = normColor
@@ -628,12 +628,12 @@ madeShapes = True
 End Sub
 
 Function MainLoop()
-'Exit Function
+// Exit Function
 Do While STOPGAME = False
-    'clock = GetTickCount / 1000
-   ' Do Until gpRate >= 60
+    // clock = GetTickCount / 1000
+   //  Do Until gpRate >= 60
     Call playGame
-  '  Loop
+  //   Loop
     Call DrawStuff
 sFactor = tRate / frRate: If frRate < 30 Then sFactor = 1
 If LemonTime = True Then sFactor = sFactor * 2
@@ -657,7 +657,7 @@ hr = dev.TestCooperativeLevel
 
 If hr = D3DERR_DEVICELOST Then
 
-     Exit Sub 'Device is lost, there's nothing to do but wait for it to come back
+     Exit Sub // Device is lost, there's nothing to do but wait for it to come back
 ElseIf hr = D3DERR_DEVICENOTRESET Then
 hr = 0
 hr = ResetDevice()
@@ -669,7 +669,7 @@ End If
 
 If Form1.WindowState <> vbMinimized Then
 
-  'cranBerry = Timer
+  // cranBerry = Timer
 
 With dev
     Call .Clear(0, ByVal 0&, D3DCLEAR_TARGET, &HFF, 0, 0)
@@ -678,52 +678,52 @@ With dev
 
 
 
-    'Call .CopyRects(bgSurface, 1, 1, .GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO), 1)
+    // Call .CopyRects(bgSurface, 1, 1, .GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO), 1)
 
 
     Call .SetTexture(0, bgtexture)
      Call .DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, bgverts(0), Len(bgverts(0)))
-Rem- THIS IS THE SPRITE DRAWING SECTION-----------------------------------------------------------------------
+// Rem- THIS IS THE SPRITE DRAWING SECTION-----------------------------------------------------------------------
     If (m_d3dcaps.TextureCaps And D3DPTEXTURECAPS_ALPHA) Then
      Call .SetRenderState(D3DRS_ALPHABLENDENABLE, 1)
     End If
-     Call .SetTexture(0, AnimationTexture(Sprite(drawOrder(0)).texture)) 'this is the current texture for sprites
+     Call .SetTexture(0, AnimationTexture(Sprite(drawOrder(0)).texture)) // this is the current texture for sprites
   k = Sprite(drawOrder(0)).texture
 
 
     For j = 0 To spritesInUse
     If drawOrder(j) = -1 Then GoTo suckIt
-' If Sprite(j).flickerTime < clock Or Sprite(j).flickOn = False Then
- If j > 0 Then If Sprite(drawOrder(j)).texture <> k Then Call .SetTexture(0, AnimationTexture(Sprite(drawOrder(j)).texture)): k = Sprite(drawOrder(j)).texture 'this is the current texture for sprites
-'Form1.Line (Sprite(j).x, Sprite(j).y)-(Sprite(j).x + Sprite(j).wide, Sprite(j).y + Sprite(j).high), QBColor(0), BF
+//  If Sprite(j).flickerTime < clock Or Sprite(j).flickOn = False Then
+ If j > 0 Then If Sprite(drawOrder(j)).texture <> k Then Call .SetTexture(0, AnimationTexture(Sprite(drawOrder(j)).texture)): k = Sprite(drawOrder(j)).texture // this is the current texture for sprites
+// Form1.Line (Sprite(j).x, Sprite(j).y)-(Sprite(j).x + Sprite(j).wide, Sprite(j).y + Sprite(j).high), QBColor(0), BF
 
 
  If Sprite(drawOrder(j)).visible = True Then Call .DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, Sprite(drawOrder(j)).SpriteVerts(0), Len(Sprite(drawOrder(j)).SpriteVerts(0)))
-'If Sprite(j).flickerTime > clock Then
-'If Sprite(j).flickOn = True Then Sprite(j).flickOn = False Else Sprite(j).flickOn = True
+// If Sprite(j).flickerTime > clock Then
+// If Sprite(j).flickOn = True Then Sprite(j).flickOn = False Else Sprite(j).flickOn = True
 
-'End If
+// End If
 
-'End If
+// End If
 suckIt:
     Next j
 
 
        If .GetRenderState(D3DRS_ALPHABLENDENABLE) Then
-       'Turn it back off
+       // Turn it back off
        Call .SetRenderState(D3DRS_ALPHABLENDENABLE, 0)
        End If
 
 
 
 
-Rem- OKAY ITS DONE NOWWW---------------------------------------------------------------------------------------
+// Rem- OKAY ITS DONE NOWWW---------------------------------------------------------------------------------------
 
     Call .EndScene
                   Call .Present(ByVal 0&, ByVal 0&, 0, ByVal 0&)
                   frRate2 = frRate2 + 1
     If ((GetTickCount / 1000) > cranBerry) Then cranBerry = ((GetTickCount / 1000) + 1): frRate = frRate2: frRate2 = 0
-   'frRate=
+   // frRate=
    If debugOn = True Then Form1.PSet (1, 1): Form1.Print "FPS:" + Str$(frRate): Form1.Print "GPS:" + Str$(gpRate)
 End With
 End If
@@ -731,7 +731,7 @@ End If
 End Sub
 
 Sub loadTexture(which As Integer, fileName As String, howWide As Integer, howHigh As Integer)
- 'On Local Error Resume Next
+ // On Local Error Resume Next
 If which = -1 Then
  Set bgtexture = d3dx.CreateTextureFromFile(dev, FilePath + fileName)
  bgWidth = howWide: bgHeight = howHigh
@@ -792,8 +792,8 @@ If o$ = KeyJump(j) Then
 JumpKey(j) = True
 End If
 Next j
-'If o$ = "P" Then CameraX = CameraX + 1
-'If o$ = "O" Then CameraX = CameraX - 1
+// If o$ = "P" Then CameraX = CameraX + 1
+// If o$ = "O" Then CameraX = CameraX - 1
 End Function
 Function offkey(o$)
 Dim j As Integer
@@ -807,18 +807,18 @@ If o$ = KeyJump(j) Then JumpKey(j) = False
 Next j
 End Function
 Sub playGame()
-'If clock < lasttime Then Exit Sub
+// If clock < lasttime Then Exit Sub
 lasttime = clock + 3.33333333333333E-02
 Dim j As Integer
 Dim k As Integer
 Dim penguin As Integer
-Dim trueorg As Integer 'penguin and true org are buddies and also junk variables
+Dim trueorg As Integer // penguin and true org are buddies and also junk variables
 
-'---------------------------------------------------------------------------------------
-'                   CAMERA TIME
-'---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------
+//                    CAMERA TIME
+// ---------------------------------------------------------------------------------------
 findPlayers
-'If Sprite(0).name <> playerName(0) And Sprite(10).name <> playerName(1) And Sprite(20).name <> playerName(2) Then gotFocus = -6
+// If Sprite(0).name <> playerName(0) And Sprite(10).name <> playerName(1) And Sprite(20).name <> playerName(2) Then gotFocus = -6
 If numberPlayers = 0 Then gotFocus = -1
 If numberPlayers = 1 Then gotFocus = 0
 If numberPlayers = 2 Then gotFocus = -2: j = 0: k = 10
@@ -827,15 +827,15 @@ If numberPlayers = 4 Then gotFocus = 10
 If numberPlayers = 5 Then gotFocus = 20
 If numberPlayers = 6 Then gotFocus = -2: j = 0: k = 20
 If numberPlayers = 7 Then gotFocus = -2: j = 10: k = 20
-'1 Only player 1
-'2 Player 1 and 2
-'3 All three Players
-'4 Just player 2
-'5 Just player 3
-'6 Players 1 and 3
-'7 Players 2 and 3
+// 1 Only player 1
+// 2 Player 1 and 2
+// 3 All three Players
+// 4 Just player 2
+// 5 Just player 3
+// 6 Players 1 and 3
+// 7 Players 2 and 3
 
-'Three Player Scrolling is kind of tricky...
+// Three Player Scrolling is kind of tricky...
 If gotFocus = -3 Then
 If Sprite(0).x < Sprite(10).x And Sprite(0).x < Sprite(20).x Then
 If Sprite(10).x < Sprite(20).x Then
@@ -862,7 +862,7 @@ End If
 End If
 
 End If
-'rem End of 3 player scrolling
+// rem End of 3 player scrolling
 
 If gotFocus = -2 Then
 If Sprite(j).x < Sprite(k).x Then
@@ -880,14 +880,14 @@ k = 0
 End If
 If gotFocus > -1 Then trueorg = Sprite(gotFocus).x: penguin = Sprite(gotFocus).y: k = gotFocus
 
-'If gotFocus <> -1 Then
-'CameraX = (Sprite(gotFocus).x + (Sprite(gotFocus).wide * 0.5)) - 320
-'If CameraX < 1 Then CameraX = 1
-'If CameraX + CameraWidth >= cameraStopX Then CameraX = cameraStopX - 1 - CameraWidth
-'CameraY = (Sprite(gotFocus).y + (Sprite(gotFocus).high * 0.5)) - 240
-'If CameraY < 1 Then CameraY = 1
-'If CameraY + CameraHeight >= cameraStopY Then CameraY = cameraStopY - 1 - CameraHeight
-'End If
+// If gotFocus <> -1 Then
+// CameraX = (Sprite(gotFocus).x + (Sprite(gotFocus).wide * 0.5)) - 320
+// If CameraX < 1 Then CameraX = 1
+// If CameraX + CameraWidth >= cameraStopX Then CameraX = cameraStopX - 1 - CameraWidth
+// CameraY = (Sprite(gotFocus).y + (Sprite(gotFocus).high * 0.5)) - 240
+// If CameraY < 1 Then CameraY = 1
+// If CameraY + CameraHeight >= cameraStopY Then CameraY = cameraStopY - 1 - CameraHeight
+// End If
 
 If gotFocus <> -1 Then
 CameraX = (trueorg + (Sprite(k).wide * 0.5)) - 320
@@ -898,9 +898,9 @@ If CameraY < 1 Then CameraY = 1
 If CameraY + CameraHeight >= cameraStopY Then CameraY = cameraStopY - 1 - CameraHeight
 End If
 
-'-----------------------------------------------------------
-'START OF NORMAL ROUTINE
-'------------------------------------------------------------
+// -----------------------------------------------------------
+// START OF NORMAL ROUTINE
+// ------------------------------------------------------------
 
 
 
@@ -908,7 +908,7 @@ End If
 
 
 
-Rem-FLICKER-
+// Rem-FLICKER-
 For j = 0 To spritesInUse
 
 If left(screen, 5) = "level" Then
@@ -925,7 +925,7 @@ With Sprite(j)
 If .trueVisible <> 0 Then
 If .trueVisible = 1 Then .visible = True
 If .trueVisible = 2 Then .visible = False
-'.trueVisible = 0
+// .trueVisible = 0
 End If
 
 If .flickerTime > clock Then
@@ -946,28 +946,28 @@ End With
 Next j
 
 
-Rem-----------------------------------------------------------------------------------------
-'               THIS SECTION DOES THE JUMPING
-Rem--------------------------------------------------------------------------
-'The ancient key from the past?!!
-'crapple = clock - jumptime(j)
-'z(j) = jumpstart(j) + (jumpstrength(j) * crapple) - (gravity * (crapple ^ 2))
-'If z(j) < 0 Then z(j) = 0: jumptime(j) = 0
+// Rem-----------------------------------------------------------------------------------------
+//                THIS SECTION DOES THE JUMPING
+// Rem--------------------------------------------------------------------------
+// The ancient key from the past?!!
+// crapple = clock - jumptime(j)
+// z(j) = jumpstart(j) + (jumpstrength(j) * crapple) - (gravity * (crapple ^ 2))
+// If z(j) < 0 Then z(j) = 0: jumptime(j) = 0
 
 For j = 0 To spritesInUse
 With Sprite(j)
 
 If .jumpTime <> 0 Then
 .lastJump = .z
-'z=jt+(JS*T*2)-(g*t)*2^2
+// z=jt+(JS*T*2)-(g*t)*2^2
 If .jumpM = 0 Then .jumpM = 1
  .z = .jumpStart + ((.jumpStrength * .jumpM) * ((clock - .jumpTime) * 2)) - (Gravity * (((clock - .jumpTime) * 2) ^ 2))
-'
+//
 If .z < 0 Then .z = 0: .jumpTime = 0: .jumpM = 1
 Else
 
-'REM------------------------------------------------------
-'  THis is the added gravity that pulls them down if the're in the are.
+// REM------------------------------------------------------
+//   THis is the added gravity that pulls them down if the're in the are.
 If .z > 0 Then .z = .z - sFactor
 End If
 
@@ -978,11 +978,11 @@ Next j
 
 For j = 0 To spritesInUse
 With Sprite(j)
-Rem-If .time > clock Then GoTo gotDog
-'.time = clock + .speed
-Rem-----------------------------------------------------------------------------------------
-'               THIS SECTION UPDATES THE DAVID SPRITE
-Rem-----------------------------------------------------------------------------------------
+// Rem-If .time > clock Then GoTo gotDog
+// .time = clock + .speed
+// Rem-----------------------------------------------------------------------------------------
+//                THIS SECTION UPDATES THE DAVID SPRITE
+// Rem-----------------------------------------------------------------------------------------
 
 
 
@@ -999,30 +999,30 @@ If j = 20 Then penguin = 2
 If upKey(penguin) = True Then
 If .dir <> "u" Then .dir = "u": .frame = 6
 .y = .y - sFactor
-'.Frame = .Frame + 1: If .Frame > 6 Then .Frame = 4
-.speed = 0 '0.00001
+// .Frame = .Frame + 1: If .Frame > 6 Then .Frame = 4
+.speed = 0 // 0.00001
 If .y < CameraY Then .y = CameraY
 End If
 If DownKEY(penguin) = True Then
 If .dir <> "d" Then .dir = "d": .frame = 10
 .y = .y + sFactor
-'.Frame = .Frame + 1: If .Frame > 9 Then .Frame = 7
-.speed = 0 '0.00001
+// .Frame = .Frame + 1: If .Frame > 9 Then .Frame = 7
+.speed = 0 // 0.00001
 If .y > CameraY + CameraHeight - .high Then .y = CameraY + CameraHeight - .high
 End If
 If LeftKEY(penguin) = True Then
 If .dir <> "l" And upKey(penguin) = False And DownKEY(penguin) = False Then .dir = "l": .frame = 14
 .x = .x - sFactor
-'.Frame = .Frame + 1: If .Frame > 12 Then .Frame = 10
-.speed = 0 '0.00001
+// .Frame = .Frame + 1: If .Frame > 12 Then .Frame = 10
+.speed = 0 // 0.00001
 If .x < CameraX Then .x = CameraX
 
 End If
 If RightKEY(penguin) = True Then
 If .dir <> "r" And upKey(penguin) = False And DownKEY(penguin) = False Then .dir = "r": .frame = 2
 .x = .x + sFactor
-'.Frame = .Frame + 1: If .Frame > 3 Then .Frame = 1
-.speed = 0 '0.00001
+// .Frame = .Frame + 1: If .Frame > 3 Then .Frame = 1
+.speed = 0 // 0.00001
 
 If .x > CameraX + CameraWidth - .wide Then .x = CameraX + CameraWidth - .wide
 
@@ -1033,7 +1033,7 @@ If .z = 0 Then .multiJump = 0
 
 If .name = "Nicky" And JumpKey(penguin) = True And .multiJump < 3 Then
 JumpKey(penguin) = False
-'If .z = 0 Then .multiJump = 0
+// If .z = 0 Then .multiJump = 0
 .multiJump = .multiJump + 1
 .jumpStart = .z
 .jumpTime = clock
@@ -1046,7 +1046,7 @@ If JumpKey(penguin) = True And .z = 0 Then
 .jumpTime = clock
 End If
 
-'Check for a lack of movement
+// Check for a lack of movement
 If weapon(j / 10) = "bomb" Then
 If AttackKey(penguin) = True And .miscTime < clock Then
 For k = j + 1 To j + 9
@@ -1056,11 +1056,11 @@ End If
 If k = j + 9 Then k = j + 10: Exit For
 Next k
 If k = j + 10 Then GoTo noammo
-Sprite(k).speed = 0 '0.00001
+Sprite(k).speed = 0 // 0.00001
 Sprite(k).name = "bomb"
 Sprite(k).x = .x
 Sprite(k).y = .y
-Sprite(k).z = .z '- (Sprite(0).length)
+Sprite(k).z = .z // - (Sprite(0).length)
 Sprite(k).wide = 30 * (GradeUp(j / 10) + 1)
 Sprite(k).high = 30 * (GradeUp(j / 10) + 1)
 Sprite(k).jumpStart = .jumpStart
@@ -1074,14 +1074,14 @@ Sprite(k).mode = ""
 Sprite(k).miscTime = clock + 3
 Sprite(k).parent = j
 PlaySound "set bomb"
-'LoadSound k, "fireball.wav"
-'PlaySound "fireball"
+// LoadSound k, "fireball.wav"
+// PlaySound "fireball"
 .miscTime = clock + 0.25
 noammo:
 End If
 End If
-'Nicky Bomb
-'Thomas Fire
+// Nicky Bomb
+// Thomas Fire
 If weapon(j / 10) = "fireball" And ThreeWay(j / 10) = False Then
 If AttackKey(penguin) = True And .miscTime < clock Then
 For k = j + 1 To j + 9
@@ -1100,29 +1100,29 @@ If LeftKEY(penguin) = True Then Sprite(k).seekx = .x - (CameraWidth * 2)
 If upKey(penguin) = True Then Sprite(k).seeky = .y - (CameraHeight * 2)
 If DownKEY(penguin) = True Then Sprite(k).seeky = .y + (CameraHeight * 2)
 If .mode = "truck" Then Sprite(k).seeky = CameraY - CameraHeight: Sprite(k).seekx = .x: Sprite(k).dir = "u"
-'Sprite(1).visible = True
-Sprite(k).speed = 0 '0.00001
+// Sprite(1).visible = True
+Sprite(k).speed = 0 // 0.00001
 Sprite(k).name = "fireball"
 Sprite(k).mph = 3
 Sprite(k).x = .x
 Sprite(k).y = .y
-Sprite(k).z = .z '- (Sprite(0).length)
+Sprite(k).z = .z // - (Sprite(0).length)
 Sprite(k).wide = 30 * (GradeUp(j / 10) + 1)
 Sprite(k).high = 30 * (GradeUp(j / 10) + 1)
 Sprite(k).length = 15
 Sprite(k).texture = Sprite(j).texture
 Sprite(k).visible = True
 Sprite(k).kind = 3
-'Sprite(k).soundFile = "fireball.wav"
+// Sprite(k).soundFile = "fireball.wav"
 Sprite(k).parent = j
-'LoadSound k, "fireball.wav"
+// LoadSound k, "fireball.wav"
 If playerName(Sprite(k).parent / 10) = "Thomas" Then PlaySound "fireball"
 If playerName(Sprite(k).parent / 10) = "Nick" Then PlaySound "iceshot"
 
 .miscTime = clock + 0.25
 outofammo:
 End If
-End If 'if thomas if
+End If // if thomas if
 
 
 If weapon(j / 10) = "fireball" And ThreeWay(j / 10) = True Then
@@ -1168,14 +1168,14 @@ End If
 End If
 
 If .mode = "truck" Then Sprite(k).seeky = CameraY - CameraHeight: Sprite(k).seekx = .x: Sprite(k).dir = "u"
-'Sprite(1).visible = True
+// Sprite(1).visible = True
 For trueorg = k To k + 2
-Sprite(trueorg).speed = 0 '0.00001
+Sprite(trueorg).speed = 0 // 0.00001
 Sprite(trueorg).name = "fireball"
 Sprite(trueorg).mph = 3
 Sprite(trueorg).x = .x
 Sprite(trueorg).y = .y
-Sprite(trueorg).z = .z '- (Sprite(0).length)
+Sprite(trueorg).z = .z // - (Sprite(0).length)
 Sprite(trueorg).wide = 30 * (GradeUp(j / 10) + 1)
 Sprite(trueorg).high = 30 * (GradeUp(j / 10) + 1)
 Sprite(trueorg).length = 15
@@ -1186,12 +1186,12 @@ Sprite(trueorg).frame = 1
 Sprite(trueorg).soundFile = "fireball.wav"
 Sprite(trueorg).parent = j
 Next trueorg
-'LoadSound k, "fireball.wav"
+// LoadSound k, "fireball.wav"
 PlaySound "fireball"
 .miscTime = clock + 0.25
 outofammo3:
 End If
-End If 'if thomas if
+End If // if thomas if
 
 
 If upKey(penguin) = False And DownKEY(penguin) = False And LeftKEY(penguin) = False And RightKEY(penguin) = False Then
@@ -1205,11 +1205,11 @@ End If
 
 
 
-End If '-End of David Sprite If
+End If // -End of David Sprite If
 
-Rem- END OF DAVID SPRITE------------------------------------------------------------
-'
-Rem------------------------------------------------------------------------------
+// Rem- END OF DAVID SPRITE------------------------------------------------------------
+//
+// Rem------------------------------------------------------------------------------
 
 If .name = "goomba" Then
 seeker (j)
@@ -1231,8 +1231,8 @@ End If
 End If
 
 If .name = "Kerbose Death" Then
-'.flickerTime = clock + 2
-'If .color = QBColor(1) Then .color = normColor Else .color = QBColor(1)
+// .flickerTime = clock + 2
+// If .color = QBColor(1) Then .color = normColor Else .color = QBColor(1)
 If .miscTime < clock Then .name = "": .visible = False: .trueVisible = 2: .flickerTime = clock + 1
 End If
 
@@ -1279,17 +1279,17 @@ End If
 If .dir = "d" Then
 If .frame > 12 Then .frame = 10
 End If
-Rem----------------------
+// Rem----------------------
 .flickerTime = clock + 1
 If .x < .seekx Then .x = .x + (.mph * sFactor)
 If .x > .seekx Then .x = .x - (.mph * sFactor)
 If .y < .seeky Then .y = .y + (.mph * sFactor)
 If .y > .seeky Then .y = .y - (.mph * sFactor)
-'.wide = .wide + 1
-'.high = .high + 1
-'If .x = .seekx And .y = .seeky Or (.x + .wide) < 1 Or .x > 640 Or (.y + .high) < 1 Or .y > 480 Then .visible = False: .name = "reserved"
-'If .x >= .seekx And .x <= (.seekx + .mph) And .y >= .seeky And .y <= (.seeky + .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
-'If .x <= .seekx And .x >= (.seekx - .mph) And .y <= .seeky And .y >= (.seeky - .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
+// .wide = .wide + 1
+// .high = .high + 1
+// If .x = .seekx And .y = .seeky Or (.x + .wide) < 1 Or .x > 640 Or (.y + .high) < 1 Or .y > 480 Then .visible = False: .name = "reserved"
+// If .x >= .seekx And .x <= (.seekx + .mph) And .y >= .seeky And .y <= (.seeky + .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
+// If .x <= .seekx And .x >= (.seekx - .mph) And .y <= .seeky And .y >= (.seeky - .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
 If .x > (CameraX + CameraWidth) Or .x < (CameraX - CameraWidth) Or .y > (CameraY + CameraHeight) Or .y < (CameraY - CameraHeight) Then
 .visible = False: .flickerTime = 0: .name = "reserved": .trueVisible = 2
 End If
@@ -1311,7 +1311,7 @@ End If
 
 
 If .name = "falling" Then
-'.flickerTime = clock + 1
+// .flickerTime = clock + 1
 .z = .z - sFactor
 If .z < 1 Then .z = 1: .name = "deceased": .visible = False: .trueVisible = 2: .flickerTime = 0
 .frame = .frame + 1
@@ -1330,17 +1330,17 @@ End If
 End If
 
 If .name = "Death of David" Then
-'If .seekx = 0 Then .seekx = .x: .seeky = .y
-'If .color = QBColor(4) Then .color = QBColor(1) Else .color = QBColor(4)
+// If .seekx = 0 Then .seekx = .x: .seeky = .y
+// If .color = QBColor(4) Then .color = QBColor(1) Else .color = QBColor(4)
 .flickerTime = clock + 1
 If .wide < .seekx Then
-.wide = .wide + .mph * 3 'instead of * 3, it used to be * 0.5
+.wide = .wide + .mph * 3 // instead of * 3, it used to be * 0.5
 .high = .high + .mph * 3
 End If
 If .wide >= .seekx Then
 .high = .high - .mph * 3
 If .high < (-1 * .high) Then
-'what to do if dead
+// what to do if dead
 .name = "deceased": .visible = False: .name = "dead"
 .srcx = 2: .srcy = 363
 .srcx2 = 96: .srcy2 = 379
@@ -1354,8 +1354,8 @@ If continues > 0 Then
 .srcy = 345
 .srcx2 = 96
 .srcy2 = 361
-.wide = 93 '16
-.high = 16 '93
+.wide = 93 // 16
+.high = 16 // 93
 .frame = 0
 Sprite(j + 1).name = "continue number"
 Sprite(j + 1).color = normColor
@@ -1373,16 +1373,16 @@ Sprite(j + 1).high = 20
 Sprite(j + 1).y = .y
 .y = 10
 Sprite(j + 1).x = .x + 100
-End If 'end continue if
-End If 'end lives if
+End If // end continue if
+End If // end lives if
 If lives(j / 10) > 0 Then
 Call createPlayer(j, playerName(j / 10))
 Sprite(j).name = playerName(j / 10)
 Sprite(j).kind = 1
 Call initSprites(j)
 Sprite(j).flickerTime = clock + 5
-'Sprite(j).x = .seekx: .seekx = 0
-'Sprite(j).y = .seekx: .seekx = 0
+// Sprite(j).x = .seekx: .seekx = 0
+// Sprite(j).y = .seekx: .seekx = 0
 
 End If
 
@@ -1433,7 +1433,7 @@ If .miscTime < clock Then
 .frame = .frame - 1
 If .frame = 0 Then .frame = 13
 .visible = True
-If continues < 1 Then .frame = 12 'this is useful, say, if two people have the choice of the last continue and one gets it before someone else
+If continues < 1 Then .frame = 12 // this is useful, say, if two people have the choice of the last continue and one gets it before someone else
 If .frame = 10 Then playWave "ConTen.wav"
 If .frame = 9 Then playWave "ConNine.wav"
 If .frame = 8 Then playWave "ConEight.wav"
@@ -1446,7 +1446,7 @@ If .frame = 2 Then playWave "ConTwo.wav"
 If .frame = 1 Then playWave "ConOne.wav"
 If .frame = 13 Then playWave "ConZero.wav"
 If .frame = 12 Then
-Sprite(j - 1).name = "dead": Sprite(j - 1).visible = False: killS j '": .visible = False
+Sprite(j - 1).name = "dead": Sprite(j - 1).visible = False: killS j // ": .visible = False
 End If
 End If
 End If
@@ -1473,20 +1473,20 @@ End If
 End If
 
 If .name = "TitleBg1" Then
-'If .mode = "part2" Then
+// If .mode = "part2" Then
 For k = 0 To 2
 If RightKEY(k) = True Or LeftKEY(k) = True Or upKey(k) = True Or DownKEY(k) = True Or AttackKey(k) = True Then screen$ = "Select Player"
 Next k
 
-'End If
-'If .mode <> "part2" Then
-'If RightKEY = True Or LeftKEY = True Or UpKEY = True Or DownKEY = True Or AttackKey = True Then
-'For k = 1 To 4: Sprite(k).miscTime = clock - 100: Sprite(k).visible = False: Next k
-'End If
-'End If
+// End If
+// If .mode <> "part2" Then
+// If RightKEY = True Or LeftKEY = True Or UpKEY = True Or DownKEY = True Or AttackKey = True Then
+// For k = 1 To 4: Sprite(k).miscTime = clock - 100: Sprite(k).visible = False: Next k
+// End If
+// End If
 If .miscTime < clock And .mode <> "part2" Then
 .visible = True
-.mode = "part2" ': .miscTime = clock + 5
+.mode = "part2" // : .miscTime = clock + 5
 End If
 End If
 
@@ -1505,14 +1505,14 @@ If .miscTime < clock And .mode <> "stop" Then
 .trueVisible = 1
 .flickerTime = clock + 5
 .wide = .wide - sFactor * 5: .x = .x + sFactor * 2.5
-If .wide < 640 Then .mode = "stop": .flickerTime = clock: .miscTime = clock + 2 ': screen = "intro story"
+If .wide < 640 Then .mode = "stop": .flickerTime = clock: .miscTime = clock + 2 // : screen = "intro story"
 End If
 End If
 
 If .name = "Selecter" Then
 If clock > .miscTime Then
-.miscTime = clock + 0.1 'this way, the person won't scream through the selection box because it moves at 40 FPS!
-'For k = 0 To 2
+.miscTime = clock + 0.1 // this way, the person won't scream through the selection box because it moves at 40 FPS!
+// For k = 0 To 2
 k = j
 If .visible = False Then If anyKey(k) = 1 Then .visible = True: .frame = k + 1
 
@@ -1525,15 +1525,15 @@ If .frame = 2 Then playWave "pickNick.wav"
 If .frame = 3 Then playWave "pickDrew.wav"
 If .frame = 5 Then playWave "pickNicky.wav"
 End If
-'Next k
+// Next k
 End If
 
 End If
 
 If .name = "StageWhat" Then
-'
+//
 If .mode = "" Then
-'playWave "conten.wav"
+// playWave "conten.wav"
 If .miscTime = 0 Then .miscTime = clock + 2: Sprite(31).zOrder = -100: Call findOrder
 With Sprite(31)
 If Sprite(j).miscTime > clock Then
@@ -1555,16 +1555,16 @@ If Sprite(j).miscTime < clock Then
 If .wide < 0 Then Sprite(j).mode = "?": Sprite(30).miscTime = clock + 3
 End If
 End With
-End If 'mode
+End If // mode
 If .mode = "?" Then
-'playWave "conten.wav"
+// playWave "conten.wav"
 With Sprite(31)
 unstretch 31
 .wide = .wide * 2
 .high = .high * 2
 
-'.wide = (275 - 188) * 2
-'.high = (376 - 353) * 2
+// .wide = (275 - 188) * 2
+// .high = (376 - 353) * 2
 
 .frame = 10
 .texture = 9
@@ -1588,19 +1588,19 @@ Next k
 If .mode = "" Then
 
 Sprite(1).invTime = 40
-Call playWave("introstory.wav") ' play it once then stop
-.mode = "waka do" ' so it won't load non stop
+Call playWave("introstory.wav") //  play it once then stop
+.mode = "waka do" //  so it won't load non stop
 End If
 If Sprite(1).mode = "words1" Then
-'Sprite(1).length = 6
+// Sprite(1).length = 6
 If .mode = "waka do" Then
-'playWave "conSix.wav"
+// playWave "conSix.wav"
 With Sprite(1)
 .length = 3
 .texture = 1
 .visible = True
-'.srcx = 2: .srcy = 44
-'.srcx2 = 303: .srcy2 = 152
+// .srcx = 2: .srcy = 44
+// .srcx2 = 303: .srcy2 = 152
 .srcx = 2: .srcy = 1
 .srcx2 = 166: .srcy2 = 41
 .wide = 164 * 2: .high = 40 * 2
@@ -1645,7 +1645,7 @@ If .mode = "word 5" Then
 Call loadTexture(-1, "open2.bmp", 320, 240)
 CameraWidth = 320: CameraHeight = 240
 With Sprite(1)
-.texture = 2 '1
+.texture = 2 // 1
 .visible = True
 .srcx = 2: .srcy = 5
 .srcx2 = 307: .srcy2 = 48
@@ -1656,46 +1656,46 @@ End If
 If .mode = "word 6" Then
 With Sprite(1)
 .length = 3
-.texture = 2 '1
+.texture = 2 // 1
 .visible = True
 .srcx = 2: .srcy = 51
 .srcx2 = 311: .srcy2 = 71
 .wide = 309 * 2: .high = (20) * 2
-'.x = 1: .y = 178
+// .x = 1: .y = 178
 End With
 End If
 If .mode = "word 7" Then
 With Sprite(1)
 .length = 4
-'.texture = 1
+// .texture = 1
 .visible = True
 .srcx = 2: .srcy = 75
 .srcx2 = 295: .srcy2 = 117
 .wide = 293 * 2: .high = (42) * 2
-'.x = 1: .y = 178
+// .x = 1: .y = 178
 End With
 End If
 If .mode = "word 8" Then
 With Sprite(1)
 .length = 6
-'.texture = 1
+// .texture = 1
 .visible = True
 .srcx = 2: .srcy = 120
 .srcx2 = 294: .srcy2 = 185
 .wide = 292 * 2: .high = (65) * 2
-'.x = 1: .y = 178
+// .x = 1: .y = 178
 End With
 End If
 If .mode = "word 9" Then
 Call loadTexture(-1, "open3.bmp", 320, 240)
 With Sprite(1)
-'.texture = 1
+// .texture = 1
 .length = 6
 .visible = True
 .srcx = 2: .srcy = 189
 .srcx2 = 305: .srcy2 = 254
 .wide = 303 * 2: .high = (65) * 2
-'.x = 1: .y = 178
+// .x = 1: .y = 178
 End With
 End If
 If .mode = "word 10" Then
@@ -1708,14 +1708,14 @@ With Sprite(1)
 .srcx = 1: .srcy = 4
 .srcx2 = 312: .srcy2 = 69
 .wide = 313 * 2: .high = (65) * 2
-'.x = 1: .y = 178
+// .x = 1: .y = 178
 End With
 End If
 If .mode = "word 11" Then
 Call loadTexture(-1, "open5.bmp", 320, 240)
 With Sprite(1)
 .length = 6
-'.texture = 1
+// .texture = 1
 .visible = True
 .srcx = 1: .srcy = 72
 .srcx2 = 258: .srcy2 = 115
@@ -1724,14 +1724,14 @@ With Sprite(1)
 End With
 End If
 If .mode = "word 12" Then
-'If .miscTime < clock Then
-'killS (1)
+// If .miscTime < clock Then
+// killS (1)
 Call loadTexture(-1, "plainblack.bmp", 320, 240)
 .mode = "word 13"
 With Sprite(1)
 .invTime = 10
 .length = 6
-'.miscTime = 0
+// .miscTime = 0
 .mode = "words1"
 .texture = 4
 .visible = True
@@ -1741,15 +1741,15 @@ With Sprite(1)
 .x = 1: .y = 1
 Sprite(0).mode = "KILLDEATH"
 End With
-'End If
+// End If
 End If
 
 End If
 If Sprite(1).mode = "words2" Then
-'playWave "conzero.wav"
+// playWave "conzero.wav"
 Sprite(1).mode = "words1": .miscTime = 0
-If .mode = "word 11" Then .mode = "word 12" ': .miscTime = clock + 3: Sprite(1).length = 0
-If .mode = "word 10" Then .mode = "word 11" ': Sprite(1).length = 0
+If .mode = "word 11" Then .mode = "word 12" // : .miscTime = clock + 3: Sprite(1).length = 0
+If .mode = "word 10" Then .mode = "word 11" // : Sprite(1).length = 0
 If .mode = "word 9" Then .mode = "word 10"
 If .mode = "word 8" Then .mode = "word 9"
 If .mode = "word 7" Then .mode = "word 8"
@@ -1763,16 +1763,16 @@ End If
 End If
 
 
-'WORDS 1
+// WORDS 1
 If .name = "words1" Then
 
 If .mode = "words1" Then
 If .miscTime < 255 Then
-.miscTime = .miscTime + (sFactor * .invTime) '0.3 * sFactor
+.miscTime = .miscTime + (sFactor * .invTime) // 0.3 * sFactor
 .color = RGB(.miscTime, .miscTime, .miscTime)
 End If
 If .miscTime > 245 Then
-'playWave "conten.wav"
+// playWave "conten.wav"
 .color = QBColor(15): .mode = "words1b": .miscTime = clock + .length
 End If
 End If
@@ -1785,11 +1785,11 @@ If .mode = "words1b" And .miscTime < clock Then .mode = "words1c": .miscTime = 2
 
 If .mode = "words1c" Then
 If .miscTime > 0 Then
-.miscTime = .miscTime - (sFactor * 20) '0.3 * sFactor
+.miscTime = .miscTime - (sFactor * 20) // 0.3 * sFactor
 If .miscTime > 0 Then .color = RGB(.miscTime, .miscTime, .miscTime)
 End If
 If .miscTime < 1 Then
-'playWave "conten.wav"
+// playWave "conten.wav"
 .color = QBColor(0): .mode = "words2"
 End If
 End If
@@ -1797,7 +1797,7 @@ End If
 End If
 
 
-'playWave "conten.wav"
+// playWave "conten.wav"
 
 If .name = "frontdoor" Then
 If findQ("Kerbose") < 1 Then
@@ -1819,17 +1819,17 @@ For penguin = 0 To 2 Step 10
 If hitdetection(j, penguin, True) = 5 And Sprite(penguin).name = playerName((penguin / 10)) Then
 .mode = "runner"
 .seekx = cameraStopX
-'.mhp = 10
+// .mhp = 10
 .kind = 2
 .deathType = "expand"
-'.hp = 1
+// .hp = 1
 .reverse = True
 End If
 Next penguin
 End If
 
 If .target <> 0 Or .target = -1 Then
-.target = checkProx(j) 'pickTarget(j, 1)
+.target = checkProx(j) // pickTarget(j, 1)
 .seekx = getMiddleX(.target)
 .seeky = getMiddleY(.target)
 End If
@@ -1844,12 +1844,12 @@ If getProx(j, .target) = 0 Then .seekx = Sprite(.target).x: .seeky = Sprite(.tar
 seeker (j)
 
 
-'Stop
-'If getMiddleX(.target) > getMiddleX(j) Then .x = .x + (sFactor * 3)
-'If getMiddleX(.target) < getMiddleX(j) Then .x = .x - (sFactor * 3)
+// Stop
+// If getMiddleX(.target) > getMiddleX(j) Then .x = .x + (sFactor * 3)
+// If getMiddleX(.target) < getMiddleX(j) Then .x = .x - (sFactor * 3)
 
-'If getMiddleY(.target) > getMiddleY(j) Then .y = .y + (sFactor * 1)
-'If getMiddleY(.target) < getMiddleY(j) Then .y = .y - (sFactor * 1)
+// If getMiddleY(.target) > getMiddleY(j) Then .y = .y + (sFactor * 1)
+// If getMiddleY(.target) < getMiddleY(j) Then .y = .y - (sFactor * 1)
 End If
 
 End If
@@ -1857,13 +1857,13 @@ End If
 
 If .name = "expand" Then
 .kind = 0
-'If .mode = "runner" Then
+// If .mode = "runner" Then
 .frame = 3
 .SpriteVerts(0).rhw = .SpriteVerts(0).rhw + (0.01 * sFactor)
 .SpriteVerts(3).rhw = .SpriteVerts(3).rhw + (0.01 * sFactor)
 .wide = .wide + (sFactor): .x = .x - (sFactor / 2)
 .high = .high + (sFactor): .y = .y - (sFactor / 2)
-If .SpriteVerts(3).rhw > 2 Then .name = "harharhar": Call initSprites(j) ': killS j
+If .SpriteVerts(3).rhw > 2 Then .name = "harharhar": Call initSprites(j) // : killS j
 End If
 
 If .name = "harharhar" Then
@@ -1872,7 +1872,7 @@ End If
 
 
 If .name = "dead" Then
-'Stop
+// Stop
 If (j / 10) = 0 Then
 .x = CameraX + 10
 End If
@@ -1892,24 +1892,24 @@ End If
 .texture = 0: .visible = True
 End If
 
-gotDog: 'end of if their ready timer thing
+gotDog: // end of if their ready timer thing
 End With
 Next j
 
-'------------------------------------------------------------------------------
-'      END OF AN ERA
-'------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+//       END OF AN ERA
+// ------------------------------------------------------------------------------
 
 
 Call updatesprites
 
 For j = 0 To spritesInUse
-'If Sprite(j).mover = True Then
+// If Sprite(j).mover = True Then
 For k = j + 1 To spritesInUse
 If Sprite(j).kind = 0 Then GoTo fthis2
 If Sprite(k).kind = Sprite(j).kind Or Sprite(k).kind = 0 Then GoTo fthis2
-'If Sprite(k).mover = False And Sprite(j).mover = False Then GoTo fthis2
-'If k = 1 And j = 31 Then Stop
+// If Sprite(k).mover = False And Sprite(j).mover = False Then GoTo fthis2
+// If k = 1 And j = 31 Then Stop
 If hitdetection(j, k) <> 0 Then Call checkHit(j, k)
 fthis2:
 Next k
@@ -1944,12 +1944,12 @@ End If
 End With
 Next j
 
-'--------------------------------------------------------------------------------------------
-'                       THIS PART HERE'S THE KICKER
-'--------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------
+//                        THIS PART HERE'S THE KICKER
+// --------------------------------------------------------------------------------------------
 
 With bgverts(0)
-    .x = 0: .y = 480 ' RealHeight
+    .x = 0: .y = 480 //  RealHeight
     .tu = CameraX / bgWidth: .tv = (CameraY + CameraHeight) / bgHeight
     .rhw = 1
     .color = normColor
@@ -1963,7 +1963,7 @@ With bgverts(1)
 End With
 
 With bgverts(2)
-    .x = 640: .y = 480 ' RealWidth: .y = RealHeight
+    .x = 640: .y = 480 //  RealWidth: .y = RealHeight
     .tu = (CameraX + CameraWidth) / bgWidth: .tv = (CameraY + CameraHeight) / bgHeight
     .rhw = 1
     .color = normColor
@@ -1984,9 +1984,9 @@ If .reverse = True Then
 k = .srcx2
 .srcx2 = .srcx
 .srcx = k
-'k = .srcy2
-'.srcy2 = .srcy
-'.srcy = k
+// k = .srcy2
+// .srcy2 = .srcy
+// .srcy = k
 
 End If
 
@@ -1995,35 +1995,35 @@ End If
 
     With .SpriteVerts(0)
       .x = Sprite(j).x - CameraX
-      .y = Sprite(j).y + Sprite(j).high - (Sprite(j).z) - CameraY ' - Sprite(j).length)
+      .y = Sprite(j).y + Sprite(j).high - (Sprite(j).z) - CameraY //  - Sprite(j).length)
 If Sprite(j).srcx <> 0 Then .tu = Sprite(j).srcx / texWidth(Sprite(j).texture)
 If Sprite(j).srcy2 <> 0 Then .tv = Sprite(j).srcy2 / texHeight(Sprite(j).texture)
-     ' .rhw = 1
+     //  .rhw = 1
       .color = Sprite(j).color
 
     End With
     With .SpriteVerts(1)
       .x = Sprite(j).x - CameraX
-      .y = Sprite(j).y - (Sprite(j).z) - CameraY ' - Sprite(j).length)
+      .y = Sprite(j).y - (Sprite(j).z) - CameraY //  - Sprite(j).length)
 If Sprite(j).srcx <> 0 Then .tu = Sprite(j).srcx / texWidth(Sprite(j).texture)
 If Sprite(j).srcy <> 0 Then .tv = Sprite(j).srcy / texHeight(Sprite(j).texture)
-     ' .rhw = 1
+     //  .rhw = 1
       .color = Sprite(j).color
     End With
     With .SpriteVerts(2)
       .x = Sprite(j).x + Sprite(j).wide - CameraX
-      .y = Sprite(j).y + Sprite(j).high - (Sprite(j).z) - CameraY ' - Sprite(j).length)
+      .y = Sprite(j).y + Sprite(j).high - (Sprite(j).z) - CameraY //  - Sprite(j).length)
 If Sprite(j).srcx2 <> 0 Then .tu = Sprite(j).srcx2 / texWidth(Sprite(j).texture)
 If Sprite(j).srcy2 <> 0 Then .tv = Sprite(j).srcy2 / texHeight(Sprite(j).texture)
-     ' .rhw = 1
+     //  .rhw = 1
       .color = Sprite(j).color
     End With
     With .SpriteVerts(3)
       .x = Sprite(j).x + Sprite(j).wide - CameraX
-      .y = Sprite(j).y - (Sprite(j).z) - CameraY ' - Sprite(j).length)
+      .y = Sprite(j).y - (Sprite(j).z) - CameraY //  - Sprite(j).length)
 If Sprite(j).srcx2 <> 0 Then .tu = Sprite(j).srcx2 / texWidth(Sprite(j).texture)
 If Sprite(j).srcy <> 0 Then .tv = Sprite(j).srcy / texHeight(Sprite(j).texture)
-     ' .rhw = 1
+     //  .rhw = 1
       .color = Sprite(j).color
     End With
 
@@ -2034,8 +2034,8 @@ Next j
 
 End Sub
 Sub timedEvents()
-Rem- Sub for the laid back peacefully timed things, like animation
-Rem- ANIMATION!
+// Rem- Sub for the laid back peacefully timed things, like animation
+// Rem- ANIMATION!
 Dim j As Integer
 
 For j = 0 To spritesInUse
@@ -2122,78 +2122,78 @@ Dim left%
 Dim right%
 Dim up%
 Dim down%
-Rem-checks to see if they hit from left or right
-'For j = 0 To BIGO
-'For k = j To BIGO
+// Rem-checks to see if they hit from left or right
+// For j = 0 To BIGO
+// For k = j To BIGO
 con1% = 0: con2% = 0: con3% = 0
-'If code(j) = 0 Or code(k) = 0 Then GoTo screwthis3
-'If k = j Then GoTo screwthis
-'lower numbers get screwed first
+// If code(j) = 0 Or code(k) = 0 Then GoTo screwthis3
+// If k = j Then GoTo screwthis
+// lower numbers get screwed first
 con1% = 0
 If (Sprite(num1).x + Sprite(num1).wide) >= Sprite(num2).x And Sprite(num1).x < Sprite(num2).x Then con1% = 1: left% = 1
-'If Sprite(num1).x = Sprite(num2).x Then con1% = 1: right% = 1
-'If (Sprite(num1).x + Sprite(num1).wide) = Sprite(num2).x Then con1% = 1: left% = 1
-'If Sprite(num1).x = Sprite(num2).x + Sprite(num2).wide Then con1% = 1: right% = 1
+// If Sprite(num1).x = Sprite(num2).x Then con1% = 1: right% = 1
+// If (Sprite(num1).x + Sprite(num1).wide) = Sprite(num2).x Then con1% = 1: left% = 1
+// If Sprite(num1).x = Sprite(num2).x + Sprite(num2).wide Then con1% = 1: right% = 1
 If (Sprite(num2).x + Sprite(num2).wide) >= Sprite(num1).x And Sprite(num2).x < Sprite(num1).x Then con1% = 1: right% = 1
 
-'If con1% = 1 Then Picture1.Line (sprite(num1).x, sprite(num1).y)-(sprite(num1).x + sprite(num1).wide, sprite(num1).y + sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = "From Right of " + Str$(j)
+// If con1% = 1 Then Picture1.Line (sprite(num1).x, sprite(num1).y)-(sprite(num1).x + sprite(num1).wide, sprite(num1).y + sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = "From Right of " + Str$(j)
 
 
 screwthis:
 
 
-Rem- Checks to see if they ever collide from the top to bottom (Y)
+// Rem- Checks to see if they ever collide from the top to bottom (Y)
 con2% = 0
-'If k = j Then GoTo screwthis2
+// If k = j Then GoTo screwthis2
 
 If (Sprite(num1).y + Sprite(num1).high) >= Sprite(num2).y And Sprite(num1).y < Sprite(num2).y Then con2% = 1: up% = 1
-'If Sprite(num1).y = Sprite(num2).y Then con2% = 1: down% = 1
-'If (Sprite(num1).y + Sprite(num1).high) = Sprite(num2).y Then con2% = 1: up% = 1
-Rem- Added as of 11/27/00
-'If Sprite(num1).y = Sprite(num2).y + Sprite(num2).high Then con2% = 1: down% = 1
+// If Sprite(num1).y = Sprite(num2).y Then con2% = 1: down% = 1
+// If (Sprite(num1).y + Sprite(num1).high) = Sprite(num2).y Then con2% = 1: up% = 1
+// Rem- Added as of 11/27/00
+// If Sprite(num1).y = Sprite(num2).y + Sprite(num2).high Then con2% = 1: down% = 1
 If (Sprite(num2).y + Sprite(num2).high) >= Sprite(num1).y And Sprite(num2).y < Sprite(num1).y Then con2% = 1: down% = 1
 
 
-'If con2% = 1 Then Picture1.Line (sprite(num1).x, sprite(num1).y)-(sprite(num1).x + sprite(num1).wide, sprite(num1).y + sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = Label2.Caption + "From Bottom of " + Str$(j)
+// If con2% = 1 Then Picture1.Line (sprite(num1).x, sprite(num1).y)-(sprite(num1).x + sprite(num1).wide, sprite(num1).y + sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = Label2.Caption + "From Bottom of " + Str$(j)
 
 screwthis2:
 If Sprite(num1).kind = 5 Or Sprite(num2).kind = 5 Then con3% = 1: GoTo screwthis3
 
 
-Rem- The THIRD dimension, Z!
+// Rem- The THIRD dimension, Z!
 
-'If k = j Then GoTo screwthis3
+// If k = j Then GoTo screwthis3
 
 If (Sprite(num1).z + (Sprite(num1).length * 1.5)) >= Sprite(num2).z And Sprite(num1).z < Sprite(num2).z Then con3% = 1
 If Sprite(num1).z = Sprite(num2).z Then con3% = 1
-'If (Sprite(num1).z + Sprite(num1).length) = Sprite(num2).z Then con3% = 1
-Rem- Added as of 11/27/00
-'If Sprite(num1).z = Sprite(num2).z + Sprite(num2).length Then con3% = 1
+// If (Sprite(num1).z + Sprite(num1).length) = Sprite(num2).z Then con3% = 1
+// Rem- Added as of 11/27/00
+// If Sprite(num1).z = Sprite(num2).z + Sprite(num2).length Then con3% = 1
 If (Sprite(num2).z + Sprite(num2).length * 1.5) >= Sprite(num1).z And Sprite(num2).z < Sprite(num1).z Then con3% = 1
 
 
-'If con3% = 1 Then Print "": Rem-Beep: 'Label2.Caption = "From Top of " + Str$(j)
+// If con3% = 1 Then Print "": Rem-Beep: 'Label2.Caption = "From Top of " + Str$(j)
 
 screwthis3:
-''If con3% = 1 And con2% = 1 And con1% = 1 Then
-'Picture1.Line (Sprite(num1).x, Sprite(num1).y)-(Sprite(num1).x + Sprite(num1).wide, Sprite(num1).y + Sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = Label2.Caption + "From Bottom of " + Str$(j)
-'Picture1.Line (Sprite(num2).x, Sprite(num2).y)-(Sprite(num2).x + Sprite(num2).wide, Sprite(num2).y + Sprite(num2).high), QBColor(4), BF
-'If k = fapple% And j = crapapple% Then GoTo skipitcausetheyalreadyweredetected
-''hitdetection = 1: Let fapple% = j: crapapple% = k
-'Call colide(k, j)
-''skipitcausetheyalreadyweredetected:
-''End If
+// 'If con3% = 1 And con2% = 1 And con1% = 1 Then
+// Picture1.Line (Sprite(num1).x, Sprite(num1).y)-(Sprite(num1).x + Sprite(num1).wide, Sprite(num1).y + Sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = Label2.Caption + "From Bottom of " + Str$(j)
+// Picture1.Line (Sprite(num2).x, Sprite(num2).y)-(Sprite(num2).x + Sprite(num2).wide, Sprite(num2).y + Sprite(num2).high), QBColor(4), BF
+// If k = fapple% And j = crapapple% Then GoTo skipitcausetheyalreadyweredetected
+// 'hitdetection = 1: Let fapple% = j: crapapple% = k
+// Call colide(k, j)
+// 'skipitcausetheyalreadyweredetected:
+// 'End If
 
-'Next k
-'Next j
+// Next k
+// Next j
 
 
-'If con1% = 1 Then hitdetection = 2
-'If con2% = 1 Then hitdetection = 3
-'If con3% = 1 Then hitdetection = 4
-'If con1% = 1 And con2% = 1 Then hitdetection = 5
-'If con2% = 1 And con3% = 1 Then hitdetection = 6
-'If con1% = 1 And con3% = 1 Then hitdetection = 7
+// If con1% = 1 Then hitdetection = 2
+// If con2% = 1 Then hitdetection = 3
+// If con3% = 1 Then hitdetection = 4
+// If con1% = 1 And con2% = 1 Then hitdetection = 5
+// If con2% = 1 And con3% = 1 Then hitdetection = 6
+// If con1% = 1 And con3% = 1 Then hitdetection = 7
 If con1% = 1 And con2% = 1 And con3% = 1 Then hitdetection = 1
 If whatKind = True Then
 If left% = 1 Then hitdetection = 2
@@ -2233,11 +2233,11 @@ Gravity = 20
 
 CameraX = 0: CameraY = 0
 Call loadTexture(-1, "lv1bg.bmp", 10, 10)
-'Call loadTexture(0, "smile.bmp", 255, 255)
+// Call loadTexture(0, "smile.bmp", 255, 255)
 
-'Call loadTexture(4, "level1a.bmp", 490, 209)
-'Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
-'Call loadTexture(6, "goomba.bmp", 240, 240)
+// Call loadTexture(4, "level1a.bmp", 490, 209)
+// Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
+// Call loadTexture(6, "goomba.bmp", 240, 240)
 Call loadTexture(9, "level1cinema.bmp", 400, 400)
 
 
@@ -2311,7 +2311,7 @@ Next j
 Sprite(81).x = 400
 Sprite(81).y = 250
 Sprite(81).name = "Deadly Rat"
-'Call initSprites(31)
+// Call initSprites(31)
 Sprite(82).x = 440
 Sprite(82).y = 150
 Sprite(82).z = 0
@@ -2362,17 +2362,17 @@ Call findOrder
 
 End Sub
 Sub initSprites(which As Integer)
-'this makes all the sprites do their thing based on their name
+// this makes all the sprites do their thing based on their name
 Dim trueorg As Integer
 With Sprite(which)
-'.color = normColor
+// .color = normColor
 .mph = 1
 If .name = "Thomas" Then
 .zOrder = -99
 .soundFile = "DavidHurt"
 .wide = 40
 .high = 50
-'.texture = 1
+// .texture = 1
 .visible = True
 .length = 20
 .z = 0
@@ -2383,7 +2383,7 @@ If .name = "Thomas" Then
 .speed = 0
 .deathType = "Death of David"
 .hp = 4
-'.mode = "truck"
+// .mode = "truck"
 .mover = True
 .maxJump = 1
 End If
@@ -2393,7 +2393,7 @@ If .name = "Nick" Then
 .soundFile = "nickhurt"
 .wide = 40
 .high = 50
-'.texture = 1
+// .texture = 1
 .visible = True
 .length = 20
 .z = 0
@@ -2404,7 +2404,7 @@ If .name = "Nick" Then
 .speed = 0
 .deathType = "Death of Nick"
 .hp = 4
-'.mode = "truck"
+// .mode = "truck"
 .mover = True
 .maxJump = 1
 End If
@@ -2415,7 +2415,7 @@ If .name = "Nicky" Then
 .soundFile = "NickyHurt"
 .wide = 26
 .high = 30
-'.texture = 1
+// .texture = 1
 .visible = True
 .length = 20
 .z = 0
@@ -2426,7 +2426,7 @@ If .name = "Nicky" Then
 .speed = 0
 .deathType = "Death of Nicky"
 .hp = 4
-'.mode = "truck"
+// .mode = "truck"
 .mover = True
 .maxJump = 2
 End If
@@ -2434,8 +2434,8 @@ End If
 
 
 If .name = "Death of David" Then
-'StopSound which
-'LoadSound which, "Death.wav"
+// StopSound which
+// LoadSound which, "Death.wav"
 PlaySound "DavidDeath"
 .seekx = .wide * 10
 .mph = 2
@@ -2531,13 +2531,13 @@ End If
 
 
 If .name = "Dying Explosion" Then
-'StopSound which
-'LoadSound which, "goomba.wav"
+// StopSound which
+// LoadSound which, "goomba.wav"
 .flickerTime = clock + 10
 .seekx = .wide * 3
 .mph = 2
 .kind = 0
-'PlaySound which
+// PlaySound which
 PlaySound "dying explosion"
 End If
 
@@ -2595,7 +2595,7 @@ loadframe which, 2, 13, 173, 23, 190
 loadframe which, 3, 23, 174, 33, 190
 .deathType = "bs death"
 .soundFile = "Stick Ouch"
-'.name = "Kerbose"
+// .name = "Kerbose"
 PlaySound "Stick Awaken"
 .frame = 1
 unstretch which
@@ -2603,16 +2603,16 @@ End If
 
 If .name = "Kerbose Death" Then
 .visible = True
-'.name = "Dying Explosion"
-'.flickerTime = clock + 10
-'.seekx = .wide * 3
-'.mph = 2
-'.kind = 0
+// .name = "Dying Explosion"
+// .flickerTime = clock + 10
+// .seekx = .wide * 3
+// .mph = 2
+// .kind = 0
 
 .mover = False: .kind = 0
 .frame = 3
-'srcx = 114: .srcy = 2
-'.srcx2 = 134: .srcy2 = 19
+// srcx = 114: .srcy = 2
+// .srcx2 = 134: .srcy2 = 19
 .miscTime = clock + 3
 PlaySound "Kerbose Die"
 End If
@@ -2652,7 +2652,7 @@ End If
 
 If .name = "falling" Then
 .kind = 0
-'.high = -30 '-1 * .high
+// .high = -30 '-1 * .high
 End If
 
 If .name = "pigeon" Then
@@ -2700,7 +2700,7 @@ If .name = "goomba" Then
 .invTime = 1
 .deathType = "Dying Explosion"
 .soundFile = "Goomba Ouch"
-'LoadSound which, .soundFile
+// LoadSound which, .soundFile
 .mover = True
 End If
 
@@ -2709,7 +2709,7 @@ If .name = "bullet" Then
 End If
 
 
-'If .soundFile <> "" Then LoadSound which, .soundFile
+// If .soundFile <> "" Then LoadSound which, .soundFile
 
 
 End With
@@ -2719,21 +2719,21 @@ Dim redo As Boolean
 Dim HolderJ As Integer
 redo = False
 redo2:
-'If k = 1 And j = 31 Then Stop
+// If k = 1 And j = 31 Then Stop
 
-Rem-KIND DEFINITIONS
-'1 is player
-'2 is enemy
-'3 is fireball
-'4 is goomba thing
-'5 is unmoveable
-'6 is trampoline
+// Rem-KIND DEFINITIONS
+// 1 is player
+// 2 is enemy
+// 3 is fireball
+// 4 is goomba thing
+// 5 is unmoveable
+// 6 is trampoline
 
-'to do
-'7 is a enemy killable by jumping on it
-'8 is bullet by the enemy (can pass through 5's)
+// to do
+// 7 is a enemy killable by jumping on it
+// 8 is bullet by the enemy (can pass through 5's)
 
-'Player hits an enemy
+// Player hits an enemy
 If Sprite(j).kind = 1 And (Sprite(k).kind = 2 Or Sprite(k).kind = 8) Then
 If Sprite(j).flickerTime < clock Then
 Sprite(j).hp = Sprite(j).hp - 1: PlaySound Sprite(j).soundFile
@@ -2742,7 +2742,7 @@ If Sprite(j).hp <= 0 Then Sprite(j).name = Sprite(j).deathType: initSprites (j)
 End If
 End If
 
-'Enemy hit by a fireball
+// Enemy hit by a fireball
 If (Sprite(j).kind = 2 Or Sprite(j).kind = 7) And Sprite(k).kind = 3 Then
 
 If Sprite(j).flickerTime < clock Then
@@ -2753,11 +2753,11 @@ End If
 If Sprite(k).name = "fireball" Then If slicer((Sprite(k).parent) / 10) = False Then killS k
 End If
 
-'Player steps on a goomba type thing
+// Player steps on a goomba type thing
 If Sprite(j).kind = 1 And (Sprite(k).kind = 4 Or Sprite(k).kind = 7) Then
 If Sprite(j).z > Sprite(k).length And Sprite(j).lastJump > Sprite(j).z Then
-Sprite(j).jumpStart = Sprite(j).z  'sends thing up into the air
-Sprite(j).jumpTime = clock 'sends thing up into the air, even if goomba is flashing
+Sprite(j).jumpStart = Sprite(j).z  // sends thing up into the air
+Sprite(j).jumpTime = clock // sends thing up into the air, even if goomba is flashing
 If Sprite(k).flickerTime < clock Then
 Sprite(k).hp = Sprite(k).hp - 1
 GoSub hurtK
@@ -2768,7 +2768,7 @@ End If
 End If
 End If
 
-'Player illigetimately touches goomba.
+// Player illigetimately touches goomba.
 If Sprite(j).kind = 1 And (Sprite(k).kind = 4 Or Sprite(k).kind = 7) Then
 If Sprite(j).flickerTime < clock Then
 If Sprite(j).z < Sprite(k).length Or Sprite(j).lastJump < Sprite(j).z Then
@@ -2780,37 +2780,37 @@ End If
 End If
 
 
-'Player jumps on bouncy object
+// Player jumps on bouncy object
 If Sprite(k).kind = 6 Then
 
 If Sprite(j).kind = 3 Or Sprite(j).kind = 8 Then GoTo overalready
 
-'BOUNCE TIME!
+// BOUNCE TIME!
 If Sprite(j).z > Sprite(k).length And Sprite(j).lastJump > Sprite(j).z Then
-Sprite(j).jumpStart = Sprite(j).z  'sends thing up into the air
-Sprite(j).jumpTime = clock 'sends thing up into the air, even if goomba is flashing
+Sprite(j).jumpStart = Sprite(j).z  // sends thing up into the air
+Sprite(j).jumpTime = clock // sends thing up into the air, even if goomba is flashing
 PlaySound "spring"
 Sprite(k).mode = "bounce": Sprite(k).miscTime = clock + 1: Sprite(j).jumpM = Sprite(k).jumpM
 End If
-'OH CRAP! I NO BOUNCE
+// OH CRAP! I NO BOUNCE
 If Sprite(j).z < Sprite(k).length Or Sprite(j).lastJump < Sprite(j).z Then
 If Sprite(j).kind = 5 Or Sprite(j).kind = 3 Or Sprite(j).kind = 6 Then GoTo britneyDog2
-'If Sprite(k).z > (Sprite(j).length - (Sprite(j).length * 0.75)) Then GoTo britneyDog2
+// If Sprite(k).z > (Sprite(j).length - (Sprite(j).length * 0.75)) Then GoTo britneyDog2
 poddle2:
-'HolderJ = hitdetection(j, k, True)
-'If HolderJ = 2 Or HolderJ = 6 Or HolderJ = 7 Then
-'Sprite(j).x = Sprite(j).x - Sprite(j).mph
-'End If
-'If HolderJ = 3 Or HolderJ = 8 Or HolderJ = 9 Then
-'Sprite(j).x = Sprite(j).x + Sprite(j).mph
-'End If
-'If HolderJ = 4 Or HolderJ = 6 Or HolderJ = 8 Then
-'Sprite(j).y = Sprite(j).y - Sprite(j).mph
-'End If
-'If HolderJ = 5 Or HolderJ = 7 Or HolderJ = 9 Then
-'Sprite(j).y = Sprite(j).y + Sprite(j).mph
-'End If
-'If hitdetection(k, j) = 1 Then GoTo poddle2 '
+// HolderJ = hitdetection(j, k, True)
+// If HolderJ = 2 Or HolderJ = 6 Or HolderJ = 7 Then
+// Sprite(j).x = Sprite(j).x - Sprite(j).mph
+// End If
+// If HolderJ = 3 Or HolderJ = 8 Or HolderJ = 9 Then
+// Sprite(j).x = Sprite(j).x + Sprite(j).mph
+// End If
+// If HolderJ = 4 Or HolderJ = 6 Or HolderJ = 8 Then
+// Sprite(j).y = Sprite(j).y - Sprite(j).mph
+// End If
+// If HolderJ = 5 Or HolderJ = 7 Or HolderJ = 9 Then
+// Sprite(j).y = Sprite(j).y + Sprite(j).mph
+// End If
+// If hitdetection(k, j) = 1 Then GoTo poddle2 '
 Sprite(j).x = Sprite(j).lastX
 Sprite(j).y = Sprite(j).lastY
 britneyDog2:
@@ -2824,20 +2824,20 @@ End If
 If Sprite(j).kind = 5 Then
 If Sprite(k).kind = 5 Or Sprite(k).kind = 3 Or Sprite(k).kind = 6 Or Sprite(k).kind = 8 Then GoTo britneyDog
 poddle:
-'HolderJ = hitdetection(k, j, True)
-'If HolderJ = 2 Or HolderJ = 6 Or HolderJ = 7 Then
-'Sprite(k).x = Sprite(k).x - Sprite(k).mph
-'End If
-'If HolderJ = 3 Or HolderJ = 8 Or HolderJ = 9 Then
-'Sprite(k).x = Sprite(k).x + Sprite(k).mph
-'End If
-'If HolderJ = 4 Or HolderJ = 6 Or HolderJ = 8 Then
-'Sprite(k).y = Sprite(k).y - Sprite(k).mph
-'End If
-'If HolderJ = 5 Or HolderJ = 7 Or HolderJ = 9 Then
-'Sprite(k).y = Sprite(k).y + Sprite(k).mph
-'End If
-'If hitdetection(k, j) = 1 Then GoTo poddle
+// HolderJ = hitdetection(k, j, True)
+// If HolderJ = 2 Or HolderJ = 6 Or HolderJ = 7 Then
+// Sprite(k).x = Sprite(k).x - Sprite(k).mph
+// End If
+// If HolderJ = 3 Or HolderJ = 8 Or HolderJ = 9 Then
+// Sprite(k).x = Sprite(k).x + Sprite(k).mph
+// End If
+// If HolderJ = 4 Or HolderJ = 6 Or HolderJ = 8 Then
+// Sprite(k).y = Sprite(k).y - Sprite(k).mph
+// End If
+// If HolderJ = 5 Or HolderJ = 7 Or HolderJ = 9 Then
+// Sprite(k).y = Sprite(k).y + Sprite(k).mph
+// End If
+// If hitdetection(k, j) = 1 Then GoTo poddle
 Sprite(k).x = Sprite(k).lastX
 Sprite(k).y = Sprite(k).lastY
 britneyDog:
@@ -2848,7 +2848,7 @@ If redo = True Then HolderJ = j: j = k: k = HolderJ
 
 Exit Sub
 
-'--------OLD FASHIONED SUBROUTINES
+// --------OLD FASHIONED SUBROUTINES
 hurtj:
 HolderJ = j
 GoTo doggy
@@ -2859,11 +2859,11 @@ Sprite(HolderJ).flickerTime = clock + Sprite(HolderJ).invTime: PlaySound Sprite(
 
 Return
 
-'Thomas hits a goomba-
-'----------------------------------------------------------------------------
-'     THOMAS HITS CRAP
-'----------------------------------------------------------------------------
-If Sprite(j).name = "Thomas" Then   '----------------------DAVID IF CHUNK
+// Thomas hits a goomba-
+// ----------------------------------------------------------------------------
+//      THOMAS HITS CRAP
+// ----------------------------------------------------------------------------
+If Sprite(j).name = "Thomas" Then   // ----------------------DAVID IF CHUNK
 If Sprite(k).name = "goomba" Then
 If hitdetection(j, k) = 1 And Sprite(j).z > Sprite(k).length And Sprite(j).lastJump > Sprite(j).z And Sprite(k).flickerTime < clock Then
 Sprite(k).hp = Sprite(k).hp - 1: Sprite(k).flickerTime = clock + 2
@@ -2886,12 +2886,12 @@ End If
 
 End If
 End If
-'----------------------------------------------------------------------------
-'        END OF THOMAS HITS CRAP
-'----------------------------------------------------------------------------
-'----------------------------------------------------------------------------
-'        FIREBALL TIME!
-'----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//         END OF THOMAS HITS CRAP
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//         FIREBALL TIME!
+// ----------------------------------------------------------------------------
 If Sprite(j).name = "fireball" Then
 If Sprite(k).name = "Deadly Rat" Then
 If Sprite(k).name <> "Dying Explosion" And Sprite(k).flickerTime < clock Then
@@ -2907,9 +2907,9 @@ End If
 End If
 
 End If
-'----------------------------------------------------------------------------
-'        END OF FIRE BALL TIME!
-'----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//         END OF FIRE BALL TIME!
+// ----------------------------------------------------------------------------
 
 
 
@@ -2926,9 +2926,9 @@ sapple = sapple + 0.1
 screen = sapple
 screen = "level" + screen
 
-'goToLevel sapple
-'currentScreen = screen
-'End If
+// goToLevel sapple
+// currentScreen = screen
+// End If
 
 End If
 
@@ -2950,31 +2950,31 @@ With Sprite(1)
 .color = QBColor(0)
 
 Sprite(0).color = QBColor(0)
-Sprite(0).visible = False 'texture = 1
+Sprite(0).visible = False // texture = 1
 End With
-End If  'End of intro story with
+End If  // End of intro story with
 
 
 If screen = "SelectPlayerz" Then
 Call selectPlayerS
 End If
 
-'playWave "conzero.wav"
+// playWave "conzero.wav"
 If screen = "title" Then
-'playWave "conTen.wav"
+// playWave "conTen.wav"
 screen = "title2"
 Call titleScreen
-'screen = "intro story"
+// screen = "intro story"
 End If
 
 
 
 
-'************************************************************
-'' LOADS A NEW LEVEL!------------------------------------
-'************************************************************
+// ************************************************************
+// ' LOADS A NEW LEVEL!------------------------------------
+// ************************************************************
 If left$(screen, 5) = "level" And currentScreen <> screen Then
-currentScreen = screen 'as long as this is set to this crazy value, it won't load it again.
+currentScreen = screen // as long as this is set to this crazy value, it won't load it again.
 Dim crapple As String
 Dim boogeycrap As Double
 
@@ -2996,9 +2996,9 @@ End If
 
 
 
-'If numberPlayers = 3 Then
+// If numberPlayers = 3 Then
 If Sprite(0).name = "dead" And Sprite(10).name = "dead" And Sprite(20).name = "dead" Then Call gameOver
-'End If
+// End If
 
 
 End Sub
@@ -3038,15 +3038,15 @@ playIsoWave "nothing.wav"
 If how <> 2 Then playBGM ("")
 
 loadTexture -1, "plainblack.bmp", 25, 25
-'bgtexture = Nothing
+// bgtexture = Nothing
 For j = 0 To 9
-'Set AnimationTexture(j) = Nothing
+// Set AnimationTexture(j) = Nothing
 Next j
 gotFocus = -1
 CameraX = 0: CameraY = 0
 goatorg = 0
 penguin = spritesInUse
-'If how = 2 Then goatorg = 30: penguin = 95
+// If how = 2 Then goatorg = 30: penguin = 95
 
 For j = goatorg To penguin
     With Sprite(j)
@@ -3140,19 +3140,19 @@ lives(j) = 3
 continues = 2
 Next j
 
-'playBGM ""
+// playBGM ""
 
 
-'Call loadTexture(-1, "bg.bmp", 300, 300)
+// Call loadTexture(-1, "bg.bmp", 300, 300)
 
 destroyEverything
 playWave "Opening.wav"
 
 loadTexture 0, "title2.bmp", 285, 427
 loadTexture 1, "title1.bmp", 440, 427
-'loadTexture 2, "goomba.bmp", 240, 240
-'Sprite(11).name = "goomba"
-'Call initSprites(11)
+// loadTexture 2, "goomba.bmp", 240, 240
+// Sprite(11).name = "goomba"
+// Call initSprites(11)
 With Sprite(0)
 .srcx = 5: .srcy = 137: .srcx2 = 324: .srcy2 = 318
 .x = 1: .y = 1: .wide = 640: .high = 480: .visible = False
@@ -3194,15 +3194,15 @@ Call findOrder
 End Sub
 
 Sub NowLoading()
-'destroyEverything
+// destroyEverything
 loadTexture -1, "nowloading.bmp", 320, 240
 CameraWidth = 320: CameraHeight = 240
 Call updatesprites
-'Call DrawStuff
+// Call DrawStuff
 CameraWidth = 640: CameraHeight = 480
 If Form1.WindowState <> vbMinimized Then
 
-  'cranBerry = Timer
+  // cranBerry = Timer
 
 With dev
     Call .Clear(0, ByVal 0&, D3DCLEAR_TARGET, &HFF, 0, 0)
@@ -3211,7 +3211,7 @@ With dev
 
 
 
-    'Call .CopyRects(bgSurface, 1, 1, .GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO), 1)
+    // Call .CopyRects(bgSurface, 1, 1, .GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO), 1)
 
 
     Call .SetTexture(0, bgtexture)
@@ -3244,16 +3244,16 @@ Next j
 End Sub
 
 Sub switchWindowedMode()
-'***********************************************************************
-    '
-    ' This sub switches the current display mode between windowed/fullscreen.
-    ' If it runs into an error, it just exits, leaving the display mode in
-    ' its current state.
-    '
-    ' Parameters:
-    '           None.
-    '
-    '***********************************************************************
+// ***********************************************************************
+    //
+    //  This sub switches the current display mode between windowed/fullscreen.
+    //  If it runs into an error, it just exits, leaving the display mode in
+    //  its current state.
+    //
+    //  Parameters:
+    //            None.
+    //
+    // ***********************************************************************
 
     Dim d3dppEmpty As D3DPRESENT_PARAMETERS
     Dim format As Long
@@ -3263,17 +3263,17 @@ Sub switchWindowedMode()
 
     If windowedMode Then
 
-        'Grab a valid format for this device. If a format
-        'for the requested resolution wasn't found, exit the sub.
+        // Grab a valid format for this device. If a format
+        // for the requested resolution wasn't found, exit the sub.
         If FindMode(FULLSCREENWIDTH, FULLSCREENHEIGHT, format) <> 0 Then Exit Sub
 
-        'Store the current window mode format
+        // Store the current window mode format
         Call d3d.GetAdapterDisplayMode(D3DADAPTER_DEFAULT, m_d3ddm)
 
-        'The app is running windowed currently, switch to fullscreen.
+        // The app is running windowed currently, switch to fullscreen.
         windowedMode = False
 
-        'Set the present parameters for running full screen
+        // Set the present parameters for running full screen
         m_d3dpp = d3dppEmpty
 
         With m_d3dpp
@@ -3284,17 +3284,17 @@ Sub switchWindowedMode()
             .Windowed = 0
         End With
 
-        'Store the client dimensions
+        // Store the client dimensions
         SimulatedWidth = FULLSCREENWIDTH
         SimulatedHeight = FULLSCREENHEIGHT
 
-        'Reset the device to the new mode
+        // Reset the device to the new mode
         lErrNum = ResetDevice
 
-        'If there is an error resetting the device,
-        'just exit the sub.
+        // If there is an error resetting the device,
+        // just exit the sub.
         If lErrNum Then
-            'Store the client dimensions
+            // Store the client dimensions
             SimulatedWidth = Form1.ScaleWidth
             SimulatedHeight = Form1.ScaleHeight
             windowedMode = True
@@ -3303,7 +3303,7 @@ Sub switchWindowedMode()
 
     Else
 
-        'Set the present params to reflect windowed operation.
+        // Set the present params to reflect windowed operation.
         m_d3dpp = d3dppEmpty
 
         With m_d3dpp
@@ -3312,31 +3312,31 @@ Sub switchWindowedMode()
             .Windowed = 1
         End With
 
-        'Reset the device to the new mode
+        // Reset the device to the new mode
         lErrNum = ResetDevice
 
-        'If there is an error, just exit the sub
+        // If there is an error, just exit the sub
         If lErrNum Then
             windowedMode = False
             Exit Sub
         End If
 
-        'Now get the device ready again
+        // Now get the device ready again
         Call InitDevice(dev, Form1.hwnd)
 
-        'Resize the form to the size it was previous to going fullscreen.
-        Form1.Width = SimulatedWidth * 12.5 '* 'screen.TwipsPerPixelX
-       Form1.Height = SimulatedHeight * 12.5 '* screen.TwipsPerPixelY
+        // Resize the form to the size it was previous to going fullscreen.
+        Form1.Width = SimulatedWidth * 12.5 // * 'screen.TwipsPerPixelX
+       Form1.Height = SimulatedHeight * 12.5 // * screen.TwipsPerPixelY
 
-        'The app is now running windowed
+        // The app is now running windowed
         windowedMode = True
 
-        'Store the client dimensions
+        // Store the client dimensions
         SimulatedWidth = Form1.ScaleWidth
         SimulatedHeight = Form1.ScaleHeight
 
-        'Resize the window to the old size now.
-        'Call Form1.Form_Resize
+        // Resize the window to the old size now.
+        // Call Form1.Form_Resize
 
     End If
 
@@ -3413,13 +3413,13 @@ Next j
 Call findOrder
 End Sub
 Sub initPlayers()
-'1 Only player 1
-'2 Player 1 and 2
-'3 All three Players
-'4 Just player 2
-'5 Just player 3
-'6 Players 1 and 3
-'7 Players 2 and 3
+// 1 Only player 1
+// 2 Player 1 and 2
+// 3 All three Players
+// 4 Just player 2
+// 5 Just player 3
+// 6 Players 1 and 3
+// 7 Players 2 and 3
 Dim j As Integer
 Sprite(0).name = "dead"
 Sprite(10).name = "dead"
@@ -3431,38 +3431,38 @@ If numberPlayers = 3 Then gotFocus = -3
 If numberPlayers = 4 Then gotFocus = 10
 If numberPlayers = 5 Then gotFocus = 5
 
-'Dim j As Integer
+// Dim j As Integer
 Dim k As Integer
 For k = 0 To 2
 If playerName(k) = "" Then playerName(k) = "redead"
 Next k
-'For j = 0 To (numberPlayers - 1)'
-'
-''Sprite(j * 10).x = 50
-'Sprite(j * 10).y = 220
-'Sprite(j * 10).name = playerName(j)
-'For k = j * 10 + 1 To j * 10 + 9
-'Sprite(k).x = 60
-'Sprite(k).y = 70
-'Sprite(k).name = "fireball"
-'Next k
-'Next j
+// For j = 0 To (numberPlayers - 1)'
+//
+// 'Sprite(j * 10).x = 50
+// Sprite(j * 10).y = 220
+// Sprite(j * 10).name = playerName(j)
+// For k = j * 10 + 1 To j * 10 + 9
+// Sprite(k).x = 60
+// Sprite(k).y = 70
+// Sprite(k).name = "fireball"
+// Next k
+// Next j
 
-Rem****************88
-'After killing the players above by setting the sprites (bodies) to "dead",
-'it reincarnates them here by calling createPlayer
-Rem*************************************8
+// Rem****************88
+// After killing the players above by setting the sprites (bodies) to "dead",
+// it reincarnates them here by calling createPlayer
+// Rem*************************************8
 
 Call loadTexture(0, "System.bmp", 336, 397)
 For k = 0 To 20 Step 10
-'For penguin = 0 To 2
+// For penguin = 0 To 2
 Call createPlayer(k, playerName(k / 10))
 Next k
 
 
-Rem******************************************************8
-'          THIS PART LOADS UP WEAPONS
-Rem******************************************************8
+// Rem******************************************************8
+//           THIS PART LOADS UP WEAPONS
+// Rem******************************************************8
 
 
 If numberPlayers = 1 Or numberPlayers = 2 Or numberPlayers = 3 Or numberPlayers = 6 Then
@@ -3497,12 +3497,12 @@ Next k
 End If
 
 
-Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
+// Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
 If Sprite(0).name = Sprite(10).name Then Sprite(10).color = QBColor(10)
 
 
-Rem- This loads sounds into holders 0 to 14, meaning each player gets 5 sounds
-Rem- Spring.wav is then put into slot 15
+// Rem- This loads sounds into holders 0 to 14, meaning each player gets 5 sounds
+// Rem- Spring.wav is then put into slot 15
 For j = 0 To 2
 
 If playerName(j) = "Thomas" Then
@@ -3532,7 +3532,7 @@ LoadSound 15, "spring.wav", "spring"
 
 End Sub
 Sub selectPlayer()
-' the select player screen
+//  the select player screen
 
 destroyEverything
 Call NowLoading
@@ -3660,7 +3660,7 @@ Close #1
 End Sub
 
 Sub selectPlayerS()
-' after you all select players, it gets up the results
+//  after you all select players, it gets up the results
 
 Dim penguin As Integer
 If Sprite(0).mode = "done" Or Sprite(0).visible = False Then
@@ -3681,7 +3681,7 @@ For penguin = 0 To 2
 With Sprite(penguin)
 
 
-'Next penguin
+// Next penguin
 
 
 If .frame = 1 Then playerName(penguin) = "Thomas"
@@ -3691,13 +3691,13 @@ If .frame = 4 Then playerName(penguin) = "Phil"
 If .frame = 5 Then playerName(penguin) = "Nicky"
 End With
 Next penguin
-'1 Only player 1
-'2 Player 1 and 2
-'3 All three Players
-'4 Just player 2
-'5 Just player 3
-'6 Players 1 and 3
-'7 Players 2 and 3
+// 1 Only player 1
+// 2 Player 1 and 2
+// 3 All three Players
+// 4 Just player 2
+// 5 Just player 3
+// 6 Players 1 and 3
+// 7 Players 2 and 3
 
 screen = "level1.1"
 End If
@@ -3708,14 +3708,14 @@ End Sub
 Sub script()
 Dim penguin As Integer
 If Sprite(30).mode <> "3" And Sprite(30).mode <> "2" Then
-'move all the faces so that they line up
-Sprite(31).x = CameraX ' - Sprite(31).seekx
+// move all the faces so that they line up
+Sprite(31).x = CameraX //  - Sprite(31).seekx
 Sprite(31).y = CameraY + 20
-Sprite(32).x = CameraX + CameraWidth - 268 '+ Sprite(32).seekx
+Sprite(32).x = CameraX + CameraWidth - 268 // + Sprite(32).seekx
 Sprite(32).y = CameraY + 20
-Sprite(33).x = CameraX ' - Sprite(33).seekx
+Sprite(33).x = CameraX //  - Sprite(33).seekx
 Sprite(33).y = CameraY + CameraHeight - 180
-Sprite(34).x = CameraX + CameraWidth - 268 ' + Sprite(33).seekx
+Sprite(34).x = CameraX + CameraWidth - 268 //  + Sprite(33).seekx
 Sprite(34).y = CameraY + CameraHeight - 180
 End If
 
@@ -3732,7 +3732,7 @@ Sprite(30).mode = "6"
 End If
 If Sprite(30).mode = "4" And Sprite(30).miscTime < clock Then
 If cinemaCounter >= cinemaMax Then Sprite(30).mode = "5" Else GoSub level1a
-'Sprite(30).mode = "5"
+// Sprite(30).mode = "5"
 End If
 If Sprite(30).mode = "2" Then
 If cinemaCounter > cinemaMax Then Sprite(30).mode = "9": Sprite(31).visible = False: Exit Sub
@@ -3742,11 +3742,11 @@ Sprite(30).mode = "3"
 End If
 If Sprite(30).mode = "3" Then
 
-'Sprite(31).x = CameraX + 300
-'Sprite(31).y = CameraY + 200
-'Sprite(31).frame = 10
-'Sprite(31).wide = 275 - 188
-'Sprite(31).high = 376 - 353
+// Sprite(31).x = CameraX + 300
+// Sprite(31).y = CameraY + 200
+// Sprite(31).frame = 10
+// Sprite(31).wide = 275 - 188
+// Sprite(31).high = 376 - 353
 
 
 
@@ -3772,7 +3772,7 @@ If penguin = 96 Then GoTo kiddy
 Sprite(penguin).seekx = Sprite(penguin).seekx - sFactor * 6
 Sprite(penguin).frame = Sprite(penguin).frame + 1
 If Sprite(penguin).frame > 2 Then Sprite(penguin).frame = 1
-'Sprite(penguin).frame = Sprite(penguin).seeky
+// Sprite(penguin).frame = Sprite(penguin).seeky
 kiddy:
 Next penguin
 
@@ -3832,7 +3832,7 @@ Sprite(34).x = CameraX + CameraWidth - 268 + Sprite(33).seekx
 Sprite(34).y = CameraY + CameraHeight - 180
 
 For penguin = 31 To 34
-'If penguin = 34 Then GoTo kiddy2
+// If penguin = 34 Then GoTo kiddy2
 Sprite(penguin).seekx = Sprite(penguin).seekx + sFactor * 6
 Sprite(penguin).seeky = Sprite(penguin).seeky + 1: If Sprite(penguin).seeky = 3 Then Sprite(penguin).seeky = 1
 Sprite(penguin).frame = Sprite(penguin).seeky
@@ -3875,8 +3875,8 @@ End With
 End Function
 
 Sub cinemaM(what As Integer)
-'Everyone raise your hand who remembers cinemaM?
-'Yes this classic far too long subroutine has made a triumphant return from Lady Pousha Quest.
+// Everyone raise your hand who remembers cinemaM?
+// Yes this classic far too long subroutine has made a triumphant return from Lady Pousha Quest.
 If what = 2 Then
 Sprite(30).name = "script": Sprite(30).mode = "2"
 cinemaMax = 4
@@ -3892,7 +3892,7 @@ End If
 End Sub
 Sub MakeLevel(lvlBgMusic As String, levelFile As String, levelBgFile As String, lvlBgWidth As Integer, lvlBgHeight As Integer, CinemaBitMapFile As String, CinemaAnimationFile As String, stopMusic As Boolean, loadScreen As Boolean)
 
-'destroyEverything
+// destroyEverything
 
 destroyEverything 2
 
@@ -3904,32 +3904,32 @@ CameraWidth = 640: CameraHeight = 480
 If stopMusic = True Then playBGM ""
 
 
-'playBGM ""
+// playBGM ""
 
-'destroyEverything 2
-loadLevel levelFile '"level1b.cap"
+// destroyEverything 2
+loadLevel levelFile // "level1b.cap"
 
 Gravity = 20
 
 Dim j As Integer
 
 CameraX = 0: CameraY = 0
-Call loadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight) '"lv1bg2.bmp", 10, 10)
-'Call loadTexture(0, "smile.bmp", 255, 255)
+Call loadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight) // "lv1bg2.bmp", 10, 10)
+// Call loadTexture(0, "smile.bmp", 255, 255)
 
-'Call loadTexture(4, "level1a.bmp", 490, 209)
-'Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
-'Call loadTexture(6, "goomba.bmp", 240, 240)
-Call loadTexture(9, CinemaBitMapFile, 400, 400) '"lvl1bg.bmp",400,400
+// Call loadTexture(4, "level1a.bmp", 490, 209)
+// Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
+// Call loadTexture(6, "goomba.bmp", 240, 240)
+Call loadTexture(9, CinemaBitMapFile, 400, 400) // "lvl1bg.bmp",400,400
 
 
 Call initPlayers
 
-'Call initPlayers
-'For j = 0 To 2
-'lives(j) = 3
-'continues(j) = 3
-'Next j
+// Call initPlayers
+// For j = 0 To 2
+// lives(j) = 3
+// continues(j) = 3
+// Next j
 
 
 For j = 0 To spritesInUse
@@ -3998,9 +3998,9 @@ End If
 End With
 
 For goatorg = (who + 1) To (who + 9): Sprite(goatorg).name = "": Sprite(goatorg).zOrder = -90: Next goatorg
-'Sprite(who).name = what'playerName(who / 10)
-'Sprite(who).frame = 1
-'Call initSprites(who)
+// Sprite(who).name = what'playerName(who / 10)
+// Sprite(who).frame = 1
+// Call initSprites(who)
 
 End Sub
 
@@ -4118,9 +4118,9 @@ End If
 
 
 If Gravity = 0 Then
-Rem- because Gravity is set to 20 in make level, we know that there has been no other levels selected
-Rem in other words, somebody screwed up
-screen = "intro story" ' this will remind them that they failed
+// Rem- because Gravity is set to 20 in make level, we know that there has been no other levels selected
+// Rem in other words, somebody screwed up
+screen = "intro story" //  this will remind them that they failed
 End If
 
 
@@ -4135,18 +4135,18 @@ Sprite(which).jumpTime = clock
 End Function
 
 Function pickTarget(who As Integer, koo As Integer) As Integer
-'Finds who is closet
-'pickTarget = 8999
-''cr As Integer
-'crow As Integer
-'For cr = 0 To NUMSPRITES
-'If Sprite(cr).kind = koo Then
-'crow = Abs((Sprite(cr).x + (Sprite(cr).wide / 2)) - Sprite(who).x) + Abs((Sprite(cr).y + Sprite(cr).high / 2) - Sprite(who).y)
-'amount of pixels they are close
-'If crow < pickTarget Then pickTarget = crow
-'End If
-'Next cr
-'If pickTarget = 8999 Then pickTarget = -1
+// Finds who is closet
+// pickTarget = 8999
+// 'cr As Integer
+// crow As Integer
+// For cr = 0 To NUMSPRITES
+// If Sprite(cr).kind = koo Then
+// crow = Abs((Sprite(cr).x + (Sprite(cr).wide / 2)) - Sprite(who).x) + Abs((Sprite(cr).y + Sprite(cr).high / 2) - Sprite(who).y)
+// amount of pixels they are close
+// If crow < pickTarget Then pickTarget = crow
+// End If
+// Next cr
+// If pickTarget = 8999 Then pickTarget = -1
 End Function
 
 Function getMiddleX(who As Integer) As Double
@@ -4156,10 +4156,10 @@ Function getMiddleY(who As Integer) As Double
 getMiddleY = Sprite(who).y + (Sprite(who).high / 2)
 End Function
 Function getProx(who As Integer, who2 As Integer) As Double
-'Finds who is closet
+// Finds who is closet
 
 getProx = Abs(getMiddleX(who) - getMiddleX(who2)) + Abs(getMiddleY(who) - getMiddleY(who))
-'amount of pixels they are close
+// amount of pixels they are close
 End Function
 Function seeker(who As Integer)
 With Sprite(who)
@@ -4176,12 +4176,12 @@ Dim k As Integer
 
 With Sprite(who)
 
-'LEVEL 1****************************************************************
-If which = 1 Then  'LEVEL 1 ****************************
+// LEVEL 1****************************************************************
+If which = 1 Then  // LEVEL 1 ****************************
 
-'If .name = "bullet" Then
+// If .name = "bullet" Then
 
-'End If
+// End If
 If .name = "greenspring" Then
 If .mode = "bounce" Then
 .frame = .frame + 1
@@ -4200,14 +4200,14 @@ End If
 
 
 
-If .name = "bullet" Then     ''This is a strange type of bullet that in retrospect feels more like a bubble
-'If .seekx <> -1 Then
+If .name = "bullet" Then     // 'This is a strange type of bullet that in retrospect feels more like a bubble
+// If .seekx <> -1 Then
 
 killLimit who
 offCameraKill who
 
 
-'If .mode = "" Then
+// If .mode = "" Then
 
 
 Do Until (.seekx > cameraStopX Or .seekx < 0) Or (.seeky > cameraStopY Or .seeky < 0)
@@ -4267,8 +4267,8 @@ End If
 
 If .name = "pigeonbomber" Then
 .z = .z + sFactor
-'.frame = .frame + 1
-'If .frame > 2 Then .frame = 1
+// .frame = .frame + 1
+// If .frame > 2 Then .frame = 1
 
 seeker who
 If .x < 1 Then .x = cameraStopX
@@ -4291,7 +4291,7 @@ Dim opera As Integer
 
 For opera = (who + 1) To spritesInUse
 If Sprite(opera).name = "" Or Sprite(opera).name = "empty" Or Sprite(opera).name = "dead" Then
-'killS opera
+// killS opera
 Sprite(opera).name = what
 Exit For
 End If
@@ -4320,7 +4320,7 @@ Call findOrder
 End Function
 
 Function killLimit(jex As Integer)
-Rem- Kills unruly sprites who are out of bounds
+// Rem- Kills unruly sprites who are out of bounds
 With Sprite(jex)
 If .x > cameraStopX Or .x < -10 Then killS jex
 
@@ -4338,14 +4338,14 @@ End With
 End Function
 
 Function checkProx(who As Integer) As Integer
-'numberPlayers integer legend
-'1 Only player 1
-'2 Player 1 and 2
-'3 All three Players
-'4 Just player 2
-'5 Just player 3
-'6 Players 1 and 3
-'7 Players 2 and 3
+// numberPlayers integer legend
+// 1 Only player 1
+// 2 Player 1 and 2
+// 3 All three Players
+// 4 Just player 2
+// 5 Just player 3
+// 6 Players 1 and 3
+// 7 Players 2 and 3
 
 Dim penguin As Integer
 Dim buttcat As Integer
@@ -4361,7 +4361,7 @@ If penguin = 1 And (numberPlayers = 1 Or numberPlayers = 5 Or numberPlayers = 6)
 If penguin = 2 And (numberPlayers = 1 Or numberPlayers = 2 Or numberPlayers = 4) Then GoTo skipthisbs
 
 
-Rem- abs(x2-x1)^2+abs(y2-y1)^2
+// Rem- abs(x2-x1)^2+abs(y2-y1)^2
 buttcat = Sqr(Abs(Sprite(penguin * 10).x - Sprite(who).x) ^ 2 + Abs(Sprite(penguin * 10).y - Sprite(who).y) ^ 2)
 
 If buttcat < min Then theclosest = penguin: min = buttcat
