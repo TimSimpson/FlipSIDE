@@ -1,5 +1,5 @@
-#include "AnimationFrame.hpp"
-#include "Vertex.hpp"
+#include "CharacterSprite.hpp"
+
 
 // SUPER DUPER DIRECT X 8 MODULE
 const int FULLSCREENWIDTH = 640;
@@ -35,73 +35,6 @@ Dim cameraStopX As Integer // this is where the cameraHALTS!
 Dim cameraStopY As Integer // this is where the cameraHALTS! for y
 Dim gotFocus As Integer
 
-
-Public Type characterSprite
-     x As Double // Integer
-     y As Double // Integer
-     lastX As Double
-     lastY As Double
-     z As Integer
-     wide As Double // Integer 'width and height
-     high As Double // Integer
-     length As Integer
-     dir As String
-
-     srcx As Integer
-     srcy As Integer
-     srcx2 As Integer
-     srcy2 As Integer
-
-     Aframe(20) As AnimationFrame
-
-     seekx As Integer
-     seeky As Integer
-     speed As Double  // this is tricky.  Every time this amount of seconds pass, its little routine is updated.
-     time As Double // this marks the time until the sprite can do its thing again.
-     mph As Integer // refers to how many pixels the thing can haul
-     texture As Integer
-
-     visible As Boolean
-     parent As Integer // whose their parent sprite (what is the reason for their existence?) are they a fireball cast by sprite 0, perhaps
-     SpriteVerts(3) As Vertex
-     // Location As D3DVECTOR2
-     frame As Integer
-     name As String
-
-     hp As Double // hp!
-     mhp As Double
-
-     jumpStart As Integer  // These are for jumping
-     jumpStrength As Integer
-     jumpTime As Double
-     lastJump As Integer
-     multiJump As Integer
-     maxJump As Integer // max # of jumps
-
-     flickerTime As Double // Lets them flicker until then
-     flickOn As Boolean
-     trueVisible As Integer
-     invTime As Double // how many seconds they flicker when hit
-
-     mode As String // which mode are they in?
-     kind As Integer // if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
-     deathType As String // how do they die?
-     miscTime As Double // they must wait this long to do misc. actions
-     color As Double // lets throw some color into the mix
-
-     soundFile As String // sound files
-
-     zOrder As Integer // higher numbers are drawn last.
-     drawTrue As Boolean // used in the draw ordering subprogram
-
-     mover As Boolean
-
-     reverse As Boolean // to flip bitmap or not TRUE for transposing from left to right
-     target As Integer // it is who they are attacking
-
-     jumpM As Double
-End Type
-
 Public Type CinemaType
   frame1 As Integer
   frame2 As Integer
@@ -122,7 +55,7 @@ Dim cinemaMax As Integer // how many lines of dialogue per cinema
 Dim exitS As String // whenever this is set to things, stuff happens
 
 
-Dim Sprite(NUMSPRITES) As characterSprite
+Dim Sprite(NUMSPRITES) As CharacterSprite
 
 
 // IT'S TIME FOR DIRECT X ACTION!

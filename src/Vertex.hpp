@@ -16,7 +16,7 @@ struct Vertex
     float tu;
     float tv;
 
-    public Vertex()
+    Vertex()
     :   x(0),
         y(0),
         z(0),
