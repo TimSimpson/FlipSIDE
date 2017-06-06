@@ -3,6 +3,9 @@
 #include <lp3/sims.hpp>
 #include <lp3/main.hpp>
 
+#include "Sound.hpp"
+#include "View.hpp"
+
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
 namespace sims = lp3::sims;
@@ -15,6 +18,10 @@ int _main(core::PlatformLoop & loop) {
     core::MediaManager media;
 
     gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
+
+    nnd3d::View view(media);
+	nnd3d::Sound sound;
+	(void)sound;
 
     sims::FrameTimer frame_timer;
 

@@ -10,19 +10,22 @@ namespace nnd3d {
 class Sound
 {
 public:
-    void LoadSound(int which, const string & soundFile, string soundName = "");
+    void LoadSound(int which, const std::string & soundFile,
+                   std::string soundName = "");
 
-    void PlayBgm(const string & soundFile);
+    void PlayBgm(const std::string & soundFile);
 
-    void PlayIsoWave(const string & soundFile);}
+    void PlayIsoWave(const std::string & soundFile);
 
-    void PlaySound(const string & who);
+    void PlaySound(const std::string & who);
 
     void PlaySoundLoop(int which);
 
-    void PlayWave(const string & soundFile);
+    void PlayWave(const std::string & soundFile);
 
     void StopSound(int which);
 };
 
 }   // end namespace
+
+#endif

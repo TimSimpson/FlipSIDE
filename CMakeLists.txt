@@ -10,6 +10,7 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/CharacterSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vertex.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/View.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/World.cpp
 )
 

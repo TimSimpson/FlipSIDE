@@ -1476,7 +1476,7 @@ End With
 End If
 If .mode = "word 5" Then
 .length = 5
-Call loadTexture(-1, "open2.bmp", 320, 240)
+view.loadTexture(-1, "open2.bmp", 320, 240);
 CameraWidth = 320: CameraHeight = 240
 With Sprite(1)
 .texture = 2 // 1
@@ -1521,7 +1521,7 @@ With Sprite(1)
 End With
 End If
 If .mode = "word 9" Then
-Call loadTexture(-1, "open3.bmp", 320, 240)
+view.loadTexture(-1, "open3.bmp", 320, 240);
 With Sprite(1)
 // .texture = 1
 .length = 6
@@ -1533,7 +1533,7 @@ With Sprite(1)
 End With
 End If
 If .mode = "word 10" Then
-Call loadTexture(-1, "open4.bmp", 320, 240)
+view.loadTexture(-1, "open4.bmp", 320, 240);
 With Sprite(1)
 .length = 6
 .texture = 3
@@ -1546,7 +1546,7 @@ With Sprite(1)
 End With
 End If
 If .mode = "word 11" Then
-Call loadTexture(-1, "open5.bmp", 320, 240)
+view.loadTexture(-1, "open5.bmp", 320, 240);
 With Sprite(1)
 .length = 6
 // .texture = 1
@@ -1560,7 +1560,7 @@ End If
 If .mode = "word 12" Then
 // If .miscTime < clock Then
 // killS (1)
-Call loadTexture(-1, "plainblack.bmp", 320, 240)
+view.loadTexture(-1, "plainblack.bmp", 320, 240);
 .mode = "word 13"
 With Sprite(1)
 .invTime = 10
@@ -2066,13 +2066,13 @@ Gravity = 20
 
 
 CameraX = 0: CameraY = 0
-Call loadTexture(-1, "lv1bg.bmp", 10, 10)
+view.loadTexture(-1, "lv1bg.bmp", 10, 10);
 // Call loadTexture(0, "smile.bmp", 255, 255)
 
 // Call loadTexture(4, "level1a.bmp", 490, 209)
 // Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
 // Call loadTexture(6, "goomba.bmp", 240, 240)
-Call loadTexture(9, "level1cinema.bmp", 400, 400)
+view.loadTexture(9, "level1cinema.bmp", 400, 400);
 
 
 
@@ -2769,10 +2769,10 @@ End If
 If screen = "intro story" Then
 screen = "intro story 2"
 destroyEverything
-Call loadTexture(1, "open1.bmp", 313, 263)
-Call loadTexture(2, "open6.bmp", 320, 258)
-Call loadTexture(3, "open7.bmp", 320, 194)
-Call loadTexture(4, "titlescreen.bmp", 320, 240)
+view.loadTexture(1, "open1.bmp", 313, 263)
+view.loadTexture(2, "open6.bmp", 320, 258)
+view.loadTexture(3, "open7.bmp", 320, 194)
+view.loadTexture(4, "titlescreen.bmp", 320, 240)
 Call playBGM("")
 Sprite(0).name = "intro story"
 With Sprite(1)
@@ -2843,7 +2843,7 @@ playBGM ""
 
 screen$ = "gameOver"
 destroyEverything
-loadTexture 0, "GameOver.bmp", 320, 287
+view.loadTexture(0, "GameOver.bmp", 320, 287)
 With Sprite(0)
 .srcx = 1: .srcy = 1: .srcx2 = 320: .srcy2 = 240
 .x = 0: .y = 0: .wide = 640: .high = 480: .visible = True: .trueVisible = 1
@@ -2871,7 +2871,7 @@ dogyup:
 playIsoWave "nothing.wav"
 If how <> 2 Then playBGM ("")
 
-loadTexture -1, "plainblack.bmp", 25, 25
+view.loadTexture(-1, "plainblack.bmp", 25, 25);
 // bgtexture = Nothing
 For j = 0 To 9
 // Set AnimationTexture(j) = Nothing
@@ -2983,8 +2983,8 @@ Next j
 destroyEverything
 playWave "Opening.wav"
 
-loadTexture 0, "title2.bmp", 285, 427
-loadTexture 1, "title1.bmp", 440, 427
+view.loadTexture(0, "title2.bmp", 285, 427);
+view.loadTexture(1, "title1.bmp", 440, 427);
 // loadTexture 2, "goomba.bmp", 240, 240
 // Sprite(11).name = "goomba"
 // Call initSprites(11)
@@ -3030,7 +3030,7 @@ End Sub
 
 Sub NowLoading()
 // destroyEverything
-loadTexture -1, "nowloading.bmp", 320, 240
+view.loadTexture(-1, "nowloading.bmp", 320, 240);
 CameraWidth = 320: CameraHeight = 240
 Call updatesprites
 // Call DrawStuff
@@ -3192,7 +3192,7 @@ Open file For Input As #1
 For j = 0 To 9
 If j > 3 Or j < 1 Then
 Input #1, texFile(j), texwide(j), texhigh(j)
-loadTexture j, texFile(j), texwide(j), texhigh(j)
+view.loadTexture(j, texFile(j), texwide(j), texhigh(j));
 End If
 Next j
 For j = 40 To 100
@@ -3212,12 +3212,12 @@ destroyEverything
 Dim j As Integer
 
 CameraX = 0: CameraY = 0
-Call loadTexture(-1, "lv1bg.bmp", 10, 10)
-Call loadTexture(0, "smile.bmp", 255, 255)
-Call loadTexture(1, "flip1.bmp", 254, 254)
-Call loadTexture(4, "goomba.bmp", 490, 209)
-Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
-Call loadTexture(6, "grass.bmp", 17, 13)
+view.loadTexture(-1, "lv1bg.bmp", 10, 10);
+view.loadTexture(0, "smile.bmp", 255, 255);
+view.loadTexture(1, "flip1.bmp", 254, 254);
+view.loadTexture(4, "goomba.bmp", 490, 209);
+view.loadTexture(5, "lv1bgtw.bmp", 308, 341);
+view.loadTexture(6, "grass.bmp", 17, 13);
 gotFocus = 0
 
 
@@ -3288,7 +3288,7 @@ Next k
 // it reincarnates them here by calling createPlayer
 // Rem*************************************8
 
-Call loadTexture(0, "System.bmp", 336, 397)
+view.loadTexture(0, "System.bmp", 336, 397);
 For k = 0 To 20 Step 10
 // For penguin = 0 To 2
 Call createPlayer(k, playerName(k / 10))
@@ -3372,8 +3372,8 @@ Sub selectPlayer()
 destroyEverything
 Call NowLoading
 Call updatesprites
-loadTexture 0, "players2.bmp", 320, 400
-loadTexture -1, "PlayerS.bmp", 320, 240
+view.loadTexture(0, "players2.bmp", 320, 400);
+view.loadTexture(-1, "PlayerS.bmp", 320, 240);
 CameraWidth = 320: CameraHeight = 240
 
 With Sprite(0)
@@ -3749,13 +3749,13 @@ Gravity = 20
 Dim j As Integer
 
 CameraX = 0: CameraY = 0
-Call loadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight) // "lv1bg2.bmp", 10, 10)
+view.loadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight); // "lv1bg2.bmp", 10, 10)
 // Call loadTexture(0, "smile.bmp", 255, 255)
 
 // Call loadTexture(4, "level1a.bmp", 490, 209)
 // Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
 // Call loadTexture(6, "goomba.bmp", 240, 240)
-Call loadTexture(9, CinemaBitMapFile, 400, 400) // "lvl1bg.bmp",400,400
+view.loadTexture(9, CinemaBitMapFile, 400, 400); // "lvl1bg.bmp",400,400
 
 
 Call initPlayers
@@ -3809,7 +3809,7 @@ With Sprite(who)
 If playerName((who / 10)) = "Thomas" Then
 weapon(who / 10) = "fireball"
 Call loadAnimation(who, "thomas.ani")
-Call loadTexture((who / 10) + 1, "flip1.bmp", 254, 254)
+view.loadTexture((who / 10) + 1, "flip1.bmp", 254, 254);
 Sprite(who).texture = (who / 10) + 1
 For goatorg = (who + 1) To (who + 9): Call loadAnimation(goatorg, "fireball.ani"): Next goatorg
 End If
@@ -3817,7 +3817,7 @@ End If
 If playerName((who / 10)) = "Nick" Then
 weapon(who / 10) = "fireball"
 Call loadAnimation(who, "nick.ani")
-Call loadTexture((who / 10) + 1, "joel.bmp", 254, 258)
+view.loadTexture((who / 10) + 1, "joel.bmp", 254, 258);
 Sprite(who).texture = (who / 10) + 1
 For goatorg = (who + 1) To (who + 9): Call loadAnimation(goatorg, "icespike.ani"): Next goatorg
 End If
@@ -3826,7 +3826,7 @@ End If
 If playerName((who / 10)) = "Nicky" Then
 weapon(who / 10) = "bomb"
 loadAnimation who, "nicky.ani"
-Call loadTexture((who / 10) + 1, "LilNicky.bmp", 84, 148)
+view.loadTexture((who / 10) + 1, "LilNicky.bmp", 84, 148);
 Sprite(who).texture = (who / 10) + 1
 For goatorg = (who + 1) To (who + 9): Call loadAnimation(goatorg, "bomb.ani"): Next goatorg
 End If
