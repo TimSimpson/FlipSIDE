@@ -1,10 +1,6 @@
-Attribute VB_Name = "Module1"
-
 // SUPER DUPER DIRECT X 8 MODULE
-Option Explicit
-
-Const FULLSCREENWIDTH = 640
-Const FULLSCREENHEIGHT = 480
+const int FULLSCREENWIDTH = 640;
+const int FULLSCREENHEIGHT = 480;
 
 Const NUMSPRITES = 150
 
@@ -26,17 +22,6 @@ Dim sFactor As Double // makes objects move at speeds irrelevent to frame rate
 Const tRate = 125 // The target frame rate
 
 Const FVF = D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE Or D3DFVF_SPECULAR
-
-Private Type TLVERTEX
-    x As Single
-    y As Single
-    z As Single
-    rhw As Single
-    color As Long
-    specular As Long
-    tu As Single
-    tv As Single
-End Type
 
 Private Type animationFrame
    x As Integer
@@ -82,7 +67,7 @@ Public Type characterSprite
 
      visible As Boolean
      parent As Integer // whose their parent sprite (what is the reason for their existence?) are they a fireball cast by sprite 0, perhaps
-     SpriteVerts(3) As TLVERTEX
+     SpriteVerts(3) As Vertex
      // Location As D3DVECTOR2
      frame As Integer
      name As String
@@ -164,7 +149,7 @@ Dim texHeight(9) As Integer
 Dim m_d3dpp As D3DPRESENT_PARAMETERS
 
 // Background vertices
-Dim bgverts(3) As TLVERTEX
+Dim bgverts(3) As Vertex
 
 Dim windowedMode As Boolean
 
