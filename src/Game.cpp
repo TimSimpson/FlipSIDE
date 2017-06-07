@@ -229,7 +229,32 @@ private:
         }
     }
 
-	void gameOver() {}  // TODO
+	void gameOver() {
+        sound.PlayBgm("");
+        world.screen = "gameOver";
+        this->destroyEverything();
+        view.LoadTexture(0, "GameOver.bmp", 320, 287);
+        {
+            auto & s = world.Sprite[0];
+            s.srcx = 1; s.srcy = 1; s.srcx2 = 320; s.srcy2 = 240;
+            s.x = 0; s.y = 0; s.wide = 640; s.high = 480; s.visible = true;
+            s.trueVisible = 1;
+            s.name = "GameOverCloudBg";
+            s.texture = 0;
+            s.color = normColor;
+        }
+        {
+            auto & s = world.Sprite[1];
+            s.srcx = 1; s.srcy = 243; s.srcx2 = 320; s.srcy2 = 287;
+            s.x = 0; s.y = 180; s.wide = 640; s.high = 94; s.visible = true;
+            s.trueVisible = 1;
+            s.name = "GameOverCloudTitle"; s.texture = 0;
+            s.miscTime = world.clock + 4;
+        }
+        sound.PlayWave("gameover.wav");
+        this->findOrder();
+    }
+
 	void goToLevel(double) {} // TODO
 	void selectPlayer() {} // TODO
 	void selectPlayerS() {} // TODO
