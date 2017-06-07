@@ -56,7 +56,7 @@ CharacterSprite::CharacterSprite()
     // Copies this from the destroyEverything function, which looked
     // to be doing this.
     {
-        auto v = this->SpriteVerts[0];
+        auto & v = this->SpriteVerts[0];
         v.x = lp3::narrow<float>(this->x);
         v.y = lp3::narrow<float>(this->y + this->high);
         v.tu = 0;
@@ -64,7 +64,7 @@ CharacterSprite::CharacterSprite()
         v.rhw = 1;
     }
     {
-        auto v = this->SpriteVerts[1];
+        auto & v = this->SpriteVerts[1];
         v.x = lp3::narrow<float>(this->x);
         v.y = lp3::narrow<float>(this->y);
         v.tu = 0;
@@ -72,7 +72,7 @@ CharacterSprite::CharacterSprite()
         v.rhw = 1;
     }
     {
-        auto v = this->SpriteVerts[2];
+        auto & v = this->SpriteVerts[2];
         v.x = lp3::narrow<float>(this->x + this->wide);
         v.y = lp3::narrow<float>(this->y + this->high);
         v.tu = 0.5;
@@ -80,7 +80,7 @@ CharacterSprite::CharacterSprite()
         v.rhw = 1;
     }
     {
-        auto v = this->SpriteVerts[3];
+        auto & v = this->SpriteVerts[3];
         v.x = lp3::narrow<float>(this->x + this->wide);
         v.y = lp3::narrow<float>(this->y);
         v.tu = 0.5;
