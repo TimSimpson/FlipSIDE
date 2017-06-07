@@ -1,16 +1,37 @@
 #include "View.hpp"
+#include "World.hpp"
 
 namespace nnd3d {
 
+namespace {
+	constexpr int letters_max = 80 * 24;
+	const glm::ivec2 res2d(World::FULLSCREENWIDTH, World::FULLSCREENHEIGHT);
+}
+
 View::View(core::MediaManager & media)
-:   media(media),
+:	media(media),
 	bgtexture(),
-    AnimationTexture({})
+	AnimationTexture({}),
+	program(),
+	font{ media.load("Engine/apple_kid.fnt") },
+	font_elements{ (letters_max * 4) },
+	font_quads(font_elements.add_quads(letters_max)),
+	game_elements{ World::NUMSPRITES * 4 },
+	game_quads(game_elements.add_quads(World::NUMSPRITES))
 {
 }
 
-void View::operator()(const glm::mat4 & previous) {
-    // TODO: FILL IN.
+void View::operator()(const glm::mat4 & previous) {	
+	program.use();
+	auto _2d = gfx::create_2d_screen(previous, res2d);
+	program.set_mvp(_2d);
+	program.set_texture(font.texture().gl_id());
+	program.draw(font_elements);
+}
+
+void View::DrawStuff(float fps) {
+	std::string s = str(boost::format("FPS: %d") % fps);
+	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
 }
 
 gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {

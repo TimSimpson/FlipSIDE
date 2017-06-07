@@ -16,8 +16,8 @@ namespace nnd3d {
 struct World {
     World();
 
-    const int FULLSCREENWIDTH = 640;
-    const int FULLSCREENHEIGHT = 480;
+    static constexpr int FULLSCREENWIDTH = 640;
+	static constexpr int FULLSCREENHEIGHT = 480;
 
     static constexpr int NUMSPRITES = 150;
 

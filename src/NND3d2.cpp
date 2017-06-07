@@ -461,23 +461,7 @@ Next j
 madeShapes = True
 End Sub
 
-Function MainLoop()
-// Exit Function
-Do While STOPGAME = False
-    // clock = GetTickCount / 1000
-   //  Do Until gpRate >= 60
-    Call playGame
-  //   Loop
-    Call DrawStuff
-sFactor = tRate / frRate: If frRate < 30 Then sFactor = 1
-If LemonTime = True Then sFactor = sFactor * 2
-    DoEvents
-    clock = clock + ((1 / 120) * sFactor)
-Loop
-
-Unload Form1
-
-End Function
+// Moved to main.cpp
 
 Sub DrawStuff()
 Dim j As Integer
@@ -2858,114 +2842,9 @@ End With
 playWave "gameover.wav"
 Call findOrder
 End Sub
-Function destroyEverything(Optional how As Integer)
-Dim j As Integer
-Dim penguin As Integer
-Dim goatorg As Integer
-If Sprite(1).name = "Selecter" Then GoTo dogyup
-If Sprite(0).name = "GameOverCloudBg" Then GoTo dogyup
-For j = 1 To 15
-playWave "nothing.wav"
-Next j
-dogyup:
-playIsoWave "nothing.wav"
-If how <> 2 Then playBGM ("")
 
-view.loadTexture(-1, "plainblack.bmp", 25, 25);
-// bgtexture = Nothing
-For j = 0 To 9
-// Set AnimationTexture(j) = Nothing
-Next j
-gotFocus = -1
-CameraX = 0: CameraY = 0
-goatorg = 0
-penguin = spritesInUse
-// If how = 2 Then goatorg = 30: penguin = 95
+// DestroyedEverything- moved to Game.cpp
 
-For j = goatorg To penguin
-    With Sprite(j)
-    .x = 0
-    .y = 0
-    .z = 0
-    .wide = 0
-    .high = 0
-    .length = 0
-    .dir = ""
-
-     .srcx = 0
-     .srcy = 0
-     .srcx2 = 0
-     .srcy2 = 0
-
-     .seekx = 0
-     .seeky = 0
-     .speed = 0
-     .time = 0
-     .mph = 0
-     .texture = 0
-
-     .visible = False
-     .parent = 0
-     .frame = 0
-     .name = ""
-
-     .hp = 0
-     .mhp = 0
-
-     .jumpStart = 0
-     .jumpStrength = 0
-     .jumpTime = 0
-     .lastJump = 0
-
-     .flickerTime = 0
-     .flickOn = False
-     .trueVisible = 0
-     .invTime = 0
-
-     .mode = ""
-     .kind = 0
-     .deathType = ""
-     .miscTime = 0
-     .color = normColor
-     .zOrder = 0
-
-     .jumpM = 0
-
-     .color = normColor
-
-
-    //NOTE(2017): Should happen in CharacterSprite constructor now.
-    // With .SpriteVerts(0)
-    //   .x = Sprite(j).x
-    //   .y = Sprite(j).y + Sprite(j).high
-    //   .tu = 0: .tv = 0.5
-    //   .rhw = 1
-    // End With
-    // With .SpriteVerts(1)
-    //   .x = Sprite(j).x
-    //   .y = Sprite(j).y
-    //   .tu = 0: .tv = 0
-    //   .rhw = 1
-    // End With
-    // With .SpriteVerts(2)
-    //   .x = Sprite(j).x + Sprite(j).wide
-    //   .y = Sprite(j).y + Sprite(j).high
-    //   .tu = 0.5: .tv = 0.5
-    //   .rhw = 1
-    // End With
-    // With .SpriteVerts(3)
-    //   .x = Sprite(j).x + Sprite(j).wide
-    //   .y = Sprite(j).y
-    //   .tu = 0.5: .tv = 0
-    //   .rhw = 1
-    // End With
-
- End With
-Next j
-
-
-
-End Function
 Sub titleScreen()
 
 Dim j As Integer
