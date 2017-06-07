@@ -21,17 +21,15 @@ int _main(core::PlatformLoop & loop) {
 	core::LogSystem log;
 	core::MediaManager media;
 	input::Controls controls;
-
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
-
-	nnd3d::View view{ media };
+	nnd3d::World world;
+	nnd3d::View view{ media, world };
 	nnd3d::Sound sound;
-	(void)sound;	
+	(void)sound;
+
+	nnd3d::Game game(controls, view, sound, world);
 
 	sims::FrameTimer frame_timer;
-
-	nnd3d::World world;
-	nnd3d::Game game(controls, view, sound, world);
 
 	const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 	sims::GameClock clock(ms_per_update);

@@ -365,8 +365,19 @@ private:
         }
     }
 
-	template<typename... Args> 
+	template<typename... Args>
 	void MakeLevel(Args&&... args) {} // TODO
+
+    void NowLoading() {
+        view.LoadTexture(-1, "nowloading.bmp", 320, 240);
+        world.CameraWidth = 320;
+        world.CameraHeight = 240;
+        view.UpdateSprites();
+        //Call DrawStuff
+        world.CameraWidth = 640;
+        world.CameraHeight = 480;
+        view.ForceShowBackground();
+    }
 
 	void selectPlayer() {} // TODO
 	void selectPlayerS() {} // TODO

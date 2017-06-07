@@ -1,24 +1,42 @@
 #include "View.hpp"
 #include "World.hpp"
 
+// The old VB code constantly was tossing ints into floats and vice-versa,
+// and using lp3::narrow everywhere 
+#pragma warning(disable: 4244)
+
 namespace nnd3d {
 
 namespace {
 	constexpr int letters_max = 80 * 24;
+	const glm::ivec4 normColor{ 255, 255, 255, 255 };
 	const glm::ivec2 res2d(World::FULLSCREENWIDTH, World::FULLSCREENHEIGHT);
 }
 
-View::View(core::MediaManager & media)
-:	media(media),
+View::View(core::MediaManager & _media, World & _world)
+:	media(_media),
 	bgtexture(),
 	AnimationTexture({}),
 	program(),
 	font{ media.load("Engine/apple_kid.fnt") },
 	font_elements{ (letters_max * 4) },
 	font_quads(font_elements.add_quads(letters_max)),
-	game_elements{ World::NUMSPRITES * 4 },
-	game_quads(game_elements.add_quads(World::NUMSPRITES))
+	game_elements(),
+	world(_world),
+	_texWidth({}),
+	_texHeight({}),
+	bgverts({}),
+	bgWidth(0),
+	bgHeight(0)
 {
+	// Create one vertex buffer for the bgtexture
+	game_elements.emplace_back(letters_max * 4);
+	// Then others for each other texture. Make each one the maximum size it
+	// might need to be to represent all sprites on the screen, even though
+	// this is wasteful.
+	for (std::size_t i = 0; i < AnimationTexture.size(); ++i) {
+		game_elements.emplace_back(World::NUMSPRITES * 4);
+	}
 }
 
 void View::operator()(const glm::mat4 & previous) {
@@ -30,8 +48,67 @@ void View::operator()(const glm::mat4 & previous) {
 }
 
 void View::DrawStuff(float fps) {
+	// 2017- draw FPS text
 	std::string s = str(boost::format("FPS: %d") % fps);
 	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
+
+	if (bgtexture) {
+		LP3_ASSERT(nullptr != bgtexture);
+		draw_verts_as_quad(bgverts.data(), -1);
+	}
+	int currentTexture = -1;
+	for (int j = 0; j < world.spritesInUse; ++j) {
+		if (world.drawOrder[j] == -1) {
+			continue;   // goto suckIt
+		}
+		const int index = world.drawOrder[j];
+		const auto & sprite = world.Sprite[index];
+
+
+		if (sprite.visible) {
+			draw_verts_as_quad(sprite.SpriteVerts.data(), sprite.texture);
+		}
+	}
+	// If ((GetTickCount / 1000) > cranBerry) Then cranBerry = ((GetTickCount / 1000) + 1): frRate = frRate2: frRate2 = 0
+	//If debugOn = True Then Form1.PSet (1, 1): Form1.Print "FPS:" + Str$(frRate): Form1.Print "GPS:" + Str$(gpRate)
+}
+
+void View::draw_verts_as_quad(const Vertex * v, const int texIndex) {
+	LP3_ASSERT(texIndex >= -1);
+	LP3_ASSERT(texIndex < lp3::narrow<int>(AnimationTexture.size()));
+
+	// Using old game logic, -1 could be the "background" texture which was
+	// reasonlessly treated differently from everything else.
+	const int realIndex = texIndex + 1;
+	gfx::Quad<gfx::TexVert> quad = game_elements[realIndex].add_quad();
+	draw_vert_to_quad(v, quad);
+}
+
+void View::ForceShowBackground() {
+	// This was originally a block of code in the "NowLoading" function.
+        // It appears it would force the background to display, pre-empting
+        // the loop, so that while busy work took place at least the loading
+        // screen would be visible.
+        /*if (Form1.WindowState != vbMinimized) {
+
+            //cranBerry = Timer
+
+            With dev
+                Call .Clear(0, ByVal 0&, D3DCLEAR_TARGET, &HFF, 0, 0)
+
+                Call .BeginScene
+
+
+
+                'Call .CopyRects(bgSurface, 1, 1, .GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO), 1)
+
+
+                Call .SetTexture(0, bgtexture)
+                 Call .DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, bgverts(0), Len(bgverts(0)))
+                .EndScene
+                Call .Present(ByVal 0&, ByVal 0&, 0, ByVal 0&)
+            End With
+        }*/
 }
 
 gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {
@@ -93,5 +170,144 @@ glm::ivec4 QBColor(int index) {
             return glm::ivec4{255, 255, 0, 128};
     }
 }
+
+int View::texWidth(int index) {
+	if (index < 0) {
+		return this->bgWidth;
+	}
+	return this->_texWidth[index];
+}
+
+int View::texHeight(int index) {
+	if (index < 0) {
+		return this->bgHeight;
+	}
+	return this->_texHeight[index];
+}
+
+void View::UpdateSprites() {
+     //int j = 0; // in old code, not needed?
+    int k = 0;
+    double texorg = 0.0;
+    int davidorg1 = 0;
+    int davidOrg2 = 0;
+
+    for (int j = 0; j < world.spritesInUse; ++ j) {
+        auto & s = world.Sprite[j];
+        if (s.frame > 0) {
+            s.srcx = s.Aframe[s.frame].x;
+            s.srcy = s.Aframe[s.frame].y;
+            s.srcx2 = s.Aframe[s.frame].x2;
+            s.srcy2 = s.Aframe[s.frame].y2;
+        }
+    }
+
+    //----------------------------------------------------------------------
+    //              THIS PART HERE'S THE KICKER
+    //----------------------------------------------------------------------
+
+    {
+        auto & v = this->bgverts[0];
+        v.x = 0; v.y = 480; // RealHeight
+        v.tu = lp3::narrow<float>(world.CameraX) / lp3::narrow<float>(world.bgWidth);
+        v.tv = (lp3::narrow<float>(world.CameraY) + lp3::narrow<float>(world.CameraHeight)) 
+			/ lp3::narrow<float>(world.bgHeight);
+        v.rhw = 1;
+        v.color = normColor;
+    }
+
+    {
+        auto & v = this->bgverts[1];
+        v.x = 0; v.y = 0;
+        v.tu = lp3::narrow<float>(world.CameraX) / 
+					lp3::narrow<float>(bgWidth); 
+		v.tv = lp3::narrow<float>(world.CameraY) / lp3::narrow<float>(bgHeight);
+        v.rhw = 1;
+        v.color = normColor;
+    }
+
+    {
+        auto & v = this->bgverts[2];
+        v.x = 640; v.y = 480; // RealWidth; v.y = RealHeight
+        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth) / bgWidth;
+        v.tv = lp3::narrow<float>(world.CameraY + world.CameraHeight) / bgHeight;
+        v.rhw = 1;
+        v.color = normColor;
+    }
+
+    {
+        auto & v = this->bgverts[3];
+        v.x = 640; v.y = 0;
+        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth) 
+				/ bgWidth; 
+		v.tv = lp3::narrow<float>(world.CameraY) / bgHeight;
+        v.rhw = 1;
+        v.color = normColor;
+    }
+
+    for (int j = 0; j < world.spritesInUse; ++ j) {
+        auto & sprite = world.Sprite[j];
+
+        if (sprite.reverse = true) {
+            k = sprite.srcx2;
+            sprite.srcx2 = sprite.srcx;
+            sprite.srcx = k;
+        }
+
+        {
+            auto & v = sprite.SpriteVerts[0];
+            v.x = lp3::narrow<float>(sprite.x - world.CameraX);
+            v.y = lp3::narrow<float>(
+				sprite.y + sprite.high - (sprite.z) - world.CameraY);
+            if (sprite.srcx != 0) {
+                v.tu = sprite.srcx / this->texWidth(sprite.texture);
+            }
+            if (sprite.srcy2 != 0) {
+                v.tv = sprite.srcy2 / this->texHeight(sprite.texture);
+            }
+            v.color = sprite.color;
+        }
+        {
+            auto & v = sprite.SpriteVerts[1];
+            v.x = sprite.x - world.CameraX;
+            v.y = sprite.y - (sprite.z) - world.CameraY;
+            if (sprite.srcx != 0) {
+                v.tu = sprite.srcx / this->texWidth(sprite.texture);
+            }
+            if (sprite.srcy != 0) {
+                v.tv = sprite.srcy / this->texHeight(sprite.texture);
+            }
+            // v.rhw = 1
+            v.color = sprite.color;
+        }
+        {
+            auto & v = sprite.SpriteVerts[2];
+            v.x = sprite.x + sprite.wide - world.CameraX;
+            v.y = sprite.y + sprite.high - (sprite.z) - world.CameraY;
+            if (sprite.srcx2 != 0) {
+                v.tu = sprite.srcx2 / this->texWidth(sprite.texture);
+            }
+            if (sprite.srcy2 != 0) {
+                v.tv = sprite.srcy2 / this->texHeight(sprite.texture);
+            }
+            // v.rhw = 1
+            v.color = sprite.color;
+        }
+        {
+            auto & v = sprite.SpriteVerts[3];
+            v.x = sprite.x + sprite.wide - world.CameraX;
+            v.y = sprite.y - (sprite.z) - world.CameraY;
+            if (sprite.srcx2 != 0) {
+                v.tu = sprite.srcx2 / this->texWidth(sprite.texture);
+            }
+            if (sprite.srcy != 0) {
+                v.tv = sprite.srcy / this->texHeight(sprite.texture);
+            }
+            // v.rhw = 1
+            v.color = sprite.color;
+        }
+    }  // end for loop
+}
+
 
 }   // end namespace
