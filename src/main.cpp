@@ -1,5 +1,6 @@
 #include <lp3/core.hpp>
 #include <lp3/gfx.hpp>
+#include <lp3/input.hpp>
 #include <lp3/sims.hpp>
 #include <lp3/main.hpp>
 
@@ -10,6 +11,7 @@
 
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
+namespace input = lp3::input;
 namespace sims = lp3::sims;
 namespace sdl = lp3::sdl;
 
@@ -18,17 +20,18 @@ int _main(core::PlatformLoop & loop) {
 	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
 	core::LogSystem log;
 	core::MediaManager media;
+	input::Controls controls;
 
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 
 	nnd3d::View view{ media };
 	nnd3d::Sound sound;
-	(void)sound;
+	(void)sound;	
 
 	sims::FrameTimer frame_timer;
 
 	nnd3d::World world;
-	nnd3d::Game game(view, sound, world);
+	nnd3d::Game game(controls, view, sound, world);
 
 	const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 	sims::GameClock clock(ms_per_update);
@@ -46,7 +49,8 @@ int _main(core::PlatformLoop & loop) {
 				break;
 			}
 		}
-		// controls update
+		controls.update();
+
 		clock.run_updates([&world, &game](std::int64_t ms) {
 			// The old code figured out the percentage of a second each frame
 			// took, and created a "speed factor" which it multiplied everything

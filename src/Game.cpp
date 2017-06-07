@@ -1,9 +1,13 @@
 #include "Game.hpp"
 
+namespace input = lp3::input;
+
 namespace nnd3d {
 
-Game::Game(View & _view, Sound & _sound, World & _world)
-:   view(_view),
+Game::Game(input::Controls & _controls, View & _view, Sound & _sound, 
+		   World & _world)
+:   controls(_controls),
+	view(_view),
     sound(_sound),
     world(_world)
 {}

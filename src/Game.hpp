@@ -2,6 +2,7 @@
 #define NND3D_GAME_HPP
 #pragma once
 
+#include <lp3/input.hpp>
 #include "Sound.hpp"
 #include "World.hpp"
 #include "View.hpp"
@@ -21,11 +22,13 @@ namespace gfx = lp3::gfx;
 class Game
 {
 public:
-    Game(View & view, Sound & sound, World & world);
+    Game(lp3::input::Controls & controls, View & view, Sound & sound, 
+		 World & world);
 
     void PlayGame();
 
 private:
+	lp3::input::Controls & controls;
     View & view;
     Sound & sound;
     World & world;
