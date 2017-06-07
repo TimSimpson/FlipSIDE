@@ -24,18 +24,14 @@ class Game
 public:
     Game(lp3::input::Controls & controls, View & view, Sound & sound,
 		 World & world);
+	
+	~Game();
 
     void PlayGame();
 
 private:
-	lp3::input::Controls & controls;
-    View & view;
-    Sound & sound;
-    World & world;
-
-    void destroyEverything(int how=0);
-
-    void findOrder();
+    class GameImpl;
+	gsl::owner<GameImpl *> impl;
 };
 
 }   // end namespace
