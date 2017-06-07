@@ -6,27 +6,6 @@
 Const FVF = D3DFVF_XYZRHW Or D3DFVF_TEX1 Or D3DFVF_DIFFUSE Or D3DFVF_SPECULAR
 
 
-
-Public Type CinemaType
-  frame1 As Integer
-  frame2 As Integer
-  frame3 As Integer
-  frame4 As Integer
-  color1 As Integer
-  color2 As Integer
-  color3 As Integer
-  color4 As Integer
-  wavefile As String
-  miscTime As Double
-End Type
-
-Dim cinema(40) As CinemaType  // Dialogue!
-Dim cinemaCounter As Integer
-Dim cinemaMax As Integer // how many lines of dialogue per cinema
-
-Dim exitS As String // whenever this is set to things, stuff happens
-
-
 Dim Sprite(NUMSPRITES) As CharacterSprite
 
 

@@ -4,6 +4,7 @@
 
 #include <array>
 #include "CharacterSprite.hpp"
+#include "CinemaType.hpp"
 
 namespace nnd3d {
 
@@ -47,6 +48,11 @@ struct World {
     int cameraStopX;  //this is where the cameraHALTS!
     int cameraStopY; //this is where the cameraHALTS! for y
     int gotFocus;
+
+	std::array<CinemaType, 40> cinema; // Dialogue!
+	int cinemaCounter;
+	int cinemaMax; //how many lines of dialogue per cinema
+	std::string exitS;
 
     std::array<CharacterSprite, NUMSPRITES> Sprite;
 
