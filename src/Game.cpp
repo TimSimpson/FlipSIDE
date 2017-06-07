@@ -67,6 +67,9 @@ Game::Game(input::Controls & _controls, View & _view, Sound & _sound,
     world.screen = "title";
 }
 
+// 2017: Initializes the game. Port uses a lot of constructors so it misses the
+// sheer joy of initializing hundreds of global variables sitting in a big
+// static array like the old code did.
 void Game::destroyEverything(int how) {
     int penguin;
     int goatorg;
@@ -101,7 +104,7 @@ void Game::destroyEverything(int how) {
     penguin = world.spritesInUse;
     //If how = 2 Then goatorg = 30: penguin = 95
 
-    for (int j = goatorg; j <= penguin; ++ j) {
+    for (int j = goatorg; j < penguin; ++ j) {
         world.Sprite[j] = CharacterSprite{};
     }
 }
