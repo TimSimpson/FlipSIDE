@@ -1,4 +1,6 @@
 #include "Game.hpp"
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace input = lp3::input;
 
@@ -148,7 +150,92 @@ private:
          world.Sprite[davidorg1].drawTrue = true;
         }
     }
-};
+
+    void flipGame() {
+        // I think this handles switching to different rooms or levels.
+        int penguin;
+		(void)penguin;  //2017- is this unused?
+
+        if (world.exitS == "true" && boost::starts_with(world.screen, "level")) {
+            double sapple = boost::lexical_cast<double>(world.screen.substr(5));
+            sapple = sapple + 0.1; // WTF, right? It's in the original code though...
+            world.screen = str(boost::format("level%s") % sapple);
+        } // End If
+
+        if (world.screen == "intro story") {
+            world.screen = "intro story 2";
+            destroyEverything();
+            view.LoadTexture(1, "open1.bmp", 313, 263);
+            view.LoadTexture(2, "open6.bmp", 320, 258);
+            view.LoadTexture(3, "open7.bmp", 320, 194);
+            view.LoadTexture(4, "titlescreen.bmp", 320, 240);
+            sound.PlayBgm("");
+            world.Sprite[0].name = "intro story";
+            {
+                auto & s = world.Sprite[1];
+                s.name = "words1";
+                s.x = 1;
+                s.y = 175;
+                s.miscTime = 0;
+                s.mode = "words1";
+                s.visible = false;
+                s.color = view.QBColor(0);
+            }
+
+            world.Sprite[0].color = view.QBColor(0);
+            world.Sprite[0].visible = false;
+        }  //End of intro story with
+
+
+        if (world.screen == "SelectPlayerz") {
+            this->selectPlayerS();
+        }
+
+        //playWave "conzero.wav"
+        if (world.screen == "title") {
+            //playWave "conTen.wav"
+            world.screen = "title2";
+            this->titleScreen();
+            //screen = "intro story"
+        }
+
+        //************************************************************
+        // LOADS A NEW LEVEL!------------------------------------
+        //************************************************************
+        if (boost::starts_with(world.screen, "level")
+            && world.currentScreen != world.screen) {
+            //as long as this is set to this crazy value, it won't load it again.
+            world.currentScreen = world.screen;
+
+            std::string crapple = world.screen.substr(5);
+            double boogeycrap = boost::lexical_cast<double>(crapple);
+
+            this->goToLevel(boogeycrap);
+        }
+
+        if (world.screen == "Select Player") {
+            world.screen = "SelectPlayerz";
+            this->selectPlayer();
+        }
+
+        if (world.screen == "deadscreen") {
+            world.screen = "title";
+        }
+
+        if (world.Sprite[0].name == "dead"
+            && world.Sprite[10].name == "dead"
+            && world.Sprite[20].name == "dead") {
+            this->gameOver();
+        }
+    }
+
+	void gameOver() {}  // TODO
+	void goToLevel(double) {} // TODO
+	void selectPlayer() {} // TODO
+	void selectPlayerS() {} // TODO
+	void titleScreen() {} // TODO
+
+};	// end of GameImpl class
 
 Game::Game(input::Controls & _controls, View & _view, Sound & _sound,
            World & _world)
