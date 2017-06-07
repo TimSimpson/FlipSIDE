@@ -255,9 +255,125 @@ private:
         this->findOrder();
     }
 
-	void goToLevel(double) {} // TODO
+	void goToLevel(const double which) {
+        world.Gravity = 0;
+
+        if (which == 1.1 || which == 1) {
+            this->destroyEverything();
+            this->MakeLevel("Level1Opening.wav", "level1.cap", "lv1bg.bmp",
+                            10, 10, "level1cinema.bmp", "level1cinema.ani",
+                            true, true);
+            world.cinemaMax = 2;
+            world.cinemaCounter = 0;
+            this->setCinema(0, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1a1.wav", 4.49);
+            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1a2.wav", 1.87);
+            world.Sprite[0].x = 50;
+            world.Sprite[0].y = 220;
+            world.Sprite[10].x = 50;
+            world.Sprite[10].y = 220;
+            world.Sprite[20].x = 50;
+            world.Sprite[20].y = 220;
+            world.cameraStopX = 1010;
+            world.cameraStopY = 905 + 480;
+
+            sound.LoadSound(16, "goomba.wav", "dying explosion");
+            sound.LoadSound(17, "goombaouch.wav", "Goomba Ouch");
+            sound.LoadSound(18, "KerboDie.wav", "Kerbose Die");
+            sound.LoadSound(19, "KerbHurt.wav", "Kerbose Ouch");
+            sound.LoadSound(20, "putulohurt.wav", "putulohurt");
+            sound.LoadSound(21, "putulodie.wav", "putulodie");
+        }
+
+        if (which == 1.2) {
+            this->MakeLevel("level1.wav", "level1b.cap", "lv1bg2.bmp",
+                            100, 100, "Level1BCinema.bmp", "level1bcinema.ani",
+                            true, true);
+            world.cinemaMax = 3;
+            world.cinemaCounter = 0;
+            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1c1.wav", 3.31);
+            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1c2.wav", 2.3);
+            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1c3.wav", 3.05);
+            world.Sprite[0].x = 1122;
+            world.Sprite[0].y = 1650;
+            world.Sprite[10].x = 1122;
+            world.Sprite[10].y = 1650;
+            world.Sprite[20].x = 1122;
+            world.Sprite[20].y = 1650;
+            world.cameraStopX = 1194;
+            world.cameraStopY = 1900;
+            sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
+            sound.LoadSound(17, "BS Death2.wav", "stick die");
+            sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
+            sound.LoadSound(19, "BS Death.wav", "Paul Shrink");
+            sound.LoadSound(20, "WhaWhee.wav", "Stick Awaken");
+        }
+
+        if (which == 1.3) {
+            this->MakeLevel("level1.wav", "level1c.cap", "lv1bg3.bmp",
+                            10, 10, "Level1BCinema.bmp", "level1bcinema.ani",
+                            false, false);
+            world.cinemaMax = 3;
+            world.cinemaCounter = 4;
+            this->setCinema(0, 7, 7, 7, 7, 8, 8, 15, 8, "TalkLv1c1.wav", 3.31);
+            this->setCinema(1, 7, 7, 7, 7, 8, 15, 8, 8, "TalkLv1c2.wav", 2.3);
+            this->setCinema(2, 7, 7, 7, 7, 15, 8, 8, 8, "TalkLv1c3.wav", 3.05);
+            world.Sprite[0].x = 242;
+            world.Sprite[0].y = 2000;
+            world.Sprite[10].x = 42;
+            world.Sprite[10].y = 300;
+            world.Sprite[20].x = 42;
+            world.Sprite[20].y = 300;
+            world.cameraStopX = 1244;
+            world.cameraStopY = 2273;
+            sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
+            sound.LoadSound(17, "BS Death2.wav", "stick die");
+            sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
+            sound.LoadSound(19, "WhaWhee.wav", "Stick Awaken");
+            sound.LoadSound(20, "BS Death.wav", "Paul Shrink");
+        }
+
+        if (which == 1.4) {
+            this->MakeLevel("level1.wav", "level1d.cap", "level1birdstreet.bmp",
+                            98, 480, "Level1DCinema.bmp", "level1bcinema.ani",
+                            false, false);
+            world.cinemaMax = 3;
+            world.cinemaCounter = 4;
+            this->setCinema(0, 7, 7, 7, 7, 8, 8, 15, 8, "TalkLv1c1.wav", 3.31);
+            this->setCinema(1, 7, 7, 7, 7, 8, 15, 8, 8, "TalkLv1c2.wav", 2.3);
+            this->setCinema(2, 7, 7, 7, 7, 15, 8, 8, 8, "TalkLv1c3.wav", 3.05);
+            world.Sprite[0].x = 42;
+            world.Sprite[0].y = 300;
+            world.Sprite[10].x = 42;
+            world.Sprite[10].y = 300;
+            world.Sprite[20].x = 42;
+            world.Sprite[20].y = 300;
+            world.cameraStopX = 3000;
+            world.cameraStopY = 480;
+            sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
+            sound.LoadSound(17, "BS Death2.wav", "stick die");
+            sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
+            sound.LoadSound(19, "WhaWhee.wav", "Stick Awaken");
+            sound.LoadSound(20, "BS Death.wav", "Paul Shrink");
+        }
+
+        if (world.Gravity == 0) {
+            // because Gravity is set to 20 in make level, we know that there
+            // has been no other levels selected
+            // in other words, somebody screwed up
+            world.screen = "intro story"; // this will remind them that they failed
+            // Note from present day: sure, just tell yourself that kid.
+        }
+    }
+
+	template<typename... Args> 
+	void MakeLevel(Args&&... args) {} // TODO
+
 	void selectPlayer() {} // TODO
 	void selectPlayerS() {} // TODO
+
+	template<typename... Args>
+	void setCinema(Args&&... args) {} // TODO
+
 	void titleScreen() {} // TODO
 
 };	// end of GameImpl class
