@@ -2820,27 +2820,6 @@ With dev
 End With
 End If
 End Sub
-Sub findOrder()
-Dim texorg As Integer
-Dim davidorg1 As Integer
-Dim j
-Dim k
-
-For j = 0 To spritesInUse: Sprite(j).drawTrue = False: drawOrder(j) = -150: Next j
-
-For j = 0 To spritesInUse
-texorg = -150
-davidorg1 = 0
-For k = 0 To spritesInUse
-If Sprite(k).zOrder > texorg And Sprite(k).drawTrue = False Then
-texorg = Sprite(k).zOrder
-davidorg1 = k
-End If
-Next k
-drawOrder(j) = davidorg1
-Sprite(davidorg1).drawTrue = True
-Next j
-End Sub
 
 Sub switchWindowedMode()
 // ***********************************************************************

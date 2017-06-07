@@ -108,6 +108,32 @@ void Game::destroyEverything(int how) {
         world.Sprite[j] = CharacterSprite{};
     }
 }
+
+void Game::findOrder() {
+    int texorg = 0;
+    int davidorg1 = 0;
+    int k = 0;
+
+    for (int j = 0; j < world.spritesInUse; ++ j) {
+     world.Sprite[j].drawTrue = false;
+     world.drawOrder[j] = -150;
+    }
+
+    for (int j = 0; j < world.spritesInUse; ++ j) {
+     texorg = -150;
+     davidorg1 = 0;
+     for (int k = 0; k < world.spritesInUse; ++ k) {
+         if (world.Sprite[k].zOrder > texorg
+             && world.Sprite[k].drawTrue == false) {
+             texorg = world.Sprite[k].zOrder;
+             davidorg1 = k;
+         }
+     }
+     world.drawOrder[j] = davidorg1;
+     world.Sprite[davidorg1].drawTrue = true;
+    }
+}
+
 void Game::PlayGame() {
     // TODO: FILL IN
 }

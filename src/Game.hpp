@@ -22,7 +22,7 @@ namespace gfx = lp3::gfx;
 class Game
 {
 public:
-    Game(lp3::input::Controls & controls, View & view, Sound & sound, 
+    Game(lp3::input::Controls & controls, View & view, Sound & sound,
 		 World & world);
 
     void PlayGame();
@@ -34,6 +34,8 @@ private:
     World & world;
 
     void destroyEverything(int how=0);
+
+    void findOrder();
 };
 
 }   // end namespace
