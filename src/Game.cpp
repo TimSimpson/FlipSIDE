@@ -4,13 +4,68 @@ namespace input = lp3::input;
 
 namespace nnd3d {
 
-Game::Game(input::Controls & _controls, View & _view, Sound & _sound, 
+namespace {
+    const glm::ivec4 normColor{255, 255, 255, 255};
+}
+
+Game::Game(input::Controls & _controls, View & _view, Sound & _sound,
 		   World & _world)
 :   controls(_controls),
 	view(_view),
     sound(_sound),
     world(_world)
-{}
+{
+    // Taken from "StartUp"
+    world.debugOn = false;
+    //world.FilePath = App.Path + "\"";
+    //world.levelPath = App.Path + "\"";
+
+    world.KeyUp[0] = "W";
+    world.KeyDown[0] = "S";
+    world.KeyLeft[0] = "A";
+    world.KeyRight[0] = "D";
+    world.KeyAttack[0] = "F";
+    world.KeyJump[0] = "G";
+
+    world.KeyUp[1] = "up";
+    world.KeyDown[1] = "down";
+    world.KeyLeft[1] = "left";
+    world.KeyRight[1] = "right";
+    world.KeyAttack[1] = "O";
+    world.KeyJump[1] = "P";
+
+    //KeyUp(2) = "I"
+    //KeyDown(2) = "K"
+    //KeyLeft(2) = "J"
+    //KeyRight(2) = "L"
+    //KeyAttack(2) = "Y"
+    //KeyJump(2) = "U"
+
+
+    //KeyUp = "W"
+    //KeyDown = "S"
+    //KeyLeft = "A"
+    //KeyRight = "D"
+    //KeyAttack = " "
+    //KeyJump = "J"
+
+    world.CameraWidth = 640;  world.CameraHeight = 480;
+    world.spritesInUse = World::NUMSPRITES;
+
+    for (int j = 0; j < 100; ++ j)
+    {
+        world.Sprite[j].visible = false;
+    }
+
+    //Time to get this show going, bodanky
+    world.RealWidth = 640; //Form1.ScaleWidth;
+    world.RealHeight = 480; //Form1.ScaleHeight;
+    world.SimulatedWidth = World::FULLSCREENWIDTH;
+    world.SimulatedHeight = World::FULLSCREENHEIGHT;
+
+    this->destroyEverything();
+    world.screen = "title";
+}
 
 void Game::destroyEverything(int how) {
     int penguin;
