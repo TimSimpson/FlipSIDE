@@ -22,6 +22,7 @@ public:
     void LoadTexture(int which, const std::string & fileName, int howWide,
                      int howHigh);
 	
+	glm::ivec4 QBColor(int index);
 private:
 	core::MediaManager & media;
     std::unique_ptr<gfx::Texture> bgtexture;

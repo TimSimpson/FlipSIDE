@@ -5,6 +5,7 @@
 #include <array>
 #include <string>
 #include <lp3/core.hpp>
+#include <lp3/gfx.hpp>
 #include "AnimationFrame.hpp"
 #include "Vertex.hpp"
 
@@ -66,7 +67,7 @@ struct CharacterSprite
      int kind; //if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
      std::string deathType; //how do they die?
      double miscTime; // they must wait this long to do misc. actions
-     double color; //lets throw some color into the mix
+     glm::ivec4 color; //lets throw some color into the mix
 
      std::string soundFile; //sound files
 

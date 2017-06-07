@@ -21,7 +21,7 @@ View::View(core::MediaManager & media)
 {
 }
 
-void View::operator()(const glm::mat4 & previous) {	
+void View::operator()(const glm::mat4 & previous) {
 	program.use();
 	auto _2d = gfx::create_2d_screen(previous, res2d);
 	program.set_mvp(_2d);
@@ -51,6 +51,46 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
         bgtexture.reset(load_image(fileName));
     } else {
         AnimationTexture[which].reset(load_image(fileName));
+    }
+}
+
+glm::ivec4 QBColor(int index) {
+	// If the code picks wrong, they get translucent yellow.
+    switch(index) {
+        case 0:
+            return glm::ivec4{0, 0, 0, 255};
+        case 1:
+            return glm::ivec4{0, 0, 128, 255};
+        case 2:
+            return glm::ivec4{0, 128, 0, 255};
+        case 3:
+            return glm::ivec4{128, 255, 128, 255};
+        case 4:
+            return glm::ivec4{128, 0, 0, 255};
+        case 5:
+            return glm::ivec4{128, 0, 128, 255};
+        case 6:
+            return glm::ivec4{128, 128, 0, 255};
+        case 7:
+            return glm::ivec4{192, 192, 192, 255};
+        case 8:
+            return glm::ivec4{64, 64, 64, 255};
+        case 9:
+            return glm::ivec4{0, 0, 255, 255};
+        case 10:
+            return glm::ivec4{0, 255, 0, 255};
+        case 11:
+            return glm::ivec4{128, 128, 255, 255};
+        case 12:
+            return glm::ivec4{255, 0, 0, 255};
+        case 13:
+            return glm::ivec4{255, 0, 255, 255};
+        case 14:
+            return glm::ivec4{255, 255, 0, 255};
+        case 15:
+            return glm::ivec4{255, 255, 255, 255};
+        default:
+            return glm::ivec4{255, 255, 0, 128};
     }
 }
 
