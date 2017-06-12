@@ -2,6 +2,9 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
+// Avoid the zillions implicit conversion warnings
+#pragma warning(disable: 4244) 
+
 namespace nnd3d {
 
 namespace {
@@ -106,8 +109,337 @@ public:
 	}
 
     void PlayGame() {
-        // TODO: FILL IN
+		world.lasttime = world.clock + 3.33333333333333E-02;
+		int j = 0;
+		int k = 0;
+		int penguin = 0;
+		int trueorg; //penguin and true org are buddies and also junk variables
+
+					 //----------------------------------------------------------------------
+					 //                   CAMERA TIME
+					 //----------------------------------------------------------------------
+		this->findPlayers();
+		//If Sprite(0).name <> playerName(0) And Sprite(10).name <> playerName(1) And Sprite(20).name <> playerName(2) Then gotFocus = -6
+		if (world.numberPlayers == 0) { world.gotFocus = -1; }
+		if (world.numberPlayers == 1) { world.gotFocus = 0; }
+		if (world.numberPlayers == 2) { world.gotFocus = -2; j = 0; k = 10; }
+		if (world.numberPlayers == 3) { world.gotFocus = -3; }
+		if (world.numberPlayers == 4) { world.gotFocus = 10; }
+		if (world.numberPlayers == 5) { world.gotFocus = 20; }
+		if (world.numberPlayers == 6) { world.gotFocus = -2; j = 0; k = 20; }
+		if (world.numberPlayers == 7) { world.gotFocus = -2; j = 10; k = 20; }
+		//1 Only player 1
+		//2 Player 1 and 2
+		//3 All three Players
+		//4 Just player 2
+		//5 Just player 3
+		//6 Players 1 and 3
+		//7 Players 2 and 3
+
+		//Three Player Scrolling is kind of tricky...
+		if (world.gotFocus == -3) {
+			if (world.Sprite[0].x < world.Sprite[10].x
+				&& world.Sprite[0].x < world.Sprite[20].x) {
+				if (world.Sprite[10].x < world.Sprite[20].x) {
+					trueorg = world.Sprite[0].x
+						+ ((world.Sprite[20].x - world.Sprite[0].x) / 2);
+				}
+				else {
+					trueorg = world.Sprite[0].x
+						+ ((world.Sprite[10].x - world.Sprite[0].x) / 2);
+				}
+			}
+
+			if (world.Sprite[10].x < world.Sprite[20].x
+				&& world.Sprite[10].x < world.Sprite[0].x) {
+				if (world.Sprite[0].x < world.Sprite[20].x) {
+					trueorg = world.Sprite[10].x
+						+ ((world.Sprite[20].x - world.Sprite[10].x) / 2);
+				}
+				else {
+					trueorg = world.Sprite[10].x
+						+ ((world.Sprite[0].x - world.Sprite[10].x) / 2);
+				}
+			}
+
+			if (world.Sprite[20].x < world.Sprite[10].x
+				&& world.Sprite[20].x < world.Sprite[0].x) {
+				if (world.Sprite[10].x < world.Sprite[0].x) {
+					trueorg = world.Sprite[20].x
+						+ ((world.Sprite[0].x - world.Sprite[20].x) / 2);
+				}
+				else {
+					trueorg = world.Sprite[20].x
+						+ ((world.Sprite[10].x - world.Sprite[20].x) / 2);
+				}
+			}
+
+		}
+
+		//rem End of 3 player scrolling
+
+		if (world.gotFocus == -2) {
+			if (world.Sprite[j].x < world.Sprite[k].x) {
+				trueorg = world.Sprite[k].x
+					+ ((world.Sprite[j].x - world.Sprite[k].x) / 2);
+			}
+			else {
+				trueorg = world.Sprite[j].x
+					+ ((world.Sprite[k].x - world.Sprite[j].x) / 2);
+			}
+			if (world.Sprite[j].y < world.Sprite[k].y) {
+				penguin = world.Sprite[k].y
+					+ ((world.Sprite[j].y - world.Sprite[k].y) / 2);
+			}
+			else {
+				penguin = world.Sprite[j].y
+					+ ((world.Sprite[k].y - world.Sprite[j].y) / 2);
+			}
+			k = 0;
+		}
+
+		if (world.gotFocus > -1) {
+			trueorg = world.Sprite[world.gotFocus].x;
+			penguin = world.Sprite[world.gotFocus].y;
+			k = world.gotFocus;
+		}
+
+		//if gotFocus <> -1 Then
+		//CameraX = (Sprite(gotFocus).x + (Sprite(gotFocus).wide * 0.5)) - 320
+		//if CameraX < 1 Then CameraX = 1
+		//if CameraX + CameraWidth >= cameraStopX Then CameraX = cameraStopX - 1 - CameraWidth
+		//CameraY = (Sprite(gotFocus).y + (Sprite(gotFocus).high * 0.5)) - 240
+		//if CameraY < 1 Then CameraY = 1
+		//if CameraY + CameraHeight >= cameraStopY Then CameraY = cameraStopY - 1 - CameraHeight
+		//End if
+
+		if (world.gotFocus != -1) {
+			world.CameraX = (trueorg + (world.Sprite[k].wide * 0.5)) - 320;
+			if (world.CameraX < 1) { world.CameraX = 1; }
+			if (world.CameraX + world.CameraWidth >= world.cameraStopX) {
+				world.CameraX = world.cameraStopX - 1 - world.CameraWidth;
+			}
+			world.CameraY = (penguin + (world.Sprite[k].high * 0.5)) - 240;
+			if (world.CameraY < 1) { world.CameraY = 1; }
+			if (world.CameraY + world.CameraHeight >= world.cameraStopY) {
+				world.CameraY = world.cameraStopY - 1 - world.CameraHeight;
+			}
+		}
+
+
+
+		//-----------------------------------------------------------
+		//START OF NORMAL ROUTINE
+		//------------------------------------------------------------
+
+
+
+
+
+
+
+		//Rem-FLICKER-
+		for (j = 0; j < world.spritesInUse; ++j) {
+
+			if (boost::starts_with(world.screen, "level")) {
+				int sopoer;
+				//TSNOW: This may be wrong- old code was:
+				//       sopoer = Val(right(left(screen, 6), 1))
+				sopoer = boost::lexical_cast<double>(world.screen.substr(6));
+				this->levelR(sopoer, j);
+			}
+
+			{
+				auto & s = world.Sprite[j];
+
+				if (s.trueVisible != 0) {
+					if (s.trueVisible == 1) { s.visible = true; }
+					if (s.trueVisible == 2) { s.visible = false; }
+					//s.trueVisible = 0
+				}
+
+				if (s.flickerTime > world.clock) {
+					if (s.trueVisible == 0) {
+						if (s.visible == false) { s.trueVisible = 2; }
+						if (s.visible == true) { s.trueVisible = 1; }
+					}
+
+					if (s.flickOn == true) { s.visible = false; }
+					if (s.flickOn == false) { s.visible = true; }
+					if (s.flickOn == true) {
+						s.flickOn = false;
+					}
+					else {
+						s.flickOn = true;
+					}
+				}
+			}
+		}
+
+
+		//Rem-------------------------------------------------------------------
+		//               THIS SECTION DOES THE JUMPING
+		//Rem-------------------------------------------------------------------
+		//The ancient key from the past?!!
+		//crapple = clock - jumptime(j)
+		//z(j) = jumpstart(j) + (jumpstrength(j) * crapple) - (gravity * (crapple ^ 2))
+		//If z(j) < 0 Then z(j) = 0: jumptime(j) = 0
+
+		for (j = 0; j < world.spritesInUse; ++j) {
+			auto & s = world.Sprite[j];
+
+			if (s.jumpTime != 0) {
+				s.lastJump = s.z;
+				//z=jt+(JS*T*2)-(g*t)*2^2
+				if (s.jumpM == 0) { s.jumpM = 1; }
+				s.z = s.jumpStart
+					+ (
+					(s.jumpStrength * s.jumpM)
+						* ((world.clock - s.jumpTime) * 2)
+						)
+					- (
+						world.Gravity
+						* std::pow(((world.clock - s.jumpTime) * 2), 2)
+						);
+				//
+				if (s.z < 0) { s.z = 0; s.jumpTime = 0; s.jumpM = 1; }
+			}
+			else {
+
+				//REM------------------------------------------------------
+				//  THis is the added gravity that pulls them down   if the're in the ares.
+				if (s.z > 0) { s.z = s.z - world.sFactor; }
+			}
+		}
+
+
+
+		for (j = 0; j < world.spritesInUse; ++j) {
+			auto & s = world.Sprite[j];
+			//Rem-If s.time > clock Then GoTo gotDog
+			//.time = clock + .speed
+			//Rem---------------------------------------------------------------
+			//'               THIS SECTION UPDATES THE DAVID SPRITE
+			//Rem---------------------------------------------------------------
+
+			if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
+				penguin = 0;
+				if (j == 0) { penguin = 0; }
+				if (j == 10) { penguin = 1; }
+				if (j == 20) { penguin = 2; }
+
+				if (world.upKey[penguin] == true) {
+					if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
+					s.y = s.y - world.sFactor;
+					//s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
+					s.speed = 0; //0.00001
+					if (s.y < world.CameraY) { s.y = world.CameraY; }
+				}
+				if (world.DownKEY[penguin] == true) {
+					if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
+					s.y = s.y + world.sFactor;
+					//s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
+					s.speed = 0; //0.00001
+					if (s.y > world.CameraY + world.CameraHeight - s.high) {
+						s.y = world.CameraY + world.CameraHeight - s.high;
+					}
+				}
+				if (world.LeftKEY[penguin] == true) {
+					if (s.dir != "l" && world.upKey[penguin] == false
+						&& world.DownKEY[penguin] == false) {
+						s.dir = "l";
+						s.frame = 14;
+					}
+					s.x = s.x - world.sFactor;
+					//s.Frame = s.Frame + 1: if s.Frame > 12 Then s.Frame = 10
+					s.speed = 0;  //0.00001
+					if (s.x < world.CameraX) { s.x = world.CameraX; }
+				}
+				if (world.RightKEY[penguin] == true) {
+					if (s.dir != "r" && world.upKey[penguin] == false
+						&& world.DownKEY[penguin] == false) {
+						s.dir = "r";
+						s.frame = 2;
+					}
+					s.x = s.x + world.sFactor;
+					//s.Frame = s.Frame + 1: if s.Frame > 3 Then s.Frame = 1
+					s.speed = 0;  //0s.00001
+
+					if (s.x > world.CameraX + world.CameraWidth - s.wide) {
+						s.x = world.CameraX + world.CameraWidth - s.wide;
+					}
+				}
+
+
+				if (s.z == 0) { s.multiJump = 0; }
+
+				if (s.name == "Nicky" && world.JumpKey[penguin] == true
+					&& s.multiJump < 3) {
+					world.JumpKey[penguin] = false;
+					//If .z = 0 Then .multiJump = 0
+					s.multiJump = s.multiJump + 1;
+					s.jumpStart = s.z;
+					s.jumpTime = world.clock;
+				}
+
+
+				if (world.JumpKey[penguin] == true && s.z == 0) {
+
+					s.jumpStart = s.z;
+					s.jumpTime = world.clock;
+				}
+
+				//Check for a lack of movement
+				if (world.weapon[j / 10] == "bomb") {
+					if (world.AttackKey[penguin] == true
+						&& s.miscTime < world.clock) {
+						for (k = j + 1; k < j + 10; ++k) {
+							if (world.Sprite[k].name == "reserved"
+								|| world.Sprite[k].name == "") {
+								break;
+							}
+							if (k == j + 9) {
+								k = j + 10;
+								break;
+							}
+						}
+						if (k == j + 10) { goto noammo; }
+						world.Sprite[k].speed = 0; //0.00001
+						world.Sprite[k].name = "bomb";
+						world.Sprite[k].x = s.x;
+						world.Sprite[k].y = s.y;
+						world.Sprite[k].z = s.z; //- (Sprite(0).length);
+						world.Sprite[k].wide = 30 * (world.GradeUp[j / 10] + 1);
+						world.Sprite[k].high = 30 * (world.GradeUp[j / 10] + 1);
+						world.Sprite[k].jumpStart = s.jumpStart;
+						world.Sprite[k].jumpStrength = s.jumpStrength;
+						world.Sprite[k].jumpTime = s.jumpTime;
+						world.Sprite[k].length = 15;
+						world.Sprite[k].texture = world.Sprite[j].texture;
+						world.Sprite[k].visible = true;
+						world.Sprite[k].frame = 1;
+						world.Sprite[k].trueVisible = 1;
+						world.Sprite[k].kind = 0;
+						world.Sprite[k].mode = "";
+						world.Sprite[k].miscTime = world.clock + 3;
+						world.Sprite[k].parent = j;
+						sound.PlaySound("set bomb");
+						//LoadSound k, "fireball.wav"
+						//PlaySound "fireball"
+						s.miscTime = world.clock + 0.25;
+
+					noammo:
+						int five = 5; // appease C++ label need?
+					}
+				} //Nicky Bomb
+
+			} // TODO:REMOVE
+		} // TODO:REMOVE
     }
+	//     End Sub for playGame--------------------------------------------!!!
+	//     End Sub for playGame--------------------------------------------!!!
+	//     End Sub for playGame--------------------------------------------!!!
+	//     End Sub for playGame--------------------------------------------!!!
 
 	void TimedEvents() {
 		//Rem- Sub for the laid back peacefully timed things, like animation
@@ -234,7 +566,7 @@ private:
             }
 
             // abs(x2-x1)^2+abs(y2-y1)^2
-            int buttcat = lp3::narrow<int>(
+            const int buttcat = lp3::narrow<int>(
                 std::sqrt(
                     std::pow(
                         std::abs(world.Sprite[penguin * 10].x
@@ -414,7 +746,8 @@ private:
     }
 
     long findPlayers() {
-        LP3_ASSERT(false); // TODO
+		LP3_LOG_WARNING("TODO: IMPLEMENT!");
+		return 0;
     }
 
     void findQ(const std::string & who) {
