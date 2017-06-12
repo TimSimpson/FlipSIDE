@@ -23,11 +23,9 @@ View::View(core::MediaManager & _media, World & _world)
 	font_quads(font_elements.add_quads(letters_max)),
 	game_elements(),
 	world(_world),
-	_texWidth({}),
-	_texHeight({}),
+	tex_size(),
 	bgverts({}),
-	bgWidth(0),
-	bgHeight(0)
+	bg_size()
 {
 	// Create one vertex buffer for the bgtexture
 	game_elements.emplace_back(letters_max * 4);
@@ -43,12 +41,32 @@ void View::operator()(const glm::mat4 & previous) {
 	program.use();
 	auto _2d = gfx::create_2d_screen(previous, res2d);
 	program.set_mvp(_2d);
+	
+	for (int i = 0; i < 10; ++ i) {
+		lp3::gfx::Texture * tex;
+		if (i == 0) {
+			tex = bgtexture.get();
+		} else {
+			tex = AnimationTexture[i - 1].get();
+		}
+		if (tex) {
+			program.set_texture(tex->gl_id());
+			program.draw(game_elements[i]);
+		}
+	}
+	
 	program.set_texture(font.texture().gl_id());
 	program.draw(font_elements);
 }
 
 void View::DrawStuff(float fps) {
 	// 2017- draw FPS text
+
+	// Clear theses
+	for (auto & ge : game_elements) {
+		ge.reset();
+	}
+
 	std::string s = str(boost::format("FPS: %d") % fps);
 	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
 
@@ -128,6 +146,7 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
         bgtexture.reset(load_image(fileName));
     } else {
         AnimationTexture[which].reset(load_image(fileName));
+		tex_size[which] = AnimationTexture[which]->size();
     }
 }
 
@@ -182,16 +201,16 @@ glm::ivec4 View::QBColor(int index) {
 
 int View::texWidth(int index) {
 	if (index < 0) {
-		return this->bgWidth;
+		return this->bg_size.x;
 	}
-	return this->_texWidth[index];
+	return this->tex_size[index].x;
 }
 
 int View::texHeight(int index) {
 	if (index < 0) {
-		return this->bgHeight;
+		return this->bg_size.y;
 	}
-	return this->_texHeight[index];
+	return this->tex_size[index].y;
 }
 
 void View::UpdateSprites() {
@@ -229,8 +248,8 @@ void View::UpdateSprites() {
         auto & v = this->bgverts[1];
         v.x = 0; v.y = 0;
         v.tu = lp3::narrow<float>(world.CameraX) / 
-					lp3::narrow<float>(bgWidth); 
-		v.tv = lp3::narrow<float>(world.CameraY) / lp3::narrow<float>(bgHeight);
+					lp3::narrow<float>(bg_size.x); 
+		v.tv = lp3::narrow<float>(world.CameraY) / lp3::narrow<float>(bg_size.y);
         v.rhw = 1;
         v.color = normColor;
     }
@@ -238,8 +257,8 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[2];
         v.x = 640; v.y = 480; // RealWidth; v.y = RealHeight
-        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth) / bgWidth;
-        v.tv = lp3::narrow<float>(world.CameraY + world.CameraHeight) / bgHeight;
+        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth) / bg_size.x;
+        v.tv = lp3::narrow<float>(world.CameraY + world.CameraHeight) / bg_size.y;
         v.rhw = 1;
         v.color = normColor;
     }
@@ -248,8 +267,8 @@ void View::UpdateSprites() {
         auto & v = this->bgverts[3];
         v.x = 640; v.y = 0;
         v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth) 
-				/ bgWidth; 
-		v.tv = lp3::narrow<float>(world.CameraY) / bgHeight;
+				/ bg_size.x; 
+		v.tv = lp3::narrow<float>(world.CameraY) / bg_size.y;
         v.rhw = 1;
         v.color = normColor;
     }

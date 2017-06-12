@@ -42,11 +42,9 @@ private:
 	std::vector<gfx::ElementWriter<gfx::TexVert>> game_elements;
 
 	World & world;
-	std::array<int, 10> _texWidth;
-	std::array<int, 10> _texHeight;
+	std::array<glm::vec2, 10> tex_size;
 	std::array<Vertex, 4> bgverts;
-	int bgWidth;
-	int bgHeight;
+	glm::vec2 bg_size;
 
 	// Maps old vert array to a quad
 	inline void draw_vert_to_quad(const Vertex * v, 
