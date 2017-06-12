@@ -25,6 +25,8 @@ public:
     void LoadTexture(int which, const std::string & fileName, int howWide,
                      int howHigh);
 
+	glm::ivec4 Rgb(int r, int g, int b) const;
+
 	glm::ivec4 QBColor(int index);
 
     void UpdateSprites();

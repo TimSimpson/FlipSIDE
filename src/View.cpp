@@ -131,6 +131,14 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
     }
 }
 
+glm::ivec4 View::Rgb(int r, int g, int b) const {
+	// Emulates old VB RGB function. Named 'Rgb' due to probable windows.h
+	// issues. >:(
+	const glm::ivec4 rgb(r, g, b, 255);
+	LP3_ASSERT(rgb.r == r && rgb.g == g && rgb.b == b);
+	return rgb;
+}
+
 glm::ivec4 View::QBColor(int index) {
 	// If the code picks wrong, they get translucent yellow.
     switch(index) {
@@ -167,6 +175,7 @@ glm::ivec4 View::QBColor(int index) {
         case 15:
             return glm::ivec4{255, 255, 255, 255};
         default:
+			LP3_ASSERT(false);  // Bad color selection.
             return glm::ivec4{255, 255, 0, 128};
     }
 }

@@ -1030,6 +1030,417 @@ if (s.mode == "truck") {
                 }
             }
 
+if (s.name == "Title2") {
+                if (s.miscTime < world.clock && s.mode != "stop") {
+                    s.trueVisible = 1;
+                    s.flickerTime = world.clock + 5;
+                    s.high = s.high - 5 * world.sFactor;
+                    s.y = s.y + world.sFactor * 2.5;
+                    if (s.high < 213) {
+                        s.mode = "stop";
+                        s.flickerTime = world.clock;
+                    }
+                }
+            }
+
+            if (s.name == "Title3") {
+                if (s.miscTime < world.clock && s.mode == "stop") {
+                    world.screen = "intro story";
+                }
+                if (s.miscTime < world.clock && s.mode != "stop") {
+                    s.trueVisible = 1;
+                    s.flickerTime = world.clock + 5;
+                    s.wide = s.wide - world.sFactor * 5;
+                    s.x = s.x + world.sFactor * 2.5;
+                    if (s.wide < 640) {
+                        s.mode = "stop";
+                        s.flickerTime = world.clock;
+                        s.miscTime = world.clock + 2; //: screen = "intro story"
+                    }
+                }
+            }
+
+            if (s.name == "Selecter") {
+                if (world.clock > s.miscTime) {
+                    s.miscTime = world.clock + 0.1;  //this way, the person won't scream through the selection box because it moves at 40 FPS!
+                    //For k = 0 To 2
+                    k = j;
+                    if (s.visible == false) {
+                        if (this->anyKey(k) == 1) {
+                            s.visible = true;
+                            s.frame = k + 1;
+                        }
+                    }
+
+                    if (world.upKey[k] == true) {
+                        s.frame = s.frame - 1;
+                        if (s.frame == 0) { s.frame = 5; }
+                    }
+                    if (world.DownKEY[k] == true) {
+                        s.frame = s.frame + 1;
+                        if (s.frame == 6) { s.frame = 1; }
+                    }
+                    if (world.AttackKey[k] == true
+                        || world.JumpKey[k] == true) {
+                        s.mode = "done";
+                        s.name = "KukoFax";
+                        if (s.frame == 1) { sound.PlayWave("pickTom.wav"); }
+                        if (s.frame == 2) { sound.PlayWave("pickNick.wav"); }
+                        if (s.frame == 3) { sound.PlayWave("pickDrew.wav"); }
+                        if (s.frame == 5) { sound.PlayWave("pickNicky.wav"); }
+                    }
+                //Next k
+                }
+
+            }
+
+            if (s.name == "StageWhat") {
+                //
+                if (s.mode == "") {
+                    //playWave "conten.wav"
+                    if (s.miscTime == 0) {
+                        s.miscTime = world.clock + 2;
+                        world.Sprite[31].zOrder = -100;
+                        this->findOrder();
+                    }
+
+                    {
+                        //TSNOW: No idea why this is hardcoded.
+                        auto & s2 = world.Sprite[31];
+                        if (world.Sprite[j].miscTime > world.clock) {
+                            s2.x = world.CameraX;
+                            s2.y = world.CameraY;
+                            s2.wide = 640;
+                            s2.high = 480;
+                            s2.frame = 9;
+                            s2.texture = 9;
+                            s2.visible = true;
+                        }
+
+                        if (world.Sprite[j].miscTime < world.clock) {
+                            s2.x = s2.x + 4 * world.sFactor;
+                            s2.y = s2.y + 4 * world.sFactor;
+                            s2.wide = s2.wide - 8 * world.sFactor;
+                            s2.high = s2.high - 8 * world.sFactor;
+                            s2.zOrder = -100;
+                            if (s.wide < 0) {
+                                world.Sprite[j].mode = "?";
+                                world.Sprite[30].miscTime = world.clock + 3;
+                            }
+                        }
+                    }
+                }  //mode
+                if (s.mode == "?") {
+                    //playWave "conten.wav"
+                    {
+                        auto & s2 = world.Sprite[31];
+                        this->unstretch(31);
+                        s2.wide = s2.wide * 2;
+                        s2.high = s2.high * 2;
+
+                        //.wide = (275 - 188) * 2
+                        //.high = (376 - 353) * 2
+
+                        s2.frame = 10;
+                        s2.texture = 9;
+                        s2.visible = true;
+                        s2.zOrder = -100;
+                        this->centerSprite(31);
+                    }
+                    if (s.miscTime < world.clock) {
+                        s.mode = "2";
+                        s.name = "script";
+                        this->findOrder();
+                    }
+                }
+
+
+            }
+
+            if (s.name == "script") {
+                this->script();
+            }
+
+
+            if (s.name == "intro story") {
+                for (k = 0; k <= 2; ++ k) {
+                    if (this->anyKey(k) == 1) {
+                        world.screen = "Select Player";
+                    }
+                }
+                if (s.mode == "") {
+
+                    world.Sprite[1].invTime = 40;
+                    sound.PlayWave("introstory.wav"); // play it once then stop
+                    s.mode = "waka do";  // so it won't load non stop
+                }
+                if (world.Sprite[1].mode == "words1") {
+                    //Sprite(1).length = 6
+                    if (s.mode == "waka do") {
+                        //playWave "conSix.wav"
+                        auto & s2 = world.Sprite[1];
+                        s2.length = 3;
+                        s2.texture = 1;
+                        s2.visible = true;
+                        //s2.srcx = 2: s2.srcy = 44;
+                        //s2.srcx2 = 303: s2.srcy2 = 152;
+                        s2.srcx = 2;
+                        s2.srcy = 1;
+                        s2.srcx2 = 166;
+                        s2.srcy2 = 41;
+                        s2.wide = 164 * 2;
+                        s2.high = 40 * 2;
+                        s2.x = 1;
+                        s2.y = 178;
+                    }
+                    if (s.mode == "word 2") {
+                        auto & s2 = world.Sprite[1];
+                        s2.length = 6;
+                        s2.texture = 1;
+                        s2.visible = true;
+                        s2.srcx = 2;
+                        s2.srcy = 44;
+                        s2.srcx2 = 303;
+                        s2.srcy2 = 152;
+                        s2.wide = 301 * 2;
+                        s2.high = (152 - 44) * 2;
+                        s2.x = 1;
+                        s2.y = 178;
+                    }
+                    if (s.mode == "word 3") {
+                        auto & s2 = world.Sprite[1];
+                        s2.length = 2;
+                        s2.texture = 1;
+                        s2.visible = true;
+                        s2.srcx = 2;
+                        s2.srcy = 153;
+                        s2.srcx2 = 123;
+                        s2.srcy2 = 173;
+                        s2.wide = 121 * 2;
+                        s2.high = (20) * 2;
+                        s2.x = 1;
+                        s2.y = 178;
+                    }
+                    if (s.mode == "word 4") {
+                        auto & s2 = world.Sprite[1];
+                        s2.length = 6;
+                        s2.texture = 1;
+                        s2.visible = true;
+                        s2.srcx = 3;
+                        s2.srcy = 174;
+                        s2.srcx2 = 311;
+                        s2.srcy2 = 263;
+                        s2.wide = 308 * 2;
+                        s2.high = (89) * 2;
+                        s2.x = 1;
+                        s2.y = 178;
+                    }
+                    if (s.mode == "word 5") {
+                        s.length = 5;
+                        view.LoadTexture(-1, "open2.bmp", 320, 240);
+                        world.CameraWidth = 320;
+                        world.CameraHeight = 240;
+                        {
+                            auto & s2 = world.Sprite[1];
+                            s2.texture = 2; //1
+                            s2.visible = true;
+                            s2.srcx = 2;
+                            s2.srcy = 5;
+                            s2.srcx2 = 307;
+                            s2.srcy2 = 48;
+                            s2.wide = 305 * 2;
+                            s2.high = (43) * 2;
+                            s2.x = 2 * 2;
+                            s2.y = 173 * 2;
+                        }
+                    }
+                    if (s.mode == "word 6") {
+                        auto & s2 = world.Sprite[1];
+                        s2.length = 3;
+                        s2.texture = 2; //1
+                        s2.visible = true;
+                        s2.srcx = 2;
+                        s2.srcy = 51;
+                        s2.srcx2 = 311;
+                        s2.srcy2 = 71;
+                        s2.wide = 309 * 2;
+                        s2.high = (20) * 2;
+                        //.x = 1: .y = 178
+                    }
+                    if (s.mode == "word 7") {
+                        {
+                            auto & s2 = world.Sprite[1];
+                            s2.length = 4;
+                            //s2.texture = 1;
+                            s2.visible = true;
+                            s2.srcx = 2;
+                            s2.srcy = 75;
+                            s2.srcx2 = 295;
+                            s2.srcy2 = 117;
+                            s2.wide = 293 * 2;
+                            s2.high = (42) * 2;
+                            //s2.x = 1: s2.y = 178;
+                        } //end with
+                    }
+                    if (s.mode == "word 8") {
+                        {
+                            auto & s2 = world.Sprite[1];
+                            s2.length = 6;
+                            //s2.texture = 1;
+                            s2.visible = true;
+                            s2.srcx = 2;
+                            s2.srcy = 120;
+                            s2.srcx2 = 294;
+                            s2.srcy2 = 185;
+                            s2.wide = 292 * 2;
+                            s2.high = (65) * 2;
+                            //s2.x = 1: s2.y = 178;
+                        } //end with
+                    }
+                    if (s.mode == "word 9") {
+                        view.LoadTexture(-1, "open3.bmp", 320, 240);
+                        {
+                            auto & s2 = world.Sprite[1];
+                            //.texture = 1
+                            s.length = 6;
+                            s.visible = true;
+                            s.srcx = 2;
+                            s.srcy = 189;
+                            s.srcx2 = 305;
+                            s.srcy2 = 254;
+                            s.wide = 303 * 2;
+                            s.high = (65) * 2;
+                            //.x = 1: .y = 178
+                        } //end with
+                    }
+                    if (s.mode == "word 10") {
+                        view.LoadTexture(-1, "open4.bmp", 320, 240);
+                        {
+                            auto & s2 = world.Sprite[1];
+                            s2.length = 6;
+                            s2.texture = 3;
+                            s2.visible = true;
+                            s2.length = 7;
+                            s2.srcx = 1;
+                            s2.srcy = 4;
+                            s2.srcx2 = 312;
+                            s2.srcy2 = 69;
+                            s2.wide = 313 * 2;
+                            s2.high = (65) * 2;
+                            //.x = 1: .y = 178
+                        } //end with
+                    }
+                    if (s.mode == "word 11") {
+                        view.LoadTexture(-1, "open5.bmp", 320, 240);
+                        {
+                            auto & s2 = world.Sprite[1];
+                            s2.length = 6;
+                            //s2.texture = 1;
+                            s2.visible = true;
+                            s2.srcx = 1;
+                            s2.srcy = 72;
+                            s2.srcx2 = 258;
+                            s2.srcy2 = 115;
+                            s2.wide = 259 * 2;
+                            s2.high = (43) * 2;
+                            s2.x = 58 * 2;
+                            s2.y = 188 * 2;
+                        }
+                    }
+                    if (s.mode == "word 12") {
+                        //if (s.miscTime < clock) then
+                        //killS (1)
+                        view.LoadTexture(-1, "plainblack.bmp", 320, 240);
+                        s.mode = "word 13";
+                        {
+                            auto & s2 = world.Sprite[1];
+                            s2.invTime = 10;
+                            s2.length = 6;
+                            //s2.miscTime = 0;
+                            s2.mode = "words1";
+                            s2.texture = 4;
+                            s2.visible = true;
+                            s2.srcx = 1;
+                            s2.srcy = 1;
+                            s2.srcx2 = 320;
+                            s2.srcy2 = 240;
+                            s2.wide = 320 * 2;
+                            s2.high = (240) * 2;
+                            s2.x = 1;
+                            s2.y = 1;
+                            world.Sprite[0].mode = "KILLDEATH";
+                        }
+                        //End If
+                    }
+
+                }
+                if (world.Sprite[1].mode == "words2") {
+                    //playWave "conzero.wav"
+                    world.Sprite[1].mode = "words1";
+                    s.miscTime = 0;
+                    if (s.mode == "word 11") {
+                        s.mode = "word 12"; //: .miscTime = clock + 3: Sprite[1].length = 0
+                    }
+                    if (s.mode == "word 10") {
+                        s.mode = "word 11"; //: Sprite[1].length = 0
+                    }
+                    if (s.mode == "word 9") { s.mode = "word 10"; }
+                    if (s.mode == "word 8") { s.mode = "word 9"; }
+                    if (s.mode == "word 7") { s.mode = "word 8"; }
+                    if (s.mode == "word 6") { s.mode = "word 7"; }
+                    if (s.mode == "word 5") { s.mode = "word 6"; }
+                    if (s.mode == "word 4") { s.mode = "word 5"; }
+                    if (s.mode == "word 3") { s.mode = "word 4"; }
+                    if (s.mode == "word 2") { s.mode = "word 3"; }
+                    if (s.mode == "waka do") { s.mode = "word 2"; }
+                }
+            }
+
+            //WORDS 1
+            if (s.name == "words1") {
+
+                if (s.mode == "words1") {
+                    if (s.miscTime < 255) {
+                        s.miscTime = s.miscTime + (world.sFactor * s.invTime);
+                        //0s.3 * sFactor
+                        s.color = view.Rgb(s.miscTime, s.miscTime, s.miscTime);
+                    }
+                    if (s.miscTime > 245) {
+                        //playWave "conten.wav"
+                        s.color = view.QBColor(15);
+                        s.mode = "words1b";
+                        s.miscTime = world.clock + s.length;
+                    }
+                }
+
+                if (world.Sprite[0].mode == "KILLDEATH" && s.mode == "words1b") {
+                    s.name = "";
+                }
+
+                if (s.mode == "words1b" && s.miscTime < world.clock) {
+                    s.mode = "words1c";
+                    s.miscTime = 255;
+                }
+
+                if (s.mode == "words1c") {
+                    if (s.miscTime > 0) {
+                        s.miscTime = s.miscTime - (world.sFactor * 20); //0.3 * sFactor
+                        if (s.miscTime > 0) {
+                            s.color = view.Rgb(s.miscTime, s.miscTime, s.miscTime);
+                        }
+                    }
+                    if (s.miscTime < 1) {
+                        //playWave "conten.wav"
+                        s.color = view.QBColor(0);
+                        s.mode = "words2";
+                    }
+                }
+
+            }
+
+
+            //playWave "conten.wav"
+
 
 
 
