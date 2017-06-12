@@ -1441,14 +1441,182 @@ if (s.name == "Title2") {
 
             //playWave "conten.wav"
 
+            if (s.name == "frontdoor") {
+                if (this->findQ("Kerbose") < 1) {
+                    this->killS(j);
+                    s.name = "exit";
+                    this->cinemaM(2);
+                }
+            }
+
+            if (s.name == "exit") {
+                //TSNOW: This looks to step up by 10 so should only iterate
+                //       the loop once, but that's what the old code did.
+                for (penguin = 0; penguin <= 2; k+= 10) {
+                    if (this->hitdetection(j, penguin) != 0
+                        && world.Sprite[penguin].name
+                        == world.playerName[(penguin / 10)]) {
+                        world.exitS = "true";
+                    }
+                }
+            }
+
+            if (s.name == "tdigger") {
+                if (s.mode == "") {
+                    this->unstretch(j);
+                    //TSNOW: Another funky step 10 loop.
+                    for (penguin = 0; penguin <= 2; penguin += 10) {
+                        if (this->hitdetection(j, penguin, true) == 5
+                            && world.Sprite[penguin].name
+                            == world.playerName[(penguin / 10)]) {
+                            s.mode = "runner";
+                            s.seekx = world.cameraStopX;
+                            //.mhp = 10
+                            s.kind = 2;
+                            s.deathType = "expand";
+                            //.hp = 1
+                            s.reverse = true;
+                        }
+                    }
+                }
+
+                if (s.target != 0 || s.target == -1) {
+                    s.target = this->checkProx(j); //pickTarget(j, 1)
+                    s.seekx = this->getMiddleX(s.target);
+                    s.seeky = this->getMiddleY(s.target);
+                }
+
+                if (s.mode == "runner") {
+                    if (this->getProx(j, s.target) > 50) {
+                        s.seekx = this->getMiddleX(s.target);
+                    }
+                    if (this->getProx(j, s.target) < 50) {
+                        s.mph = s.mph - 1;
+                        if (s.mph < -90) {
+                            s.seekx = this->getMiddleX(s.target);
+                            s.mph = 10;
+                        }
+                    }
+                    s.seeky = this->getMiddleY(s.target);
+                    if (this->getProx(j, s.target) < 100) {
+                        s.mph = (this->getProx(j, s.target)) / 100;
+                    } else {
+                        s.mph = 10;
+                    }
+                    if (this->getProx(j, s.target) == 0) {
+                        s.seekx = world.Sprite[s.target].x;
+                        s.seeky = world.Sprite[s.target].y;
+                    }
+
+                    this->seeker(j);
+
+                    //Stop
+                    //if (sgetMiddleX(.target) > getMiddleX(j)) then .x = .x + (sFactor * 3)
+                    //if (sgetMiddleX(.target) < getMiddleX(j)) then .x = .x - (sFactor * 3)
+
+                    //if (sgetMiddleY(.target) > getMiddleY(j)) then .y = .y + (sFactor * 1)
+                    //if (sgetMiddleY(.target) < getMiddleY(j)) then .y = .y - (sFactor * 1)
+                }
+
+            }
 
 
+            if (s.name == "expand") {
+                s.kind = 0;
+                //if (s.mode = "runner") then
+                s.frame = 3;
+                s.SpriteVerts[0].rhw
+                    = s.SpriteVerts[0].rhw + (0.01 * world.sFactor);
+                s.SpriteVerts[3].rhw
+                    = s.SpriteVerts[3].rhw + (0.01 * world.sFactor);
+                s.wide = s.wide + (world.sFactor);
+                s.x = s.x - (world.sFactor / 2);
+                s.high = s.high + (world.sFactor);
+                s.y = s.y - (world.sFactor / 2);
+                if (s.SpriteVerts[3].rhw > 2) {
+                    s.name = "harharhar";
+                    this->initSprites(j); //: killS j
+                }
+            }
 
-        } // TODO:REMOVE
+            if (s.name == "harharhar") {
+                if (s.flickerTime < world.clock) {
+                    this->killS(j);
+                }
+            }
 
-        LP3_ASSERT(false);
+
+            if (s.name == "dead") {
+                //Stop
+                if ((j / 10) == 0) {
+                    s.x = world.CameraX + 10;
+                }
+                if ((j / 10) == 1) {
+                    s.x = world.CameraX + 250;
+                    s.color = view.QBColor(10);
+                }
+                if ((j / 10) == 2) {
+                    s.x = world.CameraX + 450;
+                    s.color = view.QBColor(14);
+                }
+                s.y = world.CameraY + 10;
+                s.frame = 0;
+                s.visible = false;
+                s.srcx = 2;
+                s.srcy = 363;
+                s.srcx2 = 96;
+                s.srcy2 = 379;
+                s.texture = 0;
+                s.visible = true;
+            }
+
+        //2017- unused label: gotDog: //end of if their ready timer thing
+            { int cplusplusNoLikeEmptyLabelHack = 42; }
+        }
+        //TSNOW: end of the emulated with statement that creates variable "s",
+        //       along with the for loop that used the "j" variable.
+        //       Holy crap, after formatting that it's 1259 lines long.
+        //       In Visual Basic it was 910 lines long.
+
+        //---------------------------------------------------------------------
+        //      END OF AN ERA
+        //---------------------------------------------------------------------
+
+        view.UpdateSprites();
+
+        for (j = 0; j <= world.spritesInUse; ++ j) {
+            //If Sprite(j).mover = True Then
+            for (k = j + 1; k <= world.spritesInUse; ++k) {
+                if (world.Sprite[j].kind == 0) { goto fthis2; }
+                if (world.Sprite[k].kind == world.Sprite[j].kind
+                    || world.Sprite[k].kind == 0) {
+                    goto fthis2;
+                }
+                //If Sprite(k).mover = False And Sprite(j).mover = False Then GoTo fthis2
+                //If k = 1 And j = 31 Then Stop
+                if (this->hitdetection(j, k) != 0) {
+                    this->checkHit(j, k);
+                }
+            fthis2:
+                {int cplusplusNoLikeEmptyLabelHack = 128; }
+            }
+
+        }
+
+        this->flipGame();
+        world.gpRate2 = world.gpRate2 + 1;
+        if (world.clock > world.cranBerry2) {
+            world.cranBerry2 = (world.clock + 1);
+            world.gpRate = world.gpRate2;
+            world.gpRate2 = 0;
+        }
+        for (j = 0; j < world.spritesInUse; ++ j) {
+            world.Sprite[j].lastX = world.Sprite[j].x;
+            world.Sprite[j].lastY = world.Sprite[j].y;
+        }
+
     }
-	//     End Sub for playGame--------------------------------------------!!!
+    //     End Sub for playGame--------------------------------------------!!!
 	//     End Sub for playGame--------------------------------------------!!!
 	//     End Sub for playGame--------------------------------------------!!!
 	//     End Sub for playGame--------------------------------------------!!!
@@ -1767,8 +1935,9 @@ private:
 		return 0;
     }
 
-    void findQ(const std::string & who) {
+    int findQ(const std::string & who) {
         LP3_ASSERT(false); // TODO
+        return 0;
     }
 
 	void gameOver() {
@@ -1799,14 +1968,17 @@ private:
 
     double getMiddleX(int who) {
         LP3_ASSERT(false); // TODO
+		return 0.0;
     }
 
     double getMiddleY(int who) {
         LP3_ASSERT(false); // TODO
+		return 0.0;
     }
 
     double getProx(int who, int who2) {
         LP3_ASSERT(false); // TODO
+		return 0.0;
     }
 
 	void goToLevel(const double which) {
@@ -1921,6 +2093,7 @@ private:
 
     long hitdetection(int num1, int num2, bool whatKind=false) {
         LP3_ASSERT(false); // TODO
+		return 0l;
     }
 
     void initPlayers() {
