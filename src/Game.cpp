@@ -1930,9 +1930,39 @@ private:
         }
     }
 
-    long findPlayers() {
-		LP3_LOG_WARNING("TODO: IMPLEMENT!");
-		return 0;
+    void findPlayers() {
+		world.numberPlayers = 0;
+        if (world.playerName[0] == "") { world.playerName[0] = "zgjkl"; }
+        if (world.playerName[1] == "") { world.playerName[1] = "zgjkl"; }
+        if (world.playerName[2] == "") { world.playerName[2] = "zgjkl"; }
+
+
+        if (world.Sprite[0].name == world.playerName[0]) {
+            world.numberPlayers = 1;
+        }
+        if (world.Sprite[10].name == world.playerName[1]) {
+            world.numberPlayers = 4;
+        }
+        if (world.Sprite[20].name == world.playerName[2]) {
+            world.numberPlayers = 5;
+        }
+        if (world.Sprite[0].name == world.playerName[0]
+            && world.Sprite[10].name == world.playerName[1]) {
+            world.numberPlayers = 2;
+        }
+        if (world.Sprite[0].name == world.playerName[0]
+            && world.Sprite[20].name == world.playerName[2]) {
+            world.numberPlayers = 6;
+        }
+        if (world.Sprite[10].name == world.playerName[1]
+            && world.Sprite[20].name == world.playerName[2]) {
+            world.numberPlayers = 7;
+        }
+        if (world.Sprite[0].name == world.playerName[0]
+            && world.Sprite[10].name == world.playerName[1]
+            && world.Sprite[20].name == world.playerName[2]) {
+            world.numberPlayers = 3;
+        }
     }
 
     int findQ(const std::string & who) {

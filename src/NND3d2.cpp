@@ -1617,21 +1617,6 @@ playBGM "Player Select.wav"
 playWave "Select your characters of justice.wav"
 
 End Sub
-Function findPlayers() As Long
-numberPlayers = 0
-If playerName(0) = "" Then playerName(0) = "zgjkl"
-If playerName(1) = "" Then playerName(1) = "zgjkl"
-If playerName(2) = "" Then playerName(2) = "zgjkl"
-
-
-If Sprite(0).name = playerName(0) Then numberPlayers = 1
-If Sprite(10).name = playerName(1) Then numberPlayers = 4
-If Sprite(20).name = playerName(2) Then numberPlayers = 5
-If Sprite(0).name = playerName(0) And Sprite(10).name = playerName(1) Then numberPlayers = 2
-If Sprite(0).name = playerName(0) And Sprite(20).name = playerName(2) Then numberPlayers = 6
-If Sprite(10).name = playerName(1) And Sprite(20).name = playerName(2) Then numberPlayers = 7
-If Sprite(0).name = playerName(0) And Sprite(10).name = playerName(1) And Sprite(20).name = playerName(2) Then numberPlayers = 3
-End Function
 
 Function findQ(who As String) As Integer
 Dim opera As Integer
