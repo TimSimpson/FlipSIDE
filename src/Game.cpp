@@ -15,9 +15,10 @@ namespace {
 class Game::GameImpl
 {
 public:
-    GameImpl(View & _view, Sound & _sound,
+    GameImpl(View & _view, Sound & _sound, Vb & vb,
              World & _world)
-    :   view(_view),
+    :   vb(vb),
+		view(_view),
         sound(_sound),
         world(_world)
     {
@@ -627,15 +628,414 @@ public:
                                 world.Sprite[k + 1].dir = "r";
                             }
                         }
+if (s.mode == "truck") {
+                            world.Sprite[k].seeky
+                                = world.CameraY - world.CameraHeight;
+                                world.Sprite[k].seekx = s.x;
+                                world.Sprite[k].dir = "u";
+                        }
+                        //Sprite(1).visible = True
+                        for (trueorg = k; trueorg <= k + 2; ++ trueorg) {
+                            world.Sprite[trueorg].speed = 0;  //0.00001
+                            world.Sprite[trueorg].name = "fireball";
+                            world.Sprite[trueorg].mph = 3;
+                            world.Sprite[trueorg].x = s.x;
+                            world.Sprite[trueorg].y = s.y;
+                            world.Sprite[trueorg].z = s.z; //- (world.Sprite[0).lengh)
+                            world.Sprite[trueorg].wide
+                                = 30 * (world.GradeUp[j / 10] + 1);
+                            world.Sprite[trueorg].high
+                                = 30 * (world.GradeUp[j / 10] + 1);
+                            world.Sprite[trueorg].length = 15;
+                            world.Sprite[trueorg].texture
+                                = world.Sprite[j].texture;
+                            world.Sprite[trueorg].visible = true;
+                            world.Sprite[trueorg].kind = 3;
+                            world.Sprite[trueorg].frame = 1;
+                            world.Sprite[trueorg].soundFile = "fireball.wav";
+                            world.Sprite[trueorg].parent = j;
+                        }
+                        //LoadSound k, "fireball.wav"
+                        sound.PlaySound("fireball");
+                        s.miscTime = world.clock + 0.25;
+                outofammo3:
+                        { const int cplusplusNoLikeEmptyLabelHack = 5; }
+                    }
+                } //if thomas if
 
-                    }//TODO: REMOVE
-                }//TODO:REMOVE
-            } // TODO:REMOVE
+
+                if (world.upKey[penguin] == false
+                    && world.DownKEY[penguin] == false
+                    && world.LeftKEY[penguin] == false
+                    && world.RightKEY[penguin] == false) {
+                    if (s.dir == "r") { s.frame = 2; }
+                    if (s.dir == "l") { s.frame = 14; }
+                    if (s.dir == "u") { s.frame = 6; }
+                    if (s.dir == "d") { s.frame = 10; }
+                    s.speed = 0;
+                }
+
+            } //-End of David Sprite If
+
+            //- END OF DAVID SPRITE--------------------------------------------
+            //
+            //Rem--------------------------------------------------------------
+
+
+            if (s.name == "goomba") {
+                this->seeker(j);
+
+                if (s.x == s.seekx && s.y == s.seeky) {
+                    k = (int)(vb.Rnd() * 4) + 1;
+                    s.seekx = s.x;
+                    s.seeky = s.y;
+                    if (k == 1) { s.seekx = s.x + 25; }
+                    if (k == 2) { s.seekx = s.x - 25; }
+                    if (k == 3) { s.seeky = s.y + 25; }
+                    if (k == 4) { s.seeky = s.y - 25; }
+                    if ((s.seekx + s.wide) > 640) { s.seekx = 640 - s.wide; }
+                    if (s.seekx < 1) { s.seekx = 0; }
+                    if ((s.seeky + s.high) > 480) { s.seeky = 480 - s.high; }
+                    if (s.seeky < 1) { s.seeky = 0; }
+                }
+            }
+
+            if (s.name == "Kerbose Death") {
+                //.flickerTime = clock + 2
+                //if (.color = QBColor(1) Then .color = normColor Else .color = QBColor(1)
+                if (s.miscTime < world.clock) {
+                    s.name = "";
+                    s.visible = false;
+                    s.trueVisible = 2;
+                    s.flickerTime = world.clock + 1;
+                }
+            }
+
+            if (s.name == "Kerbose") {
+                k = (int) (vb.Rnd() * 2) + 1;
+                if (k == 1) { s.x = s.x + world.sFactor; }
+                if (k == 2) { s.x = s.x - world.sFactor; }
+                k = (int) (vb.Rnd() * 2) + 1;
+                if (k == 1) { s.y = s.y + world.sFactor; }
+                if (k == 2) { s.y = s.y - world.sFactor; }
+                k = (int) (vb.Rnd() * 20) + 1;
+                if (k == 1) {
+                    if (s.z == 0) {
+                        s.jumpStart = s.z;
+                        s.jumpTime = world.clock;
+                    }
+                }
+            }
+
+
+
+            if (s.name == "fireball") {
+
+                if (world.slicer[s.parent / 10] == true) {
+                    if (s.color == view.QBColor(2)) {
+                        s.color = view.QBColor(15);
+                    }
+                    if (s.color == view.QBColor(7)) { s.color = view.QBColor(2); }
+                    if (s.color == view.QBColor(10)) { s.color = view.QBColor(7); }
+                    if (s.color == view.QBColor(14)) {s.color = view.QBColor(10); }
+                    if (s.color == view.QBColor(1)) {s.color = view.QBColor(14); }
+                    if (s.color == view.QBColor(4)) { s.color = view.QBColor(1); }
+                    if (s.color == view.QBColor(15)) { s.color = view.QBColor(4); }
+
+                    if ((int) (vb.Rnd() * 1) == 1) {
+                        s.jumpStrength = 75;
+                        s.maxJump = 2;
+                        this->makeJump(j);
+                    }
+
+                }
+
+
+                s.frame = s.frame + 1;
+                if (s.dir == "r") {
+                    if (s.frame > 3) { s.frame = 1; }
+                }
+                if (s.dir == "l") {
+                    if (s.frame > 6) { s.frame = 4; }
+                }
+                if (s.dir == "u") {
+                    if (s.frame > 9) { s.frame = 7; }
+                }
+                if (s.dir == "d") {
+                    if (s.frame > 12) { s.frame = 10; }
+                }
+                //Rem----------------------
+                s.flickerTime = world.clock + 1;
+                if (s.x < s.seekx) { s.x = s.x + (s.mph * world.sFactor); }
+                if (s.x > s.seekx) { s.x = s.x - (s.mph * world.sFactor); }
+                if (s.y < s.seeky) { s.y = s.y + (s.mph * world.sFactor); }
+                if (s.y > s.seeky) { s.y = s.y - (s.mph * world.sFactor); }
+                //.wide = .wide + 1
+                //.high = .high + 1
+                //if (.x = .seekx And .y = .seeky Or (.x + .wide) < 1 Or .x > 640 Or (.y + .high) < 1 Or .y > 480 Then .visible = False: .name = "reserved"
+                //if (.x >= .seekx And .x <= (.seekx + .mph) And .y >= .seeky And .y <= (.seeky + .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
+                //if (.x <= .seekx And .x >= (.seekx - .mph) And .y <= .seeky And .y >= (.seeky - .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
+                if (s.x > (world.CameraX + world.CameraWidth)
+                    || s.x < (world.CameraX - world.CameraWidth)
+                    || s.y > (world.CameraY + world.CameraHeight)
+                    || s.y < (world.CameraY - world.CameraHeight)) {
+                    s.visible = false;
+                    s.flickerTime = 0;
+                    s.name = "reserved";
+                    s.trueVisible = 2;
+                }
+
+                this->offCameraKill(j);
+            }
+
+            if (s.name == "bomb") {
+                s.frame = s.frame + 1;
+                if (s.mode != "explode") {
+                    if (s.frame > 3) { s.frame = 2; }
+                }
+                if (s.mode == "explode") {
+                    if (s.frame > 5) { s.frame = 4; }
+                }
+                if (s.kind == 3 && s.miscTime < world.clock) {
+                    s.visible = false;
+                    s.flickerTime = 0;
+                    s.name = "reserved";
+                    s.trueVisible = 2;
+                    s.kind = 0;
+                    goto fuddle;
+                }
+                if (s.kind == 3) {
+                    goto fuddle;
+                }
+                if (s.kind == 0 && s.miscTime > world.clock) {
+                    goto fuddle;
+                }
+                s.kind = 3;
+                s.miscTime = world.clock + 1;
+                s.mode = "explode";
+                sound.PlaySound("bomb explode");
+                s.flickerTime = world.clock + 1;
+            fuddle:
+                { int cplusplusNoLikeEmptyLabelHack = 7; }
+            }
+
+
+            if (s.name == "falling") {
+                //.flickerTime = clock + 1
+                s.z = s.z - world.sFactor;
+                if (s.z < 1) {
+                    s.z = 1;
+                    s.name = "deceased";
+                    s.visible = false;
+                    s.trueVisible = 2;
+                    s.flickerTime = 0;
+                }
+                s.frame = s.frame + 1;
+                if (s.frame > 4) { s.frame = 3; }
+            }
+
+            if (s.name == "Dying Explosion") {
+                if (s.wide < s.seekx) {
+                    s.wide = s.wide + s.mph;
+                    s.x = s.x - (s.mph * 0.5 * world.sFactor);
+                    s.high = s.high + s.mph;
+                    s.y = s.y - (s.mph * 0.5 * world.sFactor);
+                }
+                if (s.wide >= s.seekx) {
+                    s.high = s.high - s.mph;
+                    s.y = s.y + (s.mph * 0.5 * world.sFactor);
+                    if (s.high < 1) {
+                        s.name = "deceased";
+                        s.visible = false;
+                    }
+                }
+            }
+
+            if (s.name == "Death of David") {
+                //if (.seekx = 0) then .seekx = .x: .seeky = .y
+                //if (.color = QBColor(4)) then .color = QBColor(1) Else .color = QBColor(4)
+                s.flickerTime = world.clock + 1;
+                if (s.wide < s.seekx) {
+                    s.wide = s.wide + s.mph * 3; //instead of * 3, it used to be * 0.5
+                    s.high = s.high + s.mph * 3;
+                }
+                if (s.wide >= s.seekx) {
+                    s.high = s.high - s.mph * 3;
+                    if (s.high < (-1 * s.high)) {
+                        //what to do if dead
+                        s.name = "deceased";
+                        s.visible = false;
+                        s.name = "dead";
+                        s.srcx = 2;
+                        s.srcy = 363;
+                        s.srcx2 = 96;
+                        s.srcy2 = 379;
+                        s.texture = 0;
+                        s.visible = true;
+                        world.lives[j / 10] = world.lives[j / 10] - 1;
+                        if (world.lives[j / 10] < 1) {
+                            if (world.continues > 0) {
+                                s.name = "continue";
+                                s.texture = 0;
+                                s.srcx = 3;
+                                s.srcy = 345;
+                                s.srcx2 = 96;
+                                s.srcy2 = 361;
+                                s.wide = 93; //16;
+                                s.high = 16; //93;
+                                s.frame = 0;
+                                world.Sprite[j + 1].name = "continue number";
+                                world.Sprite[j + 1].color = normColor;
+                                world.Sprite[j + 1].frame = 11;
+                                world.Sprite[j + 1].texture = 0;
+                                world.Sprite[j + 1].miscTime = world.clock + 2;
+                                this->loadAnimation(j + 1, "continue.ani");
+
+                                s.kind = 0;
+                                world.Sprite[j + 1].kind = 0;
+                                world.Sprite[j + 1].visible = true;
+                                world.Sprite[j + 1].wide = 20;
+                                world.Sprite[j + 1].high = 20;
+                                s.y = 10;
+                                world.Sprite[j + 1].y = s.y;
+                                s.y = 10;
+                                world.Sprite[j + 1].x = s.x + 100;
+                            } //end continue if
+                        } //end lives if
+                        if (world.lives[j / 10] > 0) {
+                            this->createPlayer(j, world.playerName[j / 10]);
+                            world.Sprite[j].name = world.playerName[j / 10];
+                            world.Sprite[j].kind = 1;
+                            this->initSprites(j);
+                            world.Sprite[j].flickerTime = world.clock + 5;
+                            //Sprite[j].x = .seekx: .seekx = 0
+                            //Sprite[j].y = .seekx: .seekx = 0
+
+                        }
+
+                    }
+                }
+            }
+
+            if (s.name == "continue") {
+                if (this->anyKey(j / 10) == 1) {
+                    world.continues = world.continues - 1;
+                    world.lives[j / 10] = 2;
+                    this->createPlayer(j, world.playerName[j / 10]);
+                    world.Sprite[j].name = world.playerName[j / 10];
+                    world.Sprite[j].kind = 1;
+                    world.Sprite[j].flickerTime = world.clock + 5;
+                    this->initSprites(j);
+                }
+                s.visible = true;
+                if ((j / 10) == 0) {
+                    s.x = world.CameraX + 10;
+                }
+                if ((j / 10) == 1) {
+                    s.x = world.CameraX + 250;
+                    s.color = view.QBColor(10);
+                }
+                if ((j / 10) == 2) {
+                    s.x = world.CameraX + 450;
+                    s.color = view.QBColor(14);
+                }
+                s.y = world.CameraY + 10;
+            }
+
+            if (s.name == "continue number") {
+                s.trueVisible = 1;
+                if (((j - 1) / 10) == 0) {
+                    s.x = world.CameraX + 10 + 93;
+                }
+                if (((j - 1) / 10) == 1) {
+                    s.x = world.CameraX + 250 + 93;
+                }
+                if (((j - 1) / 10) == 2) {
+                    s.x = world.CameraX + 450 + 93;
+                }
+                s.y = world.CameraY + 10;
+
+                if (s.miscTime < world.clock) {
+                    s.miscTime = world.clock + 2;
+                    s.frame = s.frame - 1;
+                    if (s.frame == 0) { s.frame = 13; }
+                    s.visible = true;
+                    if (world.continues < 1) {
+                        s.frame = 12; //this is useful, say, if two people have the choice of the last continue and one gets it before someone else
+                    }
+                    if (s.frame == 10) { sound.PlayWave("ConTen.wav"); }
+                    if (s.frame == 9) { sound.PlayWave("ConNine.wav"); }
+                    if (s.frame == 8) { sound.PlayWave("ConEight.wav"); }
+                    if (s.frame == 7) { sound.PlayWave("ConSeven.wav"); }
+                    if (s.frame == 6) { sound.PlayWave("ConSix.wav"); }
+                    if (s.frame == 5) { sound.PlayWave("ConFive.wav"); }
+                    if (s.frame == 4) { sound.PlayWave("ConFour.wav"); }
+                    if (s.frame == 3) { sound.PlayWave("ConThree.wav"); }
+                    if (s.frame == 2) { sound.PlayWave("ConTwo.wav"); }
+                    if (s.frame == 1) { sound.PlayWave("ConOne.wav"); }
+                    if (s.frame == 13) { sound.PlayWave("ConZero.wav"); }
+                    if (s.frame == 12) {
+                        world.Sprite[j - 1].name = "dead";
+                        world.Sprite[j - 1].visible = false;
+                        this->killS(j); //": .visible = False
+                    }
+                }
+            }
+
+            if (s.name == "GameOverCloudTitle") {
+                if (world.clock > s.miscTime) {
+                    s.high = s.high + 2 * world.sFactor;
+                    s.y = s.y - world.sFactor;
+                    if (s.y < 0) { s.flickerTime = world.clock + 1; }
+                    if (s.y < -300) {
+                        s.wide = s.wide - (10 * world.sFactor);
+                        s.x = s.x + 5 * world.sFactor;
+                        if (s.wide < 0) {
+                            s.visible = false;
+                            world.screen = "title";
+                        }
+                    }
+                }
+            }
+
+            if (s.name == "Title1") {
+                if (s.miscTime < world.clock) {
+                    if (s.miscTime + 3 > world.clock) {
+                        s.visible = true;
+                    } else {
+                        s.visible = false;
+                    }
+                }
+            }
+
+            if (s.name == "TitleBg1") {
+                //if (s.mode = "part2") then
+                for (k = 0; k <= 2; ++ k) {
+                    if (world.RightKEY[k] == true || world.LeftKEY[k] == true
+                        || world.upKey[k] == true || world.DownKEY[k] == true
+                        || world.AttackKey[k] == true) {
+                        world.screen = "Select Player";
+                    }
+                }
+
+                //End If
+                //if (s.mode <> "part2") then
+                //if (sRightKEY = True Or LeftKEY = True Or UpKEY = True Or DownKEY = True Or AttackKey = True) then
+                //For k = 1 To 4: Sprite(k).miscTime = clock - 100: Sprite(k).visible = False: Next k
+                //End If
+                //End If
+                if (s.miscTime < world.clock && s.mode != "part2") {
+                    s.visible = true;
+                    s.mode = "part2"; //: .miscTime = clock + 5
+                }
+            }
+
+
+
+
         } // TODO:REMOVE
 
-
-	outofammo3:  // TODO: <-- NOT ACTUALLY ADDED YET
-		LP3_ASSERT(false);
+        LP3_ASSERT(false);
     }
 	//     End Sub for playGame--------------------------------------------!!!
 	//     End Sub for playGame--------------------------------------------!!!
@@ -715,6 +1115,7 @@ public:
 	}
 
 private:
+	Vb & vb;
     View & view;
     Sound & sound;
     World & world;
@@ -790,6 +1191,10 @@ private:
     }
 
     void cinemaM(int what) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void createPlayer(int who, const std::string & what) {
         LP3_ASSERT(false); // TODO
     }
 
@@ -1208,9 +1613,8 @@ private:
 
 };	// end of GameImpl class
 
-Game::Game(View & _view, Sound & _sound,
-           World & _world)
-:   impl(new GameImpl(_view, _sound, _world)) {
+Game::Game(View & _view, Sound & _sound, Vb & vb, World & _world)
+:   impl(new GameImpl(_view, _sound, vb, _world)) {
 }
 
 Game::~Game() {

@@ -4,6 +4,7 @@
 
 #include "Sound.hpp"
 #include "World.hpp"
+#include "Vb.hpp"
 #include "View.hpp"
 
 namespace nnd3d {
@@ -21,8 +22,7 @@ namespace gfx = lp3::gfx;
 class Game
 {
 public:
-    Game(View & view, Sound & sound,
-		 World & world);
+    Game(View & view, Sound & sound, Vb & vb, World & world);
 
 	~Game();
 

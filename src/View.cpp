@@ -131,7 +131,7 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
     }
 }
 
-glm::ivec4 QBColor(int index) {
+glm::ivec4 View::QBColor(int index) {
 	// If the code picks wrong, they get translucent yellow.
     switch(index) {
         case 0:

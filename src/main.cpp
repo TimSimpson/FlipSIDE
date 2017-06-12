@@ -6,6 +6,7 @@
 
 #include "Game.hpp"
 #include "Sound.hpp"
+#include "Vb.hpp"
 #include "View.hpp"
 #include "World.hpp"
 
@@ -37,12 +38,15 @@ int _main(core::PlatformLoop & loop) {
 	core::MediaManager media;
 	input::Controls controls;
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
+	
+	
+	nnd3d::Vb vb;	
 	nnd3d::World world;
 	nnd3d::View view{ media, world };
 	nnd3d::Sound sound{ media };
 	(void)sound;
 
-	nnd3d::Game game(view, sound, world);
+	nnd3d::Game game(view, sound, vb, world);
 
 	sims::FrameTimer frame_timer;
 
