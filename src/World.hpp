@@ -25,7 +25,7 @@ struct World {
     double Gravity;
     double clock;
     std::string screen;
-    std::array<int, NUMSPRITES> drawOrder;
+    std::array<int, NUMSPRITES + 1> drawOrder;
 
     bool LemonTime; // a fun stupid cheat code that when set to true ups speed by 2.
     double cranBerry; //Used to gage frame rate
@@ -54,7 +54,7 @@ struct World {
 	int cinemaMax; //how many lines of dialogue per cinema
 	std::string exitS;
 
-    std::array<CharacterSprite, NUMSPRITES> Sprite;
+    std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
 
     int bgWidth;
     int bgHeight;
@@ -88,12 +88,12 @@ struct World {
     int ponkoMonkey;
     int dojoMonkey;
 
-    std::array<std::string, 2> KeyUp;
-    std::array<std::string, 2> KeyDown;
-    std::array<std::string, 2> KeyLeft;
-    std::array<std::string, 2> KeyRight;
-    std::array<std::string, 2> KeyAttack;
-    std::array<std::string, 2> KeyJump;
+    std::array<std::string, 3> KeyUp;
+    std::array<std::string, 3> KeyDown;
+    std::array<std::string, 3> KeyLeft;
+    std::array<std::string, 3> KeyRight;
+    std::array<std::string, 3> KeyAttack;
+    std::array<std::string, 3> KeyJump;
 
     std::string FilePath;
 

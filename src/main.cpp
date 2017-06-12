@@ -94,7 +94,7 @@ int _main(core::PlatformLoop & loop) {
 			}
 			// TODO(2017): I think the target FPS changed from 120 to 60...
 			// double check this maybe.
-			world.clock = world.clock + ((1 / 120) * world.sFactor);
+			world.clock = world.clock + world.sFactor;
 			game.PlayGame();
 		});
 

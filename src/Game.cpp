@@ -75,7 +75,7 @@ public:
     }
 
 	void OnKey(const std::string & o) {
-		for (int j = 0; j < 2; ++j) {
+		for (int j = 0; j <= 2; ++j) {
 			if (o == world.KeyUp[j]) { world.upKey[j] = true; }
 			if (o == world.KeyDown[j]) { world.DownKEY[j] = true; }
 			if (o == world.KeyLeft[j]) { world.LeftKEY[j] = true; }
@@ -99,7 +99,7 @@ public:
 	}
 
 	void OffKey(const std::string & o) {
-		for (int j = 0; j < 2; ++j) {
+		for (int j = 0; j <= 2; ++j) {
 			if (o == world.KeyUp[j]) { world.upKey[j] = false; }
 			if (o == world.KeyDown[j]) { world.DownKEY[j] = false; }
 			if (o == world.KeyLeft[j]) { world.LeftKEY[j] = false; }
@@ -1624,7 +1624,7 @@ if (s.name == "Title2") {
 	void TimedEvents() {
 		//Rem- Sub for the laid back peacefully timed things, like animation
 		//Rem- ANIMATION!
-		for (int j = 0; j < world.spritesInUse; ++j) {
+		for (int j = 0; j <= world.spritesInUse; ++j) {
 			auto & s = world.Sprite[j];
 
 			if (s.name == "Thomas" || s.name == "Nick" && s.mode != "truck") {
@@ -1794,7 +1794,7 @@ private:
             goto dogyup;
         }
 
-        for (int j = 1; j < 15; ++ j) {
+        for (int j = 1; j <= 15; ++ j) {
             sound.PlayWave("nothing.wav");
         }
 
@@ -1818,7 +1818,7 @@ private:
         penguin = world.spritesInUse;
         //If how = 2 Then goatorg = 30: penguin = 95
 
-        for (int j = goatorg; j < penguin; ++ j) {
+        for (int j = goatorg; j <= penguin; ++ j) {
             world.Sprite[j] = CharacterSprite{};
         }
     }
@@ -1832,12 +1832,12 @@ private:
         int davidorg1 = 0;
         int k = 0;
 
-        for (int j = 0; j < world.spritesInUse; ++ j) {
+        for (int j = 0; j <= world.spritesInUse; ++ j) {
          world.Sprite[j].drawTrue = false;
          world.drawOrder[j] = -150;
         }
 
-        for (int j = 0; j < world.spritesInUse; ++ j) {
+        for (int j = 0; j <= world.spritesInUse; ++ j) {
          texorg = -150;
          davidorg1 = 0;
          for (int k = 0; k < world.spritesInUse; ++ k) {
@@ -2217,8 +2217,131 @@ private:
 	void shoot(int who, const std::string & what, int wherex, int wherey) {
 		LP3_ASSERT(false); // TODO
 	}
+
 	void titleScreen() {
-		LP3_ASSERT(false); // TODO
+		int j = 0;
+
+		for (j = 0; j <= 2; ++j) {
+			world.lives[j] = 3;
+			world.continues = 2;
+		}
+
+		//playBGM ""
+
+
+		//Call loadTexture(-1, "bg.bmp", 300, 300)
+
+		this->destroyEverything();
+		sound.PlayWave("Opening.wav");
+
+		view.LoadTexture(0, "title2.bmp", 285, 427);
+		view.LoadTexture(1, "title1.bmp", 440, 427);
+		//loadTexture 2, "goomba.bmp", 240, 240
+		//Sprite(11).name = "goomba"
+		//Call initSprites(11)
+		{
+			auto & s = world.Sprite[0];
+			s.srcx = 5;
+			s.srcy = 137;
+			s.srcx2 = 324;
+			s.srcy2 = 318;
+			s.x = 1;
+			s.y = 1;
+			s.wide = 640;
+			s.high = 480;
+			s.visible = false;
+			s.name = "TitleBg1";
+			s.texture = 1;
+			s.miscTime = world.clock + 20;
+		}
+		{
+			auto & s = world.Sprite[1];
+			s.srcx = 1;
+			s.srcy = 3;
+			s.srcx2 = 196;
+			s.srcy2 = 107;
+			s.x = 0;
+			s.y = 180;
+			s.wide = 193;
+			s.high = 106;
+			s.visible = false;
+			s.name = "Title1";
+			s.miscTime = world.clock + 2;
+		}
+		{
+			auto & s = world.Sprite[2];
+			s.srcx = 2;
+			s.srcy = 111;
+			s.srcx2 = 279;
+			s.srcy2 = 230;
+			s.x = 0;
+			s.y = 174;
+			s.wide = 277;
+			s.high = 119;
+			s.visible = false;
+			s.name = "Title1";
+			s.miscTime = world.clock + 6;
+		}
+		{
+			auto & s = world.Sprite[3];
+			s.srcx = 1;
+			s.srcy = 233;
+			s.srcx2 = 224;
+			s.srcy2 = 363;
+			s.x = 0;
+			s.y = 168;
+			s.wide = 232;
+			s.high = 130;
+			s.visible = false;
+			s.name = "Title1";
+			s.miscTime = world.clock + 10;
+		}
+		{
+			auto & s = world.Sprite[4];
+			s.srcx = 1;
+			s.srcy = 366;
+			s.srcx2 = 198;
+			s.srcy2 = 424;
+			s.x = 0;
+			s.y = 228;
+			s.wide = 197;
+			s.high = 58;
+			s.visible = false;
+			s.name = "Title1";
+			s.miscTime = world.clock + 14;
+		}
+		{
+			auto & s = world.Sprite[5];
+			s.srcx = 9;
+			s.srcy = 6;
+			s.srcx2 = 348;
+			s.srcy2 = 81;
+			s.x = 1;
+			s.y = -240;
+			s.wide = 640;
+			s.high = 960;
+			s.visible = false;
+			s.name = "Title2";
+			s.miscTime = world.clock + 20;
+			s.texture = 1;
+		}
+		{
+			auto & s = world.Sprite[6];
+			s.srcx = 7;
+			s.srcy = 91;
+			s.srcx2 = 437;
+			s.srcy2 = 128;
+			s.x = -320;
+			s.y = 140 + 213;
+			s.wide = 1280;
+			s.high = 110;
+			s.visible = false;
+			s.name = "Title3";
+			s.miscTime = world.clock + 20;
+			s.texture = 1;
+		}
+
+		this->findOrder();
 	}
 
 	void unstretch(int which) {
