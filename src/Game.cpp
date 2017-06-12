@@ -3,7 +3,7 @@
 #include <boost/lexical_cast.hpp>
 
 // Avoid the zillions implicit conversion warnings
-#pragma warning(disable: 4244) 
+#pragma warning(disable: 4244)
 
 namespace nnd3d {
 
@@ -432,9 +432,210 @@ public:
 						int five = 5; // appease C++ label need?
 					}
 				} //Nicky Bomb
+ //Thomas Fire
+                if (world.weapon[j / 10] == "fireball"
+                    && world.ThreeWay[j / 10] == false) {
+                    if (world.AttackKey[penguin] == true
+                        && s.miscTime < world.clock) {
+                        for (k = j + 1; k <= j + 9; ++ k) {
+                            if (world.Sprite[k].name == "reserved"
+                                || world.Sprite[k].name == "") {
+                                break;
+                            }
+                            if (k == j + 9) {
+                                k = j + 10;
+                                break;
+                            }
+                        }
+                        if (k == j + 10) {
+                            goto outofammo;
+                        }
+                        if (s.dir == "u") {
+                            world.Sprite[k].seekx = s.x;
+                            world.Sprite[k].seeky =
+                                s.y - (world.CameraHeight * 2);
+                            world.Sprite[k].dir = "u";
+                        }
+                        if (s.dir == "d") {
+                            world.Sprite[k].seekx = s.x;
+                            world.Sprite[k].seeky =
+                                s.y + (2 * world.CameraHeight);
+                            world.Sprite[k].dir = "d";
+                        }
+                        if (s.dir == "l") {
+                            world.Sprite[k].seeky = s.y;
+                            world.Sprite[k].seekx
+                                = s.x - (world.CameraWidth * 2);
+                            world.Sprite[k].dir = "l";
+                        }
+                        if (s.dir == "r") {
+                            world.Sprite[k].seeky = s.y;
+                            world.Sprite[k].seekx
+                                = s.x + (world.CameraWidth * 2);
+                            world.Sprite[k].dir = "r";
+                        }
+                        if (world.RightKEY[penguin] == true) {
+                            world.Sprite[k].seekx
+                                = s.x + (2 * world.CameraWidth);
+                        }
+                        if (world.LeftKEY[penguin] == true) {
+                            world.Sprite[k].seekx
+                                = s.x - (world.CameraWidth * 2);
+                        }
+                        if (world.upKey[penguin] == true) {
+                            world.Sprite[k].seeky
+                                = s.y - (world.CameraHeight * 2);
+                        }
+                        if (world.DownKEY[penguin] == true) {
+                            world.Sprite[k].seeky
+                                = s.y + (world.CameraHeight * 2);
+                        }
+                        if (s.mode == "truck") {
+                            world.Sprite[k].seeky
+                                = world.CameraY - world.CameraHeight;
+                            world.Sprite[k].seekx = s.x;
+                            world.Sprite[k].dir = "u";
+                        }
+                        //Sprite(1).visible = true
+                        world.Sprite[k].speed = 0; //0.00001
+                        world.Sprite[k].name = "fireball";
+                        world.Sprite[k].mph = 3;
+                        world.Sprite[k].x = s.x;
+                        world.Sprite[k].y = s.y;
+                        world.Sprite[k].z = s.z; //- (Sprite(0).length)
+                        world.Sprite[k].wide = 30 * (world.GradeUp[j / 10] + 1);
+                        world.Sprite[k].high = 30 * (world.GradeUp[j / 10] + 1);
+                        world.Sprite[k].length = 15;
+                        world.Sprite[k].texture = world.Sprite[j].texture;
+                        world.Sprite[k].visible = true;
+                        world.Sprite[k].kind = 3;
+                        //Sprite[k].soundFile = "fireball.wav"
+                        world.Sprite[k].parent = j;
+                        //LoadSound k, "fireball.wav"
+                        if (world.playerName[world.Sprite[k].parent / 10] == "Thomas") {
+                            sound.PlaySound("fireball");
+                        }
+                        if (world.playerName[world.Sprite[k].parent / 10] == "Nick") {
+                            sound.PlaySound("iceshot");
+                        }
 
-			} // TODO:REMOVE
-		} // TODO:REMOVE
+                        s.miscTime = world.clock + 0.25;
+                outofammo:
+                        {
+                            int cplusplusNoLikeEmptyLabelHack = 5;
+                        }
+                    }
+                } //if thomas if
+
+                if (world.weapon[j / 10] == "fireball"
+                    && world.ThreeWay[j / 10] == true) {
+                    if (world.AttackKey[penguin] == true
+                        && s.miscTime < world.clock) {
+                        for (k = j + 1; k <= j + 6; ++k) {
+                            if (world.Sprite[k].name == "reserved"
+                                || world.Sprite[k].name == "") {
+                                break;
+                            }
+                            if (k == j + 9) {
+                                k = j + 10;
+                                break;
+                            }
+                        }
+                        if (k == j + 10) {
+                            goto outofammo3;
+                        }
+                        if (s.dir == "l") {
+                            world.Sprite[k].seeky = s.y;
+                            world.Sprite[k].seekx
+                                = s.x - (world.CameraWidth * 2);
+                            world.Sprite[k].dir = "l";
+                            world.Sprite[k + 1].seekx
+                                = s.x - (world.CameraWidth * 2);
+                            world.Sprite[k + 1].seeky
+                                = s.y + (world.CameraHeight * 2);
+                            world.Sprite[k + 1].dir = "l";
+                            world.Sprite[k + 2].seekx
+                                = s.x - (world.CameraWidth * 2);
+                            world.Sprite[k + 2].seeky
+                                = s.y - (world.CameraHeight * 2);
+                            world.Sprite[k + 2].dir = "l";
+                        }
+                        if (s.dir == "r") {
+                            world.Sprite[k].seeky = s.y;
+                            world.Sprite[k].seekx
+                                = s.x + (world.CameraWidth * 2);
+                            world.Sprite[k].dir = "r";
+                            world.Sprite[k + 1].seekx
+                                = s.x + (world.CameraWidth * 2);
+                            world.Sprite[k + 1].seeky
+                                = s.y + (world.CameraHeight * 2);
+                            world.Sprite[k + 1].dir = "r";
+                            world.Sprite[k + 2].seekx
+                                = s.x + (world.CameraWidth * 2);
+                            world.Sprite[k + 2].seeky
+                                = s.y - (world.CameraHeight * 2);
+                            world.Sprite[k + 2].dir = "r";
+                        }
+                        if (world.upKey[penguin] == true || s.dir == "u") {
+                            world.Sprite[k].seekx = s.x;
+                            world.Sprite[k].seeky = s.y - (world.CameraHeight * 2);
+                            world.Sprite[k].dir = "u";
+                            world.Sprite[k + 1].seekx
+                                = s.x - (world.CameraWidth * 2);
+                            world.Sprite[k + 1].seeky
+                                = s.y - (world.CameraHeight * 2);
+                            world.Sprite[k + 1].dir = "u";
+                            world.Sprite[k + 2].seekx
+                                = s.x + (world.CameraWidth * 2);
+                            world.Sprite[k + 2].seeky
+                                = s.y - (world.CameraHeight * 2);
+                            world.Sprite[k + 2].dir = "u";
+                            if (world.LeftKEY[penguin] == true) {
+                                world.Sprite[k + 2].seeky = s.y;
+                                world.Sprite[k + 2].seekx
+                                    = s.x - (world.CameraWidth * 2);
+                                world.Sprite[k + 2].dir = "l";
+                            }
+                            if (world.RightKEY[penguin] == true) {
+                                world.Sprite[k + 1].seeky = s.y;
+                                world.Sprite[k + 1].seekx
+                                    = s.x + (world.CameraWidth * 2);
+                                world.Sprite[k + 1].dir = "r";
+                            }
+                        }
+                        if (world.DownKEY[penguin] == true
+                            || s.dir == "d") {
+                            world.Sprite[k].seekx = s.x;
+                            world.Sprite[k].seeky = s.y + (2 * world.CameraHeight);
+                            world.Sprite[k].dir = "d";
+                            world.Sprite[k + 1].seekx = s.x - (world.CameraWidth * 2);
+                            world.Sprite[k + 1].seeky = s.y + (world.CameraHeight * 2);
+                            world.Sprite[k + 1].dir = "d";
+                            world.Sprite[k + 2].seekx = s.x + (world.CameraWidth * 2);
+                            world.Sprite[k + 2].seeky = s.y + (world.CameraHeight * 2);
+                            world.Sprite[k + 2].dir = "d";
+                            if (world.LeftKEY[penguin] == true) {
+                                world.Sprite[k + 2].seeky = s.y;
+                                world.Sprite[k + 2].seekx
+                                    = s.x - (world.CameraWidth * 2);
+                                world.Sprite[k + 2].dir = "l";
+                            }
+                            if (world.RightKEY[penguin] == true) {
+                                world.Sprite[k + 1].seeky = s.y;
+                                world.Sprite[k + 1].seekx
+                                    = s.x + (world.CameraWidth * 2);
+                                world.Sprite[k + 1].dir = "r";
+                            }
+                        }
+
+                    }//TODO: REMOVE
+                }//TODO:REMOVE
+            } // TODO:REMOVE
+        } // TODO:REMOVE
+
+
+	outofammo3:  // TODO: <-- NOT ACTUALLY ADDED YET
+		LP3_ASSERT(false);
     }
 	//     End Sub for playGame--------------------------------------------!!!
 	//     End Sub for playGame--------------------------------------------!!!
