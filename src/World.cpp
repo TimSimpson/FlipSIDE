@@ -3,6 +3,9 @@
 
 namespace nnd3d {
 
+const int World::FULLSCREENWIDTH = 640;
+const int World::FULLSCREENHEIGHT = 480;
+
 World::World()
 :   Gravity(0),
     clock(0),

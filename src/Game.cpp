@@ -109,7 +109,7 @@ private:
             sound.PlayBgm("");
         }
 
-        view.LoadTexture(-1, "plainblack.bmp", 25, 25);
+        view.LoadTexture(-1, "PlainBlack.bmp", 25, 25);
         //bgtexture = Nothing
         //for (int j = 0; j < 9; ++ j) {
             // Set AnimationTexture(j) = Nothing

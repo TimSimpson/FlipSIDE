@@ -24,7 +24,7 @@ int _main(core::PlatformLoop & loop) {
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 	nnd3d::World world;
 	nnd3d::View view{ media, world };
-	nnd3d::Sound sound;
+	nnd3d::Sound sound{ media };
 	(void)sound;
 
 	nnd3d::Game game(controls, view, sound, world);
@@ -59,13 +59,13 @@ int _main(core::PlatformLoop & loop) {
 			if (world.LemonTime) {
 				world.sFactor *= 2;
 			}
-			// TODO(2017): I think the target FPS changed from 120 to 60... 
+			// TODO(2017): I think the target FPS changed from 120 to 60...
 			// double check this maybe.
 			world.clock = world.clock + ((1 / 120) * world.sFactor);
 			game.PlayGame();
 		});
 
-		frame_timer.next_frame();		
+		frame_timer.next_frame();
 		view.DrawStuff(frame_timer.get_fps());
 		window.render(std::ref(view));
 		return !quit;

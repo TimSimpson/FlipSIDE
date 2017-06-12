@@ -3,6 +3,7 @@
 #pragma once
 
 #include <lp3/core.hpp>
+#include <lp3/mix.hpp>
 
 namespace nnd3d {
 
@@ -10,6 +11,8 @@ namespace nnd3d {
 class Sound
 {
 public:
+    Sound(lp3::core::MediaManager & media);
+
     void LoadSound(int which, const std::string & soundFile,
                    std::string soundName = "");
 
@@ -24,6 +27,12 @@ public:
     void PlayWave(const std::string & soundFile);
 
     void StopSound(int which);
+
+private:
+    lp3::core::MediaManager & media;
+    lp3::mix::Mixer mixer;
+
+    std::string get_file_path(const std::string & file_name);
 };
 
 }   // end namespace
