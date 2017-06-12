@@ -393,37 +393,6 @@ Function endgame()
 STOPGAME = True
 
 End Function
-Function onkey(o$)
-Dim j As Integer
-For j = 0 To 2
-If o$ = KeyUp(j) Then upKey(j) = True
-If o$ = KeyDown(j) Then DownKEY(j) = True
-If o$ = KeyLeft(j) Then LeftKEY(j) = True
-If o$ = KeyRight(j) Then RightKEY(j) = True
-If o$ = KeyAttack(j) Then AttackKey(j) = True
-If o$ = "escape" Then Call endgame
-If o$ = "" Then debugOn = True
-If o$ = "T" Then exitS = "true": playWave "fdis.wav"
-If o$ = "R" Then slicer(0) = True: GradeUp(0) = 2: Sprite(0).wide = 25: Sprite(0).high = 25: playWave "SoupedUp.wav"
-If o$ = "Y" Then LemonTime = True
-If o$ = KeyJump(j) Then
-JumpKey(j) = True
-End If
-Next j
-// If o$ = "P" Then CameraX = CameraX + 1
-// If o$ = "O" Then CameraX = CameraX - 1
-End Function
-Function offkey(o$)
-Dim j As Integer
-For j = 0 To 2
-If o$ = KeyUp(j) Then upKey(j) = False
-If o$ = KeyDown(j) Then DownKEY(j) = False
-If o$ = KeyLeft(j) Then LeftKEY(j) = False
-If o$ = KeyRight(j) Then RightKEY(j) = False
-If o$ = KeyAttack(j) Then AttackKey(j) = False
-If o$ = KeyJump(j) Then JumpKey(j) = False
-Next j
-End Function
 Sub playGame()
 // If clock < lasttime Then Exit Sub
 lasttime = clock + 3.33333333333333E-02
@@ -1541,80 +1510,6 @@ For j = 0 To spritesInUse
 Sprite(j).lastX = Sprite(j).x
 Sprite(j).lastY = Sprite(j).y
 Next j
-
-End Sub
-Sub timedEvents()
-// Rem- Sub for the laid back peacefully timed things, like animation
-// Rem- ANIMATION!
-Dim j As Integer
-
-For j = 0 To spritesInUse
-With Sprite(j)
-
-If .name = "Thomas" Or .name = "Nick" And .mode <> "truck" Then
-If .dir <> "" Then .frame = .frame + 1
-If .dir = "u" Then
-If .frame > 8 Then .frame = 5
-End If
-If .dir = "d" Then
-If .frame > 12 Then .frame = 9
-End If
-If .dir = "l" Then
-If .frame > 16 Then .frame = 13
-End If
-If .dir = "r" Then
-If .frame > 4 Then .frame = 1
-End If
-End If
-
-If .name = "Nicky" And .mode <> "truck" Then
-If .dir <> "" Then .frame = .frame + 1
-If .dir = "u" Then
-If .frame > 6 Then .frame = 4
-End If
-If .dir = "d" Then
-If .frame > 9 Then .frame = 7
-End If
-If .dir = "l" Then
-If .frame > 12 Then .frame = 10
-End If
-If .dir = "r" Then
-If .frame > 3 Then .frame = 1
-End If
-End If
-
-If .name = "fireball" Then
-.frame = .frame + 1
-If .frame > 3 Or .frame < 1 Then .frame = 1
-End If
-
-If .name = "goomba" Or .name = "Kerbose" Or .name = "paulrun" Or .name = "pigeonbomber" Then
-.frame = .frame + 1: If .frame > 2 Then .frame = 1
-End If
-
-If .name = "pigeon" Then
-.frame = .frame + 1: If .frame > 2 Then .frame = 1
-End If
-
-If .name = "tdigger" Then
-.frame = .frame + 1
-If .mode = "" Then If .frame > 5 Then .frame = 4
-If .mode = "runner" Then If .frame > 2 Then .frame = 1
-End If
-
-
-If .name = "bluestick" Then
-.frame = .frame + 1
-If .frame > 2 Then .frame = 1
-End If
-
-
-
-
-End With
-
-Next j
-
 
 End Sub
 Function hitdetection(num1 As Integer, num2 As Integer, Optional whatKind As Boolean) As Long

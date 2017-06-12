@@ -15,6 +15,21 @@ namespace input = lp3::input;
 namespace sims = lp3::sims;
 namespace sdl = lp3::sdl;
 
+std::string key_name_from_sdl(const SDL_Keycode & kc) {
+	// Maps the SDL keyboard names back to what they were in Visual Basic 6.
+	switch (kc) {
+	case SDLK_ESCAPE: return "escape";
+	case SDLK_UP: return "up";
+	case SDLK_DOWN: return "down";
+	case SDLK_LEFT: return "left";
+	case SDLK_RIGHT: return "right";
+	default:
+		// The letters from SDL s/b upper case. Anything else from SDL we
+		// can safely return as it will just be ignored.
+		std::string name(SDL_GetKeyName(kc));
+		return name;
+	}
+}
 
 int _main(core::PlatformLoop & loop) {
 	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
@@ -27,15 +42,23 @@ int _main(core::PlatformLoop & loop) {
 	nnd3d::Sound sound{ media };
 	(void)sound;
 
-	nnd3d::Game game(controls, view, sound, world);
+	nnd3d::Game game(view, sound, world);
 
 	sims::FrameTimer frame_timer;
 
+    // 2017: This clock runs all the old game logic.
+    //       In the old code, this ran in an endless loop which called
+    //       `doEvents` and used a suspect method of calculating the percentage
+    //       of a second each frame took. Here we can just use a GameClock.
 	const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 	sims::GameClock clock(ms_per_update);
 
+    // 2017: This next clock stands in for a Visual Basic Timer that the
+    //       old code would fire once every 200 ms.
+    sims::GameClock old_timer(200);
+
 	return loop.run([&]() {
-		bool quit = false;
+		bool quit = world.STOPGAME;
 		SDL_Event e;
 		if (SDL_PollEvent(&e)) {
 			switch (e.type) {
@@ -44,6 +67,12 @@ int _main(core::PlatformLoop & loop) {
 				break;
 			case SDL_WINDOWEVENT:
 				window.handle_events(e.window);
+				break;
+            case SDL_KEYDOWN:
+				game.OnKey(key_name_from_sdl(e.key.keysym.sym));
+                break;
+			case SDL_KEYUP:
+				game.OffKey(key_name_from_sdl(e.key.keysym.sym));
 				break;
 			}
 		}
@@ -63,6 +92,10 @@ int _main(core::PlatformLoop & loop) {
 			// double check this maybe.
 			world.clock = world.clock + ((1 / 120) * world.sFactor);
 			game.PlayGame();
+		});
+
+		old_timer.run_updates([&game](std::int64_t ms) {
+			game.TimedEvents();
 		});
 
 		frame_timer.next_frame();

@@ -2,8 +2,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
 
-namespace input = lp3::input;
-
 namespace nnd3d {
 
 namespace {
@@ -14,10 +12,9 @@ namespace {
 class Game::GameImpl
 {
 public:
-    GameImpl(lp3::input::Controls & _controls, View & _view, Sound & _sound,
+    GameImpl(View & _view, Sound & _sound,
              World & _world)
-    :   controls(_controls),
-        view(_view),
+    :   view(_view),
         sound(_sound),
         world(_world)
     {
@@ -73,12 +70,118 @@ public:
         world.screen = "title";
     }
 
+	void OnKey(const std::string & o) {
+		for (int j = 0; j < 2; ++j) {
+			if (o == world.KeyUp[j]) { world.upKey[j] = true; }
+			if (o == world.KeyDown[j]) { world.DownKEY[j] = true; }
+			if (o == world.KeyLeft[j]) { world.LeftKEY[j] = true; }
+			if (o == world.KeyRight[j]) { world.RightKEY[j] = true; }
+			if (o == world.KeyAttack[j]) { world.AttackKey[j] = true; }
+			if (o == "escape") { this->endgame(); }
+			if (o == "") { world.debugOn = true; }  // wtf?!
+			if (o == "T") { world.exitS = "true"; sound.PlayWave("fdis.wav"); }
+			if (o == "R") {
+				world.slicer[0] = true;
+				world.GradeUp[0] = 2;
+				world.Sprite[0].wide = 25;
+				world.Sprite[0].high = 25;
+				sound.PlayWave("SoupedUp.wav");
+			}
+			if (o == "Y") { world.LemonTime = true; }
+			if (o == world.KeyJump[j]) {
+				world.JumpKey[j] = true;
+			}
+		}
+	}
+
+	void OffKey(const std::string & o) {
+		for (int j = 0; j < 2; ++j) {
+			if (o == world.KeyUp[j]) { world.upKey[j] = false; }
+			if (o == world.KeyDown[j]) { world.DownKEY[j] = false; }
+			if (o == world.KeyLeft[j]) { world.LeftKEY[j] = false; }
+			if (o == world.KeyRight[j]) { world.RightKEY[j] = false; }
+			if (o == world.KeyAttack[j]) { world.AttackKey[j] = false; }
+			if (o == world.KeyJump[j]) { world.JumpKey[j] = false; }
+		}
+	}
+
     void PlayGame() {
         // TODO: FILL IN
     }
 
+	void TimedEvents() {
+		//Rem- Sub for the laid back peacefully timed things, like animation
+		//Rem- ANIMATION!
+		for (int j = 0; j < world.spritesInUse; ++j) {
+			auto & s = world.Sprite[j];
+
+			if (s.name == "Thomas" || s.name == "Nick" && s.mode != "truck") {
+				if (s.dir != "") { s.frame = s.frame + 1; }
+				if (s.dir == "u") {
+					if (s.frame > 8) { s.frame = 5; }
+				}
+				if (s.dir == "d") {
+					if (s.frame > 12) { s.frame = 9; }
+				}
+				if (s.dir == "l") {
+					if (s.frame > 16) { s.frame = 13; }
+				}
+				if (s.dir == "r") {
+					if (s.frame > 4) { s.frame = 1; }
+				}
+			}
+
+			if (s.name == "Nicky" && s.mode != "truck") {
+				if (s.dir != "") { s.frame = s.frame + 1; }
+				if (s.dir == "u") {
+					if (s.frame > 6) { s.frame = 4; }
+				}
+				if (s.dir == "d") {
+					if (s.frame > 9) { s.frame = 7; }
+				}
+				if (s.dir == "l") {
+					if (s.frame > 12) { s.frame = 10; }
+				}
+				if (s.dir == "r") {
+					if (s.frame > 3) { s.frame = 1; }
+				}
+			}
+
+			if (s.name == "fireball") {
+				s.frame = s.frame + 1;
+				if (s.frame > 3 || s.frame < 1) { s.frame = 1; }
+			}
+
+			if (s.name == "goomba" || s.name == "Kerbose"
+				|| s.name == "paulrun" || s.name == "pigeonbomber") {
+				s.frame = s.frame + 1;
+				if (s.frame > 2) { s.frame = 1; }
+			}
+
+			if (s.name == "pigeon") {
+				s.frame = s.frame + 1;
+				if (s.frame > 2) { s.frame = 1; }
+			}
+
+			if (s.name == "tdigger") {
+				s.frame = s.frame + 1;
+				if (s.mode == "") {
+					if (s.frame > 5) { s.frame = 4; }
+				}
+				if (s.mode == "runner") {
+					if (s.frame > 2) { s.frame = 1; }
+				}
+			}
+
+
+			if (s.name == "bluestick") {
+				s.frame = s.frame + 1;
+				if (s.frame > 2) { s.frame = 1; }
+			}
+		}
+	}
+
 private:
-    lp3::input::Controls & controls;
     View & view;
     Sound & sound;
     World & world;
@@ -124,6 +227,10 @@ private:
         for (int j = goatorg; j < penguin; ++ j) {
             world.Sprite[j] = CharacterSprite{};
         }
+    }
+
+    void endgame() {
+        world.STOPGAME = true;
     }
 
     void findOrder() {
@@ -379,6 +486,8 @@ private:
         view.ForceShowBackground();
     }
 
+    
+
 	void selectPlayer() {} // TODO
 	void selectPlayerS() {} // TODO
 
@@ -389,17 +498,29 @@ private:
 
 };	// end of GameImpl class
 
-Game::Game(input::Controls & _controls, View & _view, Sound & _sound,
+Game::Game(View & _view, Sound & _sound,
            World & _world)
-:   impl(new GameImpl(_controls, _view, _sound, _world)) {
+:   impl(new GameImpl(_view, _sound, _world)) {
 }
 
 Game::~Game() {
     delete impl;
 }
 
+void Game::OnKey(const std::string & c) {
+    impl->OnKey(c);
+}
+
+void Game::OffKey(const std::string & c) {
+    impl->OffKey(c);
+}
+
 void Game::PlayGame() {
     impl->PlayGame();
+}
+
+void Game::TimedEvents() {
+    impl->TimedEvents();
 }
 
 }   // end namespace
