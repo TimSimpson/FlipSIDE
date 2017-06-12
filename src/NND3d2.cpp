@@ -2736,10 +2736,6 @@ playBGM "Player Select.wav"
 playWave "Select your characters of justice.wav"
 
 End Sub
-Function anyKey(zed As Integer) As Long
-anyKey = 0
-If RightKEY(zed) = True Or LeftKEY(zed) = True Or upKey(zed) = True Or DownKEY(zed) = True Or AttackKey(zed) = True Then anyKey = 1
-End Function
 Function findPlayers() As Long
 numberPlayers = 0
 If playerName(0) = "" Then playerName(0) = "zgjkl"
@@ -3031,12 +3027,6 @@ With cinema(who)
 End With
 End Function
 
-Function centerSprite(who As Integer)
-With Sprite(who)
-.x = (CameraX + (CameraWidth / 2)) - (.wide / 2)
-.y = (CameraY + (CameraHeight / 2)) - (.high / 2)
-End With
-End Function
 
 Sub cinemaM(what As Integer)
 // Everyone raise your hand who remembers cinemaM?
@@ -3392,42 +3382,6 @@ End With
 
 End Function
 
-Function checkProx(who As Integer) As Integer
-// numberPlayers integer legend
-// 1 Only player 1
-// 2 Player 1 and 2
-// 3 All three Players
-// 4 Just player 2
-// 5 Just player 3
-// 6 Players 1 and 3
-// 7 Players 2 and 3
-
-Dim penguin As Integer
-Dim buttcat As Integer
-Dim theclosest As Integer
-Dim min As Integer
-
-
-min = 9999
-theclosest = 0
-For penguin = 0 To 2
-If penguin = 0 And (numberPlayers = 4 Or numberPlayers = 5 Or numberPlayers = 7) Then GoTo skipthisbs
-If penguin = 1 And (numberPlayers = 1 Or numberPlayers = 5 Or numberPlayers = 6) Then GoTo skipthisbs
-If penguin = 2 And (numberPlayers = 1 Or numberPlayers = 2 Or numberPlayers = 4) Then GoTo skipthisbs
-
-
-// Rem- abs(x2-x1)^2+abs(y2-y1)^2
-buttcat = Sqr(Abs(Sprite(penguin * 10).x - Sprite(who).x) ^ 2 + Abs(Sprite(penguin * 10).y - Sprite(who).y) ^ 2)
-
-If buttcat < min Then theclosest = penguin: min = buttcat
-
-skipthisbs:
-Next penguin
-
-
-
-checkProx = theclosest * 10
-End Function
 
 Function loadframe(jex As Integer, whichframe As Integer, wx1 As Integer, wy1 As Integer, wx2 As Integer, wy2 As Integer)
 With Sprite(jex).Aframe(whichframe)

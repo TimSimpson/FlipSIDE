@@ -186,6 +186,83 @@ private:
     Sound & sound;
     World & world;
 
+    long anyKey(int zed) {
+        // Returns true if the player at the given index is pressing any key.
+        return ((world.RightKEY[zed] || world.LeftKEY[zed]
+                 || world.upKey[zed] || world.DownKEY[zed]
+                 || world.AttackKey[zed]) ? 1 : 0);
+    }
+
+    void centerSprite(int who) {
+        // Aims the camera on the given sprite.
+        auto & s = world.Sprite[who];
+        s.x = (world.CameraX + (world.CameraWidth / 2)) - (s.wide / 2);
+        s.y = (world.CameraY + (world.CameraHeight / 2)) - (s.high / 2);
+    }
+
+	void checkHit(int j, int k) {
+		LP3_ASSERT(false); // TODO
+	}
+
+    int checkProx(int who) {
+        //numberPlayers integer legend
+        //1 Only player 1
+        //2 Player 1 and 2
+        //3 All three Players
+        //4 Just player 2
+        //5 Just player 3
+        //6 Players 1 and 3
+        //7 Players 2 and 3
+
+        int theclosest = 0;
+        int min = 0;
+
+        min = 9999;
+        theclosest = 0;
+        for (int penguin = 0; penguin <= 2; ++ penguin) {
+            if (penguin == 0 &&
+                (world.numberPlayers == 4 || world.numberPlayers == 5 || world.numberPlayers == 7)) {
+                continue;
+            }
+            if (penguin == 1 &&
+                (world.numberPlayers == 1 || world.numberPlayers == 5 || world.numberPlayers == 6)) {
+                continue;
+            }
+            if (penguin == 2 &&
+                (world.numberPlayers == 1 || world.numberPlayers == 2 || world.numberPlayers == 4)) {
+                continue;
+            }
+
+            // abs(x2-x1)^2+abs(y2-y1)^2
+            int buttcat = lp3::narrow<int>(
+                std::sqrt(
+                    std::pow(
+                        std::abs(world.Sprite[penguin * 10].x
+                                    - world.Sprite[who].x),
+                        2)
+                    +
+                    std::pow(
+                        std::abs(world.Sprite[penguin * 10].y
+                                    - world.Sprite[who].y),
+                        2)
+                ));
+
+            if (buttcat < min) {
+                theclosest = penguin;
+                min = buttcat;
+            }
+        }
+
+		return theclosest * 10;
+    }
+
+    void cinemaM(int what) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void debugLevel() {
+        LP3_ASSERT(false); // TODO
+    }
 
     // 2017: Initializes the game. Port uses a lot of constructors so it misses
     // the sheer joy of initializing hundreds of global variables sitting in a
@@ -336,6 +413,14 @@ private:
         }
     }
 
+    long findPlayers() {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void findQ(const std::string & who) {
+        LP3_ASSERT(false); // TODO
+    }
+
 	void gameOver() {
         sound.PlayBgm("");
         world.screen = "gameOver";
@@ -360,6 +445,18 @@ private:
         }
         sound.PlayWave("gameover.wav");
         this->findOrder();
+    }
+
+    double getMiddleX(int who) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    double getMiddleY(int who) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    double getProx(int who, int who2) {
+        LP3_ASSERT(false); // TODO
     }
 
 	void goToLevel(const double which) {
@@ -472,6 +569,51 @@ private:
         }
     }
 
+    long hitdetection(int num1, int num2, bool whatKind=false) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void initPlayers() {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void initSprites(int which) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void killLimit(int jex) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void killS(int goatX) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void loadAnimation(int who, const std::string & file) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void loadframe(int jex, int whichframe,
+                      int wx1, int wy1, int wx2, int wy2) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void level1() {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void levelR(int which, int who) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void loadLevel(const std::string & file) {
+        LP3_ASSERT(false); // TODO
+    }
+
+    void makeJump(int which) {
+        LP3_ASSERT(false); // TODO
+    }
+
 	template<typename... Args>
 	void MakeLevel(Args&&... args) {} // TODO
 
@@ -486,15 +628,49 @@ private:
         view.ForceShowBackground();
     }
 
-    
+	void offCameraKill(int jex) {
+		LP3_ASSERT(false); // TODO
+	}
 
-	void selectPlayer() {} // TODO
-	void selectPlayerS() {} // TODO
+	void selectPlayer() {
+		LP3_ASSERT(false); // TODO
+	}
+
+	void selectPlayerS() {
+		LP3_ASSERT(false); // TODO
+	}
+
+	int pickTarget(int who, int koo) {
+		LP3_ASSERT(false); // TODO
+	}
+
+	void printframes(int who) {
+		LP3_ASSERT(false); // TODO
+	}
+
+    void script() {
+		LP3_ASSERT(false); // TODO
+	}
+
+	void seeker(int who) {
+		LP3_ASSERT(false); // TODO
+	}
 
 	template<typename... Args>
-	void setCinema(Args&&... args) {} // TODO
+	void setCinema(Args&&... args) {
+		LP3_ASSERT(false); // TODO
+	}
 
-	void titleScreen() {} // TODO
+	void shoot(int who, const std::string & what, int wherex, int wherey) {
+		LP3_ASSERT(false); // TODO
+	}
+	void titleScreen() {
+		LP3_ASSERT(false); // TODO
+	}
+
+	void unstretch(int which) {
+		LP3_ASSERT(false); // TODO
+	}
 
 };	// end of GameImpl class
 
