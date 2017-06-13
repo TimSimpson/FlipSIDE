@@ -49,7 +49,7 @@ void View::operator()(const glm::mat4 & previous) {
 		} else {
 			tex = AnimationTexture[i - 1].get();
 		}
-		if (tex) {
+		if (tex && 0 < game_elements[i].count()) {
 			program.set_texture(tex->gl_id());
 			program.draw(game_elements[i]);
 		}
@@ -95,6 +95,9 @@ void View::draw_verts_as_quad(const Vertex * v, const int texIndex) {
 	LP3_ASSERT(texIndex >= -1);
 	LP3_ASSERT(texIndex < lp3::narrow<int>(AnimationTexture.size()));
 
+	if (texIndex > -1) {
+		int five = 5;
+	}
 	// Using old game logic, -1 could be the "background" texture which was
 	// reasonlessly treated differently from everything else.
 	const int realIndex = texIndex + 1;
@@ -142,11 +145,15 @@ gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {
 
 void View::LoadTexture(int which, const std::string & fileName, int howWide,
                        int howHigh) {
+	LP3_LOG_DEBUG("LoadTexture %i %s %i %i", which, fileName, howWide, howHigh);
     if (which == -1) {
         bgtexture.reset(load_image(fileName));
+		bg_size = bgtexture->size();
+		LP3_LOG_DEBUG("   size = %i, %i", bg_size.x, bg_size.y);
     } else {
         AnimationTexture[which].reset(load_image(fileName));
 		tex_size[which] = AnimationTexture[which]->size();
+		LP3_LOG_DEBUG("   size = %i, %i", tex_size[which].x, tex_size[which].y);
     }
 }
 
@@ -276,7 +283,7 @@ void View::UpdateSprites() {
     for (int j = 0; j < world.spritesInUse; ++ j) {
         auto & sprite = world.Sprite[j];
 
-        if (sprite.reverse = true) {
+        if (sprite.reverse == true) {
             k = sprite.srcx2;
             sprite.srcx2 = sprite.srcx;
             sprite.srcx = k;
@@ -288,10 +295,10 @@ void View::UpdateSprites() {
             v.y = lp3::narrow<float>(
 				sprite.y + sprite.high - (sprite.z) - world.CameraY);
             if (sprite.srcx != 0) {
-                v.tu = sprite.srcx / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
             }
             if (sprite.srcy2 != 0) {
-                v.tv = sprite.srcy2 / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy2 / this->texHeight(sprite.texture);
             }
             v.color = sprite.color;
         }
@@ -300,10 +307,10 @@ void View::UpdateSprites() {
             v.x = sprite.x - world.CameraX;
             v.y = sprite.y - (sprite.z) - world.CameraY;
             if (sprite.srcx != 0) {
-                v.tu = sprite.srcx / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
             }
             if (sprite.srcy != 0) {
-                v.tv = sprite.srcy / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy / this->texHeight(sprite.texture);
             }
             // v.rhw = 1
             v.color = sprite.color;
@@ -313,10 +320,10 @@ void View::UpdateSprites() {
             v.x = sprite.x + sprite.wide - world.CameraX;
             v.y = sprite.y + sprite.high - (sprite.z) - world.CameraY;
             if (sprite.srcx2 != 0) {
-                v.tu = sprite.srcx2 / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
             }
             if (sprite.srcy2 != 0) {
-                v.tv = sprite.srcy2 / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy2 / this->texHeight(sprite.texture);
             }
             // v.rhw = 1
             v.color = sprite.color;
@@ -326,10 +333,10 @@ void View::UpdateSprites() {
             v.x = sprite.x + sprite.wide - world.CameraX;
             v.y = sprite.y - (sprite.z) - world.CameraY;
             if (sprite.srcx2 != 0) {
-                v.tu = sprite.srcx2 / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
             }
             if (sprite.srcy != 0) {
-                v.tv = sprite.srcy / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy / this->texHeight(sprite.texture);
             }
             // v.rhw = 1
             v.color = sprite.color;
