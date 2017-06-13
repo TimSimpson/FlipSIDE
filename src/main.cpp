@@ -40,7 +40,7 @@ int _main(core::PlatformLoop & loop) {
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 	
 	
-	nnd3d::Vb vb;	
+	nnd3d::Vb vb{ media };
 	nnd3d::World world;
 	nnd3d::View view{ media, world };
 	nnd3d::Sound sound{ media };

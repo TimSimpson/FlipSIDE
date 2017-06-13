@@ -2,7 +2,9 @@
 #define NND3D_VB_HPP
 #pragma once
 
+#include <fstream>
 #include <random>
+#include <lp3/core.hpp>
 
 namespace nnd3d {
 
@@ -10,10 +12,13 @@ namespace nnd3d {
 class Vb
 {
 public:
-    Vb();
+    Vb(lp3::core::MediaManager & media);
+
+	std::fstream OpenForInput(const std::string & filePath);
 
     double Rnd();
 private:
+	lp3::core::MediaManager & media;
     std::random_device rnd_dev;
     std::mt19937 rnd_gen;
     std::uniform_real_distribution<double> rnd_distribution;

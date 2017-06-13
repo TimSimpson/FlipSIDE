@@ -2143,7 +2143,29 @@ private:
     }
 
     void loadAnimation(int who, const std::string & file) {
-        LP3_ASSERT(false); // TODO
+        auto stream = vb.OpenForInput(file);
+        std::string line;
+        auto & s = world.Sprite[who];
+        for (int j = 1; j <= 20; ++ j) {
+            if (!std::getline(stream, line)) {
+                LP3_LOG_ERROR("Error reading line from %s", file);
+                LP3_THROW2(lp3::core::Exception, "Failure to read line!");
+            }
+            if (line == "-1") {
+                break;
+            }
+            for (int i = 0; i < line.size(); ++i) {
+                if (line[i]== ',') {
+                    line[i] = ' ';
+                }
+            }
+            std::stringstream ss(line);
+            ss >> s.Aframe[j].x;
+            ss >> s.Aframe[j].y;
+            ss >> s.Aframe[j].x2;
+            ss >> s.Aframe[j].y2;
+        }
+        stream.close();
     }
 
     void loadframe(int jex, int whichframe,
@@ -2186,11 +2208,118 @@ private:
 	}
 
 	void selectPlayer() {
-		LP3_ASSERT(false); // TODO
+		// the select player screen
+
+        this->destroyEverything();
+        this->NowLoading();
+        view.UpdateSprites();
+        view.LoadTexture(0, "players2.bmp", 320, 400);
+        view.LoadTexture(-1, "PlayerS.bmp", 320, 240);
+        world.CameraWidth = 320;
+        world.CameraHeight = 240;
+
+        {
+            auto & s = world.Sprite[0];
+            s.x = 2 * 2;
+            s.y = 36 * 2;
+            s.wide = 105 * 2;
+            s.high = (217 - 36) * 2;
+            if (this->anyKey(0) == 1) { s.visible = true; }
+            s.name = "Selecter";
+            s.frame = 1;
+            s.miscTime = world.clock + 2;
+        }
+        {
+            auto & s = world.Sprite[1];
+            s.x = 106 * 2;
+            s.y = 36 * 2;
+            s.wide = 105 * 2;
+            s.high = (217 - 36) * 2;
+            if (this->anyKey(1) == 1) { s.visible = true; };
+            s.name = "Selecter";
+            s.frame = 2;
+            s.miscTime = world.clock + 2;
+        }
+        {
+            auto & s = world.Sprite[2];
+            s.x = 212 * 2; s.y = 36 * 2;
+            s.wide = 105 * 2;
+            s.high = (217 - 36) * 2;
+            if (this->anyKey(2) == 1) { s.visible = true; };
+            s.name = "Selecter";
+            s.miscTime = world.clock + 2;
+            s.frame = 3;
+        }
+        this->loadAnimation(0, "selector.ani");
+        this->loadAnimation(1, "selector.ani");
+        this->loadAnimation(2, "selector.ani");
+
+        sound.PlayBgm("Player Select.wav");
+        sound.PlayWave("Select your characters of justice.wav");
 	}
 
 	void selectPlayerS() {
-		LP3_ASSERT(false); // TODO
+		// after you all select players, it gets up the results
+
+        int penguin;
+        if (world.Sprite[0].mode == "done" || world.Sprite[0].visible == false) {
+            if (world.Sprite[1].mode == "done" || world.Sprite[1].visible == false) {
+                if (world.Sprite[2].mode == "done" || world.Sprite[2].visible == false) {
+                    for (penguin = 0; penguin <= 2; ++penguin) {
+                        if (world.Sprite[penguin].visible == false) {
+                            world.Sprite[penguin].mode = "";
+                        }
+                    }
+                    if (world.Sprite[0].mode == "done") {
+                        world.numberPlayers = 1; }
+                    if (world.Sprite[1].mode == "done") {
+                        world.numberPlayers = 4; }
+                    if (world.Sprite[2].mode == "done") {
+                        world.numberPlayers = 5; }
+                    if (world.Sprite[0].mode == "done"
+                        && world.Sprite[1].mode == "done") {
+                        world.numberPlayers = 2;
+                    }
+                    if (world.Sprite[0].mode == "done"
+                        && world.Sprite[2].mode == "done") {
+                        world.numberPlayers = 6;
+                    }
+                    if (world.Sprite[1].mode == "done"
+                        && world.Sprite[2].mode == "done") {
+                        world.numberPlayers = 7;
+                    }
+                    if (world.Sprite[0].mode == "done"
+                        && world.Sprite[1].mode == "done"
+                        && world.Sprite[2].mode == "done") {
+                        world.numberPlayers = 3;
+                    }
+
+                    for (penguin = 0; penguin <= 2; ++ penguin) {
+                        auto & s = world.Sprite[penguin];
+                        //Next penguin
+                        if (s.frame == 1) {
+                            world.playerName[penguin] = "Thomas"; }
+                        if (s.frame == 2) {
+                            world.playerName[penguin] = "Nick"; }
+                        if (s.frame == 3) {
+                            world.playerName[penguin] = "Andrew"; }
+                        if (s.frame == 4) {
+                            world.playerName[penguin] = "Phil"; }
+                        if (s.frame == 5) {
+                            world.playerName[penguin] = "Nicky"; }
+                    }
+                    //1 Only player 1
+                    //2 Player 1 and 2
+                    //3 All three Players
+                    //4 Just player 2
+                    //5 Just player 3
+                    //6 Players 1 and 3
+                    //7 Players 2 and 3
+
+                    world.screen = "level1.1";
+                }
+            }
+        }
 	}
 
 	int pickTarget(int who, int koo) {

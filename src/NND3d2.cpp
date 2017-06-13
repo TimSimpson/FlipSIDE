@@ -1576,47 +1576,7 @@ LoadSound 15, "spring.wav", "spring"
 
 
 End Sub
-Sub selectPlayer()
-//  the select player screen
 
-destroyEverything
-Call NowLoading
-Call updatesprites
-view.loadTexture(0, "players2.bmp", 320, 400);
-view.loadTexture(-1, "PlayerS.bmp", 320, 240);
-CameraWidth = 320: CameraHeight = 240
-
-With Sprite(0)
-.x = 2 * 2: .y = 36 * 2
-.wide = 105 * 2: .high = (217 - 36) * 2
-If anyKey(0) = 1 Then .visible = True
-.name = "Selecter"
-.frame = 1
-.miscTime = clock + 2
-
-End With
-With Sprite(1)
-.x = 106 * 2: .y = 36 * 2
-.wide = 105 * 2: .high = (217 - 36) * 2
-If anyKey(1) = 1 Then .visible = True
-.name = "Selecter"
-.frame = 2: .miscTime = clock + 2
-End With
-With Sprite(2)
-.x = 212 * 2: .y = 36 * 2
-.wide = 105 * 2: .high = (217 - 36) * 2
-If anyKey(2) = 1 Then .visible = True
-.name = "Selecter": .miscTime = clock + 2
-.frame = 3
-End With
-Call loadAnimation(0, "selector.ani")
-Call loadAnimation(1, "selector.ani")
-Call loadAnimation(2, "selector.ani")
-
-playBGM "Player Select.wav"
-playWave "Select your characters of justice.wav"
-
-End Sub
 
 Function findQ(who As String) As Integer
 Dim opera As Integer
@@ -1671,66 +1631,8 @@ With Sprite(goatX)
 End With
 
 End Function
-Sub loadAnimation(who As Integer, file As String)
-Dim j
-Open FilePath + file For Input As #1
-For j = 1 To 20
-With Sprite(who)
-Input #1, .Aframe(j).x
-If .Aframe(j).x = -1 Then Exit For
-Input #1, .Aframe(j).y, .Aframe(j).x2, .Aframe(j).y2
-End With
-Next j
-Close #1
-
-End Sub
-
-Sub selectPlayerS()
-//  after you all select players, it gets up the results
-
-Dim penguin As Integer
-If Sprite(0).mode = "done" Or Sprite(0).visible = False Then
-If Sprite(1).mode = "done" Or Sprite(1).visible = False Then
-If Sprite(2).mode = "done" Or Sprite(2).visible = False Then
-For penguin = 0 To 2: If Sprite(penguin).visible = False Then Sprite(penguin).mode = ""
-Next penguin
-If Sprite(0).mode = "done" Then numberPlayers = 1
-If Sprite(1).mode = "done" Then numberPlayers = 4
-If Sprite(2).mode = "done" Then numberPlayers = 5
-If Sprite(0).mode = "done" And Sprite(1).mode = "done" Then numberPlayers = 2
-If Sprite(0).mode = "done" And Sprite(2).mode = "done" Then numberPlayers = 6
-If Sprite(1).mode = "done" And Sprite(2).mode = "done" Then numberPlayers = 7
-If Sprite(0).mode = "done" And Sprite(1).mode = "done" And Sprite(2).mode = "done" Then numberPlayers = 3
-
-For penguin = 0 To 2
-
-With Sprite(penguin)
 
 
-// Next penguin
-
-
-If .frame = 1 Then playerName(penguin) = "Thomas"
-If .frame = 2 Then playerName(penguin) = "Nick"
-If .frame = 3 Then playerName(penguin) = "Andrew"
-If .frame = 4 Then playerName(penguin) = "Phil"
-If .frame = 5 Then playerName(penguin) = "Nicky"
-End With
-Next penguin
-// 1 Only player 1
-// 2 Player 1 and 2
-// 3 All three Players
-// 4 Just player 2
-// 5 Just player 3
-// 6 Players 1 and 3
-// 7 Players 2 and 3
-
-screen = "level1.1"
-End If
-End If
-End If
-
-End Sub
 Sub script()
 Dim penguin As Integer
 If Sprite(30).mode <> "3" And Sprite(30).mode <> "2" Then
