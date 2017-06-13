@@ -2190,8 +2190,85 @@ private:
         LP3_ASSERT(false); // TODO
     }
 
-	template<typename... Args>
-	void MakeLevel(Args&&... args) {} // TODO
+	void MakeLevel(const std::string & lvlBgMusic, const std::string & levelFile,
+		const std::string & levelBgFile, const int lvlBgWidth,
+		const int lvlBgHeight,
+		const std::string & CinemaBitMapFile,
+		const std::string & CinemaAnimationFile,
+		const bool stopMusic,
+		const bool loadScreen) {
+		//destroyEverything
+
+		this->destroyEverything(2);
+
+
+		if (loadScreen == true) { this->NowLoading(); }
+
+		world.CameraWidth = 640; world.CameraHeight = 480;
+
+		if (stopMusic == true) { sound.PlayBgm(""); }
+
+
+		//playBGM ""
+
+		//destroyEverything 2
+		this->loadLevel(levelFile); //"level1b.cap"
+
+		world.Gravity = 20;
+
+		int j = 0;
+
+		world.CameraX = 0; world.CameraY = 0;
+		view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight); //"lv1bg2.bmp", 10, 10)
+																	//Call loadTexture(0, "smile.bmp", 255, 255)
+
+																	//Call loadTexture(4, "level1a.bmp", 490, 209)
+																	//Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
+																	//Call loadTexture(6, "goomba.bmp", 240, 240)
+		view.LoadTexture(9, CinemaBitMapFile, 400, 400); //"lvl1bg.bmp",400,400
+
+
+		this->initPlayers();
+
+		//Call initPlayers
+		//For j = 0 To 2
+		//lives(j) = 3
+		//continues(j) = 3
+		//Next j
+
+
+		for (j = 0; j <= world.spritesInUse; ++j) {
+			this->initSprites(j);
+		}
+
+		this->findOrder();
+		world.Sprite[33].name = "cinema"; world.Sprite[33].zOrder = -149;
+		world.Sprite[32].name = "cinema"; world.Sprite[32].zOrder = -149;
+		world.Sprite[31].name = "cinema"; world.Sprite[31].zOrder = -149;
+		world.Sprite[34].name = "cinema"; world.Sprite[34].zOrder = -149;
+		world.Sprite[30].zOrder = -149;
+		this->loadAnimation(33, CinemaAnimationFile);
+		this->loadAnimation(32, CinemaAnimationFile);
+		this->loadAnimation(31, CinemaAnimationFile);
+		this->loadAnimation(34, CinemaAnimationFile);
+		world.Sprite[30].name = "StageWhat"; world.Sprite[30].mode = "";
+
+
+
+
+
+
+
+
+
+
+
+
+		if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }
+
+
+		world.exitS = "";
+	}
 
     void NowLoading() {
         view.LoadTexture(-1, "nowloading.bmp", 320, 240);
