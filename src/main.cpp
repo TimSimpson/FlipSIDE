@@ -13,6 +13,7 @@
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
 namespace input = lp3::input;
+namespace mix = lp3::mix;
 namespace sims = lp3::sims;
 namespace sdl = lp3::sdl;
 
@@ -38,7 +39,7 @@ int _main(core::PlatformLoop & loop) {
 	core::MediaManager media;
 	input::Controls controls;
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
-	
+	mix::Init mix_init(MIX_INIT_MP3);
 	
 	nnd3d::Vb vb{ media };
 	nnd3d::World world;
@@ -81,6 +82,7 @@ int _main(core::PlatformLoop & loop) {
 			}
 		}
 		controls.update();
+		sound.garbage_collect();
 
 		clock.run_updates([&world, &game](std::int64_t ms) {
 			// The old code figured out the percentage of a second each frame

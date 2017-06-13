@@ -1794,9 +1794,10 @@ private:
             goto dogyup;
         }
 
-        for (int j = 1; j <= 15; ++ j) {
-            sound.PlayWave("nothing.wav");
-        }
+		sound.silence_sfx();
+        //for (int j = 1; j <= 15; ++ j) {
+        //    sound.PlayWave("nothing.wav");
+        //}
 
      dogyup:
 
@@ -2254,7 +2255,7 @@ private:
         this->loadAnimation(1, "selector.ani");
         this->loadAnimation(2, "selector.ani");
 
-        sound.PlayBgm("Player Select.wav");
+        sound.PlayBgm("Player SelectWAV.wav");
         sound.PlayWave("Select your characters of justice.wav");
 	}
 
@@ -2361,7 +2362,7 @@ private:
 		//Call loadTexture(-1, "bg.bmp", 300, 300)
 
 		this->destroyEverything();
-		sound.PlayWave("Opening.wav");
+		sound.PlayWave("OpeningWAV.wav");
 
 		view.LoadTexture(0, "title2.bmp", 285, 427);
 		view.LoadTexture(1, "title1.bmp", 440, 427);
