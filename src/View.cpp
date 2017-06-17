@@ -2,7 +2,7 @@
 #include "World.hpp"
 
 // The old VB code constantly was tossing ints into floats and vice-versa,
-// and using lp3::narrow everywhere 
+// and using lp3::narrow everywhere
 #pragma warning(disable: 4244)
 
 namespace nnd3d {
@@ -41,7 +41,7 @@ void View::operator()(const glm::mat4 & previous) {
 	program.use();
 	auto _2d = gfx::create_2d_screen(previous, res2d);
 	program.set_mvp(_2d);
-	
+
 	for (int i = 0; i < 10; ++ i) {
 		lp3::gfx::Texture * tex;
 		if (i == 0) {
@@ -54,7 +54,7 @@ void View::operator()(const glm::mat4 & previous) {
 			program.draw(game_elements[i]);
 		}
 	}
-	
+
 	program.set_texture(font.texture().gl_id());
 	program.draw(font_elements);
 }
@@ -244,9 +244,12 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[0];
         v.x = 0; v.y = 480; // RealHeight
-        v.tu = lp3::narrow<float>(world.CameraX) / lp3::narrow<float>(world.bgWidth);
-        v.tv = (lp3::narrow<float>(world.CameraY) + lp3::narrow<float>(world.CameraHeight)) 
-			/ lp3::narrow<float>(world.bgHeight);
+   //      v.tu = lp3::narrow<float>(world.CameraX) / lp3::narrow<float>(world.bgWidth);
+   //      v.tv = (lp3::narrow<float>(world.CameraY) + lp3::narrow<float>(world.CameraHeight))
+			// / lp3::narrow<float>(world.bgHeight);
+        v.tu = lp3::narrow<float>(world.CameraX) / lp3::narrow<float>(bg_size.x);
+        v.tv = (lp3::narrow<float>(world.CameraY) + lp3::narrow<float>(world.CameraHeight))
+            / lp3::narrow<float>(bg_size.y);
         v.rhw = 1;
         v.color = normColor;
     }
@@ -254,8 +257,8 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[1];
         v.x = 0; v.y = 0;
-        v.tu = lp3::narrow<float>(world.CameraX) / 
-					lp3::narrow<float>(bg_size.x); 
+        v.tu = lp3::narrow<float>(world.CameraX) /
+					lp3::narrow<float>(bg_size.x);
 		v.tv = lp3::narrow<float>(world.CameraY) / lp3::narrow<float>(bg_size.y);
         v.rhw = 1;
         v.color = normColor;
@@ -273,8 +276,8 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[3];
         v.x = 640; v.y = 0;
-        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth) 
-				/ bg_size.x; 
+        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth)
+				/ bg_size.x;
 		v.tv = lp3::narrow<float>(world.CameraY) / bg_size.y;
         v.rhw = 1;
         v.color = normColor;

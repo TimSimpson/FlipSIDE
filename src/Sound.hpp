@@ -39,6 +39,7 @@ public:
 private:
     lp3::core::MediaManager & media;
     lp3::mix::Mixer mixer;
+    std::unique_ptr<lp3::mix::Music> bgm;
 
     std::string get_file_path(const std::string & file_name);
 

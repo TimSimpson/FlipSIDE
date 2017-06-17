@@ -2271,7 +2271,7 @@ private:
 	}
 
     void NowLoading() {
-        view.LoadTexture(-1, "nowloading.bmp", 320, 240);
+        view.LoadTexture(-1, "NowLoading.bmp", 320, 240);
         world.CameraWidth = 320;
         world.CameraHeight = 240;
         view.UpdateSprites();
@@ -2291,7 +2291,7 @@ private:
         this->destroyEverything();
         this->NowLoading();
         view.UpdateSprites();
-        view.LoadTexture(0, "players2.bmp", 320, 400);
+        view.LoadTexture(0, "PlayerS2.bmp", 320, 400);
         view.LoadTexture(-1, "PlayerS.bmp", 320, 240);
         world.CameraWidth = 320;
         world.CameraHeight = 240;
@@ -2328,12 +2328,12 @@ private:
             s.miscTime = world.clock + 2;
             s.frame = 3;
         }
-        this->loadAnimation(0, "selector.ani");
-        this->loadAnimation(1, "selector.ani");
-        this->loadAnimation(2, "selector.ani");
+        this->loadAnimation(0, "Selector.ani");
+        this->loadAnimation(1, "Selector.ani");
+        this->loadAnimation(2, "Selector.ani");
 
         sound.PlayBgm("Player SelectWAV.wav");
-        sound.PlayWave("Select your characters of justice.wav");
+        sound.PlayWave("Select Your Characters of Justice.wav");
 	}
 
 	void selectPlayerS() {
@@ -2441,7 +2441,7 @@ private:
 		this->destroyEverything();
 		sound.PlayWave("OpeningWAV.wav");
 
-		view.LoadTexture(0, "title2.bmp", 285, 427);
+		view.LoadTexture(0, "title2ALT.bmp", 285, 427);
 		view.LoadTexture(1, "title1.bmp", 440, 427);
 		//loadTexture 2, "goomba.bmp", 240, 240
 		//Sprite(11).name = "goomba"

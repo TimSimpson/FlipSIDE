@@ -7,6 +7,7 @@ namespace mix = lp3::mix;
 Sound::Sound(lp3::core::MediaManager & media)
 :   media(media),
     mixer(22050, MIX_DEFAULT_FORMAT, 2, 4096),
+    bgm(),
 	chunks()
 {
 	Mix_AllocateChannels(16);  // According to the docs, this never fails.
@@ -25,12 +26,14 @@ void Sound::LoadSound(int which, const std::string & soundFile,
 void Sound::PlayBgm(const std::string & sound_file) {
     if (sound_file.length() == 0) {
         LP3_LOG_DEBUG("PlayBgm [ STOP ]");
+        bgm = nullptr;
         return;
     }
     const auto music_path = get_file_path(sound_file);
+    Mix_HaltMusic();
     LP3_LOG_DEBUG("PlayBgm %s", music_path);
-    mix::Music music = Mix_LoadMUS(music_path.c_str());
-    music.play();
+    bgm.reset(new mix::Music{Mix_LoadMUS(music_path.c_str())});
+    bgm->play();
 }
 
 void Sound::PlayIsoWave(const std::string & soundFile) {
@@ -45,7 +48,7 @@ void Sound::PlaySoundLoop(int which) {
     LP3_LOG_DEBUG("PlaySoundLoop %d", which);
 }
 
-void Sound::PlayWave(const std::string & soundFile) {	
+void Sound::PlayWave(const std::string & soundFile) {
     LP3_LOG_DEBUG("PlayWave %s", soundFile);
 	// The old code would play this a zillion times, I think in order to make
 	// sure nothing else was playing. Just ignore it here.
@@ -72,12 +75,12 @@ void Sound::garbage_collect() {
 			chunks.begin(), chunks.end(),
 			[](const OrphanWave & ow) {
 				const auto r = Mix_Playing(ow.channel);
-				if (0 == r) { 
-					Mix_HaltChannel(ow.channel);  
+				if (0 == r) {
+					Mix_HaltChannel(ow.channel);
 				}
 				return 0 == r;
 			}
-		), 
+		),
 		chunks.end());
 }
 
