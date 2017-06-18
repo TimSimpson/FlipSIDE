@@ -1714,7 +1714,248 @@ private:
     }
 
 	void checkHit(int j, int k) {
-		LP3_ASSERT(false); // TODO
+		        bool redo = false;
+        int HolderJ = 0;
+
+        auto gosub_hurtj = [this, &HolderJ, &j]() {
+            HolderJ = j;
+            world.Sprite[HolderJ].flickerTime
+                = world.clock + world.Sprite[HolderJ].invTime;
+            sound.PlaySound(world.Sprite[HolderJ].soundFile);
+        };
+
+        auto gosub_hurtK = [this, &HolderJ, &k]() {
+            HolderJ = k;
+            world.Sprite[HolderJ].flickerTime
+                = world.clock + world.Sprite[HolderJ].invTime;
+            sound.PlaySound(world.Sprite[HolderJ].soundFile);
+        };
+
+    redo2:
+        //If k = 1 And j = 31 Then Stop
+
+        //Rem-KIND DEFINITIONS
+        //1 is player
+        //2 is enemy
+        //3 is fireball
+        //4 is goomba thing
+        //5 is unmoveable
+        //6 is trampoline
+
+        //to do
+        //7 is a enemy killable by jumping on it
+        //8 is bullet by the enemy (can pass through 5//s)
+
+        //Player hits an enemy
+        if (world.Sprite[j].kind == 1 && (world.Sprite[k].kind == 2
+            || world.Sprite[k].kind == 8)) {
+            if (world.Sprite[j].flickerTime < world.clock) {
+                world.Sprite[j].hp = world.Sprite[j].hp - 1;
+                sound.PlaySound(world.Sprite[j].soundFile);
+                gosub_hurtj();
+                if (world.Sprite[j].hp <= 0) {
+                    world.Sprite[j].name = world.Sprite[j].deathType;
+                    this->initSprites(j);
+                }
+            }
+        }
+
+        //Enemy hit by a fireball
+        if ((world.Sprite[j].kind == 2 || world.Sprite[j].kind == 7)
+            && world.Sprite[k].kind == 3) {
+
+            if (world.Sprite[j].flickerTime < world.clock) {
+                world.Sprite[j].hp = world.Sprite[j].hp - 1;
+                gosub_hurtj();
+                if (world.Sprite[j].hp <= 0) {
+                    world.Sprite[j].name = world.Sprite[j].deathType;
+                    this->initSprites(j);
+                }
+            }
+            if (world.Sprite[k].name == "fireball") {
+                if (world.slicer[(world.Sprite[k].parent) / 10] == false) {
+                    this->killS(k);
+                }
+            }
+        }
+
+        //Player steps on a goomba type thing
+        if (world.Sprite[j].kind == 1
+            && (world.Sprite[k].kind == 4 || world.Sprite[k].kind == 7)) {
+            if (world.Sprite[j].z > world.Sprite[k].length
+                && world.Sprite[j].lastJump > world.Sprite[j].z) {
+                world.Sprite[j].jumpStart = world.Sprite[j].z;  //sends thing up into the air
+                world.Sprite[j].jumpTime = world.clock; //sends thing up into the air, even if (goomba is flashing
+                if (world.Sprite[k].flickerTime < world.clock) {
+                    world.Sprite[k].hp = world.Sprite[k].hp - 1;
+                    gosub_hurtK();
+                    sound.PlaySound("spring");
+                    world.Sprite[j].jumpM = world.Sprite[k].jumpM;
+                    if (world.Sprite[k].hp <= 0) {
+                        world.Sprite[k].name = world.Sprite[k].deathType;
+                        this->initSprites(k);
+                    }
+                }
+            }
+        }
+
+        //Player illigetimately touches goomba.
+        if (world.Sprite[j].kind == 1
+            && (world.Sprite[k].kind == 4 || world.Sprite[k].kind == 7)) {
+            if (world.Sprite[j].flickerTime < world.clock) {
+                if (world.Sprite[j].z < world.Sprite[k].length
+                    || world.Sprite[j].lastJump < world.Sprite[j].z) {
+                    world.Sprite[j].hp = world.Sprite[j].hp - 1;
+                    gosub_hurtj();
+                    if (world.Sprite[j].hp <= 0) {
+                        world.Sprite[j].name = world.Sprite[j].deathType;
+                        this->initSprites(j);
+                    }
+                }
+            }
+        }
+
+
+        //Player jumps on bouncy object
+        if (world.Sprite[k].kind == 6) {
+
+            if (world.Sprite[j].kind == 3 || world.Sprite[j].kind == 8) {
+                goto overalready;
+            }
+
+            //BOUNCE TIME!
+            if (world.Sprite[j].z > world.Sprite[k].length
+                && world.Sprite[j].lastJump > world.Sprite[j].z) {
+                world.Sprite[j].jumpStart = world.Sprite[j].z; //sends thing up into the air
+                world.Sprite[j].jumpTime = world.clock; //sends thing up into the air, even if (goomba is flashing
+                sound.PlaySound("spring");
+                world.Sprite[k].mode = "bounce";
+                world.Sprite[k].miscTime = world.clock + 1;
+                world.Sprite[j].jumpM = world.Sprite[k].jumpM;
+            }
+            //OH CRAP! I NO BOUNCE
+            if (world.Sprite[j].z < world.Sprite[k].length
+                || world.Sprite[j].lastJump < world.Sprite[j].z) {
+                if (world.Sprite[j].kind == 5 || world.Sprite[j].kind == 3
+                    || world.Sprite[j].kind == 6) {
+                    goto britneyDog2;
+                }
+                //if (world.Sprite[k].z > (world.Sprite[j].length - (world.Sprite[j].length * 0.75))) then GoTo britneyDog2
+            poddle2:
+                //HolderJ = hitdetection(j, k, True)
+                //if (HolderJ = 2 || HolderJ = 6 || HolderJ = 7) then
+                //world.Sprite[j].x = world.Sprite[j].x - world.Sprite[j].mph
+                //End If
+                //if (HolderJ = 3 || HolderJ = 8 || HolderJ = 9) then
+                //world.Sprite[j].x = world.Sprite[j].x + world.Sprite[j].mph
+                //End If
+                //if (HolderJ = 4 || HolderJ = 6 || HolderJ = 8) then
+                //world.Sprite[j].y = world.Sprite[j].y - world.Sprite[j].mph
+                //End If
+                //if (HolderJ = 5 || HolderJ = 7 || HolderJ = 9) then
+                //world.Sprite[j].y = world.Sprite[j].y + world.Sprite[j].mph
+                //End If
+                //if (hitdetection(k, j) = 1) then GoTo poddle2 //
+                world.Sprite[j].x = world.Sprite[j].lastX;
+                world.Sprite[j].y = world.Sprite[j].lastY;
+        britneyDog2:
+                { int cplusplusNoLikeEmptyLabelHack = 364; }
+            }
+        overalready:
+            { int cplusplusNoLikeEmptyLabelHack = 365; }
+        }
+
+
+        if (world.Sprite[j].kind == 5) {
+            if (world.Sprite[k].kind == 5 || world.Sprite[k].kind == 3
+                || world.Sprite[k].kind == 6 || world.Sprite[k].kind == 8) {
+                goto britneyDog;
+            }
+        poddle:
+            //HolderJ = hitdetection(k, j, True)
+            //if (HolderJ = 2 || HolderJ = 6 || HolderJ = 7) then
+            //world.Sprite(k).x = world.Sprite(k).x - world.Sprite(k).mph
+            //End If
+            //if (HolderJ = 3 || HolderJ = 8 || HolderJ = 9) then
+            //world.Sprite(k).x = world.Sprite(k).x + world.Sprite(k).mph
+            //End If
+            //if (HolderJ = 4 || HolderJ = 6 || HolderJ = 8) then
+            //world.Sprite(k).y = world.Sprite(k).y - world.Sprite(k).mph
+            //End If
+            //if (HolderJ = 5 || HolderJ = 7 || HolderJ = 9) then
+            //world.Sprite(k).y = world.Sprite(k).y + world.Sprite(k).mph
+            //End If
+            //if (hitdetection(k, j) = 1) then GoTo poddle
+            world.Sprite[k].x = world.Sprite[k].lastX;
+            world.Sprite[k].y = world.Sprite[k].lastY;
+        britneyDog:
+            { int cplusplusNoLikeEmptyLabelHack = 366; }
+        }
+
+        if (redo == false) {
+            redo = true; HolderJ = j; j = k; k = HolderJ; goto redo2;
+        }
+        if (redo == true) { HolderJ = j; j = k; k = HolderJ; }
+
+        return;  // exit sub
+
+        //--------OLD FASHIONED SUBROUTINES
+        //TSNOW: Note - hurtj subroutine was defined here.
+        //TSNOW: All of the stuff after it was important looking code that
+        //       I don't think could ever be executed.
+        /*
+        'Thomas hits a goomba-
+        '----------------------------------------------------------------------------
+        '     THOMAS HITS CRAP
+        '----------------------------------------------------------------------------
+        If Sprite(j).name = "Thomas" Then   '----------------------DAVID IF CHUNK
+        If Sprite(k).name = "goomba" Then
+        If hitdetection(j, k) = 1 And Sprite(j).z > Sprite(k).length And Sprite(j).lastJump > Sprite(j).z And Sprite(k).flickerTime < clock Then
+        Sprite(k).hp = Sprite(k).hp - 1: Sprite(k).flickerTime = clock + 2
+        If Sprite(k).hp < 1 Then
+
+        Sprite(k).name = "Dying Explosion"
+        Sprite(k).seekx = Sprite(11).wide * 2
+        Sprite(k).mph = 2
+        PlaySound 1
+        End If
+
+        End If
+        End If
+
+        If Sprite(k).name = "Deadly Rat" And hitdetection(j, k) = 1 Then
+        If Sprite(j).flickerTime < clock Then
+        Sprite(j).hp = Sprite(j).hp - 1: Sprite(j).flickerTime = clock + 2
+        If Sprite(j).hp < 1 Then Sprite(j).name = "Dying Explosion": Sprite(j).mph = 2: Sprite(j).seekx = Sprite(j).wide * 5
+        End If
+
+        End If
+        End If
+        '----------------------------------------------------------------------------
+        '        END OF THOMAS HITS CRAP
+        '----------------------------------------------------------------------------
+        '----------------------------------------------------------------------------
+        '        FIREBALL TIME!
+        '----------------------------------------------------------------------------
+        If Sprite(j).name = "fireball" Then
+        If Sprite(k).name = "Deadly Rat" Then
+        If Sprite(k).name <> "Dying Explosion" And Sprite(k).flickerTime < clock Then
+        Sprite(k).hp = Sprite(10).hp - 1
+        Sprite(k).flickerTime = clock + 2
+        If Sprite(k).hp < 1 Then
+        Sprite(k).name = "Dying Explosion"
+        Sprite(k).seekx = Sprite(k).wide * 2
+        Sprite(k).mph = 2
+        End If
+        Sprite(j).visible = False
+        End If
+        End If
+
+        End If
+        '----------------------------------------------------------------------------
+        '        END OF FIRE BALL TIME!
+        '----------------------------------------------------------------------------
+        */
 	}
 
     int checkProx(int who) {
