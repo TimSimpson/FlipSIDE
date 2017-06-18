@@ -19,7 +19,7 @@ std::string Sound::get_file_path(const std::string & file_name) {
 
 void Sound::LoadSound(int which, const std::string & soundFile,
                       std::string soundName) {
-    LP3_LOG_DEBUG("LoadSound", soundFile);
+    LP3_LOG_DEBUG("LoadSound %s", soundFile);
 }
 
 void Sound::PlayBgm(const std::string & sound_file) {
@@ -31,6 +31,8 @@ void Sound::PlayBgm(const std::string & sound_file) {
     const auto music_path = get_file_path(sound_file);
     Mix_HaltMusic();
     LP3_LOG_DEBUG("PlayBgm %s", music_path);
+    Mix_HaltMusic();
+    bgm.reset(nullptr);
     bgm.reset(new mix::Music{Mix_LoadMUS(music_path.c_str())});
     bgm->play();
 }

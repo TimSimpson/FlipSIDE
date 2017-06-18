@@ -40,6 +40,8 @@ public:
 
     void set_arg(std::stringstream & ss, std::string & arg);
 
+    void set_arg(std::stringstream & ss, bool & arg);
+
     template<typename HeadType, typename... TailTypes>
     void set_arguments(std::stringstream & ss, HeadType & head,
                       TailTypes & ... tail)

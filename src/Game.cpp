@@ -1774,7 +1774,46 @@ private:
     }
 
     void createPlayer(int who, const std::string & what) {
-        LP3_ASSERT(false); // TODO
+            int goatorg = 0;
+        auto & ws = world.Sprite[who];
+
+        if (world.playerName[(who / 10)] == "Thomas") {
+            world.weapon[who / 10] = "fireball";
+            this->loadAnimation(who, "Thomas.ani");
+            view.LoadTexture((who / 10) + 1, "Flip1.bmp", 254, 254);
+            world.Sprite[who].texture = (who / 10) + 1;
+            for (goatorg = (who + 1); goatorg <= (who + 9); ++ goatorg) {
+                this->loadAnimation(goatorg, "Fireball.ani");
+            }
+        }
+
+        if (world.playerName[(who / 10)] == "Nick") {
+            world.weapon[who / 10] = "fireball";
+            this->loadAnimation(who, "nick.ani");
+            view.LoadTexture((who / 10) + 1, "joel.bmp", 254, 258);
+            world.Sprite[who].texture = (who / 10) + 1;
+            for (goatorg = (who + 1); goatorg <= (who + 9); ++goatorg) {
+                this->loadAnimation(goatorg, "icespike.ani");
+            }
+        }
+
+        if (world.playerName[(who / 10)] == "Nicky") {
+            world.weapon[who / 10] = "bomb";
+            this->loadAnimation(who, "nicky.ani");
+            view.LoadTexture((who / 10) + 1, "LilNicky.bmp", 84, 148);
+            world.Sprite[who].texture = (who / 10) + 1;
+            for (goatorg = (who + 1); goatorg <= (who + 9); ++goatorg) {
+                this->loadAnimation(goatorg, "bomb.ani");
+            }
+        }
+
+        for (goatorg = (who + 1); goatorg <= (who + 9); ++ goatorg) {
+            world.Sprite[goatorg].name = "";
+            world.Sprite[goatorg].zOrder = -90;
+        }
+        //Sprite(who).name = what//playerName(who / 10)
+        //Sprite(who).frame = 1
+        //Call initSprites(who)
     }
 
     void debugLevel() {
@@ -2025,7 +2064,7 @@ private:
 
         if (which == 1.1 || which == 1) {
             this->destroyEverything();
-            this->MakeLevel("Level1Opening.wav", "Level1.cap", "Lv1bg.bmp",
+            this->MakeLevel("Level1Opening.ogg", "Level1.cap", "Lv1bg.bmp",
                             10, 10, "Level1Cinema.bmp", "Level1Cinema.ani",
                             true, true);
             world.cinemaMax = 2;
@@ -2559,9 +2598,9 @@ private:
             spr.jumpStrength = 25;
             trueorg = (int) (vb.Rnd() * 2.0 + 1);
             if (trueorg = 1) {
-                this->loadAnimation(which, "kerbose.ani");
+                this->loadAnimation(which, "Kerbose.ani");
             } else {
-                this->loadAnimation(which, "putulo.ani");
+                this->loadAnimation(which, "Putulo.ani");
                 spr.soundFile = "putulohurt";
                 spr.deathType = "putuloDeath";
             }

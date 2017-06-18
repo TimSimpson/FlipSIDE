@@ -947,7 +947,7 @@ Dim j As Integer
 CameraX = 0: CameraY = 0
 view.loadTexture(-1, "lv1bg.bmp", 10, 10);
 view.loadTexture(0, "smile.bmp", 255, 255);
-view.loadTexture(1, "flip1.bmp", 254, 254);
+view.loadTexture(1, "Flip1.bmp", 254, 254);
 view.loadTexture(4, "goomba.bmp", 490, 209);
 view.loadTexture(5, "lv1bgtw.bmp", 308, 341);
 view.loadTexture(6, "grass.bmp", 17, 13);
@@ -1193,42 +1193,6 @@ End Sub
 
 End Sub
 
-Sub createPlayer(who As Integer, what As String)
-Dim goatorg As Integer
-With Sprite(who)
-
-If playerName((who / 10)) = "Thomas" Then
-weapon(who / 10) = "fireball"
-Call loadAnimation(who, "thomas.ani")
-view.loadTexture((who / 10) + 1, "flip1.bmp", 254, 254);
-Sprite(who).texture = (who / 10) + 1
-For goatorg = (who + 1) To (who + 9): Call loadAnimation(goatorg, "fireball.ani"): Next goatorg
-End If
-
-If playerName((who / 10)) = "Nick" Then
-weapon(who / 10) = "fireball"
-Call loadAnimation(who, "nick.ani")
-view.loadTexture((who / 10) + 1, "joel.bmp", 254, 258);
-Sprite(who).texture = (who / 10) + 1
-For goatorg = (who + 1) To (who + 9): Call loadAnimation(goatorg, "icespike.ani"): Next goatorg
-End If
-
-
-If playerName((who / 10)) = "Nicky" Then
-weapon(who / 10) = "bomb"
-loadAnimation who, "nicky.ani"
-view.loadTexture((who / 10) + 1, "LilNicky.bmp", 84, 148);
-Sprite(who).texture = (who / 10) + 1
-For goatorg = (who + 1) To (who + 9): Call loadAnimation(goatorg, "bomb.ani"): Next goatorg
-End If
-End With
-
-For goatorg = (who + 1) To (who + 9): Sprite(goatorg).name = "": Sprite(goatorg).zOrder = -90: Next goatorg
-// Sprite(who).name = what'playerName(who / 10)
-// Sprite(who).frame = 1
-// Call initSprites(who)
-
-End Sub
 
 Function unstretch(which As Integer)
 With Sprite(which)

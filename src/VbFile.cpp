@@ -35,6 +35,16 @@ void VbFile::get_line(std::string & line) {
     }
 }
 
+void VbFile::set_arg(std::stringstream & ss, bool & arg) {
+    std::string text;
+    ss >> text;
+    if (text == "#TRUE#" || text != "0") {
+        arg = true;
+    } else {
+        arg = false;
+    }
+}
+
 void VbFile::set_arg(std::stringstream & ss, std::string & arg) {
     ss >> arg;
     // Visual Basic files allowed for items to be wrapped in quotes.
