@@ -1452,7 +1452,7 @@ if (s.name == "Title2") {
             if (s.name == "exit") {
                 //TSNOW: This looks to step up by 10 so should only iterate
                 //       the loop once, but that's what the old code did.
-                for (penguin = 0; penguin <= 2; k+= 10) {
+                for (penguin = 0; penguin <= 2; penguin+= 10) {
                     if (this->hitdetection(j, penguin) != 0
                         && world.Sprite[penguin].name
                         == world.playerName[(penguin / 10)]) {
@@ -2011,7 +2011,18 @@ private:
     }
 
     void cinemaM(int what) {
-        LP3_ASSERT(false); // TODO
+        //Everyone raise your hand who remembers cinemaM?
+        //Yes this classic far too long subroutine has made a triumphant return from Lady Pousha Quest.
+        if (what == 2) {
+            world.Sprite[30].name = "script";
+            world.Sprite[30].mode = "2";
+            world.cinemaMax = 4;
+            world.cinemaCounter = 0;
+            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1b1.wav", 2.24);
+            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1b2.wav", 2.74);
+            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1b3.wav", 4.24);
+            this->setCinema(3, 5, 3, 7, 16, 15, 15, 15, 8, "TalkLv1b4.wav", 0.95);
+        }
     }
 
     void createPlayer(int who, const std::string & what) {
@@ -3002,7 +3013,50 @@ private:
     }
 
     void killS(int goatX) {
-        LP3_ASSERT(false); // TODO
+                auto & s = world.Sprite[goatX];
+        s.visible = false;
+        s.kind = 0;
+        s.name = "";
+        s.trueVisible = 2;
+        s.flickerTime = 0;
+        s.target = -1;
+
+        {
+            auto & ws = s.SpriteVerts[0];
+            ws.x = world.Sprite[goatX].x;
+            ws.y = world.Sprite[goatX].y + world.Sprite[goatX].high;
+            ws.tu = 0;
+            ws.tv = 0.5;
+            ws.rhw = 1;
+            ws.color = normColor;
+        }
+        {
+            auto & ws = s.SpriteVerts[1];
+            ws.x = world.Sprite[goatX].x;
+            ws.y = world.Sprite[goatX].y;
+            ws.tu = 0;
+            ws.tv = 0;
+            ws.rhw = 1;
+            ws.color = normColor;
+        }
+        {
+            auto & ws = s.SpriteVerts[2];
+            ws.x = world.Sprite[goatX].x + world.Sprite[goatX].wide;
+            ws.y = world.Sprite[goatX].y + world.Sprite[goatX].high;
+            ws.tu = 0.5;
+            ws.tv = 0.5;
+            ws.rhw = 1;
+            ws.color = normColor;
+        }
+        {
+            auto & ws = s.SpriteVerts[3];
+            ws.x = world.Sprite[goatX].x + world.Sprite[goatX].wide;
+            ws.y = world.Sprite[goatX].y;
+            ws.tu = 0.5;
+            ws.tv = 0;
+            ws.rhw = 1;
+            ws.color = normColor;
+        }
     }
 
     void loadAnimation(int who, const std::string & file) {
@@ -3279,7 +3333,11 @@ private:
     }
 
 	void offCameraKill(int jex) {
-		LP3_ASSERT(false); // TODO
+		auto & s = world.Sprite[jex];
+        if (s.x > world.CameraX + 640 || (s.x + s.wide) < world.CameraX) {
+            this->killS(jex); }
+        if (s.y > world.CameraY + 480 || (s.y + s.high) < world.CameraY) {
+            this->killS(jex); }
 	}
 
 	void selectPlayer() {

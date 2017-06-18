@@ -782,46 +782,6 @@ Call findOrder
 End Sub
 
 
-Function killS(goatX As Integer)
-With Sprite(goatX)
-.visible = False
-.kind = 0
-.name = ""
-.trueVisible = 2
-.flickerTime = 0
-.target = -1
-
-    With .SpriteVerts(0)
-      .x = Sprite(goatX).x
-      .y = Sprite(goatX).y + Sprite(goatX).high
-      .tu = 0: .tv = 0.5
-      .rhw = 1
-      .color = normColor
-    End With
-    With .SpriteVerts(1)
-      .x = Sprite(goatX).x
-      .y = Sprite(goatX).y
-      .tu = 0: .tv = 0
-      .rhw = 1
-      .color = normColor
-    End With
-    With .SpriteVerts(2)
-      .x = Sprite(goatX).x + Sprite(goatX).wide
-      .y = Sprite(goatX).y + Sprite(goatX).high
-      .tu = 0.5: .tv = 0.5
-      .rhw = 1
-      .color = normColor
-    End With
-    With .SpriteVerts(3)
-      .x = Sprite(goatX).x + Sprite(goatX).wide
-      .y = Sprite(goatX).y
-      .tu = 0.5: .tv = 0
-      .rhw = 1
-     .color = normColor
-    End With
-End With
-
-End Function
 
 
 Sub script()
@@ -973,22 +933,6 @@ End Sub
 
 
 
-Sub cinemaM(what As Integer)
-// Everyone raise your hand who remembers cinemaM?
-// Yes this classic far too long subroutine has made a triumphant return from Lady Pousha Quest.
-If what = 2 Then
-Sprite(30).name = "script": Sprite(30).mode = "2"
-cinemaMax = 4
-cinemaCounter = 0
-setCinema 0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1b1.wav", 2.24
-setCinema 1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1b2.wav", 2.74
-setCinema 2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1b3.wav", 4.24
-setCinema 3, 5, 3, 7, 16, 15, 15, 15, 8, "TalkLv1b4.wav", 0.95
-
-End If
-
-
-End Sub
 
 
 End Sub
@@ -1095,14 +1039,6 @@ If .y > cameraStopX Or .y < -10 Then killS jex
 End With
 End Function
 
-Function offCameraKill(jex As Integer)
-With Sprite(jex)
-If .x > CameraX + 640 Or (.x + .wide) < CameraX Then killS jex
-
-If .y > CameraY + 480 Or (.y + .high) < CameraY Then killS jex
-End With
-
-End Function
 
 
 Function loadframe(jex As Integer, whichframe As Integer, wx1 As Integer, wy1 As Integer, wx2 As Integer, wy2 As Integer)
