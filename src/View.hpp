@@ -31,7 +31,7 @@ public:
 
     void UpdateSprites();
 private:
-	core::MediaManager & media;	
+	core::MediaManager & media;
     std::unique_ptr<gfx::Texture> bgtexture;
     std::array<std::unique_ptr<gfx::Texture>, 10> AnimationTexture;
 	gfx::programs::SimpleTextured program;
@@ -47,19 +47,20 @@ private:
 	glm::vec2 bg_size;
 
 	// Maps old vert array to a quad
-	inline void draw_vert_to_quad(const Vertex * v, 
-		                          gfx::Quad<gfx::TexVert> & quad) {
-		quad.dl().set(v[0].x, v[0].y, v[0].z, v[0].tu, v[0].tv);
-		quad.ul().set(v[1].x, v[1].y, v[1].z, v[1].tu, v[1].tv);
-		quad.dr().set(v[2].x, v[2].y, v[2].z, v[2].tu, v[2].tv);
-		quad.ur().set(v[3].x, v[3].y, v[3].z, v[3].tu, v[3].tv);
+	inline void draw_vert_to_quad(const Vertex * v,
+		                          gfx::Quad<gfx::TexVert> & quad,
+                                  float z) {
+		quad.dl().set(v[0].x, v[0].y, z, v[0].tu, v[0].tv);
+		quad.ul().set(v[1].x, v[1].y, z, v[1].tu, v[1].tv);
+		quad.dr().set(v[2].x, v[2].y, z, v[2].tu, v[2].tv);
+		quad.ur().set(v[3].x, v[3].y, z, v[3].tu, v[3].tv);
 	}
-	
-	void draw_verts_as_quad(const Vertex * v, const int texIndex);
+
+	void draw_verts_as_quad(const Vertex * v, const int texIndex, float z);
 
     gsl::owner<gfx::Texture *> load_image(const std::string & fileName);
 
-	// This used to be an array. The problem is in the old code bgWidth is a 
+	// This used to be an array. The problem is in the old code bgWidth is a
 	// different value, which leads to one off duplications EVERYWHERE.
 	// So instead passing -1 here will return bgWidth.
 	int texWidth(int index);

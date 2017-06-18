@@ -72,8 +72,12 @@ void View::DrawStuff(float fps) {
 
 	if (bgtexture) {
 		LP3_ASSERT(nullptr != bgtexture);
-		draw_verts_as_quad(bgverts.data(), -1);
+		draw_verts_as_quad(bgverts.data(), -1, 0.0f);
 	}
+    //2017: So, the old game has verts that in fact have a Z coordinate,
+    //      but it looks like it wasn't used (or I didn't copy the logic
+    //      in correctly).
+    float z = 0.0f;
 	int currentTexture = -1;
 	for (int j = 0; j < world.spritesInUse; ++j) {
 		if (world.drawOrder[j] == -1) {
@@ -84,14 +88,15 @@ void View::DrawStuff(float fps) {
 
 
 		if (sprite.visible) {
-			draw_verts_as_quad(sprite.SpriteVerts.data(), sprite.texture);
+            z += 0.0067;
+			draw_verts_as_quad(sprite.SpriteVerts.data(), sprite.texture, z);
 		}
 	}
 	// If ((GetTickCount / 1000) > cranBerry) Then cranBerry = ((GetTickCount / 1000) + 1): frRate = frRate2: frRate2 = 0
 	//If debugOn = True Then Form1.PSet (1, 1): Form1.Print "FPS:" + Str$(frRate): Form1.Print "GPS:" + Str$(gpRate)
 }
 
-void View::draw_verts_as_quad(const Vertex * v, const int texIndex) {
+void View::draw_verts_as_quad(const Vertex * v, const int texIndex, float z) {
 	LP3_ASSERT(texIndex >= -1);
 	LP3_ASSERT(texIndex < lp3::narrow<int>(AnimationTexture.size()));
 
@@ -102,7 +107,7 @@ void View::draw_verts_as_quad(const Vertex * v, const int texIndex) {
 	// reasonlessly treated differently from everything else.
 	const int realIndex = texIndex + 1;
 	gfx::Quad<gfx::TexVert> quad = game_elements[realIndex].add_quad();
-	draw_vert_to_quad(v, quad);
+	draw_vert_to_quad(v, quad, z);
 }
 
 void View::ForceShowBackground() {

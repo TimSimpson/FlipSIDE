@@ -92,12 +92,15 @@ int _main(core::PlatformLoop & loop) {
 			// reasons, but the take away is here we introducing a constant
 			// speed mod which will always be 0.016
 			world.sFactor = lp3::narrow<double>(ms) / 1000.0;
+			world.clock = world.clock + world.sFactor;
 			if (world.LemonTime) {
 				world.sFactor *= 2;
 			}
-			// TODO(2017): I think the target FPS changed from 120 to 60...
-			// double check this maybe.
-			world.clock = world.clock + world.sFactor;
+			// So the game created a speed factor that tried to make it
+			// target 120fps (kind of cool my old Pentium 2 machine could do
+			// that). So we multiple the number we just had by 120.
+			world.sFactor *= 120;
+
 			game.PlayGame();
 		});
 
