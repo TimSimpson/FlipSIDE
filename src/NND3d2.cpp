@@ -393,108 +393,7 @@ Function endgame()
 STOPGAME = True
 
 End Function
-Function hitdetection(num1 As Integer, num2 As Integer, Optional whatKind As Boolean) As Long
-hitdetection = 0
 
-Dim k As Integer
-Dim j As Integer
-Dim con1%
-Dim con2%
-Dim con3%
-Dim fapple%
-Dim crapapple%
-
-Dim left%
-Dim right%
-Dim up%
-Dim down%
-// Rem-checks to see if they hit from left or right
-// For j = 0 To BIGO
-// For k = j To BIGO
-con1% = 0: con2% = 0: con3% = 0
-// If code(j) = 0 Or code(k) = 0 Then GoTo screwthis3
-// If k = j Then GoTo screwthis
-// lower numbers get screwed first
-con1% = 0
-If (Sprite(num1).x + Sprite(num1).wide) >= Sprite(num2).x And Sprite(num1).x < Sprite(num2).x Then con1% = 1: left% = 1
-// If Sprite(num1).x = Sprite(num2).x Then con1% = 1: right% = 1
-// If (Sprite(num1).x + Sprite(num1).wide) = Sprite(num2).x Then con1% = 1: left% = 1
-// If Sprite(num1).x = Sprite(num2).x + Sprite(num2).wide Then con1% = 1: right% = 1
-If (Sprite(num2).x + Sprite(num2).wide) >= Sprite(num1).x And Sprite(num2).x < Sprite(num1).x Then con1% = 1: right% = 1
-
-// If con1% = 1 Then Picture1.Line (sprite(num1).x, sprite(num1).y)-(sprite(num1).x + sprite(num1).wide, sprite(num1).y + sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = "From Right of " + Str$(j)
-
-
-screwthis:
-
-
-// Rem- Checks to see if they ever collide from the top to bottom (Y)
-con2% = 0
-// If k = j Then GoTo screwthis2
-
-If (Sprite(num1).y + Sprite(num1).high) >= Sprite(num2).y And Sprite(num1).y < Sprite(num2).y Then con2% = 1: up% = 1
-// If Sprite(num1).y = Sprite(num2).y Then con2% = 1: down% = 1
-// If (Sprite(num1).y + Sprite(num1).high) = Sprite(num2).y Then con2% = 1: up% = 1
-// Rem- Added as of 11/27/00
-// If Sprite(num1).y = Sprite(num2).y + Sprite(num2).high Then con2% = 1: down% = 1
-If (Sprite(num2).y + Sprite(num2).high) >= Sprite(num1).y And Sprite(num2).y < Sprite(num1).y Then con2% = 1: down% = 1
-
-
-// If con2% = 1 Then Picture1.Line (sprite(num1).x, sprite(num1).y)-(sprite(num1).x + sprite(num1).wide, sprite(num1).y + sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = Label2.Caption + "From Bottom of " + Str$(j)
-
-screwthis2:
-If Sprite(num1).kind = 5 Or Sprite(num2).kind = 5 Then con3% = 1: GoTo screwthis3
-
-
-// Rem- The THIRD dimension, Z!
-
-// If k = j Then GoTo screwthis3
-
-If (Sprite(num1).z + (Sprite(num1).length * 1.5)) >= Sprite(num2).z And Sprite(num1).z < Sprite(num2).z Then con3% = 1
-If Sprite(num1).z = Sprite(num2).z Then con3% = 1
-// If (Sprite(num1).z + Sprite(num1).length) = Sprite(num2).z Then con3% = 1
-// Rem- Added as of 11/27/00
-// If Sprite(num1).z = Sprite(num2).z + Sprite(num2).length Then con3% = 1
-If (Sprite(num2).z + Sprite(num2).length * 1.5) >= Sprite(num1).z And Sprite(num2).z < Sprite(num1).z Then con3% = 1
-
-
-// If con3% = 1 Then Print "": Rem-Beep: 'Label2.Caption = "From Top of " + Str$(j)
-
-screwthis3:
-// 'If con3% = 1 And con2% = 1 And con1% = 1 Then
-// Picture1.Line (Sprite(num1).x, Sprite(num1).y)-(Sprite(num1).x + Sprite(num1).wide, Sprite(num1).y + Sprite(num1).high), QBColor(4), BF 'Beep: Label2.Caption = Label2.Caption + "From Bottom of " + Str$(j)
-// Picture1.Line (Sprite(num2).x, Sprite(num2).y)-(Sprite(num2).x + Sprite(num2).wide, Sprite(num2).y + Sprite(num2).high), QBColor(4), BF
-// If k = fapple% And j = crapapple% Then GoTo skipitcausetheyalreadyweredetected
-// 'hitdetection = 1: Let fapple% = j: crapapple% = k
-// Call colide(k, j)
-// 'skipitcausetheyalreadyweredetected:
-// 'End If
-
-// Next k
-// Next j
-
-
-// If con1% = 1 Then hitdetection = 2
-// If con2% = 1 Then hitdetection = 3
-// If con3% = 1 Then hitdetection = 4
-// If con1% = 1 And con2% = 1 Then hitdetection = 5
-// If con2% = 1 And con3% = 1 Then hitdetection = 6
-// If con1% = 1 And con3% = 1 Then hitdetection = 7
-If con1% = 1 And con2% = 1 And con3% = 1 Then hitdetection = 1
-If whatKind = True Then
-If left% = 1 Then hitdetection = 2
-If right% = 1 Then hitdetection = 3
-If up% = 1 Then hitdetection = 4
-If down% = 1 Then hitdetection = 5
-If left% = 1 And up% = 1 Then hitdetection = 6
-If left% = 1 And down% = 1 Then hitdetection = 7
-If right% = 1 And up% = 1 Then hitdetection = 8
-If right% = 1 And down% = 1 Then hitdetection = 9
-
-End If
-
-
-End Function
 Sub level1()
 
 destroyEverything
@@ -1083,19 +982,6 @@ Call findOrder
 End Sub
 
 
-Function findQ(who As String) As Integer
-Dim opera As Integer
-Dim goatX As Integer
-
-
-goatX = 0
-For opera = 0 To spritesInUse
-If Sprite(opera).name = who Then Let goatX = goatX + 1
-Next opera
-
-findQ = goatX
-End Function
-
 Function killS(goatX As Integer)
 With Sprite(goatX)
 .visible = False
@@ -1285,20 +1171,6 @@ Return
 
 End Sub
 
-Function setCinema(who As Integer, frame1 As Integer, frame2 As Integer, frame3 As Integer, frame4 As Integer, color1 As Integer, color2 As Integer, color3 As Integer, color4 As Integer, wavefile As String, miscTime As Integer)
-With cinema(who)
-.frame1 = frame1
-.frame2 = frame2
-.frame3 = frame3
-.frame4 = frame4
-.color1 = color1
-.color2 = color2
-.color3 = color3
-.color4 = color4
-.wavefile = wavefile
-.miscTime = miscTime
-End With
-End Function
 
 
 Sub cinemaM(what As Integer)
@@ -1415,121 +1287,7 @@ If .y > .seeky Then .y = .y - (.mph * sFactor)
 End With
 End Function
 
-Sub levelR(which As Integer, who As Integer)
-Dim k As Integer
 
-
-With Sprite(who)
-
-// LEVEL 1****************************************************************
-If which = 1 Then  // LEVEL 1 ****************************
-
-// If .name = "bullet" Then
-
-// End If
-If .name = "greenspring" Then
-If .mode = "bounce" Then
-.frame = .frame + 1
-If .frame > 5 Then .frame = 2
-If .miscTime < clock Then .mode = "": .frame = 1
-End If
-End If
-
-
-If .name = "clouds" Then
-.srcx = .srcx + (sFactor * 0.5)
-.srcx2 = .srcx2 + (sFactor * 0.5)
-.Aframe(1).x = .Aframe(1).x + 1
-.Aframe(1).x2 = .Aframe(1).x2 + 1
-End If
-
-
-
-If .name = "bullet" Then     // 'This is a strange type of bullet that in retrospect feels more like a bubble
-// If .seekx <> -1 Then
-
-killLimit who
-offCameraKill who
-
-
-// If .mode = "" Then
-
-
-Do Until (.seekx > cameraStopX Or .seekx < 0) Or (.seeky > cameraStopY Or .seeky < 0)
-If .seekx > .x Then
-.seekx = .seekx + ((.seekx - .x))
-End If
-If .seekx < .x Then
-.seekx = .seekx - ((.x - .seekx))
-End If
-
-If .seeky > .y Then
-.seeky = .seeky + ((.seeky - .y))
-End If
-If .seeky < .y Then
-.seeky = .seeky - ((.y - .seeky))
-End If
-Loop
-
-
-
-seeker who
-.frame = .frame + 1: If .frame > 1 Then .frame = 0
-End If
-
-
-If .name = "paulrun" Then
-If .mode = "" Then .mode = "right"
-
-If .mode = "right" Then
-.reverse = False
-.x = .x + sFactor
-.seekx = .seekx + sFactor
-If .seekx > 100 Then .mode = "left": .seekx = 0: .dir = ""
-End If
-If .mode = "left" Then
-.reverse = True
-.x = .x - sFactor
-.seekx = .seekx + sFactor
-If .seekx > 100 Then .mode = "right": .seekx = 0: .dir = ""
-End If
-
-If .seekx >= 50 And .dir <> "done" Then Call shoot(who, "paulbullet", Sprite(checkProx(who)).x, Sprite(checkProx(who)).y): .dir = "done"
-End If
-
-If .name = "bluestick" Then
-k = Int(Rnd * 2) + 1
-If k = 1 Then .x = .x + sFactor
-If k = 2 Then .x = .x - sFactor
-k = Int(Rnd * 2) + 1
-If k = 1 Then .y = .y + sFactor
-If k = 2 Then .y = .y - sFactor
-k = Int(Rnd * 20) + 1
-If k = 1 Then If .z = 0 Then .jumpStart = .z: .jumpTime = clock
-
-End If
-
-
-If .name = "pigeonbomber" Then
-.z = .z + sFactor
-// .frame = .frame + 1
-// If .frame > 2 Then .frame = 1
-
-seeker who
-If .x < 1 Then .x = cameraStopX
-
-If .miscTime < clock Then
-shoot who, "bluestick", Sprite(checkProx(who)).x, Sprite(checkProx(who)).y
-.miscTime = clock + 2
-End If
-
-End If
-
-Exit Sub
-End If
-
-End With
-End Sub
 Function shoot(who As Integer, what As String, wherex, wherey)
 
 Dim opera As Integer

@@ -1967,8 +1967,16 @@ private:
     }
 
     int findQ(const std::string & who) {
-        LP3_ASSERT(false); // TODO
-        return 0;
+        int opera = 0;
+        int goatX = 0;
+
+
+        goatX = 0;
+        for (opera = 0; opera <= world.spritesInUse; ++ opera) {
+            if (world.Sprite[opera].name == who) { goatX = goatX + 1; }
+        }
+
+        return goatX;
     }
 
 	void gameOver() {
@@ -2123,9 +2131,97 @@ private:
     }
 
     long hitdetection(int num1, int num2, bool whatKind=false) {
-        LP3_ASSERT(false); // TODO
-		return 0l;
+        //TSNOW: I deleted a lot of commented code here as it was already pretty
+        //       confusing.
+        long result = 0;
+
+        int k = 0;
+        int j = 0;
+        int con1 = 0;
+        int con2 = 0;
+        int con3 = 0;
+        int fapple = 0;
+        int crapapple = 0;
+
+        int left = 0;
+        int right = 0;
+        int up = 0;
+        int down = 0;
+        //Rem-checks to see if they hit from left or right
+        con1 = 0; con2 = 0; con3 = 0;
+        con1 = 0;
+        if ((world.Sprite[num1].x + world.Sprite[num1].wide)
+                >= world.Sprite[num2].x
+            && world.Sprite[num1].x < world.Sprite[num2].x) {
+            con1 = 1; left = 1;
+        }
+        if ((world.Sprite[num2].x + world.Sprite[num2].wide) >= world.Sprite[num1].x && world.Sprite[num2].x < world.Sprite[num1].x) {
+            con1 = 1; right = 1;
+        }
+
+
+        screwthis:
+
+
+        //Rem- Checks to see if they ever collide from the top to bottom (Y)
+        con2 = 0;
+
+        if ((world.Sprite[num1].y + world.Sprite[num1].high)
+                >= world.Sprite[num2].y
+            && world.Sprite[num1].y < world.Sprite[num2].y) {
+            con2 = 1; up = 1;
+        }
+        //Rem- Added as of 11/27/00
+        if ((world.Sprite[num2].y + world.Sprite[num2].high)
+                >= world.Sprite[num1].y
+            && world.Sprite[num2].y < world.Sprite[num1].y) {
+            con2 = 1; down = 1;
+        }
+
+
+        screwthis2:
+        if (world.Sprite[num1].kind == 5 || world.Sprite[num2].kind == 5) {
+            con3 = 1;
+            goto screwthis3;
+        }
+
+
+        //Rem- The THIRD dimension, Z!
+
+        //if k = j) then GoTo screwthis3
+
+        if ((world.Sprite[num1].z + (world.Sprite[num1].length * 1.5))
+                >= world.Sprite[num2].z
+            && world.Sprite[num1].z < world.Sprite[num2].z) {
+            con3 = 1;
+        }
+        if (world.Sprite[num1].z == world.Sprite[num2].z) { con3 = 1; }
+        //Rem- Added as of 11/27/00
+        if ((world.Sprite[num2].z + world.Sprite[num2].length * 1.5)
+                >= world.Sprite[num1].z
+            && world.Sprite[num2].z < world.Sprite[num1].z) {
+            con3 = 1;
+        }
+
+        //TSNOW: This if statement just printed a line.
+        //if (con3 == 1) { Print ""; } //Rem-Beep: //Label2.Caption = "From Top of " + Str$(j)
+
+        screwthis3:
+        if (con1 == 1 && con2 == 1 && con3 == 1) { result = 1; }
+        if (whatKind == true) {
+            if (left == 1) { result = 2; }
+            if (right == 1) { result = 3; }
+            if (up == 1) { result = 4; }
+            if (down == 1) { result = 5; }
+            if (left == 1 && up == 1) { result = 6; }
+            if (left == 1 && down == 1) { result = 7; }
+            if (right == 1 && up == 1) { result = 8; }
+            if (right == 1 && down == 1) { result = 9; }
+        }
+
+        return result;
     }
+
 
     void initPlayers() {
                //1 Only player 1
@@ -2655,8 +2751,132 @@ private:
         LP3_ASSERT(false); // TODO
     }
 
+    //TSNOW: This looks insane. It looks as if there was too much in PlayGame,
+    //       so I made this function to get called for each level... which
+    //       also over time would have grown to have been too much.
     void levelR(int which, int who) {
-        LP3_ASSERT(false); // TODO
+        int k = 0;
+
+        auto & ws = world.Sprite[who]; // with sprite
+
+        //LEVEL 1****************************************************************
+        if (which == 1) {  //LEVEL 1 ****************************
+
+            //If .name = "bullet" Then
+
+            //End If
+            if (ws.name == "greenspring") {
+                if (ws.mode == "bounce") {
+                    ws.frame = ws.frame + 1;
+                    if (ws.frame > 5) { ws.frame = 2; }
+                    if (ws.miscTime < world.clock) { ws.mode = ""; ws.frame = 1; }
+                }
+            }
+
+
+            if (ws.name == "clouds") {
+                ws.srcx = ws.srcx + (world.sFactor * 0.5);
+                ws.srcx2 = ws.srcx2 + (world.sFactor * 0.5);
+                ws.Aframe[1].x = ws.Aframe[1].x + 1;
+                ws.Aframe[1].x2 = ws.Aframe[1].x2 + 1;
+            }
+
+
+
+            if (ws.name == "bullet") {     ////This is a strange type of bullet that in retrospect feels more like a bubble
+                //if (ws.seekx <> -1) then
+
+                this->killLimit(who);
+                this->offCameraKill(who);
+
+
+                //if (ws.mode = "") then
+
+
+                while(!(
+                    (ws.seekx > world.cameraStopX || ws.seekx < 0)
+                        || (ws.seeky > world.cameraStopY || ws.seeky < 0)
+                    )) {
+                    if (ws.seekx > ws.x) {
+                        ws.seekx = ws.seekx + ((ws.seekx - ws.x));
+                    }
+                    if (ws.seekx < ws.x) {
+                    ws.seekx = ws.seekx - ((ws.x - ws.seekx));
+                    }
+
+                    if (ws.seeky > ws.y) {
+                        ws.seeky = ws.seeky + ((ws.seeky - ws.y));
+                    }
+                    if (ws.seeky < ws.y) {
+                        ws.seeky = ws.seeky - ((ws.y - ws.seeky));
+                    }
+                }
+
+
+
+                this->seeker(who);
+                ws.frame = ws.frame + 1; if (ws.frame > 1) { ws.frame = 0; }
+            }
+
+
+            if (ws.name == "paulrun") {
+                if (ws.mode == "") { ws.mode = "right"; }
+
+                if (ws.mode == "right") {
+                    ws.reverse = false;
+                    ws.x = ws.x + world.sFactor;
+                    ws.seekx = ws.seekx + world.sFactor;
+                    if (ws.seekx > 100) {
+                        ws.mode = "left"; ws.seekx = 0; ws.dir = ""; }
+                }
+                if (ws.mode == "left") {
+                    ws.reverse = true;
+                    ws.x = ws.x - world.sFactor;
+                    ws.seekx = ws.seekx + world.sFactor;
+                    if (ws.seekx > 100) {
+                        ws.mode = "right"; ws.seekx = 0; ws.dir = ""; }
+                }
+
+                if (ws.seekx >= 50 && ws.dir != "done") {
+                    this->shoot(who, "paulbullet",
+                                world.Sprite[this->checkProx(who)].x,
+                                world.Sprite[checkProx(who)].y);
+                    ws.dir = "done";
+                }
+            }
+
+            if (ws.name == "bluestick") {
+                k = vb.Rnd() * 2 + 1;
+                if (k == 1) { ws.x = ws.x + world.sFactor; }
+                if (k == 2) { ws.x = ws.x - world.sFactor; }
+                k = vb.Rnd() * 2 + 1;
+                if (k == 1) { ws.y = ws.y + world.sFactor; }
+                if (k == 2) { ws.y = ws.y - world.sFactor; }
+                k = vb.Rnd() * 20 + 1;
+                if (k == 1) { if (ws.z == 0) {
+                    ws.jumpStart = ws.z; ws.jumpTime = world.clock; } }
+            }
+
+
+            if (ws.name == "pigeonbomber") {
+                ws.z = ws.z + world.sFactor;
+                //ws.frame = ws.frame + 1
+                //if (ws.frame > 2) then ws.frame = 1
+
+                this->seeker(who);
+                if (ws.x < 1) { ws.x = world.cameraStopX; }
+
+                if (ws.miscTime < world.clock) {
+                    this->shoot(who, "bluestick",
+                                world.Sprite[checkProx(who)].x,
+                                world.Sprite[checkProx(who)].y);
+                    ws.miscTime = world.clock + 2;
+                }
+
+            }
+
+            return;
+        }
     }
 
     void loadLevel(const std::string & file) {
@@ -2913,9 +3133,21 @@ private:
 		LP3_ASSERT(false); // TODO
 	}
 
-	template<typename... Args>
-	void setCinema(Args&&... args) {
-		LP3_ASSERT(false); // TODO
+	void setCinema(const int who, const int frame1, const int frame2,
+                   const int frame3, const int frame4, const int color1,
+                   const int color2, const int color3, const int color4,
+                   const std::string & wavefile, const int miscTime) {
+		auto & c = world.cinema[who];
+        c.frame1 = frame1;
+        c.frame2 = frame2;
+        c.frame3 = frame3;
+        c.frame4 = frame4;
+        c.color1 = color1;
+        c.color2 = color2;
+        c.color3 = color3;
+        c.color4 = color4;
+        c.wavefile = wavefile;
+        c.miscTime = miscTime;
 	}
 
 	void shoot(int who, const std::string & what, int wherex, int wherey) {
