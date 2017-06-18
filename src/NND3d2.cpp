@@ -511,7 +511,7 @@ Next j
 
 CameraWidth = 640: CameraHeight = 480
 StopSound 0
-loadLevel "level1.cap"
+loadLevel "Level1.cap"
 cameraStopX = 1010
 cameraStopY = 905 + 480
 Gravity = 20
@@ -1390,29 +1390,6 @@ If windowedMode = True Then Form1.MousePointer = 1 Else Form1.MousePointer = 99
 
 End Sub
 
-Public Sub loadLevel(file As String)
-Dim j As Integer
-Dim texFile(9) As String
-Dim texwide(9) As Integer
-Dim texhigh(9) As Integer
-
-
-file = levelPath + file
-Open file For Input As #1
-For j = 0 To 9
-If j > 3 Or j < 1 Then
-Input #1, texFile(j), texwide(j), texhigh(j)
-view.loadTexture(j, texFile(j), texwide(j), texhigh(j));
-End If
-Next j
-For j = 40 To 100
-With Sprite(j)
-Input #1, .name, .x, .y, .z, .srcx, .srcy, .srcx2, .srcy2, .wide, .high, .length, .texture, .visible, .kind, .zOrder
-End With
-Next j
-Close #1
-Call findOrder
-End Sub
 
 Sub debugLevel()
 Call NowLoading

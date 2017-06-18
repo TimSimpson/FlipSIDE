@@ -9,18 +9,10 @@ Vb::Vb(lp3::core::MediaManager & media)
     rnd_distribution(0.0, 1.0)
 {}
 
-std::fstream Vb::OpenForInput(const std::string & filePath) {
-	std::fstream file;
-	std::string fullPath = media.path(str(boost::format("FlipSIDE/%s")
-		% filePath));
-	LP3_LOG_DEBUG("Opening file %s...", fullPath);
-	file.open(fullPath.c_str(), std::ios::in | std::ios::binary);
-	if (file.bad() || file.fail())
-	{
-		LP3_LOG_ERROR("Error opening file! %s", filePath);
-		LP3_THROW2(lp3::core::Exception, "Error opening file!");
-	}
-	return file;
+VbFile Vb::OpenForInput(const std::string & filePath) {
+	const std::string full_path = media.path(filePath);
+	VbFile file{full_path};
+	return std::move(file);
 }
 
 double Vb::Rnd() {

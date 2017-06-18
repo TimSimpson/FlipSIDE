@@ -5,6 +5,7 @@
 #include <fstream>
 #include <random>
 #include <lp3/core.hpp>
+#include "VbFile.hpp"
 
 namespace nnd3d {
 
@@ -14,7 +15,7 @@ class Vb
 public:
     Vb(lp3::core::MediaManager & media);
 
-	std::fstream OpenForInput(const std::string & filePath);
+	VbFile OpenForInput(const std::string & filePath);
 
     double Rnd();
 private:

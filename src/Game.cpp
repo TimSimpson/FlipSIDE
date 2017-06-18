@@ -242,7 +242,7 @@ public:
 		//Rem-FLICKER-
 		for (j = 0; j < world.spritesInUse; ++j) {
 
-			if (boost::starts_with(world.screen, "level")) {
+			if (boost::starts_with(world.screen, "Level")) {
 				int sopoer;
 				//TSNOW: This may be wrong- old code was:
 				//       sopoer = Val(right(left(screen, 6), 1))
@@ -1084,10 +1084,10 @@ if (s.name == "Title2") {
                         || world.JumpKey[k] == true) {
                         s.mode = "done";
                         s.name = "KukoFax";
-                        if (s.frame == 1) { sound.PlayWave("pickTom.wav"); }
-                        if (s.frame == 2) { sound.PlayWave("pickNick.wav"); }
-                        if (s.frame == 3) { sound.PlayWave("pickDrew.wav"); }
-                        if (s.frame == 5) { sound.PlayWave("pickNicky.wav"); }
+                        if (s.frame == 1) { sound.PlayWave("PickTom.wav"); }
+                        if (s.frame == 2) { sound.PlayWave("PickNick.wav"); }
+                        if (s.frame == 3) { sound.PlayWave("PickDrew.wav"); }
+                        if (s.frame == 5) { sound.PlayWave("PickNicky.wav"); }
                     }
                 //Next k
                 }
@@ -1858,10 +1858,10 @@ private:
         int penguin;
 		(void)penguin;  //2017- is this unused?
 
-        if (world.exitS == "true" && boost::starts_with(world.screen, "level")) {
+        if (world.exitS == "true" && boost::starts_with(world.screen, "Level")) {
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
-            world.screen = str(boost::format("level%s") % sapple);
+            world.screen = str(boost::format("Level%s") % sapple);
         } // End If
 
         if (world.screen == "intro story") {
@@ -1904,7 +1904,7 @@ private:
         //************************************************************
         // LOADS A NEW LEVEL!------------------------------------
         //************************************************************
-        if (boost::starts_with(world.screen, "level")
+        if (boost::starts_with(world.screen, "Level")
             && world.currentScreen != world.screen) {
             //as long as this is set to this crazy value, it won't load it again.
             world.currentScreen = world.screen;
@@ -2017,8 +2017,8 @@ private:
 
         if (which == 1.1 || which == 1) {
             this->destroyEverything();
-            this->MakeLevel("Level1Opening.wav", "level1.cap", "lv1bg.bmp",
-                            10, 10, "level1cinema.bmp", "level1cinema.ani",
+            this->MakeLevel("Level1Opening.wav", "Level1.cap", "Lv1bg.bmp",
+                            10, 10, "Level1Cinema.bmp", "Level1Cinema.ani",
                             true, true);
             world.cinemaMax = 2;
             world.cinemaCounter = 0;
@@ -2042,8 +2042,8 @@ private:
         }
 
         if (which == 1.2) {
-            this->MakeLevel("level1.wav", "level1b.cap", "lv1bg2.bmp",
-                            100, 100, "Level1BCinema.bmp", "level1bcinema.ani",
+            this->MakeLevel("Level1.wav", "Level1b.cap", "Lv1bg2.bmp",
+                            100, 100, "Level1BCinema.bmp", "Level1bcinema.ani",
                             true, true);
             world.cinemaMax = 3;
             world.cinemaCounter = 0;
@@ -2066,8 +2066,8 @@ private:
         }
 
         if (which == 1.3) {
-            this->MakeLevel("level1.wav", "level1c.cap", "lv1bg3.bmp",
-                            10, 10, "Level1BCinema.bmp", "level1bcinema.ani",
+            this->MakeLevel("Level1.wav", "Level1c.cap", "Lv1bg3.bmp",
+                            10, 10, "Level1BCinema.bmp", "Level1bcinema.ani",
                             false, false);
             world.cinemaMax = 3;
             world.cinemaCounter = 4;
@@ -2090,8 +2090,8 @@ private:
         }
 
         if (which == 1.4) {
-            this->MakeLevel("level1.wav", "level1d.cap", "level1birdstreet.bmp",
-                            98, 480, "Level1DCinema.bmp", "level1bcinema.ani",
+            this->MakeLevel("Level1.wav", "Level1d.cap", "Level1birdstreet.bmp",
+                            98, 480, "Level1DCinema.bmp", "Level1bcinema.ani",
                             false, false);
             world.cinemaMax = 3;
             world.cinemaCounter = 4;
@@ -2144,29 +2144,20 @@ private:
     }
 
     void loadAnimation(int who, const std::string & file) {
-        auto stream = vb.OpenForInput(file);
+        auto f = vb.OpenForInput(file);
         std::string line;
         auto & s = world.Sprite[who];
         for (int j = 1; j <= 20; ++ j) {
-            if (!std::getline(stream, line)) {
-                LP3_LOG_ERROR("Error reading line from %s", file);
-                LP3_THROW2(lp3::core::Exception, "Failure to read line!");
-            }
-            if (line == "-1") {
+            f.input(s.Aframe[j].x , s.Aframe[j].y,
+                    s.Aframe[j].x2, s.Aframe[j].y2);
+            LP3_LOG_DEBUG("%d, %d", s.Aframe[j].x, s.Aframe[j].y);
+            LP3_LOG_DEBUG("%d, %d", s.Aframe[j].x2, s.Aframe[j].y2);
+            if (s.Aframe[j].x == -1) {
+                //TSNOW: Unlike the original this will read into the other
+                //       vars, even if the first one was -1.
                 break;
             }
-            for (int i = 0; i < line.size(); ++i) {
-                if (line[i]== ',') {
-                    line[i] = ' ';
-                }
-            }
-            std::stringstream ss(line);
-            ss >> s.Aframe[j].x;
-            ss >> s.Aframe[j].y;
-            ss >> s.Aframe[j].x2;
-            ss >> s.Aframe[j].y2;
         }
-        stream.close();
     }
 
     void loadframe(int jex, int whichframe,
@@ -2183,7 +2174,27 @@ private:
     }
 
     void loadLevel(const std::string & file) {
-        LP3_ASSERT(false); // TODO
+        int j = 0;
+        std::array<std::string, 10> texFile;
+        std::array<int, 10> texwide;
+        std::array<int, 10> texhigh;
+        //TSNOW: Unnecessary: string file = world.levelPath + fileArg;
+        {
+            auto f = vb.OpenForInput(file);
+            for (j = 0; j <= 9; ++ j) {
+                if (j > 3 || j < 1) {
+                    f.input(texFile[j], texwide[j], texhigh[j]);
+                    view.LoadTexture(j, texFile[j], texwide[j], texhigh[j]);
+                }
+            }
+            for (j = 40; j <= 100; ++j) {
+                auto & s = world.Sprite[j];
+                f.input(s.name, s.x, s.y, s.z, s.srcx, s.srcy, s.srcx2,
+                        s.srcy2, s.wide, s.high, s.length, s.texture, s.visible,
+                        s.kind, s.zOrder);
+            }
+        }
+        this->findOrder();
     }
 
     void makeJump(int which) {
@@ -2212,7 +2223,7 @@ private:
 		//playBGM ""
 
 		//destroyEverything 2
-		this->loadLevel(levelFile); //"level1b.cap"
+		this->loadLevel(levelFile); //"Level1b.cap"
 
 		world.Gravity = 20;
 
@@ -2222,7 +2233,7 @@ private:
 		view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight); //"lv1bg2.bmp", 10, 10)
 																	//Call loadTexture(0, "smile.bmp", 255, 255)
 
-																	//Call loadTexture(4, "level1a.bmp", 490, 209)
+																	//Call loadTexture(4, "Level1a.bmp", 490, 209)
 																	//Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
 																	//Call loadTexture(6, "goomba.bmp", 240, 240)
 		view.LoadTexture(9, CinemaBitMapFile, 400, 400); //"lvl1bg.bmp",400,400
@@ -2394,7 +2405,7 @@ private:
                     //6 Players 1 and 3
                     //7 Players 2 and 3
 
-                    world.screen = "level1.1";
+                    world.screen = "Level1.1";
                 }
             }
         }

@@ -36,11 +36,12 @@ std::string key_name_from_sdl(const SDL_Keycode & kc) {
 int _main(core::PlatformLoop & loop) {
 	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
 	core::LogSystem log;
-	core::MediaManager media;
+	core::MediaManager base_media;
+	core::MediaManager media = base_media.sub_directory("FlipSIDE");
 	input::Controls controls;
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 	mix::Init mix_init(MIX_INIT_MP3);
-	
+
 	nnd3d::Vb vb{ media };
 	nnd3d::World world;
 	nnd3d::View view{ media, world };

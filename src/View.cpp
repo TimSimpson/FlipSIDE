@@ -18,7 +18,7 @@ View::View(core::MediaManager & _media, World & _world)
 	bgtexture(),
 	AnimationTexture({}),
 	program(),
-	font{ media.load("Engine/apple_kid.fnt") },
+	font{ media.load("../Engine/apple_kid.fnt") },
 	font_elements{ (letters_max * 4) },
 	font_quads(font_elements.add_quads(letters_max)),
 	game_elements(),
@@ -135,8 +135,7 @@ void View::ForceShowBackground() {
 gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {
     // Yes, this old game was so silly it used black as its color key. :/
     LP3_LOG_DEBUG("Loading texture %s", fileName);
-    std::string path = str(boost::format("FlipSIDE/%s") % fileName);
-    auto bmp_file = media.path(path);
+    auto bmp_file = media.path(fileName);
     glm::ivec3 color_key[] = { glm::ivec3{ 0, 0, 0 }};
     return new gfx::Texture(
         IMG_Load(bmp_file.c_str()),

@@ -14,8 +14,7 @@ Sound::Sound(lp3::core::MediaManager & media)
 }
 
 std::string Sound::get_file_path(const std::string & file_name) {
-    std::string path = str(boost::format("FlipSIDE/%s") % file_name);
-    return media.path(path);
+    return media.path(file_name);
 }
 
 void Sound::LoadSound(int which, const std::string & soundFile,
