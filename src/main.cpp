@@ -40,6 +40,9 @@ int _main(core::PlatformLoop & loop) {
 	core::MediaManager media = base_media.sub_directory("FlipSIDE");
 	input::Controls controls;
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
+		
+	glEnable(GL_DEPTH_TEST);  // DOES SOMETHING, makes Z count between render calls
+	
 	mix::Init mix_init(MIX_INIT_MP3);
 
 	nnd3d::Vb vb{ media };
@@ -109,6 +112,7 @@ int _main(core::PlatformLoop & loop) {
 		});
 
 		frame_timer.next_frame();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		view.DrawStuff(frame_timer.get_fps());
 		window.render(std::ref(view));
 		return !quit;

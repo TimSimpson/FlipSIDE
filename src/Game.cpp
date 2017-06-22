@@ -1171,7 +1171,7 @@ if (s.name == "Title2") {
                 if (s.mode == "") {
 
                     world.Sprite[1].invTime = 40;
-                    sound.PlayWave("introstory.wav"); // play it once then stop
+                    sound.PlayWave("IntroStory.ogg"); // play it once then stop
                     s.mode = "waka do";  // so it won't load non stop
                 }
                 if (world.Sprite[1].mode == "words1") {
@@ -1841,7 +1841,8 @@ private:
                     goto britneyDog2;
                 }
                 //if (world.Sprite[k].z > (world.Sprite[j].length - (world.Sprite[j].length * 0.75))) then GoTo britneyDog2
-            poddle2:
+            //2017: this label was unreferneced:
+			// poddle2:
                 //HolderJ = hitdetection(j, k, True)
                 //if (HolderJ = 2 || HolderJ = 6 || HolderJ = 7) then
                 //world.Sprite[j].x = world.Sprite[j].x - world.Sprite[j].mph
@@ -1871,7 +1872,8 @@ private:
                 || world.Sprite[k].kind == 6 || world.Sprite[k].kind == 8) {
                 goto britneyDog;
             }
-        poddle:
+		// 2017: unreferenced label:
+        // poddle:
             //HolderJ = hitdetection(k, j, True)
             //if (HolderJ = 2 || HolderJ = 6 || HolderJ = 7) then
             //world.Sprite(k).x = world.Sprite(k).x - world.Sprite(k).mph
@@ -2451,7 +2453,8 @@ private:
         }
 
 
-        screwthis:
+		// 2017: unreferenced label:
+	    // screwthis:
 
 
         //Rem- Checks to see if they ever collide from the top to bottom (Y)
@@ -2469,8 +2472,8 @@ private:
             con2 = 1; down = 1;
         }
 
-
-        screwthis2:
+		// 2017: unreferenced label:
+        // screwthis2:
         if (world.Sprite[num1].kind == 5 || world.Sprite[num2].kind == 5) {
             con3 = 1;
             goto screwthis3;
@@ -2729,7 +2732,7 @@ private:
             spr.mph = 2;
             spr.kind = 0;
             spr.frame = 17;
-            sound.PlayWave("deathspr.wav");
+            sound.PlayWave("Death.wav");
         }
         if (spr.name == "Death of Nicky") {
             spr.srcx = 1;

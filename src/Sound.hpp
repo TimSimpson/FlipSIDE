@@ -22,7 +22,7 @@ public:
 
     void PlaySound(const std::string & who);
 
-    void PlaySoundLoop(int which);
+    void PlaySoundLoop(const int which);
 
     void PlayWave(const std::string & soundFile);
 
@@ -39,20 +39,39 @@ public:
 private:
     lp3::core::MediaManager & media;
     lp3::mix::Mixer mixer;
-    std::unique_ptr<lp3::mix::Music> bgm;
+    std::unique_ptr<lp3::mix::Music> bgm;    
 
-    std::string get_file_path(const std::string & file_name);
+	// Represents a sound buffer in the old code.
+	// I've combined a few variables which used to be part of independent
+	// arrays.
+	struct SoundBuffer {
+		lp3::mix::Chunk chunk;	// SDL resource
+		std::string name;		// made up name code uses to refer to this		
+		int which_index;        // used to map to the old code's `which` arg
+	};
+
+	struct InUseBuffer {
+		// For orphaned buffers (see below) the buffer will be attached to 
+		// this and cleaned up later.
+		std::unique_ptr<SoundBuffer> source;
+		int channel;            // which channel SDL is using for it
+	};
 
 	// The old code would play wave files by name, and never managed the
 	// resulting resources. Here we need to make sure we clean up the
 	// chunk needed to play the wave, but only after it's done playing.
-	struct OrphanWave {
-		lp3::mix::Chunk chunk;
-		std::string name;
-		int channel;  // which channel SDL is using for it
-	};
+	// I think the old game had an array of 15 of these, but here I'll
+	// just grow it dynamically under the assumption the related 
+	// functions don't get called too often (... or do they?!!)
+	std::vector<InUseBuffer> orphaned_waves;
 
-	std::vector<OrphanWave> chunks;
+	// There were also 20 sound buffers that could be named (the code declared
+	// 30 but due to a bug I think only 20 got used).
+	std::vector<SoundBuffer> sound_buffers;
+
+	std::string get_file_path(const std::string & file_name);
+
+	//SoundBuffer && load_buffer(const std::string & sound_file);
 };
 
 }   // end namespace

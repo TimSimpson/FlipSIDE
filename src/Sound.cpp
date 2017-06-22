@@ -8,9 +8,11 @@ Sound::Sound(lp3::core::MediaManager & media)
 :   media(media),
     mixer(22050, MIX_DEFAULT_FORMAT, 2, 4096),
     bgm(),
-	chunks()
+	orphaned_waves(),
+	sound_buffers()
 {
-	Mix_AllocateChannels(16);  // According to the docs, this never fails.
+	Mix_AllocateChannels(16 + 30);  // According to the docs, this never fails.
+	sound_buffers.reserve(30);
 }
 
 std::string Sound::get_file_path(const std::string & file_name) {
@@ -19,7 +21,16 @@ std::string Sound::get_file_path(const std::string & file_name) {
 
 void Sound::LoadSound(int which, const std::string & soundFile,
                       std::string soundName) {
-    LP3_LOG_DEBUG("LoadSound %s", soundFile);
+	LP3_LOG_DEBUG("LoadSound %s", soundFile);
+
+	const auto music_path = get_file_path(soundFile);
+
+	SoundBuffer sb;
+	sb.name = soundName;
+	sb.which_index = which;
+	sb.chunk = Mix_LoadWAV(music_path.c_str());	
+
+	sound_buffers.emplace_back(std::move(sb));    
 }
 
 void Sound::PlayBgm(const std::string & sound_file) {
@@ -38,15 +49,39 @@ void Sound::PlayBgm(const std::string & sound_file) {
 }
 
 void Sound::PlayIsoWave(const std::string & soundFile) {
+	// Is this used?
     LP3_LOG_DEBUG("PlayIsoWave %s", soundFile);
 }
 
 void Sound::PlaySound(const std::string & who) {
+	for (SoundBuffer & sb : sound_buffers) {
+		if (sb.name == who) {
+			InUseBuffer ow;
+			ow.channel = Mix_PlayChannel(-1, sb.chunk, 0);
+			if (ow.channel == -1) {
+				LP3_LOG_ERROR("PlayChannel error: %s", Mix_GetError());
+				LP3_THROW2(lp3::core::Exception, "PlayChannel error");
+			}
+			orphaned_waves.emplace_back(std::move(ow));
+		}
+	}
     LP3_LOG_DEBUG("PlaySound %s", who);
 }
 
-void Sound::PlaySoundLoop(int which) {
+void Sound::PlaySoundLoop(const int which) {
     LP3_LOG_DEBUG("PlaySoundLoop %d", which);
+	for (SoundBuffer & sb : sound_buffers) {
+		if (sb.which_index == which) {
+			InUseBuffer ow;
+			ow.channel = Mix_PlayChannel(-1, sb.chunk, -1);
+			if (ow.channel == -1) {
+				LP3_LOG_ERROR("PlayChannel error: %s", Mix_GetError());
+				LP3_THROW2(lp3::core::Exception, "PlayChannel error");
+			}
+			orphaned_waves.emplace_back(std::move(ow));
+		}
+	}
+	LP3_LOG_DEBUG("PlaySound %s", which);
 }
 
 void Sound::PlayWave(const std::string & soundFile) {
@@ -58,23 +93,25 @@ void Sound::PlayWave(const std::string & soundFile) {
 	}
 	const auto music_path = get_file_path(soundFile);
 
-	OrphanWave ow;
-	ow.name = soundFile;
-	ow.chunk = Mix_LoadWAV(music_path.c_str());
-	ow.channel = Mix_PlayChannel(-1, ow.chunk, 0);
+	InUseBuffer ow;
+	ow.source.reset(new SoundBuffer());
+
+	ow.source->name = soundFile;
+	ow.source->chunk = Mix_LoadWAV(music_path.c_str());
+	ow.channel = Mix_PlayChannel(-1, ow.source->chunk, 0);
 	if (ow.channel == -1) {
 		LP3_LOG_ERROR("PlayChannel error: %s", Mix_GetError());
 		LP3_THROW2(lp3::core::Exception, "PlayChannel error");
 	}
 
-	chunks.emplace_back(std::move(ow));
+	orphaned_waves.emplace_back(std::move(ow));
 }
 
 void Sound::garbage_collect() {
-	chunks.erase(
+	orphaned_waves.erase(
 		std::remove_if(
-			chunks.begin(), chunks.end(),
-			[](const OrphanWave & ow) {
+			orphaned_waves.begin(), orphaned_waves.end(),
+			[](const InUseBuffer & ow) {
 				const auto r = Mix_Playing(ow.channel);
 				if (0 == r) {
 					Mix_HaltChannel(ow.channel);
@@ -82,14 +119,14 @@ void Sound::garbage_collect() {
 				return 0 == r;
 			}
 		),
-		chunks.end());
+		orphaned_waves.end());
 }
 
 void Sound::silence_sfx() {
-	for (OrphanWave & ow : chunks) {
+	for (InUseBuffer & ow : orphaned_waves) {
 		Mix_HaltChannel(ow.channel);
 	}
-	chunks.clear();
+	orphaned_waves.clear();
 }
 
 void Sound::StopSound(int which) {

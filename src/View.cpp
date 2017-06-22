@@ -70,14 +70,15 @@ void View::DrawStuff(float fps) {
 	std::string s = str(boost::format("FPS: %d") % fps);
 	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
 
+	float z = 0.9999f;
 	if (bgtexture) {
 		LP3_ASSERT(nullptr != bgtexture);
-		draw_verts_as_quad(bgverts.data(), -1, 0.0f);
+		draw_verts_as_quad(bgverts.data(), -1, z);
 	}
     //2017: So, the old game has verts that in fact have a Z coordinate,
     //      but it looks like it wasn't used (or I didn't copy the logic
     //      in correctly).
-    float z = 0.0f;
+    
 	int currentTexture = -1;
 	for (int j = 0; j < world.spritesInUse; ++j) {
 		if (world.drawOrder[j] == -1) {
@@ -88,7 +89,7 @@ void View::DrawStuff(float fps) {
 
 
 		if (sprite.visible) {
-            z += 0.0067;
+            z -= 0.0067f;
 			draw_verts_as_quad(sprite.SpriteVerts.data(), sprite.texture, z);
 		}
 	}
