@@ -2314,6 +2314,74 @@ private:
 		return 0.0;
     }
 
+    void GoSub_level1a() {
+        world.Sprite[31].frame = world.cinema[world.cinemaCounter].frame1;
+        world.Sprite[32].frame = world.cinema[world.cinemaCounter].frame2;
+        world.Sprite[33].frame = world.cinema[world.cinemaCounter].frame3;
+        world.Sprite[34].frame = world.cinema[world.cinemaCounter].frame4;
+        world.Sprite[31].color = view.QBColor(world.cinema[world.cinemaCounter].color1);
+        world.Sprite[32].color = view.QBColor(world.cinema[world.cinemaCounter].color2);
+        world.Sprite[33].color = view.QBColor(world.cinema[world.cinemaCounter].color3);
+        world.Sprite[34].color = view.QBColor(world.cinema[world.cinemaCounter].color4);
+
+        sound.PlayIsoWave(world.cinema[world.cinemaCounter].wavefile);
+        world.Sprite[30].miscTime = world.clock + world.cinema[world.cinemaCounter].miscTime;
+        world.cinemaCounter = world.cinemaCounter + 1;
+    }
+
+    void GoSub_level1b() {
+        for (int penguin = 31; penguin <= 34; ++ penguin) {
+            if (penguin == 30) { continue; } //2017: WAT?
+            world.Sprite[penguin].visible = true;
+            world.Sprite[penguin].wide = (271 - 137) * 2;
+            world.Sprite[penguin].high = 81 * 2;
+            world.Sprite[penguin].seekx = 0;
+            world.Sprite[penguin].seeky = 1;
+            world.Sprite[penguin].texture = 9;
+        }
+    }
+
+    void GoSub_level1c() {
+        world.Sprite[31].x = world.CameraX - world.Sprite[31].seekx;
+        world.Sprite[31].y = world.CameraY + 20;
+        world.Sprite[32].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[32].seekx;
+        world.Sprite[32].y = world.CameraY + 20;
+        world.Sprite[33].x = world.CameraX - world.Sprite[33].seekx;
+        world.Sprite[33].y = world.CameraY + world.CameraHeight - 180;
+        world.Sprite[34].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[33].seekx;
+        world.Sprite[34].y = world.CameraY + world.CameraHeight - 180;
+
+        for (int penguin = 31; penguin <= 34; ++ penguin) {
+            // If penguin = 34 Then GoTo kiddy2
+            world.Sprite[penguin].seekx = world.Sprite[penguin].seekx + world.sFactor * 6;
+            world.Sprite[penguin].seeky = world.Sprite[penguin].seeky + 1;
+            if (world.Sprite[penguin].seeky == 3) {
+                world.Sprite[penguin].seeky = 1;
+            }
+            world.Sprite[penguin].frame = world.Sprite[penguin].seeky;
+        }
+
+        if (world.Sprite[32].seekx > 268) {
+            for (int penguin = 31; penguin <= 34; ++ penguin) {
+                world.Sprite[penguin].visible = false;
+            }
+
+            world.Sprite[30].mode = "9";
+        }
+    }
+
+    void GoSub_setUpLevel1() {
+        for (int penguin = 31; penguin <= 34; ++ penguin) {
+            if (penguin == 30) { continue; }
+            world.Sprite[penguin].visible = true;
+            world.Sprite[penguin].wide = (271 - 137) * 2;
+            world.Sprite[penguin].high = 81 * 2;
+            world.Sprite[penguin].seekx = 268;
+            world.Sprite[penguin].seeky = 1;
+            world.Sprite[penguin].texture = 9;
+        }
+    }
+
 	void goToLevel(const double which) {
         world.Gravity = 0;
 
@@ -3461,15 +3529,87 @@ private:
 	}
 
 	int pickTarget(int who, int koo) {
-		LP3_ASSERT(false); // TODO
+		//2017: Old function literally did nothing.
 	}
 
 	void printframes(int who) {
-		LP3_ASSERT(false); // TODO
+		//2017: This just printed out stuff so I could debug. Not implemented.
 	}
 
     void script() {
-		LP3_ASSERT(false); // TODO
+        int penguin;
+        if (world.Sprite[30].mode != "3" && world.Sprite[30].mode != "2") {
+            // move all the faces so that they line up
+            world.Sprite[31].x = world.CameraX; //  - world.Sprite[31].seekx
+            world.Sprite[31].y = world.CameraY + 20;
+            world.Sprite[32].x = world.CameraX + world.CameraWidth - 268; // + world.Sprite[32].seekx
+            world.Sprite[32].y = world.CameraY + 20;
+            world.Sprite[33].x = world.CameraX; //  - world.Sprite[33].seekx
+            world.Sprite[33].y = world.CameraY + world.CameraHeight - 180;
+            world.Sprite[34].x = world.CameraX + world.CameraWidth - 268; //  + world.Sprite[33].seekx
+            world.Sprite[34].y = world.CameraY + world.CameraHeight - 180;
+        }
+
+        if (world.Sprite[30].mode == "6") {
+            GoSub_level1c();
+        }
+
+        if (world.Sprite[30].mode == "5") {
+            GoSub_level1b();
+            world.Sprite[30].mode = "6";
+        }
+        if (world.Sprite[30].mode == "4" && world.Sprite[30].miscTime < world.clock) {
+            if (world.cinemaCounter >= world.cinemaMax) {
+                world.Sprite[30].mode = "5";
+            } else {
+                GoSub_level1a();
+            }
+        // world.Sprite[30].mode = "5"
+        }
+        if (world.Sprite[30].mode == "2") {
+            if (world.cinemaCounter > world.cinemaMax) {
+                world.Sprite[30].mode = "9";
+                world.Sprite[31].visible = false;
+                return;
+            }
+            GoSub_setUpLevel1();
+            world.Sprite[30].mode = "3";
+        }
+        if (world.Sprite[30].mode == "3") {
+
+            // Sprite(31).x = CameraX + 300
+            // Sprite(31).y = CameraY + 200
+            // Sprite(31).frame = 10
+            // Sprite(31).wide = 275 - 188
+            // Sprite(31).high = 376 - 353
+
+            world.Sprite[31].x = world.CameraX - world.Sprite[31].seekx;
+            world.Sprite[31].y = world.CameraY + 20;
+            world.Sprite[32].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[32].seekx;
+            world.Sprite[32].y = world.CameraY + 20;
+            world.Sprite[33].x = world.CameraX - world.Sprite[33].seekx;
+            world.Sprite[33].y = world.CameraY + world.CameraHeight - 180;
+            world.Sprite[34].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[33].seekx;
+            world.Sprite[34].y = world.CameraY + world.CameraHeight - 180;
+
+            if (world.Sprite[31].seekx < 0) {
+                world.Sprite[30].mode = "4";
+                world.Sprite[31].seekx = 0;
+                world.Sprite[32].seekx = 0;
+                world.Sprite[33].seekx = 0;
+                world.Sprite[34].seekx = 0;
+            }
+
+            for (penguin = 31; penguin <= 34; ++ penguin) {
+                if (penguin == 96) { continue; }
+                world.Sprite[penguin].seekx = world.Sprite[penguin].seekx - world.sFactor * 6;
+                world.Sprite[penguin].frame = world.Sprite[penguin].frame + 1;
+                if (world.Sprite[penguin].frame > 2) {
+                    world.Sprite[penguin].frame = 1;
+                }
+                // Sprite(penguin).frame = Sprite(penguin).seeky
+            }
+        }
 	}
 
 	void seeker(int who) {

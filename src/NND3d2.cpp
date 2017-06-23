@@ -389,10 +389,6 @@ End If
 Call InitDevice(dev, Form1.hwnd)
 
 End Function
-Function endgame()
-STOPGAME = True
-
-End Function
 
 Sub level1()
 
@@ -784,153 +780,6 @@ End Sub
 
 
 
-Sub script()
-Dim penguin As Integer
-If Sprite(30).mode <> "3" And Sprite(30).mode <> "2" Then
-// move all the faces so that they line up
-Sprite(31).x = CameraX //  - Sprite(31).seekx
-Sprite(31).y = CameraY + 20
-Sprite(32).x = CameraX + CameraWidth - 268 // + Sprite(32).seekx
-Sprite(32).y = CameraY + 20
-Sprite(33).x = CameraX //  - Sprite(33).seekx
-Sprite(33).y = CameraY + CameraHeight - 180
-Sprite(34).x = CameraX + CameraWidth - 268 //  + Sprite(33).seekx
-Sprite(34).y = CameraY + CameraHeight - 180
-End If
-
-
-If Sprite(30).mode = "6" Then
-GoSub level1c
-
-End If
-
-If Sprite(30).mode = "5" Then
-
-GoSub level1b
-Sprite(30).mode = "6"
-End If
-If Sprite(30).mode = "4" And Sprite(30).miscTime < clock Then
-If cinemaCounter >= cinemaMax Then Sprite(30).mode = "5" Else GoSub level1a
-// Sprite(30).mode = "5"
-End If
-If Sprite(30).mode = "2" Then
-If cinemaCounter > cinemaMax Then Sprite(30).mode = "9": Sprite(31).visible = False: Exit Sub
-
-GoSub setUpLevel1
-Sprite(30).mode = "3"
-End If
-If Sprite(30).mode = "3" Then
-
-// Sprite(31).x = CameraX + 300
-// Sprite(31).y = CameraY + 200
-// Sprite(31).frame = 10
-// Sprite(31).wide = 275 - 188
-// Sprite(31).high = 376 - 353
-
-
-
-Sprite(31).x = CameraX - Sprite(31).seekx
-Sprite(31).y = CameraY + 20
-Sprite(32).x = CameraX + CameraWidth - 268 + Sprite(32).seekx
-Sprite(32).y = CameraY + 20
-Sprite(33).x = CameraX - Sprite(33).seekx
-Sprite(33).y = CameraY + CameraHeight - 180
-Sprite(34).x = CameraX + CameraWidth - 268 + Sprite(33).seekx
-Sprite(34).y = CameraY + CameraHeight - 180
-
-If Sprite(31).seekx < 0 Then
-Sprite(30).mode = "4"
-Sprite(31).seekx = 0
-Sprite(32).seekx = 0
-Sprite(33).seekx = 0
-Sprite(34).seekx = 0
-End If
-
-For penguin = 31 To 34
-If penguin = 96 Then GoTo kiddy
-Sprite(penguin).seekx = Sprite(penguin).seekx - sFactor * 6
-Sprite(penguin).frame = Sprite(penguin).frame + 1
-If Sprite(penguin).frame > 2 Then Sprite(penguin).frame = 1
-// Sprite(penguin).frame = Sprite(penguin).seeky
-kiddy:
-Next penguin
-
-End If
-Exit Sub
-
-setUpLevel1:
-For penguin = 31 To 34
-If penguin = 30 Then GoTo doggy
-Sprite(penguin).visible = True
-Sprite(penguin).wide = (271 - 137) * 2
-Sprite(penguin).high = 81 * 2
-Sprite(penguin).seekx = 268
-Sprite(penguin).seeky = 1
-Sprite(penguin).texture = 9
-doggy:
-Next penguin
-Return
-
-level1a:
-
-Sprite(31).frame = cinema(cinemaCounter).frame1
-Sprite(32).frame = cinema(cinemaCounter).frame2
-Sprite(33).frame = cinema(cinemaCounter).frame3
-Sprite(34).frame = cinema(cinemaCounter).frame4
-Sprite(31).color = QBColor(cinema(cinemaCounter).color1)
-Sprite(32).color = QBColor(cinema(cinemaCounter).color2)
-Sprite(33).color = QBColor(cinema(cinemaCounter).color3)
-Sprite(34).color = QBColor(cinema(cinemaCounter).color4)
-
-playIsoWave (cinema(cinemaCounter).wavefile)
-Sprite(30).miscTime = clock + cinema(cinemaCounter).miscTime
-cinemaCounter = cinemaCounter + 1
-Return
-
-level1b:
-For penguin = 31 To 34
-If penguin = 30 Then GoTo doggy2
-Sprite(penguin).visible = True
-Sprite(penguin).wide = (271 - 137) * 2
-Sprite(penguin).high = 81 * 2
-Sprite(penguin).seekx = 0
-Sprite(penguin).seeky = 1
-Sprite(penguin).texture = 9
-doggy2:
-Next penguin
-Return
-
-level1c:
-Sprite(31).x = CameraX - Sprite(31).seekx
-Sprite(31).y = CameraY + 20
-Sprite(32).x = CameraX + CameraWidth - 268 + Sprite(32).seekx
-Sprite(32).y = CameraY + 20
-Sprite(33).x = CameraX - Sprite(33).seekx
-Sprite(33).y = CameraY + CameraHeight - 180
-Sprite(34).x = CameraX + CameraWidth - 268 + Sprite(33).seekx
-Sprite(34).y = CameraY + CameraHeight - 180
-
-For penguin = 31 To 34
-// If penguin = 34 Then GoTo kiddy2
-Sprite(penguin).seekx = Sprite(penguin).seekx + sFactor * 6
-Sprite(penguin).seeky = Sprite(penguin).seeky + 1: If Sprite(penguin).seeky = 3 Then Sprite(penguin).seeky = 1
-Sprite(penguin).frame = Sprite(penguin).seeky
-kiddy2:
-Next penguin
-
-If Sprite(32).seekx > 268 Then
-For penguin = 31 To 34
-Sprite(penguin).visible = False
-Next penguin
-
-Sprite(30).mode = "9"
-
-End If
-
-Return
-
-End Sub
-
 
 
 
@@ -956,23 +805,9 @@ If Sprite(which).z = 0 Then Sprite(which).multiJump = 0
 If Sprite(which).multiJump >= Sprite(which).maxJump Then Exit Function
 Sprite(which).multiJump = Sprite(which).multiJump + 1
 Sprite(which).jumpStart = Sprite(which).z
-Sprite(which).jumpTime = clock
+Sprite(which).jumpTime = cscript(lock
 End Function
 
-Function pickTarget(who As Integer, koo As Integer) As Integer
-// Finds who is closet
-// pickTarget = 8999
-// 'cr As Integer
-// crow As Integer
-// For cr = 0 To NUMSPRITES
-// If Sprite(cr).kind = koo Then
-// crow = Abs((Sprite(cr).x + (Sprite(cr).wide / 2)) - Sprite(who).x) + Abs((Sprite(cr).y + Sprite(cr).high / 2) - Sprite(who).y)
-// amount of pixels they are close
-// If crow < pickTarget Then pickTarget = crow
-// End If
-// Next cr
-// If pickTarget = 8999 Then pickTarget = -1
-End Function
 
 Function getMiddleX(who As Integer) As Double
 getMiddleX = Sprite(who).x + (Sprite(who).wide / 2)
@@ -1053,16 +888,6 @@ End With
 
 End Function
 
-Function printframes(who As Integer)
-With Sprite(who)
-Dim pigeon As Integer
-
-For pigeon = 0 To 16
-Debug.Print Str$(pigeon) + ": " + Str$(.Aframe(pigeon).x) + "," + Str$(.Aframe(pigeon).y) + "," + Str$(.Aframe(pigeon).x2) + "," + Str$(.Aframe(pigeon).y2)
-Next pigeon
-End With
-
-End Function
 
 Private Function getErrorCode(errNum)
 If errNum = D3D_OK Then MsgBox ("It's All good.")
