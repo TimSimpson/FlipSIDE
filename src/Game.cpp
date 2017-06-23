@@ -2811,11 +2811,11 @@ private:
 
         if (spr.name == "harharhar") {
             spr.flickerTime = world.clock + 2;
-            sound.PlayWave("harharharspr.wav");
+            sound.PlayWave("harharhar.wav");
         }
 
         if (spr.name == "expand") {
-            sound.PlayWave("whawheespr.wav");
+            sound.PlayWave("WhaWhee.wav");
             spr.reverse = false;
         }
 
