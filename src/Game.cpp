@@ -2300,18 +2300,17 @@ private:
     }
 
     double getMiddleX(int who) {
-        LP3_ASSERT(false); // TODO
-		return 0.0;
+        return world.Sprite[who].x + (world.Sprite[who].wide / 2);
     }
 
     double getMiddleY(int who) {
-        LP3_ASSERT(false); // TODO
-		return 0.0;
+        return world.Sprite[who].y + (world.Sprite[who].high / 2);
     }
 
     double getProx(int who, int who2) {
-        LP3_ASSERT(false); // TODO
-		return 0.0;
+        // Finds who is closet
+        return std::abs(getMiddleX(who) - getMiddleX(who2)) + std::abs(getMiddleY(who) - getMiddleY(who));
+        // amount of pixels they are close
     }
 
     void GoSub_level1a() {

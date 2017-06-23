@@ -809,18 +809,6 @@ Sprite(which).jumpTime = cscript(lock
 End Function
 
 
-Function getMiddleX(who As Integer) As Double
-getMiddleX = Sprite(who).x + (Sprite(who).wide / 2)
-End Function
-Function getMiddleY(who As Integer) As Double
-getMiddleY = Sprite(who).y + (Sprite(who).high / 2)
-End Function
-Function getProx(who As Integer, who2 As Integer) As Double
-// Finds who is closet
-
-getProx = Abs(getMiddleX(who) - getMiddleX(who2)) + Abs(getMiddleY(who) - getMiddleY(who))
-// amount of pixels they are close
-End Function
 Function seeker(who As Integer)
 With Sprite(who)
 If .x < .seekx Then .x = .x + (.mph * sFactor)
