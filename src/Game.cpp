@@ -83,7 +83,7 @@ public:
 			if (o == world.KeyAttack[j]) { world.AttackKey[j] = true; }
 			if (o == "escape") { this->endgame(); }
 			if (o == "") { world.debugOn = true; }  // wtf?!
-			if (o == "T") { world.exitS = "true"; sound.PlayWave("fdis.wav"); }
+			if (o == "T") { world.exitS = "true"; sound.PlayWave("FDis.wav"); }
 			if (o == "R") {
 				world.slicer[0] = true;
 				world.GradeUp[0] = 2;
@@ -2411,8 +2411,8 @@ private:
         }
 
         if (which == 1.2) {
-            this->MakeLevel("Level1.wav", "Level1b.cap", "Lv1bg2.bmp",
-                            100, 100, "Level1BCinema.bmp", "Level1bcinema.ani",
+            this->MakeLevel("Level1.ogg", "level1b.cap", "Lv1bg2.bmp",
+                            100, 100, "Level1BCinema.bmp", "Level1bCinema.ani",
                             true, true);
             world.cinemaMax = 3;
             world.cinemaCounter = 0;
@@ -2435,8 +2435,8 @@ private:
         }
 
         if (which == 1.3) {
-            this->MakeLevel("Level1.wav", "Level1c.cap", "Lv1bg3.bmp",
-                            10, 10, "Level1BCinema.bmp", "Level1bcinema.ani",
+            this->MakeLevel("Level1.ogg", "level1c.cap", "lv1bg3.bmp",
+                            10, 10, "Level1BCinema.bmp", "Level1bCinema.ani",
                             false, false);
             world.cinemaMax = 3;
             world.cinemaCounter = 4;
@@ -2459,8 +2459,8 @@ private:
         }
 
         if (which == 1.4) {
-            this->MakeLevel("Level1.wav", "Level1d.cap", "Level1birdstreet.bmp",
-                            98, 480, "Level1DCinema.bmp", "Level1bcinema.ani",
+            this->MakeLevel("Level1.ogg", "level1d.cap", "level1birdstreet.bmp",
+                            98, 480, "Level1DCinema.bmp", "Level1bCinema.ani",
                             false, false);
             world.cinemaMax = 3;
             world.cinemaCounter = 4;
@@ -2831,7 +2831,7 @@ private:
 
 
         if (spr.name == "tdigger") {
-            this->loadAnimation(which, "tdiggerspr.ani");
+            this->loadAnimation(which, "tDigger.ani");
             spr.hp = 1;
         }
 
@@ -3037,7 +3037,7 @@ private:
         }
 
         if (spr.name == "pigeonbomber") {
-            this->loadAnimation(which, "pigeonspr.ani");
+            this->loadAnimation(which, "pigeon.ani");
             spr.visible = true;
             spr.seekx = -10;
             spr.seeky = spr.y;
