@@ -3162,6 +3162,7 @@ private:
     }
 
     void level1() {
+        //2017: Looks like this is never called
         LP3_ASSERT(false); // TODO
     }
 
@@ -3318,7 +3319,15 @@ private:
     }
 
     void makeJump(int which) {
-        LP3_ASSERT(false); // TODO
+        if (world.Sprite[which].z == 0) {
+            world.Sprite[which].multiJump = 0;
+        }
+        if (world.Sprite[which].multiJump >= world.Sprite[which].maxJump) {
+            return ;
+        }
+        world.Sprite[which].multiJump = world.Sprite[which].multiJump + 1;
+        world.Sprite[which].jumpStart = world.Sprite[which].z;
+        world.Sprite[which].jumpTime = world.clock;
     }
 
 	void MakeLevel(const std::string & lvlBgMusic, const std::string & levelFile,
@@ -3620,7 +3629,11 @@ private:
 	}
 
 	void seeker(int who) {
-		LP3_ASSERT(false); // TODO
+        auto & s = world.Sprite[who];
+        if (s.x < s.seekx) { s.x = s.x + (s.mph * world.sFactor); }
+        if (s.x > s.seekx) { s.x = s.x - (s.mph * world.sFactor); }
+        if (s.y < s.seeky) { s.y = s.y + (s.mph * world.sFactor); }
+        if (s.y > s.seeky) { s.y = s.y - (s.mph * world.sFactor); }
 	}
 
 	void setCinema(const int who, const int frame1, const int frame2,
@@ -3641,7 +3654,33 @@ private:
 	}
 
 	void shoot(int who, const std::string & what, int wherex, int wherey) {
-		LP3_ASSERT(false); // TODO
+    	int opera;
+
+        for (opera = (who + 1); opera <= world.spritesInUse; ++ opera) {
+            if (world.Sprite[opera].name == "" || world.Sprite[opera].name == "empty" || world.Sprite[opera].name == "dead") {
+                // killS opera
+                world.Sprite[opera].name = what;
+                break;
+            }
+        }
+
+        if (opera >= 95) { return; }  //2017: WAT?
+
+        world.Sprite[opera].trueVisible = 0;
+        world.Sprite[opera].visible = true;
+        world.Sprite[opera].flickOn = false;
+        world.Sprite[opera].texture = world.Sprite[who].texture;
+        world.Sprite[opera].wide = world.Sprite[who].wide;
+        world.Sprite[opera].high = world.Sprite[who].high;
+
+        initSprites(opera);
+        world.Sprite[opera].zOrder = -1;
+        world.Sprite[opera].x = world.Sprite[who].x;
+        world.Sprite[opera].y = world.Sprite[who].y;
+        world.Sprite[opera].z = world.Sprite[who].z;
+        world.Sprite[opera].seekx = wherex;
+        world.Sprite[opera].seeky = wherey;
+        findOrder();
 	}
 
 	void titleScreen() {
@@ -3771,7 +3810,14 @@ private:
 	}
 
 	void unstretch(int which) {
-		LP3_ASSERT(false); // TODO
+		auto & s = world.Sprite[which];
+        if (s.frame == 0) {
+            s.wide = s.srcx2 - s.srcx;
+            s.high = s.srcy2 = s.srcy;
+        } else {
+            s.wide = s.Aframe[s.frame].x2 - s.Aframe[s.frame].x;
+            s.high = s.Aframe[s.frame].y2 - s.Aframe[s.frame].y;
+        }
 	}
 
 };	// end of GameImpl class

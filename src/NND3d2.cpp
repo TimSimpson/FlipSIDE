@@ -787,71 +787,8 @@ End Sub
 End Sub
 
 
-Function unstretch(which As Integer)
-With Sprite(which)
-If .frame = 0 Then
-.wide = .srcx2 - .srcx
-.high = .srcy2 = .srcy
-Else
-.wide = .Aframe(.frame).x2 - .Aframe(.frame).x
-.high = .Aframe(.frame).y2 - .Aframe(.frame).y
-End If
-
-End With
-End Function
-
-Function makeJump(which As Integer)
-If Sprite(which).z = 0 Then Sprite(which).multiJump = 0
-If Sprite(which).multiJump >= Sprite(which).maxJump Then Exit Function
-Sprite(which).multiJump = Sprite(which).multiJump + 1
-Sprite(which).jumpStart = Sprite(which).z
-Sprite(which).jumpTime = cscript(lock
-End Function
 
 
-Function seeker(who As Integer)
-With Sprite(who)
-If .x < .seekx Then .x = .x + (.mph * sFactor)
-If .x > .seekx Then .x = .x - (.mph * sFactor)
-If .y < .seeky Then .y = .y + (.mph * sFactor)
-If .y > .seeky Then .y = .y - (.mph * sFactor)
-End With
-End Function
-
-
-Function shoot(who As Integer, what As String, wherex, wherey)
-
-Dim opera As Integer
-
-For opera = (who + 1) To spritesInUse
-If Sprite(opera).name = "" Or Sprite(opera).name = "empty" Or Sprite(opera).name = "dead" Then
-// killS opera
-Sprite(opera).name = what
-Exit For
-End If
-
-
-
-Next opera
-If opera >= 95 Then Exit Function
-
-Sprite(opera).trueVisible = 0
-Sprite(opera).visible = True
-Sprite(opera).flickOn = False
-Sprite(opera).texture = Sprite(who).texture
-Sprite(opera).wide = Sprite(who).wide
-Sprite(opera).high = Sprite(who).high
-
-Call initSprites(opera)
-Sprite(opera).zOrder = -1
-Sprite(opera).x = Sprite(who).x
-Sprite(opera).y = Sprite(who).y
-Sprite(opera).z = Sprite(who).z
-Sprite(opera).seekx = wherex
-Sprite(opera).seeky = wherey
-Call findOrder
-
-End Function
 
 
 
