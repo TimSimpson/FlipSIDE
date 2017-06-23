@@ -853,28 +853,9 @@ Call findOrder
 
 End Function
 
-Function killLimit(jex As Integer)
-// Rem- Kills unruly sprites who are out of bounds
-With Sprite(jex)
-If .x > cameraStopX Or .x < -10 Then killS jex
-
-If .y > cameraStopX Or .y < -10 Then killS jex
-End With
-End Function
 
 
 
-Function loadframe(jex As Integer, whichframe As Integer, wx1 As Integer, wy1 As Integer, wx2 As Integer, wy2 As Integer)
-With Sprite(jex).Aframe(whichframe)
-.x = wx1
-.y = wy1
-.x2 = wx2
-.y2 = wy2
-End With
-
-
-
-End Function
 
 
 Private Function getErrorCode(errNum)

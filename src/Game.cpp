@@ -3081,7 +3081,11 @@ private:
     }
 
     void killLimit(int jex) {
-        LP3_ASSERT(false); // TODO
+        // Rem- Kills unruly sprites who are out of bounds
+        auto & s = world.Sprite[jex];
+        if (s.x > world.cameraStopX || s.x < -10) { killS(jex); }
+
+        if (s.y > world.cameraStopX || s.y < -10) { killS(jex); }
     }
 
     void killS(int goatX) {
@@ -3150,7 +3154,11 @@ private:
 
     void loadframe(int jex, int whichframe,
                       int wx1, int wy1, int wx2, int wy2) {
-        LP3_ASSERT(false); // TODO
+        auto & s = world.Sprite[jex].Aframe[whichframe];
+        s.x = wx1;
+        s.y = wy1;
+        s.x2 = wx2;
+        s.y2 = wy2;
     }
 
     void level1() {
