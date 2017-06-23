@@ -543,91 +543,9 @@ Call findOrder
 
 End Sub
 
-Sub gameOver()
-playBGM ""
-
-
-screen$ = "gameOver"
-destroyEverything
-view.loadTexture(0, "GameOver.bmp", 320, 287)
-With Sprite(0)
-.srcx = 1: .srcy = 1: .srcx2 = 320: .srcy2 = 240
-.x = 0: .y = 0: .wide = 640: .high = 480: .visible = True: .trueVisible = 1
-.name = "GameOverCloudBg": .texture = 0: .color = normColor
-End With
-With Sprite(1)
-.srcx = 1: .srcy = 243: .srcx2 = 320: .srcy2 = 287
-.x = 0: .y = 180: .wide = 640: .high = 94: .visible = True: .trueVisible = 1
-.name = "GameOverCloudTitle": .texture = 0
-.miscTime = clock + 4
-End With
-playWave "gameover.wav"
-Call findOrder
-End Sub
 
 // DestroyedEverything- moved to Game.cpp
 
-Sub titleScreen()
-
-Dim j As Integer
-
-For j = 0 To 2
-lives(j) = 3
-continues = 2
-Next j
-
-// playBGM ""
-
-
-// Call loadTexture(-1, "bg.bmp", 300, 300)
-
-destroyEverything
-playWave "Opening.wav"
-
-view.loadTexture(0, "title2.bmp", 285, 427);
-view.loadTexture(1, "title1.bmp", 440, 427);
-// loadTexture 2, "goomba.bmp", 240, 240
-// Sprite(11).name = "goomba"
-// Call initSprites(11)
-With Sprite(0)
-.srcx = 5: .srcy = 137: .srcx2 = 324: .srcy2 = 318
-.x = 1: .y = 1: .wide = 640: .high = 480: .visible = False
-.name = "TitleBg1": .texture = 1
-.miscTime = clock + 20
-End With
-With Sprite(1)
-.srcx = 1: .srcy = 3: .srcx2 = 196: .srcy2 = 107
-.x = 0: .y = 180: .wide = 193: .high = 106: .visible = False
-.name = "Title1": .miscTime = clock + 2
-End With
-With Sprite(2)
-.srcx = 2: .srcy = 111: .srcx2 = 279: .srcy2 = 230
-.x = 0: .y = 174: .wide = 277: .high = 119: .visible = False
-.name = "Title1": .miscTime = clock + 6
-End With
-With Sprite(3)
-.srcx = 1: .srcy = 233: .srcx2 = 224: .srcy2 = 363
-.x = 0: .y = 168: .wide = 232: .high = 130: .visible = False
-.name = "Title1": .miscTime = clock + 10
-End With
-With Sprite(4)
-.srcx = 1: .srcy = 366: .srcx2 = 198: .srcy2 = 424
-.x = 0: .y = 228: .wide = 197: .high = 58: .visible = False
-.name = "Title1": .miscTime = clock + 14
-End With
-With Sprite(5)
-.srcx = 9: .srcy = 6: .srcx2 = 348: .srcy2 = 81
-.x = 1: .y = -240: .wide = 640: .high = 960: .visible = False
-.name = "Title2": .miscTime = clock + 20: .texture = 1
-End With
-With Sprite(6)
-.srcx = 7: .srcy = 91: .srcx2 = 437: .srcy2 = 128
-.x = -320: .y = 140 + 213: .wide = 1280: .high = 110: .visible = False
-.name = "Title3": .miscTime = clock + 20: .texture = 1
-End With
-
-Call findOrder
-End Sub
 
 
 Sub switchWindowedMode()
