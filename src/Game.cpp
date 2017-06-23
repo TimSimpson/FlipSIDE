@@ -424,7 +424,8 @@ public:
 						world.Sprite[k].mode = "";
 						world.Sprite[k].miscTime = world.clock + 3;
 						world.Sprite[k].parent = j;
-						sound.PlaySound("set bomb");
+						//2017: This file doesn't work:
+                        // sound.PlaySound("set bomb");
 						//LoadSound k, "fireball.wav"
 						//PlaySound "fireball"
 						s.miscTime = world.clock + 0.25;
@@ -2160,10 +2161,10 @@ private:
         if (world.screen == "intro story") {
             world.screen = "intro story 2";
             destroyEverything();
-            view.LoadTexture(1, "open1.bmp", 313, 263);
-            view.LoadTexture(2, "open6.bmp", 320, 258);
-            view.LoadTexture(3, "open7.bmp", 320, 194);
-            view.LoadTexture(4, "titlescreen.bmp", 320, 240);
+            view.LoadTexture(1, "Open1.bmp", 313, 263);
+            view.LoadTexture(2, "Open6.bmp", 320, 258);
+            view.LoadTexture(3, "Open7.bmp", 320, 194);
+            view.LoadTexture(4, "TitleScreen.bmp", 320, 240);
             sound.PlayBgm("");
             world.Sprite[0].name = "intro story";
             {
@@ -2294,7 +2295,7 @@ private:
             s.name = "GameOverCloudTitle"; s.texture = 0;
             s.miscTime = world.clock + 4;
         }
-        sound.PlayWave("gameover.wav");
+        sound.PlayWave("GameOver.wav");
         this->findOrder();
     }
 
@@ -2335,11 +2336,11 @@ private:
             world.cameraStopY = 905 + 480;
 
             sound.LoadSound(16, "goomba.wav", "dying explosion");
-            sound.LoadSound(17, "goombaouch.wav", "Goomba Ouch");
+            sound.LoadSound(17, "GoombaOuch.wav", "Goomba Ouch");
             sound.LoadSound(18, "KerboDie.wav", "Kerbose Die");
             sound.LoadSound(19, "KerbHurt.wav", "Kerbose Ouch");
-            sound.LoadSound(20, "putulohurt.wav", "putulohurt");
-            sound.LoadSound(21, "putulodie.wav", "putulodie");
+            sound.LoadSound(20, "PutuloHurt.wav", "putulohurt");
+            sound.LoadSound(21, "PutuloDie.wav", "putulodie");
         }
 
         if (which == 1.2) {
@@ -2626,15 +2627,16 @@ private:
 
             if (world.playerName[j] == "Thomas") {
                 sound.LoadSound((j * 5), "fireball.wav", "fireball");
-                sound.LoadSound((j * 5) + 1, "death.wav", "DavidDeath");
+                sound.LoadSound((j * 5) + 1, "Death.wav", "DavidDeath");
                 sound.LoadSound((j * 5) + 2, "hurt.wav", "DavidHurt");
             }
 
             if (world.playerName[j] == "Nicky") {
                 sound.LoadSound((j * 5), "NickyDeath.wav", "NickyDeath");
                 sound.LoadSound((j * 5) + 1, "NickyHurt.wav", "NickyHurt");
-                sound.LoadSound((j * 5) + 2, "setbomb.wav ", "set bomb");
-                sound.LoadSound((j * 5) + 3, "Bomb Explode.wav", "bomb explode");
+                //2017: This file doesn't work, so don't play it
+                //sound.LoadSound((j * 5) + 2, "SetBomb.wav ", "set bomb");
+                sound.LoadSound((j * 5) + 3, "Bomb explode.wav", "bomb explode");
             }
 
             if (world.playerName[j] == "Nick") {
@@ -2646,7 +2648,7 @@ private:
 
         }
 
-        sound.LoadSound(15, "spring.wav", "spring");
+        sound.LoadSound(15, "Spring.wav", "spring");
     }
 
     void initSprites(int which) {
