@@ -49,8 +49,10 @@ void Sound::PlayBgm(const std::string & sound_file) {
 }
 
 void Sound::PlayIsoWave(const std::string & soundFile) {
-	// Is this used?
-    LP3_LOG_DEBUG("PlayIsoWave %s", soundFile);
+	// .... so it's a copy? Huh?
+	// Maybe the goal was that if something called this twice, it
+	// would stop whatever sound had been playing. <shrug emoji here>
+	PlayWave(soundFile);
 }
 
 void Sound::PlaySound(const std::string & who) {
@@ -81,7 +83,7 @@ void Sound::PlaySoundLoop(const int which) {
 			orphaned_waves.emplace_back(std::move(ow));
 		}
 	}
-	LP3_LOG_DEBUG("PlaySound %s", which);
+	LP3_LOG_DEBUG("PlaySoundLoop %s", which);
 }
 
 void Sound::PlayWave(const std::string & soundFile) {

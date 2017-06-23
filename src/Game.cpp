@@ -323,6 +323,11 @@ public:
 			//'               THIS SECTION UPDATES THE DAVID SPRITE
 			//Rem---------------------------------------------------------------
 
+			//2017
+			if (s.name == "script") {
+				int five = 5;
+			}
+
 			if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
 				penguin = 0;
 				if (j == 0) { penguin = 0; }
@@ -1124,12 +1129,12 @@ if (s.name == "Title2") {
                             s2.wide = s2.wide - 8 * world.sFactor;
                             s2.high = s2.high - 8 * world.sFactor;
                             s2.zOrder = -100;
-                            if (s.wide < 0) {
+                            if (s2.wide < 0) {
                                 world.Sprite[j].mode = "?";
                                 world.Sprite[30].miscTime = world.clock + 3;
                             }
                         }
-                    }
+                    }  // End With
                 }  //mode
                 if (s.mode == "?") {
                     //playWave "conten.wav"
@@ -2391,8 +2396,8 @@ private:
                             true, true);
             world.cinemaMax = 2;
             world.cinemaCounter = 0;
-            this->setCinema(0, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1a1.wav", 4.49);
-            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1a2.wav", 1.87);
+            this->setCinema(0, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1A1.wav", 4.49);
+            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1A2.wav", 1.87);
             world.Sprite[0].x = 50;
             world.Sprite[0].y = 220;
             world.Sprite[10].x = 50;
