@@ -2132,6 +2132,12 @@ private:
         int davidorg1 = 0;
         int k = 0;
 
+		//2017: This is madness. Looks like it set `drawTrue` to false for
+		//      everything, then went through and found the sprites with the
+		//		highest z order first and put them in the drawOrder array.
+		//      At the end the drawOrder array has indices of sprites from
+		//      the close (high z order) ones to the far away (low z order) 
+		//      ones.
         for (int j = 0; j <= world.spritesInUse; ++ j) {
          world.Sprite[j].drawTrue = false;
          world.drawOrder[j] = -150;
@@ -2140,7 +2146,7 @@ private:
         for (int j = 0; j <= world.spritesInUse; ++ j) {
          texorg = -150;
          davidorg1 = 0;
-         for (int k = 0; k < world.spritesInUse; ++ k) {
+         for (int k = 0; k <= world.spritesInUse; ++ k) {
              if (world.Sprite[k].zOrder > texorg
                  && world.Sprite[k].drawTrue == false) {
                  texorg = world.Sprite[k].zOrder;
@@ -2150,6 +2156,14 @@ private:
          world.drawOrder[j] = davidorg1;
          world.Sprite[davidorg1].drawTrue = true;
         }
+
+		//2017: Sanity check
+		int last_value = 9999;
+		for (int i = 0; i <= world.spritesInUse; ++i) {
+			int next_value = world.Sprite[world.drawOrder[i]].zOrder;
+			LP3_ASSERT(last_value >= next_value);
+			last_value = next_value;
+		}
     }
 
     void flipGame() {

@@ -42,7 +42,7 @@ void View::operator()(const glm::mat4 & previous) {
 	auto _2d = gfx::create_2d_screen(previous, res2d);
 	program.set_mvp(_2d);
 
-	for (int i = 0; i < 10; ++ i) {
+	for (int i = 0; i <= 10; ++ i) {
 		lp3::gfx::Texture * tex;
 		if (i == 0) {
 			tex = bgtexture.get();
@@ -86,7 +86,6 @@ void View::DrawStuff(float fps) {
 		}
 		const int index = world.drawOrder[j];
 		const auto & sprite = world.Sprite[index];
-
 
 		if (sprite.visible) {
             z -= 0.0067f;
