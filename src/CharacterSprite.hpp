@@ -21,7 +21,7 @@ struct CharacterSprite
      double y; //Integer
      double lastX;
      double lastY;
-     int z;
+     double z;  //2017: Changed to double to prevent some bugs
      double wide; //Integer 'width and height
      double high; //Integer
      int length;
