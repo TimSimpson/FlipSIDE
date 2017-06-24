@@ -246,7 +246,7 @@ public:
 				int sopoer;
 				//TSNOW: This may be wrong- old code was:
 				//       sopoer = Val(right(left(screen, 6), 1))
-				sopoer = boost::lexical_cast<double>(world.screen.substr(6));
+				sopoer = boost::lexical_cast<double>(world.screen.substr(5, 1));
 				this->levelR(sopoer, j);
 			}
 
