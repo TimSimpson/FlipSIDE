@@ -2026,10 +2026,10 @@ private:
             world.Sprite[30].mode = "2";
             world.cinemaMax = 4;
             world.cinemaCounter = 0;
-            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1b1.wav", 2.24);
-            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1b2.wav", 2.74);
-            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1b3.wav", 4.24);
-            this->setCinema(3, 5, 3, 7, 16, 15, 15, 15, 8, "TalkLv1b4.wav", 0.95);
+            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1B1.wav", 2.24);
+            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1B2.wav", 2.74);
+            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1B3.wav", 4.24);
+            this->setCinema(3, 5, 3, 7, 16, 15, 15, 15, 8, "TalkLv1B4.wav", 0.95);
         }
     }
 
@@ -2136,7 +2136,7 @@ private:
 		//      everything, then went through and found the sprites with the
 		//		highest z order first and put them in the drawOrder array.
 		//      At the end the drawOrder array has indices of sprites from
-		//      the close (high z order) ones to the far away (low z order) 
+		//      the close (high z order) ones to the far away (low z order)
 		//      ones.
         for (int j = 0; j <= world.spritesInUse; ++ j) {
          world.Sprite[j].drawTrue = false;
@@ -2435,9 +2435,9 @@ private:
                             true, true);
             world.cinemaMax = 3;
             world.cinemaCounter = 0;
-            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1c1.wav", 3.31);
-            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1c2.wav", 2.3);
-            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1c3.wav", 3.05);
+            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1C1.wav", 3.31);
+            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1C2.wav", 2.3);
+            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1C3.wav", 3.05);
             world.Sprite[0].x = 1122;
             world.Sprite[0].y = 1650;
             world.Sprite[10].x = 1122;
