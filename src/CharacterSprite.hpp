@@ -67,7 +67,7 @@ struct CharacterSprite
      int kind; //if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
      std::string deathType; //how do they die?
      double miscTime; // they must wait this long to do misc. actions
-     glm::ivec4 color; //lets throw some color into the mix
+     glm::vec4 color; //lets throw some color into the mix
 
      std::string soundFile; //sound files
 

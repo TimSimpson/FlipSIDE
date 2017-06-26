@@ -8,7 +8,7 @@
 namespace nnd3d {
 
 namespace {
-    const glm::ivec4 normColor{255, 255, 255, 255};
+    const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
 }
 
 
@@ -1243,7 +1243,7 @@ if (s.name == "Title2") {
                     }
                     if (s.mode == "word 5") {
                         s.length = 5;
-                        view.LoadTexture(-1, "open2.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open2.bmp", 320, 240);
                         world.CameraWidth = 320;
                         world.CameraHeight = 240;
                         {
@@ -1304,23 +1304,23 @@ if (s.name == "Title2") {
                         } //end with
                     }
                     if (s.mode == "word 9") {
-                        view.LoadTexture(-1, "open3.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open3.bmp", 320, 240);
                         {
                             auto & s2 = world.Sprite[1];
                             //.texture = 1
-                            s.length = 6;
-                            s.visible = true;
-                            s.srcx = 2;
-                            s.srcy = 189;
-                            s.srcx2 = 305;
-                            s.srcy2 = 254;
-                            s.wide = 303 * 2;
-                            s.high = (65) * 2;
+                            s2.length = 6;
+                            s2.visible = true;
+                            s2.srcx = 2;
+                            s2.srcy = 189;
+                            s2.srcx2 = 305;
+                            s2.srcy2 = 254;
+                            s2.wide = 303 * 2;
+                            s2.high = (65) * 2;
                             //.x = 1: .y = 178
                         } //end with
                     }
                     if (s.mode == "word 10") {
-                        view.LoadTexture(-1, "open4.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open4.bmp", 320, 240);
                         {
                             auto & s2 = world.Sprite[1];
                             s2.length = 6;
@@ -1337,7 +1337,7 @@ if (s.name == "Title2") {
                         } //end with
                     }
                     if (s.mode == "word 11") {
-                        view.LoadTexture(-1, "open5.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open5.bmp", 320, 240);
                         {
                             auto & s2 = world.Sprite[1];
                             s2.length = 6;
@@ -1356,7 +1356,7 @@ if (s.name == "Title2") {
                     if (s.mode == "word 12") {
                         //if (s.miscTime < clock) then
                         //killS (1)
-                        view.LoadTexture(-1, "plainblack.bmp", 320, 240);
+                        view.LoadTexture(-1, "PlainBlack.bmp", 320, 240);
                         s.mode = "word 13";
                         {
                             auto & s2 = world.Sprite[1];

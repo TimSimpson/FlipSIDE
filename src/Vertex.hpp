@@ -15,7 +15,7 @@ struct Vertex
     float y;
     float z;
     float rhw;
-    glm::ivec4 color;
+    glm::vec4 color;
     long specular;
     float tu;
     float tv;

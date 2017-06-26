@@ -9,7 +9,7 @@ namespace nnd3d {
 
 namespace {
 	constexpr int letters_max = 80 * 24;
-	const glm::ivec4 normColor{ 255, 255, 255, 255 };
+	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 	const glm::ivec2 res2d(World::FULLSCREENWIDTH, World::FULLSCREENHEIGHT);
 }
 
@@ -78,7 +78,7 @@ void View::DrawStuff(float fps) {
     //2017: So, the old game has verts that in fact have a Z coordinate,
     //      but it looks like it wasn't used (or I didn't copy the logic
     //      in correctly).
-    
+
 	int currentTexture = -1;
 	for (int j = 0; j < world.spritesInUse; ++j) {
 		if (world.drawOrder[j] == -1) {
@@ -106,7 +106,7 @@ void View::draw_verts_as_quad(const Vertex * v, const int texIndex, float z) {
 	// Using old game logic, -1 could be the "background" texture which was
 	// reasonlessly treated differently from everything else.
 	const int realIndex = texIndex + 1;
-	gfx::Quad<gfx::TexVert> quad = game_elements[realIndex].add_quad();
+	gfx::Quad<gfx::TexCVert> quad = game_elements[realIndex].add_quad();
 	draw_vert_to_quad(v, quad, z);
 }
 
@@ -164,49 +164,49 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
 glm::ivec4 View::Rgb(int r, int g, int b) const {
 	// Emulates old VB RGB function. Named 'Rgb' due to probable windows.h
 	// issues. >:(
-	const glm::ivec4 rgb(r, g, b, 255);
-	LP3_ASSERT(rgb.r == r && rgb.g == g && rgb.b == b);
+	const glm::vec4 rgb(r/255.0f, g/255.0f, b/255.0f, 1.0f);
+	// LP3_ASSERT(rgb.r == r && rgb.g == g && rgb.b == b);
 	return rgb;
 }
 
-glm::ivec4 View::QBColor(int index) {
+glm::vec4 View::QBColor(int index) {
 	// If the code picks wrong, they get translucent yellow.
     switch(index) {
         case 0:
-            return glm::ivec4{0, 0, 0, 255};
+            return glm::vec4{0.0f, 0.0f, 0.0f, 1.0f};
         case 1:
-            return glm::ivec4{0, 0, 128, 255};
+            return glm::vec4{0.0f, 0.0f, 0.5f, 1.0f};
         case 2:
-            return glm::ivec4{0, 128, 0, 255};
+            return glm::vec4{0.0f, 0.5f, 0.0f, 1.0f};
         case 3:
-            return glm::ivec4{128, 255, 128, 255};
+            return glm::vec4{0.5f, 1.0f, 0.5f, 1.0f};
         case 4:
-            return glm::ivec4{128, 0, 0, 255};
+            return glm::vec4{0.5f, 0.0f, 0.0f, 1.0f};
         case 5:
-            return glm::ivec4{128, 0, 128, 255};
+            return glm::vec4{0.5f, 0.0f, 0.5f, 1.0f};
         case 6:
-            return glm::ivec4{128, 128, 0, 255};
+            return glm::vec4{0.5f, 0.5f, 0.0f, 1.0f};
         case 7:
-            return glm::ivec4{192, 192, 192, 255};
+            return glm::vec4{0.75f, 0.75f, 0.75f, 1.0f};
         case 8:
-            return glm::ivec4{64, 64, 64, 255};
+            return glm::vec4{0.25f, 0.25f, 0.25f, 1.0f};
         case 9:
-            return glm::ivec4{0, 0, 255, 255};
+            return glm::vec4{0.0f, 0.0f, 1.0f, 1.0f};
         case 10:
-            return glm::ivec4{0, 255, 0, 255};
+            return glm::vec4{0.0f, 1.0f, 0.0f, 1.0f};
         case 11:
-            return glm::ivec4{128, 128, 255, 255};
+            return glm::vec4{0.5f, 0.5f, 1.0f, 1.0f};
         case 12:
-            return glm::ivec4{255, 0, 0, 255};
+            return glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
         case 13:
-            return glm::ivec4{255, 0, 255, 255};
+            return glm::vec4{1.0f, 0.0f, 1.0f, 1.0f};
         case 14:
-            return glm::ivec4{255, 255, 0, 255};
+            return glm::vec4{1.0f, 1.0f, 0.0f, 1.0f};
         case 15:
-            return glm::ivec4{255, 255, 255, 255};
+            return glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
         default:
 			LP3_ASSERT(false);  // Bad color selection.
-            return glm::ivec4{255, 255, 0, 128};
+            return glm::vec4{1.0f, 1.0f, 0.0f, 0.5f};
     }
 }
 

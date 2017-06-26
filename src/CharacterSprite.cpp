@@ -44,7 +44,7 @@ CharacterSprite::CharacterSprite()
     kind(0),
     deathType(""),
     miscTime(0),
-    color(0),
+    color({1.0f, 1.0f, 1.0f, 1.0f}),
     soundFile(""),
     zOrder(0),
     drawTrue(false),
