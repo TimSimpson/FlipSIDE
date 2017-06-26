@@ -50,12 +50,6 @@ private:
 	inline void draw_vert_to_quad(const Vertex * v,
 		                          gfx::Quad<gfx::TexCVert> & quad,
                                   float z) {
-        LP3_LOG_DEBUG("a color %f", v[0].color.a);
-        LP3_ASSERT(v[0].color.a != 0.0f);
-        LP3_ASSERT(v[0].color.a <= 1.0f);
-        LP3_ASSERT(v[1].color.a <= 1.0f);
-        LP3_ASSERT(v[2].color.a <= 1.0f);
-        LP3_ASSERT(v[3].color.a <= 1.0f);
 		quad.dl().set(v[0].x, v[0].y, z, v[0].tu, v[0].tv,
                       v[0].color.r, v[0].color.g, v[0].color.b, v[0].color.a);
 		quad.ul().set(v[1].x, v[1].y, z, v[1].tu, v[1].tv,
