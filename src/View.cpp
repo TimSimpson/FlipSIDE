@@ -152,11 +152,13 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
 	LP3_LOG_DEBUG("LoadTexture %i %s %i %i", which, fileName, howWide, howHigh);
     if (which == -1) {
         bgtexture.reset(load_image(fileName));
-		bg_size = bgtexture->size();
+		// bg_size = glm::vec2{ howWide, howHigh };
+        bg_size = bgtexture->size();
 		LP3_LOG_DEBUG("   size = %i, %i", bg_size.x, bg_size.y);
     } else {
         AnimationTexture[which].reset(load_image(fileName));
-		tex_size[which] = AnimationTexture[which]->size();
+        // tex_size[which] = glm::vec2{ howWide, howHigh };
+        tex_size[which] = AnimationTexture[which]->size();
 		LP3_LOG_DEBUG("   size = %i, %i", tex_size[which].x, tex_size[which].y);
     }
 }

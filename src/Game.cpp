@@ -1243,7 +1243,7 @@ if (s.name == "Title2") {
                     }
                     if (s.mode == "word 5") {
                         s.length = 5;
-                        view.LoadTexture(-1, "Open2.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open2.png", 320, 240);
                         world.CameraWidth = 320;
                         world.CameraHeight = 240;
                         {
@@ -1304,7 +1304,7 @@ if (s.name == "Title2") {
                         } //end with
                     }
                     if (s.mode == "word 9") {
-                        view.LoadTexture(-1, "Open3.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open3.png", 320, 240);
                         {
                             auto & s2 = world.Sprite[1];
                             //.texture = 1
@@ -1320,7 +1320,7 @@ if (s.name == "Title2") {
                         } //end with
                     }
                     if (s.mode == "word 10") {
-                        view.LoadTexture(-1, "Open4.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open4.png", 320, 240);
                         {
                             auto & s2 = world.Sprite[1];
                             s2.length = 6;
@@ -1337,7 +1337,7 @@ if (s.name == "Title2") {
                         } //end with
                     }
                     if (s.mode == "word 11") {
-                        view.LoadTexture(-1, "Open5.bmp", 320, 240);
+                        view.LoadTexture(-1, "Open5.png", 320, 240);
                         {
                             auto & s2 = world.Sprite[1];
                             s2.length = 6;
@@ -1356,7 +1356,7 @@ if (s.name == "Title2") {
                     if (s.mode == "word 12") {
                         //if (s.miscTime < clock) then
                         //killS (1)
-                        view.LoadTexture(-1, "PlainBlack.bmp", 320, 240);
+                        view.LoadTexture(-1, "PlainBlack.png", 320, 240);
                         s.mode = "word 13";
                         {
                             auto & s2 = world.Sprite[1];
@@ -2040,7 +2040,7 @@ private:
         if (world.playerName[(who / 10)] == "Thomas") {
             world.weapon[who / 10] = "fireball";
             this->loadAnimation(who, "Thomas.ani");
-            view.LoadTexture((who / 10) + 1, "Flip1.bmp", 254, 254);
+            view.LoadTexture((who / 10) + 1, "Flip1.png", 254, 254);
             world.Sprite[who].texture = (who / 10) + 1;
             for (goatorg = (who + 1); goatorg <= (who + 9); ++ goatorg) {
                 this->loadAnimation(goatorg, "Fireball.ani");
@@ -2050,7 +2050,7 @@ private:
         if (world.playerName[(who / 10)] == "Nick") {
             world.weapon[who / 10] = "fireball";
             this->loadAnimation(who, "nick.ani");
-            view.LoadTexture((who / 10) + 1, "joel.bmp", 254, 258);
+            view.LoadTexture((who / 10) + 1, "joel.png", 254, 258);
             world.Sprite[who].texture = (who / 10) + 1;
             for (goatorg = (who + 1); goatorg <= (who + 9); ++goatorg) {
                 this->loadAnimation(goatorg, "icespike.ani");
@@ -2060,7 +2060,7 @@ private:
         if (world.playerName[(who / 10)] == "Nicky") {
             world.weapon[who / 10] = "bomb";
             this->loadAnimation(who, "nicky.ani");
-            view.LoadTexture((who / 10) + 1, "LilNicky.bmp", 84, 148);
+            view.LoadTexture((who / 10) + 1, "LilNicky.png", 84, 148);
             world.Sprite[who].texture = (who / 10) + 1;
             for (goatorg = (who + 1); goatorg <= (who + 9); ++goatorg) {
                 this->loadAnimation(goatorg, "bomb.ani");
@@ -2106,7 +2106,7 @@ private:
             sound.PlayBgm("");
         }
 
-        view.LoadTexture(-1, "PlainBlack.bmp", 25, 25);
+        view.LoadTexture(-1, "PlainBlack.png", 25, 25);
         //bgtexture = Nothing
         //for (int j = 0; j < 9; ++ j) {
             // Set AnimationTexture(j) = Nothing
@@ -2180,10 +2180,10 @@ private:
         if (world.screen == "intro story") {
             world.screen = "intro story 2";
             destroyEverything();
-            view.LoadTexture(1, "Open1.bmp", 313, 263);
-            view.LoadTexture(2, "Open6.bmp", 320, 258);
-            view.LoadTexture(3, "Open7.bmp", 320, 194);
-            view.LoadTexture(4, "TitleScreen.bmp", 320, 240);
+            view.LoadTexture(1, "Open1.png", 313, 263);
+            view.LoadTexture(2, "Open6.png", 320, 258);
+            view.LoadTexture(3, "Open7.png", 320, 194);
+            view.LoadTexture(4, "TitleScreen.png", 320, 240);
             sound.PlayBgm("");
             world.Sprite[0].name = "intro story";
             {
@@ -2296,7 +2296,7 @@ private:
         sound.PlayBgm("");
         world.screen = "gameOver";
         this->destroyEverything();
-        view.LoadTexture(0, "GameOver.bmp", 320, 287);
+        view.LoadTexture(0, "GameOver.png", 320, 287);
         {
             auto & s = world.Sprite[0];
             s.srcx = 1; s.srcy = 1; s.srcx2 = 320; s.srcy2 = 240;
@@ -2405,8 +2405,8 @@ private:
 
         if (which == 1.1 || which == 1) {
             this->destroyEverything();
-            this->MakeLevel("Level1Opening.ogg", "Level1.cap", "Lv1bg.bmp",
-                            10, 10, "Level1Cinema.bmp", "Level1Cinema.ani",
+            this->MakeLevel("Level1Opening.ogg", "Level1.cap", "Lv1bg.png",
+                            10, 10, "Level1Cinema.png", "Level1Cinema.ani",
                             true, true);
             world.cinemaMax = 2;
             world.cinemaCounter = 0;
@@ -2430,8 +2430,8 @@ private:
         }
 
         if (which == 1.2) {
-            this->MakeLevel("Level1.ogg", "level1b.cap", "Lv1bg2.bmp",
-                            100, 100, "Level1BCinema.bmp", "Level1bCinema.ani",
+            this->MakeLevel("Level1.ogg", "level1b.cap", "Lv1bg2.png",
+                            100, 100, "Level1BCinema.png", "Level1bCinema.ani",
                             true, true);
             world.cinemaMax = 3;
             world.cinemaCounter = 0;
@@ -2454,8 +2454,8 @@ private:
         }
 
         if (which == 1.3) {
-            this->MakeLevel("Level1.ogg", "level1c.cap", "lv1bg3.bmp",
-                            10, 10, "Level1BCinema.bmp", "Level1bCinema.ani",
+            this->MakeLevel("Level1.ogg", "level1c.cap", "lv1bg3.png",
+                            10, 10, "Level1BCinema.png", "Level1bCinema.ani",
                             false, false);
             world.cinemaMax = 3;
             world.cinemaCounter = 4;
@@ -2478,8 +2478,8 @@ private:
         }
 
         if (which == 1.4) {
-            this->MakeLevel("Level1.ogg", "level1d.cap", "level1birdstreet.bmp",
-                            98, 480, "Level1DCinema.bmp", "Level1bCinema.ani",
+            this->MakeLevel("Level1.ogg", "level1d.cap", "level1birdstreet.png",
+                            98, 480, "Level1DCinema.png", "Level1bCinema.ani",
                             false, false);
             world.cinemaMax = 3;
             world.cinemaCounter = 4;
@@ -2645,7 +2645,7 @@ private:
         //it reincarnates them here by calling createPlayer
         //Rem*************************************8
 
-        view.LoadTexture(0, "System.bmp", 336, 397);
+        view.LoadTexture(0, "System.png", 336, 397);
         for (k = 0; k <= 20; k+=10) {
             //For penguin = 0 To 2
             this->createPlayer(k, world.playerName[k / 10]);
@@ -3378,13 +3378,13 @@ private:
 		int j = 0;
 
 		world.CameraX = 0; world.CameraY = 0;
-		view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight); //"lv1bg2.bmp", 10, 10)
-																	//Call loadTexture(0, "smile.bmp", 255, 255)
+		view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight); //"lv1bg2.png", 10, 10)
+																	//Call loadTexture(0, "smile.png", 255, 255)
 
-																	//Call loadTexture(4, "Level1a.bmp", 490, 209)
-																	//Call loadTexture(5, "lv1bgtw.bmp", 308, 341)
-																	//Call loadTexture(6, "goomba.bmp", 240, 240)
-		view.LoadTexture(9, CinemaBitMapFile, 400, 400); //"lvl1bg.bmp",400,400
+																	//Call loadTexture(4, "Level1a.png", 490, 209)
+																	//Call loadTexture(5, "lv1bgtw.png", 308, 341)
+																	//Call loadTexture(6, "goomba.png", 240, 240)
+		view.LoadTexture(9, CinemaBitMapFile, 400, 400); //"lvl1bg.png",400,400
 
 
 		this->initPlayers();
@@ -3430,7 +3430,7 @@ private:
 	}
 
     void NowLoading() {
-        view.LoadTexture(-1, "NowLoading.bmp", 320, 240);
+        view.LoadTexture(-1, "NowLoading.png", 320, 240);
         world.CameraWidth = 320;
         world.CameraHeight = 240;
         view.UpdateSprites();
@@ -3454,8 +3454,8 @@ private:
         this->destroyEverything();
         this->NowLoading();
         view.UpdateSprites();
-        view.LoadTexture(0, "PlayerS2.bmp", 320, 400);
-        view.LoadTexture(-1, "PlayerS.bmp", 320, 240);
+        view.LoadTexture(0, "PlayerS2.png", 320, 400);
+        view.LoadTexture(-1, "PlayerS.png", 320, 240);
         world.CameraWidth = 320;
         world.CameraHeight = 240;
 
@@ -3713,14 +3713,14 @@ private:
 		//playBGM ""
 
 
-		//Call loadTexture(-1, "bg.bmp", 300, 300)
+		//Call loadTexture(-1, "bg.png", 300, 300)
 
 		this->destroyEverything();
 		sound.PlayWave("OpeningWAV.wav");
 
-		view.LoadTexture(0, "title2ALT.bmp", 285, 427);
-		view.LoadTexture(1, "title1.bmp", 440, 427);
-		//loadTexture 2, "goomba.bmp", 240, 240
+		view.LoadTexture(0, "title2ALT.png", 285, 427);
+		view.LoadTexture(1, "title1.png", 440, 427);
+		//loadTexture 2, "goomba.png", 240, 240
 		//Sprite(11).name = "goomba"
 		//Call initSprites(11)
 		{

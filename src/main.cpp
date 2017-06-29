@@ -37,7 +37,13 @@ int _main(core::PlatformLoop & loop) {
 	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
 	core::LogSystem log;
 	core::MediaManager base_media;
-	core::MediaManager media = base_media.sub_directory("FlipSIDE");
+	core::MediaManager media = base_media.sub_directory(
+		#ifndef LP3_COMPILE_TARGET_EMSCRIPTEN
+			"FlipSIDE"
+		#else
+			"FlipSIDE-lite"
+		#endif
+	);
 	input::Controls controls;
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 
