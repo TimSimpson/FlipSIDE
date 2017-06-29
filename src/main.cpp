@@ -40,10 +40,14 @@ int _main(core::PlatformLoop & loop) {
 	core::MediaManager media = base_media.sub_directory("FlipSIDE");
 	input::Controls controls;
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
-		
+
 	glEnable(GL_DEPTH_TEST);  // DOES SOMETHING, makes Z count between render calls
-	
-	mix::Init mix_init(MIX_INIT_MP3);
+
+	#if LP3_COMPILE_TARGET_EMSCRIPTEN
+		mix::Init mix_init();
+	#else
+		mix::Init mix_init(MIX_INIT_MP3);
+	#endif
 
 	nnd3d::Vb vb{ media };
 	nnd3d::World world;

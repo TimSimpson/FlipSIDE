@@ -18,7 +18,7 @@ View::View(core::MediaManager & _media, World & _world)
 	bgtexture(),
 	AnimationTexture({}),
 	program(),
-	font{ media.load("../Engine/apple_kid.fnt") },
+	font{ media.load("apple_kid.fnt") },
 	font_elements{ (letters_max * 4) },
 	font_quads(font_elements.add_quads(letters_max)),
 	game_elements(),
