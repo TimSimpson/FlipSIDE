@@ -22,15 +22,6 @@ std::string Sound::get_file_path(const std::string & file_name) {
 void Sound::LoadSound(int which, const std::string & soundFile,
                       std::string soundName) {
     LP3_LOG_DEBUG("LoadSound %s", soundFile);
-
-    const auto music_path = get_file_path(soundFile);
-
-    SoundBuffer sb;
-    sb.name = soundName;
-    sb.which_index = which;
-    sb.chunk = Mix_LoadWAV(music_path.c_str());
-
-    sound_buffers.emplace_back(std::move(sb));
 }
 
 void Sound::PlayBgm(const std::string & sound_file) {

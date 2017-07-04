@@ -1633,7 +1633,7 @@ if (s.name == "Title2") {
 		for (int j = 0; j <= world.spritesInUse; ++j) {
 			auto & s = world.Sprite[j];
 
-			if (s.name == "Thomas" || s.name == "Nick" && s.mode != "truck") {
+			if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
 				if (s.dir != "") { s.frame = s.frame + 1; }
 				if (s.dir == "u") {
 					if (s.frame > 8) { s.frame = 5; }
@@ -2940,7 +2940,7 @@ private:
             spr.soundFile = "Kerbose Ouch";
             spr.jumpStrength = 25;
             trueorg = (int) (vb.Rnd() * 2.0 + 1);
-            if (trueorg = 1) {
+            if (trueorg == 1) {
                 this->loadAnimation(which, "Kerbose.ani");
             } else {
                 this->loadAnimation(which, "Putulo.ani");
@@ -3563,7 +3563,7 @@ private:
         }
 	}
 
-	int pickTarget(int who, int koo) {
+	void pickTarget(int who, int koo) {
 		//2017: Old function literally did nothing.
 	}
 
