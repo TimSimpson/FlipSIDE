@@ -2405,7 +2405,16 @@ private:
 
         if (which == 1.1 || which == 1) {
             this->destroyEverything();
-            this->MakeLevel("Level1Opening.ogg", "Level1.cap", "Lv1bg.png",
+            this->MakeLevel("Level1Opening.ogg", "Level1.cap", 
+// TSNOW: This is such a hack, but honestly the graphic for the apartment 
+//        carpet- which already looked terrible - makes the eyes bleed
+//		  when the texture is manually repeated to make a 64x64 bitmap. 
+//		  It's so much worse I'd rather only use it in Emscripten.
+#ifdef LP3_COMPILE_TARGET_EMSCRIPTEN
+                            "Lv1bg.png",
+#else
+                            "Lv1bg.bmp",
+#endif
                             10, 10, "Level1Cinema.png", "Level1Cinema.ani",
                             true, true);
             world.cinemaMax = 2;
