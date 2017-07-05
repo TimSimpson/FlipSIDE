@@ -1,4 +1,5 @@
 #include "View.hpp"
+#include <algorithm>
 #include "World.hpp"
 
 // The old VB code constantly was tossing ints into floats and vice-versa,
@@ -11,6 +12,48 @@ namespace {
 	constexpr int letters_max = 80 * 24;
 	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 	const glm::ivec2 res2d(World::FULLSCREENWIDTH, World::FULLSCREENHEIGHT);
+
+    glm::vec2 find_texture_scale_factor(const glm::vec2 & original_size,
+                                        const glm::vec2 current_size) {
+        // The old game used textures with random dimensions. Emscripten though
+        // vomits if it gets textures that aren't the same multiples of 2 in both
+        // directions.
+
+        // ... though let's make sure.
+        LP3_ASSERT(current_size.x == current_size.y);
+
+        // First, look at the "original size". The old game logic passed in the
+        // size of every bitmap it used, and we can use that to know what the
+        // used size of the texture was.
+
+        // Next, find "desired size", which is the next multiple of 2 fit for
+        // each texture.
+
+        const auto get_desired_dimension = [](const float s) {
+            for(float i = 2; i < 1024; i *= 2) {
+                if (s <= i) {
+                    return i;
+                }
+            }
+            // Just ignore it.
+            return s;
+        };
+
+        // The size will be the largest of either dimension.
+        const float desired_max_dimension = std::max(
+            get_desired_dimension(original_size.x),
+            get_desired_dimension(original_size.y));
+
+        // If the current size is less than the desired size, it means I scaled
+        // the image down so Emscripten wouldn't run out of memory (let's call this
+        // Lynx Ninja Gaiden III enhanced graphics mode).
+
+        // However, if we use the desired size in the calculations, the
+        // resulting tu and tv coordinates will work.
+
+        //return desired_max_dimension / current_size.x;
+        return glm::vec2{desired_max_dimension, desired_max_dimension};
+    }
 }
 
 View::View(core::MediaManager & _media, World & _world)
@@ -152,13 +195,18 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
 	LP3_LOG_DEBUG("LoadTexture %i %s %i %i", which, fileName, howWide, howHigh);
     if (which == -1) {
         bgtexture.reset(load_image(fileName));
+        bg_size = find_texture_scale_factor(
+            glm::vec2{ howWide, howHigh }, bgtexture->size());
 		// bg_size = glm::vec2{ howWide, howHigh };
-        bg_size = bgtexture->size();
+        // bg_size = bgtexture->size();
 		LP3_LOG_DEBUG("   size = %i, %i", bg_size.x, bg_size.y);
     } else {
         AnimationTexture[which].reset(load_image(fileName));
         // tex_size[which] = glm::vec2{ howWide, howHigh };
-        tex_size[which] = AnimationTexture[which]->size();
+        // tex_size[which] = AnimationTexture[which]->size();
+        tex_size[which] = find_texture_scale_factor(
+            glm::vec2{ howWide, howHigh },
+            AnimationTexture[which]->size());
 		LP3_LOG_DEBUG("   size = %i, %i", tex_size[which].x, tex_size[which].y);
     }
 }

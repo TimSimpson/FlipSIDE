@@ -41,7 +41,7 @@ int _main(core::PlatformLoop & loop) {
 		#ifndef LP3_COMPILE_TARGET_EMSCRIPTEN
 			"FlipSIDE"
 		#else
-			"FlipSIDE-lite"
+			"FlipSIDE" //-lite"
 		#endif
 	);
 	input::Controls controls;
