@@ -1,5 +1,6 @@
 #include "View.hpp"
 #include <algorithm>
+#include <boost/algorithm/string.hpp>
 #include "World.hpp"
 
 // The old VB code constantly was tossing ints into floats and vice-versa,
@@ -195,18 +196,22 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
 	LP3_LOG_DEBUG("LoadTexture %i %s %i %i", which, fileName, howWide, howHigh);
     if (which == -1) {
         bgtexture.reset(load_image(fileName));
-        bg_size = find_texture_scale_factor(
-            glm::vec2{ howWide, howHigh }, bgtexture->size());
-		// bg_size = glm::vec2{ howWide, howHigh };
-        // bg_size = bgtexture->size();
+		if (boost::algorithm::ends_with(fileName, ".bmp")) {
+			bg_size = bgtexture->size();
+		} else {
+			bg_size = find_texture_scale_factor(
+				glm::vec2{ howWide, howHigh }, bgtexture->size());
+		}			
 		LP3_LOG_DEBUG("   size = %i, %i", bg_size.x, bg_size.y);
     } else {
-        AnimationTexture[which].reset(load_image(fileName));
-        // tex_size[which] = glm::vec2{ howWide, howHigh };
-        // tex_size[which] = AnimationTexture[which]->size();
-        tex_size[which] = find_texture_scale_factor(
-            glm::vec2{ howWide, howHigh },
-            AnimationTexture[which]->size());
+        AnimationTexture[which].reset(load_image(fileName));        
+		if (boost::algorithm::ends_with(fileName, ".bmp")) {
+			tex_size[which] = AnimationTexture[which]->size();
+		} else {
+			tex_size[which] = find_texture_scale_factor(
+				glm::vec2{ howWide, howHigh },
+				AnimationTexture[which]->size());
+		}
 		LP3_LOG_DEBUG("   size = %i, %i", tex_size[which].x, tex_size[which].y);
     }
 }
