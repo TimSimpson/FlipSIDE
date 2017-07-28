@@ -30,7 +30,22 @@ public:
 	glm::vec4 QBColor(int index);
 
     void UpdateSprites();
+
+    struct LoadTextureCall {
+        std::string fileName;
+        int howWide;
+        int howHigh;
+    };
+
+    void LoadHistory(
+        const std::vector<boost::optional<LoadTextureCall>> & history);
+
+    const std::array<boost::optional<LoadTextureCall>, 11> &  SaveHistory();
+
 private:
+
+    std::array<boost::optional<LoadTextureCall>, 11> history;
+
 	core::MediaManager & media;
     std::unique_ptr<gfx::Texture> bgtexture;
     std::array<std::unique_ptr<gfx::Texture>, 10> AnimationTexture;

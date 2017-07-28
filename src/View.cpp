@@ -58,7 +58,8 @@ namespace {
 }
 
 View::View(core::MediaManager & _media, World & _world)
-:	media(_media),
+:	history({}),
+    media(_media),
 	bgtexture(),
 	AnimationTexture({}),
 	program(),
@@ -79,6 +80,10 @@ View::View(core::MediaManager & _media, World & _world)
 	for (std::size_t i = 0; i < AnimationTexture.size(); ++i) {
 		game_elements.emplace_back(World::NUMSPRITES * 4);
 	}
+
+    // for (std::size_t i = 0; i < AnimationTexture.size() + 1; ++ i) {
+    //     history.push_back(boost::none);
+    // }
 }
 
 void View::operator()(const glm::mat4 & previous) {
@@ -181,6 +186,22 @@ void View::ForceShowBackground() {
         }*/
 }
 
+void View::LoadHistory(
+    const std::vector<boost::optional<View::LoadTextureCall>> & other_history)
+{
+    for (int i = 0; i < lp3::narrow<int>(other_history.size()); ++i) {
+        const auto & call = other_history[i];
+        if (call) {
+            LoadTexture(i - 1, call->fileName, call->howWide, call->howHigh);
+        }
+    }
+}
+
+const std::array<boost::optional<View::LoadTextureCall>, 11> & View::SaveHistory() {
+    return history;
+}
+
+
 gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {
     // Yes, this old game was so silly it used black as its color key. :/
     LP3_LOG_DEBUG("Loading texture %s", fileName);
@@ -193,6 +214,8 @@ gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {
 
 void View::LoadTexture(int which, const std::string & fileName, int howWide,
                        int howHigh) {
+    history[which + 1] = LoadTextureCall{fileName, howWide, howHigh};
+
 	LP3_LOG_DEBUG("LoadTexture %i %s %i %i", which, fileName, howWide, howHigh);
     if (which == -1) {
         bgtexture.reset(load_image(fileName));
@@ -201,10 +224,10 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
 		} else {
 			bg_size = find_texture_scale_factor(
 				glm::vec2{ howWide, howHigh }, bgtexture->size());
-		}			
+		}
 		LP3_LOG_DEBUG("   size = %i, %i", bg_size.x, bg_size.y);
     } else {
-        AnimationTexture[which].reset(load_image(fileName));        
+        AnimationTexture[which].reset(load_image(fileName));
 		if (boost::algorithm::ends_with(fileName, ".bmp")) {
 			tex_size[which] = AnimationTexture[which]->size();
 		} else {
