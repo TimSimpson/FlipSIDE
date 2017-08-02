@@ -40,6 +40,23 @@ std::vector<StateChange> KeyboardInputProvider::retrieve_events(std::int64_t ms)
 	return old_changes;
 }
 
+InputMultiplexer::InputMultiplexer()
+: providers()
+{}
+
+void InputMultiplexer::add_input(InputProvider * provider) {
+	this->providers.push_back(provider);
+}
+
+std::vector<StateChange> InputMultiplexer::retrieve_events(std::int64_t ms) {
+	std::vector<StateChange> all_changes;
+	for (auto & provider : this->providers) {
+		auto changes = provider->retrieve_events(ms);
+		all_changes.insert(all_changes.end(), changes.begin(), changes.end());
+	}
+	return all_changes;
+}
+
 InputRecorder::InputRecorder(lp3::sdl::RWops && write_file, InputProvider & input)
 :	file(std::move(write_file)),
 	provider(input),

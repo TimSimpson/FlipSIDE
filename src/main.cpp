@@ -86,7 +86,9 @@ int _main(core::PlatformLoop & loop) {
 
 	// Set up input stuff
 	nnd3d::input::KeyboardInputProvider kb_input;
-	nnd3d::input::InputProvider * input = &kb_input;
+	nnd3d::input::InputMultiplexer input_multiplexer;
+	input_multiplexer.add_input(&kb_input);
+	nnd3d::input::InputProvider * input = &input_multiplexer;
 
 	// Playback input if requested
 	std::unique_ptr<nnd3d::input::InputPlayback> playback;
@@ -94,7 +96,7 @@ int _main(core::PlatformLoop & loop) {
 		LP3_LOG_INFO("Loading input playback file %s...", *args.playback_input);
 		auto file = base_media.load(*args.playback_input);		
 		playback.reset(new nnd3d::input::InputPlayback(std::move(file)));
-		input = playback.get();
+		input_multiplexer.add_input(playback.get());
 	}
 
 	// Set up input recorder if requested
@@ -119,7 +121,8 @@ int _main(core::PlatformLoop & loop) {
 	nnd3d::Vb vb{ media };
 	nnd3d::World world;
 	nnd3d::View view{ media, world };
-	nnd3d::Sound sound{ media };
+
+	nnd3d::MutableSound sound{ media };
 	(void)sound;
 
 	nnd3d::Game game(view, sound, vb, world);
@@ -174,9 +177,11 @@ int _main(core::PlatformLoop & loop) {
 	
 	if (args.skip_playback_to_end) {
 		// Speed through the game loop until the end of playback.
+		sound.mute();
 		while (!playback->playback_finished()) {
 			run_game(ms_per_update);
 		}
+		sound.unmute();
 	}
 
 	return loop.run([&]() {

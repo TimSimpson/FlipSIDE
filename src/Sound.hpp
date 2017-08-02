@@ -11,30 +11,80 @@ namespace nnd3d {
 class Sound
 {
 public:
-    Sound(lp3::core::MediaManager & media);
+	virtual ~Sound() = default;
 
-    void LoadSound(int which, const std::string & soundFile,
-                   std::string soundName = "");
+    virtual void LoadSound(int which, const std::string & soundFile,
+                           std::string soundName = "") = 0;
 
-    void PlayBgm(const std::string & soundFile);
+	virtual void PlayBgm(const std::string & soundFile) = 0;
 
-    void PlayIsoWave(const std::string & soundFile);
+	virtual void PlayIsoWave(const std::string & soundFile) = 0;
 
-    void PlaySound(const std::string & who);
+	virtual void PlaySound(const std::string & who) = 0;
 
-    void PlaySoundLoop(const int which);
+	virtual void PlaySoundLoop(const int which) = 0;
 
-    void PlayWave(const std::string & soundFile);
+	virtual void PlayWave(const std::string & soundFile) = 0;
 
-    void StopSound(int which);
+	virtual void StopSound(int which) = 0;
 
 	// Must be called periodically to clean stuff up.
-	void garbage_collect();
+	virtual void garbage_collect() = 0;
 
 	// This is a new part of the interface. In the old code, it would call
 	// PlayWave with `nothing.wav` over and over. That was too crazy to be
 	// worth emulating so this function just mutes everything but the bgm.
-	void silence_sfx();
+	virtual void silence_sfx() = 0;
+};
+
+class MuteSound : public Sound
+{
+public:
+	MuteSound();
+
+	void LoadSound(int which, const std::string & soundFile,
+		           std::string soundName = "") override;
+
+	void PlayBgm(const std::string & soundFile) override;
+
+	void PlayIsoWave(const std::string & soundFile) override;
+
+	void PlaySound(const std::string & who) override;
+
+	void PlaySoundLoop(const int which) override;
+
+	void PlayWave(const std::string & soundFile) override;
+
+	void StopSound(int which) override;
+
+	void garbage_collect() override;
+
+	void silence_sfx() override;	
+};
+
+class MixSound : public Sound
+{
+public:
+	MixSound(lp3::core::MediaManager & media);
+
+	void LoadSound(int which, const std::string & soundFile,
+		           std::string soundName = "") override;
+
+	void PlayBgm(const std::string & soundFile) override;
+
+	void PlayIsoWave(const std::string & soundFile) override;
+
+	void PlaySound(const std::string & who) override;
+
+	void PlaySoundLoop(const int which) override;
+
+	void PlayWave(const std::string & soundFile) override;
+
+	void StopSound(int which) override;
+
+	void garbage_collect() override;
+
+	void silence_sfx() override;
 
 private:
     lp3::core::MediaManager & media;
@@ -72,6 +122,49 @@ private:
 	std::string get_file_path(const std::string & file_name);
 
 	//SoundBuffer && load_buffer(const std::string & sound_file);
+};
+
+class MutableSound : public Sound
+{
+public:
+	MutableSound(lp3::core::MediaManager & media);
+
+	void LoadSound(int which, const std::string & soundFile,
+		           std::string soundName = "") override;
+
+	void PlayBgm(const std::string & soundFile) override;
+
+	void PlayIsoWave(const std::string & soundFile) override;
+
+	void PlaySound(const std::string & who) override;
+
+	void PlaySoundLoop(const int which) override;
+
+	void PlayWave(const std::string & soundFile) override;
+
+	void StopSound(int which) override;
+
+	void garbage_collect() override;
+
+	void silence_sfx() override;
+
+	void mute();
+
+	void unmute();
+private:
+	struct LoadSoundCall {
+		int which;
+		std::string soundFile;
+		std::string soundName;
+	};
+
+	MixSound real_sound;
+	MuteSound muted_sound;
+	Sound * current_sound;
+	
+	std::vector<LoadSoundCall> calls;
+
+	std::string current_bgm;
 };
 
 }   // end namespace

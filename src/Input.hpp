@@ -26,6 +26,24 @@ public:
     virtual std::vector<StateChange> retrieve_events(std::int64_t ms) = 0;
 };
 
+
+// --------------------------------------------------------------------
+// InputMultiplexer
+// --------------------------------------------------------------------
+//      retrieves events from multiple InputProvider instances
+// --------------------------------------------------------------------
+class InputMultiplexer : public InputProvider {
+public:
+	InputMultiplexer();
+	~InputMultiplexer() override = default;
+
+	void add_input(InputProvider * provider);
+
+	std::vector<StateChange> retrieve_events(std::int64_t ms) override;
+private:
+	std::vector<InputProvider *> providers;
+};
+
 // --------------------------------------------------------------------
 // KeyboardInputProvider
 // --------------------------------------------------------------------
