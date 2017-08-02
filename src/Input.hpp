@@ -72,6 +72,9 @@ public:
     ~InputPlayback() override = default;
 
     InputPlayback(lp3::sdl::RWops && read_file);
+
+	bool playback_finished() const;
+
     std::vector<StateChange> retrieve_events(std::int64_t ms) override;
 private:
     lp3::sdl::RWops file;

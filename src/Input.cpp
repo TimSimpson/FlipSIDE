@@ -66,6 +66,10 @@ InputPlayback::InputPlayback(lp3::sdl::RWops && read_file)
 {
 }
 
+bool InputPlayback::playback_finished() const {
+	return !next_time.is_initialized();
+}
+
 StateChange InputPlayback::read_event() {
 	StateChange sc;
 	this->file.read(sc.on);

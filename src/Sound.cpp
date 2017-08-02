@@ -11,8 +11,9 @@ Sound::Sound(lp3::core::MediaManager & media)
 	orphaned_waves(),
 	sound_buffers()
 {
-	Mix_AllocateChannels(16 + 30);  // According to the docs, this never fails.
-	sound_buffers.reserve(30);
+	constexpr int arbitrary_channel_count = 70;
+	Mix_AllocateChannels(16 + arbitrary_channel_count);
+	sound_buffers.reserve(arbitrary_channel_count);
 }
 
 std::string Sound::get_file_path(const std::string & file_name) {

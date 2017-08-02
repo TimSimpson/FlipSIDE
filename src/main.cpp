@@ -20,6 +20,7 @@ namespace sdl = lp3::sdl;
 
 
 struct CommandLineArgs {
+	bool skip_playback_to_end;
 	boost::optional<std::string> record_input;
 	boost::optional<std::string> playback_input;
 };
@@ -28,6 +29,8 @@ boost::optional<CommandLineArgs> parse_args(
 	const std::vector<std::string> & string_args) 
 {
 	CommandLineArgs args;
+	args.skip_playback_to_end = false;
+
 	for (std::size_t i = 1; i < string_args.size(); ++i) {
 		if (string_args[i] == "--record-input") {
 			if (i + 1 >= string_args.size()) {
@@ -43,11 +46,18 @@ boost::optional<CommandLineArgs> parse_args(
 			}
 			args.playback_input = string_args[i + 1];
 			++i;
+		} else if (string_args[i] == "--skip-playback-to-end") {
+			if (!args.playback_input) {
+				std::cerr << "--skip-playback-to-end requires option --playback-input\n";
+				return boost::none;
+			}
+			args.skip_playback_to_end = true;
 		} else {
 			std::cerr << "Unknown argument: " << string_args[i] << "\n"
 				"Options: \n"
 				"    --record-input <file-to-write>\n"
-				"    --playback-input <file-to-read>\n";
+				"    --playback-input <file-to-read>\n"
+				"    --skip-playback-to-end\n";
 			return boost::none;
 		}
 	}
@@ -127,6 +137,48 @@ int _main(core::PlatformLoop & loop) {
     //       old code would fire once every 200 ms.
     sims::GameClock old_timer(200);
 
+	auto run_game = [&world, &game, &input, &sound](std::int64_t ms) {
+		// Garbage collect sound to avoid out of channel problems.
+		sound.garbage_collect();
+
+		// Handle input
+		{
+			auto changes = input->retrieve_events(ms);
+			for (const auto & change : changes) {
+				if (change.on) {
+					game.OnKey(change.key_name);
+				}
+				else {
+					game.OffKey(change.key_name);
+				}
+			}
+		}
+
+		// The old code figured out the percentage of a second each frame
+		// took, and created a "speed factor" which it multiplied everything
+		// in existence by. That's actually a bad approach for several
+		// reasons, but the take away is here we introducing a constant
+		// speed mod which will always be 0.016
+		world.sFactor = lp3::narrow<double>(ms) / 1000.0;
+		world.clock = world.clock + world.sFactor;
+		if (world.LemonTime) {
+			world.sFactor *= 2;
+		}
+		// So the game created a speed factor that tried to make it
+		// target 120fps (kind of cool my old Pentium 2 machine could do
+		// that). So we multiple the number we just had by 120.
+		world.sFactor *= 120;
+
+		game.PlayGame();
+	};
+	
+	if (args.skip_playback_to_end) {
+		// Speed through the game loop until the end of playback.
+		while (!playback->playback_finished()) {
+			run_game(ms_per_update);
+		}
+	}
+
 	return loop.run([&]() {
 		bool quit = world.STOPGAME;
 		SDL_Event e;
@@ -144,39 +196,8 @@ int _main(core::PlatformLoop & loop) {
 			kb_input.handle_events(e);
 		}
 		controls.update();
-		sound.garbage_collect();
-
-		clock.run_updates([&world, &game, &input](std::int64_t ms) {
-			
-			// Handle input
-			{
-				auto changes = input->retrieve_events(ms);
-				for (const auto & change : changes) {
-					if (change.on) {
-						game.OnKey(change.key_name);
-					} else {
-						game.OffKey(change.key_name);
-					}
-				}
-			}
-
-			// The old code figured out the percentage of a second each frame
-			// took, and created a "speed factor" which it multiplied everything
-			// in existence by. That's actually a bad approach for several
-			// reasons, but the take away is here we introducing a constant
-			// speed mod which will always be 0.016
-			world.sFactor = lp3::narrow<double>(ms) / 1000.0;
-			world.clock = world.clock + world.sFactor;
-			if (world.LemonTime) {
-				world.sFactor *= 2;
-			}
-			// So the game created a speed factor that tried to make it
-			// target 120fps (kind of cool my old Pentium 2 machine could do
-			// that). So we multiple the number we just had by 120.
-			world.sFactor *= 120;
-
-			game.PlayGame();
-		});
+		
+		clock.run_updates(run_game);
 
 		old_timer.run_updates([&game](std::int64_t ms) {
 			game.TimedEvents();
