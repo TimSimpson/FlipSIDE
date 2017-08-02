@@ -5,6 +5,7 @@
 #include <lp3/main.hpp>
 
 #include "Game.hpp"
+#include "Input.hpp"
 #include "Sound.hpp"
 #include "Vb.hpp"
 #include "View.hpp"
@@ -17,21 +18,6 @@ namespace mix = lp3::mix;
 namespace sims = lp3::sims;
 namespace sdl = lp3::sdl;
 
-std::string key_name_from_sdl(const SDL_Keycode & kc) {
-	// Maps the SDL keyboard names back to what they were in Visual Basic 6.
-	switch (kc) {
-	case SDLK_ESCAPE: return "escape";
-	case SDLK_UP: return "up";
-	case SDLK_DOWN: return "down";
-	case SDLK_LEFT: return "left";
-	case SDLK_RIGHT: return "right";
-	default:
-		// The letters from SDL s/b upper case. Anything else from SDL we
-		// can safely return as it will just be ignored.
-		std::string name(SDL_GetKeyName(kc));
-		return name;
-	}
-}
 
 int _main(core::PlatformLoop & loop) {
 	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
@@ -45,6 +31,11 @@ int _main(core::PlatformLoop & loop) {
 		#endif
 	);
 	input::Controls controls;
+
+	nnd3d::input::KeyboardInputProvider kb_input;
+
+	nnd3d::input::InputProvider & input = kb_input;
+
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 
 	glEnable(GL_DEPTH_TEST);  // DOES SOMETHING, makes Z count between render calls
@@ -79,26 +70,36 @@ int _main(core::PlatformLoop & loop) {
 	return loop.run([&]() {
 		bool quit = world.STOPGAME;
 		SDL_Event e;
-		if (SDL_PollEvent(&e)) {
+		while (SDL_PollEvent(&e)) {
 			switch (e.type) {
 			case SDL_QUIT:
 				quit = true;
 				break;
 			case SDL_WINDOWEVENT:
 				window.handle_events(e.window);
-				break;
-            case SDL_KEYDOWN:
-				game.OnKey(key_name_from_sdl(e.key.keysym.sym));
-                break;
-			case SDL_KEYUP:
-				game.OffKey(key_name_from_sdl(e.key.keysym.sym));
+				break;			           
+			default:
 				break;
 			}
+			kb_input.handle_events(e);
 		}
 		controls.update();
 		sound.garbage_collect();
 
-		clock.run_updates([&world, &game](std::int64_t ms) {
+		clock.run_updates([&world, &game, &input](std::int64_t ms) {
+			
+			// Handle input
+			{
+				auto changes = input.retrieve_events(ms);
+				for (const auto & change : changes) {
+					if (change.on) {
+						game.OnKey(change.key_name);
+					} else {
+						game.OffKey(change.key_name);
+					}
+				}
+			}
+
 			// The old code figured out the percentage of a second each frame
 			// took, and created a "speed factor" which it multiplied everything
 			// in existence by. That's actually a bad approach for several

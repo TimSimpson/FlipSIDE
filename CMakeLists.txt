@@ -12,6 +12,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/CharacterSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/CinemaType.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/CinemaType.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.hpp
