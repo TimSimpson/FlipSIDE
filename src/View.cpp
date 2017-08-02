@@ -1,6 +1,7 @@
 #include "View.hpp"
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
+#include <boost/format.hpp>
 #include "World.hpp"
 
 // The old VB code constantly was tossing ints into floats and vice-versa,
@@ -58,7 +59,8 @@ namespace {
 }
 
 View::View(core::MediaManager & _media, World & _world)
-:	history({}),
+:	disable_view(false),
+	history({}),
     media(_media),
 	bgtexture(),
 	AnimationTexture({}),
@@ -186,8 +188,7 @@ void View::ForceShowBackground() {
         }*/
 }
 
-void View::LoadHistory(
-    const std::vector<boost::optional<View::LoadTextureCall>> & other_history)
+void View::LoadHistory(const TextureHistory & other_history)
 {
     for (int i = 0; i < lp3::narrow<int>(other_history.size()); ++i) {
         const auto & call = other_history[i];
@@ -197,7 +198,7 @@ void View::LoadHistory(
     }
 }
 
-const std::array<boost::optional<View::LoadTextureCall>, 11> & View::SaveHistory() {
+const View::TextureHistory & View::SaveHistory() {
     return history;
 }
 
@@ -212,9 +213,28 @@ gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {
         gsl::make_span(color_key, 1));
 }
 
+void View::disable() {
+	this->disable_view = true;
+}
+
+void View::enable() {
+	this->disable_view = false;
+	for (std::size_t i = 0; i < history.size(); ++ i) {
+		const auto & call = history[i];
+		if (call) {
+			LoadTexture(lp3::narrow<int>(i) - 1, 
+				        call->fileName, call->howWide, call->howHigh);
+		}
+		history[i] = boost::none;
+	}
+}
+
 void View::LoadTexture(int which, const std::string & fileName, int howWide,
                        int howHigh) {
-    history[which + 1] = LoadTextureCall{fileName, howWide, howHigh};
+	if (this->disable_view) {
+		history[which + 1] = LoadTextureCall{ fileName, howWide, howHigh };
+		return;
+	}
 
 	LP3_LOG_DEBUG("LoadTexture %i %s %i %i", which, fileName, howWide, howHigh);
     if (which == -1) {

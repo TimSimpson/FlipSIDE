@@ -178,10 +178,12 @@ int _main(core::PlatformLoop & loop) {
 	if (args.skip_playback_to_end) {
 		// Speed through the game loop until the end of playback.
 		sound.mute();
+		view.disable();
 		while (!playback->playback_finished()) {
 			run_game(ms_per_update);
 		}
 		sound.unmute();
+		view.enable();
 	}
 
 	return loop.run([&]() {

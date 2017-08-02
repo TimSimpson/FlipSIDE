@@ -18,6 +18,7 @@ public:
 
     void operator()(const glm::mat4 & previous);
 
+	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
 	void DrawStuff(float fps);
 
 	void ForceShowBackground();
@@ -37,14 +38,24 @@ public:
         int howHigh;
     };
 
-    void LoadHistory(
-        const std::vector<boost::optional<LoadTextureCall>> & history);
+	typedef std::array<boost::optional<LoadTextureCall>, 11> TextureHistory;
 
-    const std::array<boost::optional<LoadTextureCall>, 11> &  SaveHistory();
+	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
+	// Turn off view
+	void disable();
+
+	void enable();
+
+	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
+    void LoadHistory(const TextureHistory & history);
+
+	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
+    const TextureHistory &  SaveHistory();
 
 private:
+	bool disable_view;
 
-    std::array<boost::optional<LoadTextureCall>, 11> history;
+	TextureHistory history;
 
 	core::MediaManager & media;
     std::unique_ptr<gfx::Texture> bgtexture;

@@ -1,5 +1,6 @@
 #include "Game.hpp"
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
 // Avoid the zillions implicit conversion warnings
