@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include <lp3/core.hpp>
 #include <lp3/gfx.hpp>
 #include <lp3/input.hpp>
@@ -65,6 +67,8 @@ boost::optional<CommandLineArgs> parse_args(
 }
 
 int _main(core::PlatformLoop & loop) {
+	const auto start_time = std::chrono::high_resolution_clock::now();
+
 	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
 	core::LogSystem log;
 
@@ -182,11 +186,20 @@ int _main(core::PlatformLoop & loop) {
 		while (!playback->playback_finished()) {
 			run_game(ms_per_update);
 		}
+		const auto playback_end_time = std::chrono::high_resolution_clock::now();
+		const auto playback_time =
+			std::chrono::duration_cast<std::chrono::milliseconds>(
+				playback_end_time - start_time).count();
+#ifndef LP3_COMPILE_WITH_DEBUGGING
+		std::cout << "Playback completed in " << playback_time << "ms.\n";
+#endif
+		LP3_LOG_INFO("Playback completed in %d ms", playback_time);
+
 		sound.unmute();
 		view.enable();
 	}
 
-	return loop.run([&]() {
+	const auto result = loop.run([&]() {
 		bool quit = world.STOPGAME;
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
@@ -216,6 +229,13 @@ int _main(core::PlatformLoop & loop) {
 		window.render(std::ref(view));
 		return !quit;
 	});
+
+	const auto end_time = std::chrono::high_resolution_clock::now();
+	const auto process_time = 
+		std::chrono::duration_cast<std::chrono::milliseconds>(
+			end_time - start_time).count();
+	LP3_LOG_INFO("Process ran for %d ms", process_time);
+	return result;
 }
 
 LP3_MAIN(_main)
