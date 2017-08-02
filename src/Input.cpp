@@ -51,7 +51,7 @@ std::vector<StateChange> InputRecorder::retrieve_events(std::int64_t ms) {
 	this->time += ms;
 	auto events = provider.retrieve_events(ms);
 	for (const StateChange & change : events) {
-		this->file.write(ms);
+		this->file.write(this->time);
 		this->file.write(change.on);
 		this->file.write(lp3::narrow<int>(change.key_name.size()));
 		this->file.write(change.key_name.c_str(), change.key_name.size());
@@ -73,7 +73,7 @@ StateChange InputPlayback::read_event() {
 	int string_size;		
 	this->file.read(string_size);
 
-	sc.key_name.reserve(string_size);;
+	sc.key_name.resize(string_size);;
 	this->file.read(&sc.key_name.front(), string_size);
 
 	return sc;
@@ -84,6 +84,7 @@ std::vector<StateChange> InputPlayback::retrieve_events(std::int64_t ms) {
 
 	std::vector<StateChange> changes;	
 	while (next_time && next_time.get() <= time) {
+		const auto nt = *next_time;
 		changes.push_back(this->read_event());
 		next_time = this->file.read_optional<std::int64_t>();		
 	}

@@ -19,9 +19,51 @@ namespace sims = lp3::sims;
 namespace sdl = lp3::sdl;
 
 
+struct CommandLineArgs {
+	boost::optional<std::string> record_input;
+	boost::optional<std::string> playback_input;
+};
+
+boost::optional<CommandLineArgs> parse_args(
+	const std::vector<std::string> & string_args) 
+{
+	CommandLineArgs args;
+	for (std::size_t i = 1; i < string_args.size(); ++i) {
+		if (string_args[i] == "--record-input") {
+			if (i + 1 >= string_args.size()) {
+				std::cerr << "Expected a file name for record-input.\n";
+				return boost::none;
+			}
+			args.record_input = string_args[i + 1];
+			++i; 
+		} else if (string_args[i] == "--playback-input") {
+			if (i + 1 >= string_args.size()) {
+				std::cerr << "Expected a file name for playback-input.\n";
+				return boost::none;
+			}
+			args.playback_input = string_args[i + 1];
+			++i;
+		} else {
+			std::cerr << "Unknown argument: " << string_args[i] << "\n"
+				"Options: \n"
+				"    --record-input <file-to-write>\n"
+				"    --playback-input <file-to-read>\n";
+			return boost::none;
+		}
+	}
+	return args;
+}
+
 int _main(core::PlatformLoop & loop) {
 	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
 	core::LogSystem log;
+
+	auto op_args = parse_args(loop.command_line_args());
+	if (!op_args) {
+		return 1;
+	}
+	auto args = op_args.get();
+
 	core::MediaManager base_media;
 	core::MediaManager media = base_media.sub_directory(
 		#ifndef LP3_COMPILE_TARGET_EMSCRIPTEN
@@ -32,9 +74,27 @@ int _main(core::PlatformLoop & loop) {
 	);
 	input::Controls controls;
 
+	// Set up input stuff
 	nnd3d::input::KeyboardInputProvider kb_input;
+	nnd3d::input::InputProvider * input = &kb_input;
 
-	nnd3d::input::InputProvider & input = kb_input;
+	// Playback input if requested
+	std::unique_ptr<nnd3d::input::InputPlayback> playback;
+	if (args.playback_input) {
+		LP3_LOG_INFO("Loading input playback file %s...", *args.playback_input);
+		auto file = base_media.load(*args.playback_input);		
+		playback.reset(new nnd3d::input::InputPlayback(std::move(file)));
+		input = playback.get();
+	}
+
+	// Set up input recorder if requested
+	std::unique_ptr<nnd3d::input::InputRecorder> recorder;
+	if (args.record_input) {
+		LP3_LOG_INFO("Recording input to file %s...", *args.record_input);
+		auto file = base_media.save(*args.record_input);
+		recorder.reset(new nnd3d::input::InputRecorder(std::move(file), *input));
+		input = recorder.get();
+	}
 
 	gfx::Window window("FlipSIDE", glm::vec2{ 640, 480 });
 
@@ -90,7 +150,7 @@ int _main(core::PlatformLoop & loop) {
 			
 			// Handle input
 			{
-				auto changes = input.retrieve_events(ms);
+				auto changes = input->retrieve_events(ms);
 				for (const auto & change : changes) {
 					if (change.on) {
 						game.OnKey(change.key_name);
