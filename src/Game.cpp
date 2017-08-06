@@ -3,8 +3,13 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
-// Avoid the zillions implicit conversion warnings
-#pragma warning(disable: 4244)
+#ifdef _MSC_VER
+    // Avoid the zillions implicit conversion warnings
+    #pragma warning(disable: 4244)
+#endif
+
+// TODO: Remove gotos!
+#define EMPTY_LABEL_HACK  { constexpr int dumb = 1; LP3_LOG_VAR(dumb) }
 
 namespace nnd3d {
 
@@ -16,12 +21,12 @@ namespace {
 class Game::GameImpl
 {
 public:
-    GameImpl(View & _view, Sound & _sound, Vb & vb,
-             World & _world)
-    :   vb(vb),
-		view(_view),
-        sound(_sound),
-        world(_world)
+    GameImpl(View & view_arg, Sound & sound_arg, Vb & vb_arg,
+             World & world_arg)
+    :   vb(vb_arg),
+		view(view_arg),
+        sound(sound_arg),
+        world(world_arg)
     {
         // Taken from "StartUp"
         world.debugOn = false;
@@ -324,11 +329,6 @@ public:
 			//'               THIS SECTION UPDATES THE DAVID SPRITE
 			//Rem---------------------------------------------------------------
 
-			//2017
-			if (s.name == "script") {
-				int five = 5;
-			}
-
 			if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
 				penguin = 0;
 				if (j == 0) { penguin = 0; }
@@ -410,34 +410,32 @@ public:
 								break;
 							}
 						}
-						if (k == j + 10) { goto noammo; }
-						world.Sprite[k].speed = 0; //0.00001
-						world.Sprite[k].name = "bomb";
-						world.Sprite[k].x = s.x;
-						world.Sprite[k].y = s.y;
-						world.Sprite[k].z = s.z; //- (Sprite(0).length);
-						world.Sprite[k].wide = 30 * (world.GradeUp[j / 10] + 1);
-						world.Sprite[k].high = 30 * (world.GradeUp[j / 10] + 1);
-						world.Sprite[k].jumpStart = s.jumpStart;
-						world.Sprite[k].jumpStrength = s.jumpStrength;
-						world.Sprite[k].jumpTime = s.jumpTime;
-						world.Sprite[k].length = 15;
-						world.Sprite[k].texture = world.Sprite[j].texture;
-						world.Sprite[k].visible = true;
-						world.Sprite[k].frame = 1;
-						world.Sprite[k].trueVisible = 1;
-						world.Sprite[k].kind = 0;
-						world.Sprite[k].mode = "";
-						world.Sprite[k].miscTime = world.clock + 3;
-						world.Sprite[k].parent = j;
-						//2017: This file doesn't work:
-                        // sound.PlaySound("set bomb");
-						//LoadSound k, "fireball.wav"
-						//PlaySound "fireball"
-						s.miscTime = world.clock + 0.25;
-
-					noammo:
-						int five = 5; // appease C++ label need?
+						if (k != j + 10) {
+    						world.Sprite[k].speed = 0; //0.00001
+    						world.Sprite[k].name = "bomb";
+    						world.Sprite[k].x = s.x;
+    						world.Sprite[k].y = s.y;
+    						world.Sprite[k].z = s.z; //- (Sprite(0).length);
+    						world.Sprite[k].wide = 30 * (world.GradeUp[j / 10] + 1);
+    						world.Sprite[k].high = 30 * (world.GradeUp[j / 10] + 1);
+    						world.Sprite[k].jumpStart = s.jumpStart;
+    						world.Sprite[k].jumpStrength = s.jumpStrength;
+    						world.Sprite[k].jumpTime = s.jumpTime;
+    						world.Sprite[k].length = 15;
+    						world.Sprite[k].texture = world.Sprite[j].texture;
+    						world.Sprite[k].visible = true;
+    						world.Sprite[k].frame = 1;
+    						world.Sprite[k].trueVisible = 1;
+    						world.Sprite[k].kind = 0;
+    						world.Sprite[k].mode = "";
+    						world.Sprite[k].miscTime = world.clock + 3;
+    						world.Sprite[k].parent = j;
+    						//2017: This file doesn't work:
+                            // sound.PlaySound("set bomb");
+    						//LoadSound k, "fireball.wav"
+    						//PlaySound "fireball"
+    						s.miscTime = world.clock + 0.25;
+                        }
 					}
 				} //Nicky Bomb
  //Thomas Fire
@@ -529,9 +527,7 @@ public:
 
                         s.miscTime = world.clock + 0.25;
                 outofammo:
-                        {
-                            int cplusplusNoLikeEmptyLabelHack = 5;
-                        }
+                        EMPTY_LABEL_HACK
                     }
                 } //if thomas if
 
@@ -666,7 +662,7 @@ if (s.mode == "truck") {
                         sound.PlaySound("fireball");
                         s.miscTime = world.clock + 0.25;
                 outofammo3:
-                        { const int cplusplusNoLikeEmptyLabelHack = 5; }
+                        EMPTY_LABEL_HACK
                     }
                 } //if thomas if
 
@@ -823,7 +819,7 @@ if (s.mode == "truck") {
                 sound.PlaySound("bomb explode");
                 s.flickerTime = world.clock + 1;
             fuddle:
-                { int cplusplusNoLikeEmptyLabelHack = 7; }
+                EMPTY_LABEL_HACK
             }
 
 
@@ -910,7 +906,7 @@ if (s.mode == "truck") {
                             } //end continue if
                         } //end lives if
                         if (world.lives[j / 10] > 0) {
-                            this->createPlayer(j, world.playerName[j / 10]);
+                            this->createPlayer(j);
                             world.Sprite[j].name = world.playerName[j / 10];
                             world.Sprite[j].kind = 1;
                             this->initSprites(j);
@@ -928,7 +924,7 @@ if (s.mode == "truck") {
                 if (this->anyKey(j / 10) == 1) {
                     world.continues = world.continues - 1;
                     world.lives[j / 10] = 2;
-                    this->createPlayer(j, world.playerName[j / 10]);
+                    this->createPlayer(j);
                     world.Sprite[j].name = world.playerName[j / 10];
                     world.Sprite[j].kind = 1;
                     world.Sprite[j].flickerTime = world.clock + 5;
@@ -1488,7 +1484,7 @@ if (s.name == "Title2") {
                 }
 
                 if (s.target != 0 || s.target == -1) {
-                    s.target = this->checkProx(j); //pickTarget(j, 1)
+                    s.target = this->checkProx(j);
                     s.seekx = this->getMiddleX(s.target);
                     s.seeky = this->getMiddleY(s.target);
                 }
@@ -1577,8 +1573,6 @@ if (s.name == "Title2") {
                 s.visible = true;
             }
 
-        //2017- unused label: gotDog: //end of if their ready timer thing
-            { int cplusplusNoLikeEmptyLabelHack = 42; }
         }
         //TSNOW: end of the emulated with statement that creates variable "s",
         //       along with the for loop that used the "j" variable.
@@ -1605,7 +1599,7 @@ if (s.name == "Title2") {
                     this->checkHit(j, k);
                 }
             fthis2:
-                {int cplusplusNoLikeEmptyLabelHack = 128; }
+                EMPTY_LABEL_HACK
             }
 
         }
@@ -1867,10 +1861,10 @@ private:
                 world.Sprite[j].x = world.Sprite[j].lastX;
                 world.Sprite[j].y = world.Sprite[j].lastY;
         britneyDog2:
-                { int cplusplusNoLikeEmptyLabelHack = 364; }
+                EMPTY_LABEL_HACK
             }
         overalready:
-            { int cplusplusNoLikeEmptyLabelHack = 365; }
+            EMPTY_LABEL_HACK
         }
 
 
@@ -1898,7 +1892,7 @@ private:
             world.Sprite[k].x = world.Sprite[k].lastX;
             world.Sprite[k].y = world.Sprite[k].lastY;
         britneyDog:
-            { int cplusplusNoLikeEmptyLabelHack = 366; }
+            EMPTY_LABEL_HACK
         }
 
         if (redo == false) {
@@ -2034,9 +2028,8 @@ private:
         }
     }
 
-    void createPlayer(int who, const std::string & what) {
+    void createPlayer(int who) {
             int goatorg = 0;
-        auto & ws = world.Sprite[who];
 
         if (world.playerName[(who / 10)] == "Thomas") {
             world.weapon[who / 10] = "fireball";
@@ -2147,11 +2140,11 @@ private:
         for (int j = 0; j <= world.spritesInUse; ++ j) {
          texorg = -150;
          davidorg1 = 0;
-         for (int k = 0; k <= world.spritesInUse; ++ k) {
-             if (world.Sprite[k].zOrder > texorg
-                 && world.Sprite[k].drawTrue == false) {
-                 texorg = world.Sprite[k].zOrder;
-                 davidorg1 = k;
+         for (int k2 = 0; k <= world.spritesInUse; ++ k2) {
+             if (world.Sprite[k2].zOrder > texorg
+                 && world.Sprite[k2].drawTrue == false) {
+                 texorg = world.Sprite[k2].zOrder;
+                 davidorg1 = k2;
              }
          }
          world.drawOrder[j] = davidorg1;
@@ -2406,10 +2399,10 @@ private:
 
         if (which == 1.1 || which == 1) {
             this->destroyEverything();
-            this->MakeLevel("Level1Opening.ogg", "Level1.cap", 
-// TSNOW: This is such a hack, but honestly the graphic for the apartment 
+            this->MakeLevel("Level1Opening.ogg", "Level1.cap",
+// TSNOW: This is such a hack, but honestly the graphic for the apartment
 //        carpet- which already looked terrible - makes the eyes bleed
-//		  when the texture is manually repeated to make a 64x64 bitmap. 
+//		  when the texture is manually repeated to make a 64x64 bitmap.
 //		  It's so much worse I'd rather only use it in Emscripten.
 #ifdef LP3_COMPILE_TARGET_EMSCRIPTEN
                             "Lv1bg.png",
@@ -2525,13 +2518,9 @@ private:
         //       confusing.
         long result = 0;
 
-        int k = 0;
-        int j = 0;
         int con1 = 0;
         int con2 = 0;
         int con3 = 0;
-        int fapple = 0;
-        int crapapple = 0;
 
         int left = 0;
         int right = 0;
@@ -2658,7 +2647,7 @@ private:
         view.LoadTexture(0, "System.png", 336, 397);
         for (k = 0; k <= 20; k+=10) {
             //For penguin = 0 To 2
-            this->createPlayer(k, world.playerName[k / 10]);
+            this->createPlayer(k);
         }
 
 
@@ -3573,14 +3562,6 @@ private:
         }
 	}
 
-	void pickTarget(int who, int koo) {
-		//2017: Old function literally did nothing.
-	}
-
-	void printframes(int who) {
-		//2017: This just printed out stuff so I could debug. Not implemented.
-	}
-
     void script() {
         int penguin;
         if (world.Sprite[30].mode != "3" && world.Sprite[30].mode != "2") {
@@ -3668,7 +3649,7 @@ private:
 	void setCinema(const int who, const int frame1, const int frame2,
                    const int frame3, const int frame4, const int color1,
                    const int color2, const int color3, const int color4,
-                   const std::string & wavefile, const int miscTime) {
+                   const std::string & wavefile, const double miscTime) {
 		auto & c = world.cinema[who];
         c.frame1 = frame1;
         c.frame2 = frame2;

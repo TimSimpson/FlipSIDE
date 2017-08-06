@@ -35,6 +35,7 @@ void KeyboardInputProvider::handle_events(const SDL_Event & event) {
 }
 
 std::vector<StateChange> KeyboardInputProvider::retrieve_events(std::int64_t ms) {
+	LP3_LOG_VAR(ms);
 	auto old_changes = std::move(changes);
 	changes.clear();
 	return old_changes;
@@ -61,7 +62,7 @@ InputRecorder::InputRecorder(lp3::sdl::RWops && write_file, InputProvider & inpu
 :	file(std::move(write_file)),
 	provider(input),
 	time(0)
-{	
+{
 }
 
 std::vector<StateChange> InputRecorder::retrieve_events(std::int64_t ms) {
@@ -90,8 +91,8 @@ bool InputPlayback::playback_finished() const {
 StateChange InputPlayback::read_event() {
 	StateChange sc;
 	this->file.read(sc.on);
-		
-	int string_size;		
+
+	int string_size;
 	this->file.read(string_size);
 
 	sc.key_name.resize(string_size);;
@@ -103,11 +104,10 @@ StateChange InputPlayback::read_event() {
 std::vector<StateChange> InputPlayback::retrieve_events(std::int64_t ms) {
 	this->time += ms;
 
-	std::vector<StateChange> changes;	
+	std::vector<StateChange> changes;
 	while (next_time && next_time.get() <= time) {
-		const auto nt = *next_time;
 		changes.push_back(this->read_event());
-		next_time = this->file.read_optional<std::int64_t>();		
+		next_time = this->file.read_optional<std::int64_t>();
 	}
 
 	return changes;

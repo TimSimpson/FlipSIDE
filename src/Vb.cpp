@@ -2,8 +2,8 @@
 
 namespace nnd3d {
 
-Vb::Vb(lp3::core::MediaManager & media)
-:   media(media),
+Vb::Vb(lp3::core::MediaManager & media_arg)
+:   media(media_arg),
 	rnd_dev(),
     rnd_gen(rnd_dev()),
     rnd_distribution(0.0, 1.0)
@@ -17,7 +17,7 @@ Vb::Vb(lp3::core::MediaManager & media)
     //   LP3_LOG_INFO("after seed by 1: %d", rnd_gen());
 }
 
-VbFile Vb::OpenForInput(const std::string & filePath) {
+VbFile && Vb::OpenForInput(const std::string & filePath) {
 	const std::string full_path = media.path(filePath);
 	VbFile file{full_path};
 	return std::move(file);

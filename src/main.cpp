@@ -28,7 +28,7 @@ struct CommandLineArgs {
 };
 
 boost::optional<CommandLineArgs> parse_args(
-	const std::vector<std::string> & string_args) 
+	const std::vector<std::string> & string_args)
 {
 	CommandLineArgs args;
 	args.skip_playback_to_end = false;
@@ -40,7 +40,7 @@ boost::optional<CommandLineArgs> parse_args(
 				return boost::none;
 			}
 			args.record_input = string_args[i + 1];
-			++i; 
+			++i;
 		} else if (string_args[i] == "--playback-input") {
 			if (i + 1 >= string_args.size()) {
 				std::cerr << "Expected a file name for playback-input.\n";
@@ -98,7 +98,7 @@ int _main(core::PlatformLoop & loop) {
 	std::unique_ptr<nnd3d::input::InputPlayback> playback;
 	if (args.playback_input) {
 		LP3_LOG_INFO("Loading input playback file %s...", *args.playback_input);
-		auto file = base_media.load(*args.playback_input);		
+		auto file = base_media.load(*args.playback_input);
 		playback.reset(new nnd3d::input::InputPlayback(std::move(file)));
 		input_multiplexer.add_input(playback.get());
 	}
@@ -178,7 +178,7 @@ int _main(core::PlatformLoop & loop) {
 
 		game.PlayGame();
 	};
-	
+
 	if (args.skip_playback_to_end) {
 		// Speed through the game loop until the end of playback.
 		sound.mute();
@@ -209,17 +209,17 @@ int _main(core::PlatformLoop & loop) {
 				break;
 			case SDL_WINDOWEVENT:
 				window.handle_events(e.window);
-				break;			           
+				break;
 			default:
 				break;
 			}
 			kb_input.handle_events(e);
 		}
 		controls.update();
-		
+
 		clock.run_updates(run_game);
 
-		old_timer.run_updates([&game](std::int64_t ms) {
+		old_timer.run_updates([&game](std::int64_t) {
 			game.TimedEvents();
 		});
 
@@ -231,7 +231,7 @@ int _main(core::PlatformLoop & loop) {
 	});
 
 	const auto end_time = std::chrono::high_resolution_clock::now();
-	const auto process_time = 
+	const auto process_time =
 		std::chrono::duration_cast<std::chrono::milliseconds>(
 			end_time - start_time).count();
 	LP3_LOG_INFO("Process ran for %d ms", process_time);

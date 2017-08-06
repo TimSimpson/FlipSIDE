@@ -13,21 +13,29 @@ MuteSound::MuteSound()
 
 void MuteSound::LoadSound(int which, const std::string & soundFile,
 	                      std::string soundName) {
+    LP3_LOG_VAR(which)
+    LP3_LOG_VAR(soundFile)
+    LP3_LOG_VAR(soundName)
 }
 
 void MuteSound::PlayBgm(const std::string & sound_file) {
+    LP3_LOG_VAR(sound_file)
 }
 
 void MuteSound::PlayIsoWave(const std::string & soundFile) {
+    LP3_LOG_VAR(soundFile)
 }
 
 void MuteSound::PlaySound(const std::string & who) {
+    LP3_LOG_VAR(who)
 }
 
 void MuteSound::PlaySoundLoop(const int which) {
+    LP3_LOG_VAR(which)
 }
 
 void MuteSound::PlayWave(const std::string & soundFile) {
+    LP3_LOG_VAR(soundFile)
 }
 
 void MuteSound::garbage_collect() {
@@ -37,14 +45,15 @@ void MuteSound::silence_sfx() {
 }
 
 void MuteSound::StopSound(int which) {
+    LP3_LOG_VAR(which)
 }
 
 // --------------------------------------------------------------------
 // MixSound impl
 // --------------------------------------------------------------------
 
-MixSound::MixSound(lp3::core::MediaManager & media)
-:   media(media),
+MixSound::MixSound(lp3::core::MediaManager & media_arg)
+:   media(media_arg),
     mixer(22050, MIX_DEFAULT_FORMAT, 2, 4096),
     bgm(),
 	orphaned_waves(),
@@ -193,7 +202,7 @@ MutableSound::MutableSound(lp3::core::MediaManager & media)
 {}
 
 void MutableSound::LoadSound(int which, const std::string & soundFile,
-                          std::string soundName) {	
+                          std::string soundName) {
 	if (current_sound == &real_sound) {
 		real_sound.LoadSound(which, soundFile, soundName);
 	}
@@ -233,7 +242,7 @@ void MutableSound::garbage_collect() {
 }
 
 void MutableSound::silence_sfx() {
-	real_sound.silence_sfx();	
+	real_sound.silence_sfx();
 }
 
 void MutableSound::StopSound(int which) {

@@ -23,7 +23,7 @@ public:
     {
         std::string line;
         this->get_line(line);
-        for (int i = 0; i < line.size(); ++i) {
+        for (std::size_t i = 0; i < line.size(); ++i) {
             if (line[i]== ',') {
                 line[i] = ' ';
             }

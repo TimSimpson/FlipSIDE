@@ -4,9 +4,12 @@
 #include <boost/format.hpp>
 #include "World.hpp"
 
-// The old VB code constantly was tossing ints into floats and vice-versa,
-// and using lp3::narrow everywhere
-#pragma warning(disable: 4244)
+
+#ifdef _MSC_VER
+    // The old VB code constantly was tossing ints into floats and vice-versa,
+    // and using lp3::narrow everywhere
+    #pragma warning(disable: 4244)
+#endif
 
 namespace nnd3d {
 
@@ -130,7 +133,6 @@ void View::DrawStuff(float fps) {
     //      but it looks like it wasn't used (or I didn't copy the logic
     //      in correctly).
 
-	int currentTexture = -1;
 	for (int j = 0; j < world.spritesInUse; ++j) {
 		if (world.drawOrder[j] == -1) {
 			continue;   // goto suckIt
@@ -151,9 +153,6 @@ void View::draw_verts_as_quad(const Vertex * v, const int texIndex, float z) {
 	LP3_ASSERT(texIndex >= -1);
 	LP3_ASSERT(texIndex < lp3::narrow<int>(AnimationTexture.size()));
 
-	if (texIndex > -1) {
-		int five = 5;
-	}
 	// Using old game logic, -1 could be the "background" texture which was
 	// reasonlessly treated differently from everything else.
 	const int realIndex = texIndex + 1;
@@ -222,7 +221,7 @@ void View::enable() {
 	for (std::size_t i = 0; i < history.size(); ++ i) {
 		const auto & call = history[i];
 		if (call) {
-			LoadTexture(lp3::narrow<int>(i) - 1, 
+			LoadTexture(lp3::narrow<int>(i) - 1,
 				        call->fileName, call->howWide, call->howHigh);
 		}
 		history[i] = boost::none;
@@ -325,9 +324,6 @@ int View::texHeight(int index) {
 void View::UpdateSprites() {
      //int j = 0; // in old code, not needed?
     int k = 0;
-    double texorg = 0.0;
-    int davidorg1 = 0;
-    int davidOrg2 = 0;
 
     for (int j = 0; j < world.spritesInUse; ++ j) {
         auto & s = world.Sprite[j];
