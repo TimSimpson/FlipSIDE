@@ -2124,7 +2124,6 @@ private:
     void findOrder() {
         int texorg = 0;
         int davidorg1 = 0;
-        int k = 0;
 
 		//2017: This is madness. Looks like it set `drawTrue` to false for
 		//      everything, then went through and found the sprites with the
@@ -2140,11 +2139,11 @@ private:
         for (int j = 0; j <= world.spritesInUse; ++ j) {
          texorg = -150;
          davidorg1 = 0;
-         for (int k2 = 0; k <= world.spritesInUse; ++ k2) {
-             if (world.Sprite[k2].zOrder > texorg
-                 && world.Sprite[k2].drawTrue == false) {
-                 texorg = world.Sprite[k2].zOrder;
-                 davidorg1 = k2;
+         for (int k = 0; k <= world.spritesInUse; ++ k) {
+             if (world.Sprite[k].zOrder > texorg
+                 && world.Sprite[k].drawTrue == false) {
+                 texorg = world.Sprite[k].zOrder;
+                 davidorg1 = k;
              }
          }
          world.drawOrder[j] = davidorg1;

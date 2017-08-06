@@ -5,30 +5,48 @@ namespace nnd3d {
 
 VbFile::VbFile(const std::string & filePath)
 :   file(),
-    fullPath(filePath)
+    fullPath(filePath),
+    used(false)
 {
-    LP3_LOG_DEBUG("Opening file %s...", fullPath);
-    file.open(fullPath.c_str(), std::ios::in | std::ios::binary);
-    if (file.bad() || file.fail())
-    {
-        LP3_LOG_ERROR("Error opening file %s!", fullPath);
-        LP3_THROW2(lp3::core::Exception, "Error opening file!");
-    }
+
 }
 
-VbFile::VbFile(VbFile && other)
-:   file(std::move(other.file)),
-    fullPath(other.fullPath) {
+ VbFile::VbFile(VbFile && other)
+:   file(),
+    fullPath(other.fullPath),
+    used(other.used)
+{
 }
 
 
 VbFile::~VbFile() {
     LP3_LOG_DEBUG("Closing file %s...", fullPath);
-    file.close();
+    if (used) {
+        file.close();
+    }
+}
+
+void VbFile::open() {
+    // All of these contortions are because fstream on Clang doesn't have a
+    // move constructor (yes, I know!). This code had been looking ok before
+    // that and had a move constructor which worked pretty well on Windows and
+    // in GCC.
+    LP3_ASSERT(!used);
+    used = true;
+    LP3_LOG_DEBUG("Opening file %s...", fullPath);
+    file.open(fullPath.c_str(), std::ios::in | std::ios::binary);
+    if (file.bad() || file.fail()) {
+        LP3_LOG_ERROR("Error opening file %s!", fullPath);
+        LP3_THROW2(lp3::core::Exception, "Error opening file!");
+    }
 }
 
 void VbFile::get_line(std::string & line) {
     LP3_LOG_DEBUG("Reading line from %s", fullPath);
+    if (!used) {
+        open();
+    }
+
     if (!std::getline(this->file, line)) {
         LP3_LOG_ERROR("Error reading line from %s", fullPath);
         LP3_THROW2(lp3::core::Exception, "Failure to read line!");

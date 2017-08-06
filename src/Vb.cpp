@@ -17,10 +17,10 @@ Vb::Vb(lp3::core::MediaManager & media_arg)
     //   LP3_LOG_INFO("after seed by 1: %d", rnd_gen());
 }
 
-VbFile && Vb::OpenForInput(const std::string & filePath) {
+VbFile Vb::OpenForInput(const std::string & filePath) {
 	const std::string full_path = media.path(filePath);
 	VbFile file{full_path};
-	return std::move(file);
+	return file;
 }
 
 double Vb::Rnd() {

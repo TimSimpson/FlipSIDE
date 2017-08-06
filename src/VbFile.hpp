@@ -58,8 +58,11 @@ public:
 private:
     std::fstream file;
     std::string fullPath;
+    bool used;
 
     void get_line(std::string & line);
+
+    void open();
 };
 
 }

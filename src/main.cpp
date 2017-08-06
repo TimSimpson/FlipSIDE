@@ -116,8 +116,8 @@ int _main(core::PlatformLoop & loop) {
 
 	glEnable(GL_DEPTH_TEST);  // DOES SOMETHING, makes Z count between render calls
 
-	#if LP3_COMPILE_TARGET_EMSCRIPTEN
-		mix::Init mix_init();
+	#if defined(LP3_COMPILE_TARGET_EMSCRIPTEN) || defined(LP3_COMPILE_TARGET_POCKETCHIP)
+		// mix::Init mix_init();
 	#else
 		mix::Init mix_init(MIX_INIT_MP3);
 	#endif
@@ -234,6 +234,7 @@ int _main(core::PlatformLoop & loop) {
 	const auto process_time =
 		std::chrono::duration_cast<std::chrono::milliseconds>(
 			end_time - start_time).count();
+	LP3_LOG_VAR(process_time);
 	LP3_LOG_INFO("Process ran for %d ms", process_time);
 	return result;
 }

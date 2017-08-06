@@ -184,6 +184,7 @@ void MixSound::silence_sfx() {
 }
 
 void MixSound::StopSound(int which) {
+    LP3_LOG_VAR(which);
     LP3_LOG_DEBUG("StopSound %d", which);
 }
 
