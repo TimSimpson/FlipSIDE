@@ -183,17 +183,32 @@ int _main(core::PlatformLoop & loop) {
 		// Speed through the game loop until the end of playback.
 		sound.mute();
 		view.disable();
+		const auto playback_start_time = std::chrono::high_resolution_clock::now();
+		std::int64_t game_time = 0;
 		while (!playback->playback_finished()) {
 			run_game(ms_per_update);
+			game_time += ms_per_update;
 		}
 		const auto playback_end_time = std::chrono::high_resolution_clock::now();
-		const auto playback_time =
+
+		const auto total_time =
 			std::chrono::duration_cast<std::chrono::milliseconds>(
 				playback_end_time - start_time).count();
+		const auto playback_time =
+			std::chrono::duration_cast<std::chrono::milliseconds>(
+				playback_end_time - playback_start_time).count();
+
+		double simulation_speed = lp3::narrow<double>(game_time) 
+			                      / lp3::narrow<double>(playback_time);
 #ifndef LP3_COMPILE_WITH_DEBUGGING
-		std::cout << "Playback completed in " << playback_time << "ms.\n";
+		std::cout << "Played back " << game_time << "ms of game time in " 
+			      << playback_time << "ms of real time (" << simulation_speed 
+			      << " times as fast).\n";
+		
 #endif
-		LP3_LOG_INFO("Playback completed in %d ms", playback_time);
+		LP3_LOG_INFO("Played back %dms of game time in %d ms of real time ("
+			         "%d times as fast).\n", 
+					 game_time, playback_time, simulation_speed);
 
 		sound.unmute();
 		view.enable();
