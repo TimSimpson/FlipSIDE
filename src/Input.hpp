@@ -4,14 +4,39 @@
 
 #include <fstream>
 #include <lp3/core.hpp>
+#include <lp3/sims.hpp>
 #include <string>
 
 namespace nnd3d { namespace input {
 
+
+enum class Key {
+    up,
+    down,
+    left,
+    right,
+    attack,
+    jump,
+    pause,
+    quit,
+    skip_scene,
+    power_up,
+    lemon_time,
+};
+
+struct Event {
+    std::int8_t player;  // 0 for system events
+    Key key;
+    float value;
+};
+
+
+// TODO: Deprecated, remove soon.
 struct StateChange {
     bool on;
     std::string key_name;
 };
+
 
 // --------------------------------------------------------------------
 // InputProvider
@@ -23,7 +48,7 @@ public:
     virtual ~InputProvider() = default;
 
     // Called by when the loop wants to retrieve new events.
-    virtual std::vector<StateChange> retrieve_events(std::int64_t ms) = 0;
+    virtual std::vector<Event> retrieve_events(std::int64_t ms) = 0;
 };
 
 
@@ -39,7 +64,7 @@ public:
 
 	void add_input(InputProvider * provider);
 
-	std::vector<StateChange> retrieve_events(std::int64_t ms) override;
+	std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
 	std::vector<InputProvider *> providers;
 };
@@ -56,9 +81,9 @@ public:
 
     void handle_events(const SDL_Event & event);
 
-    std::vector<StateChange> retrieve_events(std::int64_t ms) override;
+    std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
-	std::vector<StateChange> changes;
+	std::vector<Event> changes;
 };
 
 // --------------------------------------------------------------------
@@ -72,7 +97,7 @@ public:
     InputRecorder(lp3::sdl::RWops && write_file, InputProvider & input);
     ~InputRecorder() override = default;
 
-    std::vector<StateChange> retrieve_events(std::int64_t ms) override;
+    std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
 	lp3::sdl::RWops file;
 	InputProvider & provider;
@@ -93,13 +118,13 @@ public:
 
 	bool playback_finished() const;
 
-    std::vector<StateChange> retrieve_events(std::int64_t ms) override;
+    std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
     lp3::sdl::RWops file;
 	boost::optional<std::int64_t> next_time;
 	std::int64_t time;
-	
-	StateChange read_event();
+
+	boost::optional<Event> read_event();
 };
 
 

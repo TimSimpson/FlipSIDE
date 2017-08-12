@@ -2,6 +2,7 @@
 #define NND3D_GAME_HPP
 #pragma once
 
+#include "Input.hpp"
 #include "Sound.hpp"
 #include "World.hpp"
 #include "Vb.hpp"
@@ -26,9 +27,7 @@ public:
 
 	~Game();
 
-    void OnKey(const std::string & c);
-
-    void OffKey(const std::string & c);
+    void handle_input(const input::Event & even);
 
     void PlayGame();
 

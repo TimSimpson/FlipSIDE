@@ -150,14 +150,8 @@ int _main(core::PlatformLoop & loop) {
 
 		// Handle input
 		{
-			auto changes = input->retrieve_events(ms);
-			for (const auto & change : changes) {
-				if (change.on) {
-					game.OnKey(change.key_name);
-				}
-				else {
-					game.OffKey(change.key_name);
-				}
+			for (const auto & event : input->retrieve_events(ms)) {
+				game.handle_input(event);
 			}
 		}
 
@@ -194,20 +188,21 @@ int _main(core::PlatformLoop & loop) {
 		const auto total_time =
 			std::chrono::duration_cast<std::chrono::milliseconds>(
 				playback_end_time - start_time).count();
+		LP3_LOG_VAR(total_time)
 		const auto playback_time =
 			std::chrono::duration_cast<std::chrono::milliseconds>(
 				playback_end_time - playback_start_time).count();
 
-		double simulation_speed = lp3::narrow<double>(game_time) 
+		double simulation_speed = lp3::narrow<double>(game_time)
 			                      / lp3::narrow<double>(playback_time);
 #ifndef LP3_COMPILE_WITH_DEBUGGING
-		std::cout << "Played back " << game_time << "ms of game time in " 
-			      << playback_time << "ms of real time (" << simulation_speed 
+		std::cout << "Played back " << game_time << "ms of game time in "
+			      << playback_time << "ms of real time (" << simulation_speed
 			      << " times as fast).\n";
-		
+
 #endif
 		LP3_LOG_INFO("Played back %dms of game time in %d ms of real time ("
-			         "%d times as fast).\n", 
+			         "%d times as fast).\n",
 					 game_time, playback_time, simulation_speed);
 
 		sound.unmute();

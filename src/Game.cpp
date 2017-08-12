@@ -80,40 +80,46 @@ public:
         world.screen = "title";
     }
 
-	void OnKey(const std::string & o) {
-		for (int j = 0; j <= 2; ++j) {
-			if (o == world.KeyUp[j]) { world.upKey[j] = true; }
-			if (o == world.KeyDown[j]) { world.DownKEY[j] = true; }
-			if (o == world.KeyLeft[j]) { world.LeftKEY[j] = true; }
-			if (o == world.KeyRight[j]) { world.RightKEY[j] = true; }
-			if (o == world.KeyAttack[j]) { world.AttackKey[j] = true; }
-			if (o == "escape") { this->endgame(); }
-			if (o == "") { world.debugOn = true; }  // wtf?!
-			if (o == "T") { world.exitS = "true"; sound.PlayWave("FDis.wav"); }
-			if (o == "R") {
-				world.slicer[0] = true;
-				world.GradeUp[0] = 2;
-				world.Sprite[0].wide = 25;
-				world.Sprite[0].high = 25;
-				sound.PlayWave("SoupedUp.wav");
-			}
-			if (o == "Y") { world.LemonTime = true; }
-			if (o == world.KeyJump[j]) {
-				world.JumpKey[j] = true;
-			}
-		}
-	}
-
-	void OffKey(const std::string & o) {
-		for (int j = 0; j <= 2; ++j) {
-			if (o == world.KeyUp[j]) { world.upKey[j] = false; }
-			if (o == world.KeyDown[j]) { world.DownKEY[j] = false; }
-			if (o == world.KeyLeft[j]) { world.LeftKEY[j] = false; }
-			if (o == world.KeyRight[j]) { world.RightKEY[j] = false; }
-			if (o == world.KeyAttack[j]) { world.AttackKey[j] = false; }
-			if (o == world.KeyJump[j]) { world.JumpKey[j] = false; }
-		}
-	}
+    void handle_input(const input::Event & event) {
+        switch(event.key) {
+            case input::Key::up:
+                world.upKey[event.player] = event.value != 0.0f;
+                break;
+            case input::Key::down:
+                world.DownKEY[event.player] = event.value != 0.0f;
+                break;
+            case input::Key::left:
+                world.LeftKEY[event.player] = event.value != 0.0f;
+                break;
+            case input::Key::right:
+                world.RightKEY[event.player] = event.value != 0.0f;
+                break;
+            case input::Key::attack:
+                world.AttackKey[event.player] = event.value != 0.0f;
+                break;
+            case input::Key::jump:
+                world.JumpKey[event.player] = event.value != 0.0f;
+                break;
+            case input::Key::quit:
+                this->endgame();
+                break;
+            case input::Key::skip_scene:
+                world.exitS = "true"; sound.PlayWave("FDis.wav");
+                break;
+            case input::Key::power_up:
+                world.slicer[0] = true;
+                world.GradeUp[0] = 2;
+                world.Sprite[0].wide = 25;
+                world.Sprite[0].high = 25;
+                sound.PlayWave("SoupedUp.wav");
+                break;
+            case input::Key::lemon_time:
+                world.LemonTime = true;
+                break;
+            default:
+                LP3_ASSERT(false);
+        }
+    }
 
     void PlayGame() {
 		world.lasttime = world.clock + 3.33333333333333E-02;
@@ -3839,12 +3845,8 @@ Game::~Game() {
     delete impl;
 }
 
-void Game::OnKey(const std::string & c) {
-    impl->OnKey(c);
-}
-
-void Game::OffKey(const std::string & c) {
-    impl->OffKey(c);
+void Game::handle_input(const input::Event & event) {
+    impl->handle_input(event);
 }
 
 void Game::PlayGame() {
