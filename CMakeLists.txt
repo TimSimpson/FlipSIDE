@@ -16,6 +16,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/PlayerData.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/PlayerData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.cpp

@@ -5,6 +5,7 @@
 #include <array>
 #include "CharacterSprite.hpp"
 #include "CinemaType.hpp"
+#include "PlayerData.hpp"
 
 namespace nnd3d {
 
@@ -69,16 +70,7 @@ struct World {
     int SimulatedWidth;
     int SimulatedHeight;
 
-    //Keyboard key states
-    std::array<bool, 3> upKey;
-    std::array<bool, 3> DownKEY;
-    std::array<bool, 3> LeftKEY;
-    std::array<bool, 3> RightKEY;
-    std::array<bool, 3> SelectKey;
-    std::array<bool, 3> AttackKey;
-    std::array<bool, 3> AttackKeyRelease;
-    std::array<bool, 3> CancelKey;
-    std::array<bool, 3> JumpKey;
+    std::array<PlayerData, 3> player_data;
 
 
     int normColor;
@@ -88,24 +80,12 @@ struct World {
     int ponkoMonkey;
     int dojoMonkey;
 
-    std::array<std::string, 3> KeyUp;
-    std::array<std::string, 3> KeyDown;
-    std::array<std::string, 3> KeyLeft;
-    std::array<std::string, 3> KeyRight;
-    std::array<std::string, 3> KeyAttack;
-    std::array<std::string, 3> KeyJump;
 
     std::string FilePath;
 
     //GAME PLAY MULTIPLE PLAYERS DATA
     int numberPlayers;
-    std::array<std::string, 3> playerName;
-    std::array<int, 3> lives;
     int continues;
-    std::array<bool, 3> ThreeWay;
-    std::array<bool, 3> slicer;
-    std::array<int, 3> GradeUp;
-    std::array<std::string, 3> weapon;
 
     std::string currentScreen;
 };

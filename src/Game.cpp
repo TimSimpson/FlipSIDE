@@ -33,19 +33,19 @@ public:
         //world.FilePath = App.Path + "\"";
         //world.levelPath = App.Path + "\"";
 
-        world.KeyUp[0] = "W";
-        world.KeyDown[0] = "S";
-        world.KeyLeft[0] = "A";
-        world.KeyRight[0] = "D";
-        world.KeyAttack[0] = "F";
-        world.KeyJump[0] = "G";
+        world.player_data[0].KeyUp = "W";
+        world.player_data[0].KeyDown = "S";
+        world.player_data[0].KeyLeft = "A";
+        world.player_data[0].KeyRight = "D";
+        world.player_data[0].KeyAttack = "F";
+        world.player_data[0].KeyJump = "G";
 
-        world.KeyUp[1] = "up";
-        world.KeyDown[1] = "down";
-        world.KeyLeft[1] = "left";
-        world.KeyRight[1] = "right";
-        world.KeyAttack[1] = "O";
-        world.KeyJump[1] = "P";
+        world.player_data[1].KeyUp = "up";
+        world.player_data[1].KeyDown = "down";
+        world.player_data[1].KeyLeft = "left";
+        world.player_data[1].KeyRight = "right";
+        world.player_data[1].KeyAttack = "O";
+        world.player_data[1].KeyJump = "P";
 
         //KeyUp(2) = "I"
         //KeyDown(2) = "K"
@@ -83,22 +83,22 @@ public:
     void handle_input(const input::Event & event) {
         switch(event.key) {
             case input::Key::up:
-                world.upKey[event.player] = event.value != 0.0f;
+                world.player_data[event.player].upKey = event.value != 0.0f;
                 break;
             case input::Key::down:
-                world.DownKEY[event.player] = event.value != 0.0f;
+                world.player_data[event.player].DownKEY = event.value != 0.0f;
                 break;
             case input::Key::left:
-                world.LeftKEY[event.player] = event.value != 0.0f;
+                world.player_data[event.player].LeftKEY = event.value != 0.0f;
                 break;
             case input::Key::right:
-                world.RightKEY[event.player] = event.value != 0.0f;
+                world.player_data[event.player].RightKEY = event.value != 0.0f;
                 break;
             case input::Key::attack:
-                world.AttackKey[event.player] = event.value != 0.0f;
+                world.player_data[event.player].AttackKey = event.value != 0.0f;
                 break;
             case input::Key::jump:
-                world.JumpKey[event.player] = event.value != 0.0f;
+                world.player_data[event.player].JumpKey = event.value != 0.0f;
                 break;
             case input::Key::quit:
                 this->endgame();
@@ -107,8 +107,8 @@ public:
                 world.exitS = "true"; sound.PlayWave("FDis.wav");
                 break;
             case input::Key::power_up:
-                world.slicer[0] = true;
-                world.GradeUp[0] = 2;
+                world.player_data[0].slicer = true;
+                world.player_data[0].GradeUp = 2;
                 world.Sprite[0].wide = 25;
                 world.Sprite[0].high = 25;
                 sound.PlayWave("SoupedUp.wav");
@@ -341,14 +341,14 @@ public:
 				if (j == 10) { penguin = 1; }
 				if (j == 20) { penguin = 2; }
 
-				if (world.upKey[penguin] == true) {
+				if (world.player_data[penguin].upKey == true) {
 					if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
 					s.y = s.y - world.sFactor;
 					//s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
 					s.speed = 0; //0.00001
 					if (s.y < world.CameraY) { s.y = world.CameraY; }
 				}
-				if (world.DownKEY[penguin] == true) {
+				if (world.player_data[penguin].DownKEY == true) {
 					if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
 					s.y = s.y + world.sFactor;
 					//s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
@@ -357,9 +357,9 @@ public:
 						s.y = world.CameraY + world.CameraHeight - s.high;
 					}
 				}
-				if (world.LeftKEY[penguin] == true) {
-					if (s.dir != "l" && world.upKey[penguin] == false
-						&& world.DownKEY[penguin] == false) {
+				if (world.player_data[penguin].LeftKEY == true) {
+					if (s.dir != "l" && world.player_data[penguin].upKey == false
+						&& world.player_data[penguin].DownKEY == false) {
 						s.dir = "l";
 						s.frame = 14;
 					}
@@ -368,9 +368,9 @@ public:
 					s.speed = 0;  //0.00001
 					if (s.x < world.CameraX) { s.x = world.CameraX; }
 				}
-				if (world.RightKEY[penguin] == true) {
-					if (s.dir != "r" && world.upKey[penguin] == false
-						&& world.DownKEY[penguin] == false) {
+				if (world.player_data[penguin].RightKEY == true) {
+					if (s.dir != "r" && world.player_data[penguin].upKey == false
+						&& world.player_data[penguin].DownKEY == false) {
 						s.dir = "r";
 						s.frame = 2;
 					}
@@ -386,9 +386,9 @@ public:
 
 				if (s.z == 0) { s.multiJump = 0; }
 
-				if (s.name == "Nicky" && world.JumpKey[penguin] == true
+				if (s.name == "Nicky" && world.player_data[penguin].JumpKey == true
 					&& s.multiJump < 3) {
-					world.JumpKey[penguin] = false;
+					world.player_data[penguin].JumpKey = false;
 					//If .z = 0 Then .multiJump = 0
 					s.multiJump = s.multiJump + 1;
 					s.jumpStart = s.z;
@@ -396,15 +396,15 @@ public:
 				}
 
 
-				if (world.JumpKey[penguin] == true && s.z == 0) {
+				if (world.player_data[penguin].JumpKey == true && s.z == 0) {
 
 					s.jumpStart = s.z;
 					s.jumpTime = world.clock;
 				}
 
 				//Check for a lack of movement
-				if (world.weapon[j / 10] == "bomb") {
-					if (world.AttackKey[penguin] == true
+				if (world.player_data[j / 10].weapon == "bomb") {
+					if (world.player_data[penguin].AttackKey == true
 						&& s.miscTime < world.clock) {
 						for (k = j + 1; k < j + 10; ++k) {
 							if (world.Sprite[k].name == "reserved"
@@ -422,8 +422,8 @@ public:
     						world.Sprite[k].x = s.x;
     						world.Sprite[k].y = s.y;
     						world.Sprite[k].z = s.z; //- (Sprite(0).length);
-    						world.Sprite[k].wide = 30 * (world.GradeUp[j / 10] + 1);
-    						world.Sprite[k].high = 30 * (world.GradeUp[j / 10] + 1);
+    						world.Sprite[k].wide = 30 * (world.player_data[j / 10].GradeUp + 1);
+    						world.Sprite[k].high = 30 * (world.player_data[j / 10].GradeUp + 1);
     						world.Sprite[k].jumpStart = s.jumpStart;
     						world.Sprite[k].jumpStrength = s.jumpStrength;
     						world.Sprite[k].jumpTime = s.jumpTime;
@@ -445,9 +445,9 @@ public:
 					}
 				} //Nicky Bomb
  //Thomas Fire
-                if (world.weapon[j / 10] == "fireball"
-                    && world.ThreeWay[j / 10] == false) {
-                    if (world.AttackKey[penguin] == true
+                if (world.player_data[j / 10].weapon == "fireball"
+                    && world.player_data[j / 10].ThreeWay == false) {
+                    if (world.player_data[penguin].AttackKey == true
                         && s.miscTime < world.clock) {
                         for (k = j + 1; k <= j + 9; ++ k) {
                             if (world.Sprite[k].name == "reserved"
@@ -486,19 +486,19 @@ public:
                                 = s.x + (world.CameraWidth * 2);
                             world.Sprite[k].dir = "r";
                         }
-                        if (world.RightKEY[penguin] == true) {
+                        if (world.player_data[penguin].RightKEY == true) {
                             world.Sprite[k].seekx
                                 = s.x + (2 * world.CameraWidth);
                         }
-                        if (world.LeftKEY[penguin] == true) {
+                        if (world.player_data[penguin].LeftKEY == true) {
                             world.Sprite[k].seekx
                                 = s.x - (world.CameraWidth * 2);
                         }
-                        if (world.upKey[penguin] == true) {
+                        if (world.player_data[penguin].upKey == true) {
                             world.Sprite[k].seeky
                                 = s.y - (world.CameraHeight * 2);
                         }
-                        if (world.DownKEY[penguin] == true) {
+                        if (world.player_data[penguin].DownKEY == true) {
                             world.Sprite[k].seeky
                                 = s.y + (world.CameraHeight * 2);
                         }
@@ -515,8 +515,8 @@ public:
                         world.Sprite[k].x = s.x;
                         world.Sprite[k].y = s.y;
                         world.Sprite[k].z = s.z; //- (Sprite(0).length)
-                        world.Sprite[k].wide = 30 * (world.GradeUp[j / 10] + 1);
-                        world.Sprite[k].high = 30 * (world.GradeUp[j / 10] + 1);
+                        world.Sprite[k].wide = 30 * (world.player_data[j / 10].GradeUp + 1);
+                        world.Sprite[k].high = 30 * (world.player_data[j / 10].GradeUp + 1);
                         world.Sprite[k].length = 15;
                         world.Sprite[k].texture = world.Sprite[j].texture;
                         world.Sprite[k].visible = true;
@@ -524,10 +524,10 @@ public:
                         //Sprite[k].soundFile = "fireball.wav"
                         world.Sprite[k].parent = j;
                         //LoadSound k, "fireball.wav"
-                        if (world.playerName[world.Sprite[k].parent / 10] == "Thomas") {
+                        if (world.player_data[world.Sprite[k].parent / 10].playerName == "Thomas") {
                             sound.PlaySound("fireball");
                         }
-                        if (world.playerName[world.Sprite[k].parent / 10] == "Nick") {
+                        if (world.player_data[world.Sprite[k].parent / 10].playerName == "Nick") {
                             sound.PlaySound("iceshot");
                         }
 
@@ -537,9 +537,9 @@ public:
                     }
                 } //if thomas if
 
-                if (world.weapon[j / 10] == "fireball"
-                    && world.ThreeWay[j / 10] == true) {
-                    if (world.AttackKey[penguin] == true
+                if (world.player_data[j / 10].weapon == "fireball"
+                    && world.player_data[j / 10].ThreeWay == true) {
+                    if (world.player_data[penguin].AttackKey == true
                         && s.miscTime < world.clock) {
                         for (k = j + 1; k <= j + 6; ++k) {
                             if (world.Sprite[k].name == "reserved"
@@ -586,7 +586,7 @@ public:
                                 = s.y - (world.CameraHeight * 2);
                             world.Sprite[k + 2].dir = "r";
                         }
-                        if (world.upKey[penguin] == true || s.dir == "u") {
+                        if (world.player_data[penguin].upKey == true || s.dir == "u") {
                             world.Sprite[k].seekx = s.x;
                             world.Sprite[k].seeky = s.y - (world.CameraHeight * 2);
                             world.Sprite[k].dir = "u";
@@ -600,20 +600,20 @@ public:
                             world.Sprite[k + 2].seeky
                                 = s.y - (world.CameraHeight * 2);
                             world.Sprite[k + 2].dir = "u";
-                            if (world.LeftKEY[penguin] == true) {
+                            if (world.player_data[penguin].LeftKEY == true) {
                                 world.Sprite[k + 2].seeky = s.y;
                                 world.Sprite[k + 2].seekx
                                     = s.x - (world.CameraWidth * 2);
                                 world.Sprite[k + 2].dir = "l";
                             }
-                            if (world.RightKEY[penguin] == true) {
+                            if (world.player_data[penguin].RightKEY == true) {
                                 world.Sprite[k + 1].seeky = s.y;
                                 world.Sprite[k + 1].seekx
                                     = s.x + (world.CameraWidth * 2);
                                 world.Sprite[k + 1].dir = "r";
                             }
                         }
-                        if (world.DownKEY[penguin] == true
+                        if (world.player_data[penguin].DownKEY == true
                             || s.dir == "d") {
                             world.Sprite[k].seekx = s.x;
                             world.Sprite[k].seeky = s.y + (2 * world.CameraHeight);
@@ -624,13 +624,13 @@ public:
                             world.Sprite[k + 2].seekx = s.x + (world.CameraWidth * 2);
                             world.Sprite[k + 2].seeky = s.y + (world.CameraHeight * 2);
                             world.Sprite[k + 2].dir = "d";
-                            if (world.LeftKEY[penguin] == true) {
+                            if (world.player_data[penguin].LeftKEY == true) {
                                 world.Sprite[k + 2].seeky = s.y;
                                 world.Sprite[k + 2].seekx
                                     = s.x - (world.CameraWidth * 2);
                                 world.Sprite[k + 2].dir = "l";
                             }
-                            if (world.RightKEY[penguin] == true) {
+                            if (world.player_data[penguin].RightKEY == true) {
                                 world.Sprite[k + 1].seeky = s.y;
                                 world.Sprite[k + 1].seekx
                                     = s.x + (world.CameraWidth * 2);
@@ -652,9 +652,9 @@ if (s.mode == "truck") {
                             world.Sprite[trueorg].y = s.y;
                             world.Sprite[trueorg].z = s.z; //- (world.Sprite[0).lengh)
                             world.Sprite[trueorg].wide
-                                = 30 * (world.GradeUp[j / 10] + 1);
+                                = 30 * (world.player_data[j / 10].GradeUp + 1);
                             world.Sprite[trueorg].high
-                                = 30 * (world.GradeUp[j / 10] + 1);
+                                = 30 * (world.player_data[j / 10].GradeUp + 1);
                             world.Sprite[trueorg].length = 15;
                             world.Sprite[trueorg].texture
                                 = world.Sprite[j].texture;
@@ -673,10 +673,10 @@ if (s.mode == "truck") {
                 } //if thomas if
 
 
-                if (world.upKey[penguin] == false
-                    && world.DownKEY[penguin] == false
-                    && world.LeftKEY[penguin] == false
-                    && world.RightKEY[penguin] == false) {
+                if (world.player_data[penguin].upKey == false
+                    && world.player_data[penguin].DownKEY == false
+                    && world.player_data[penguin].LeftKEY == false
+                    && world.player_data[penguin].RightKEY == false) {
                     if (s.dir == "r") { s.frame = 2; }
                     if (s.dir == "l") { s.frame = 14; }
                     if (s.dir == "u") { s.frame = 6; }
@@ -740,7 +740,7 @@ if (s.mode == "truck") {
 
             if (s.name == "fireball") {
 
-                if (world.slicer[s.parent / 10] == true) {
+                if (world.player_data[s.parent / 10].slicer == true) {
                     if (s.color == view.QBColor(2)) {
                         s.color = view.QBColor(15);
                     }
@@ -881,8 +881,8 @@ if (s.mode == "truck") {
                         s.srcy2 = 379;
                         s.texture = 0;
                         s.visible = true;
-                        world.lives[j / 10] = world.lives[j / 10] - 1;
-                        if (world.lives[j / 10] < 1) {
+                        world.player_data[j / 10].lives = world.player_data[j / 10].lives - 1;
+                        if (world.player_data[j / 10].lives < 1) {
                             if (world.continues > 0) {
                                 s.name = "continue";
                                 s.texture = 0;
@@ -911,9 +911,9 @@ if (s.mode == "truck") {
                                 world.Sprite[j + 1].x = s.x + 100;
                             } //end continue if
                         } //end lives if
-                        if (world.lives[j / 10] > 0) {
+                        if (world.player_data[j / 10].lives > 0) {
                             this->createPlayer(j);
-                            world.Sprite[j].name = world.playerName[j / 10];
+                            world.Sprite[j].name = world.player_data[j / 10].playerName;
                             world.Sprite[j].kind = 1;
                             this->initSprites(j);
                             world.Sprite[j].flickerTime = world.clock + 5;
@@ -929,9 +929,9 @@ if (s.mode == "truck") {
             if (s.name == "continue") {
                 if (this->anyKey(j / 10) == 1) {
                     world.continues = world.continues - 1;
-                    world.lives[j / 10] = 2;
+                    world.player_data[j / 10].lives = 2;
                     this->createPlayer(j);
-                    world.Sprite[j].name = world.playerName[j / 10];
+                    world.Sprite[j].name = world.player_data[j / 10].playerName;
                     world.Sprite[j].kind = 1;
                     world.Sprite[j].flickerTime = world.clock + 5;
                     this->initSprites(j);
@@ -1020,9 +1020,9 @@ if (s.mode == "truck") {
             if (s.name == "TitleBg1") {
                 //if (s.mode = "part2") then
                 for (k = 0; k <= 2; ++ k) {
-                    if (world.RightKEY[k] == true || world.LeftKEY[k] == true
-                        || world.upKey[k] == true || world.DownKEY[k] == true
-                        || world.AttackKey[k] == true) {
+                    if (world.player_data[k].RightKEY == true || world.player_data[k].LeftKEY == true
+                        || world.player_data[k].upKey == true || world.player_data[k].DownKEY == true
+                        || world.player_data[k].AttackKey == true) {
                         world.screen = "Select Player";
                     }
                 }
@@ -1081,16 +1081,16 @@ if (s.name == "Title2") {
                         }
                     }
 
-                    if (world.upKey[k] == true) {
+                    if (world.player_data[k].upKey == true) {
                         s.frame = s.frame - 1;
                         if (s.frame == 0) { s.frame = 5; }
                     }
-                    if (world.DownKEY[k] == true) {
+                    if (world.player_data[k].DownKEY == true) {
                         s.frame = s.frame + 1;
                         if (s.frame == 6) { s.frame = 1; }
                     }
-                    if (world.AttackKey[k] == true
-                        || world.JumpKey[k] == true) {
+                    if (world.player_data[k].AttackKey == true
+                        || world.player_data[k].JumpKey == true) {
                         s.mode = "done";
                         s.name = "KukoFax";
                         if (s.frame == 1) { sound.PlayWave("PickTom.wav"); }
@@ -1464,7 +1464,7 @@ if (s.name == "Title2") {
                 for (penguin = 0; penguin <= 2; penguin+= 10) {
                     if (this->hitdetection(j, penguin) != 0
                         && world.Sprite[penguin].name
-                        == world.playerName[(penguin / 10)]) {
+                        == world.player_data[(penguin / 10)].playerName) {
                         world.exitS = "true";
                     }
                 }
@@ -1477,7 +1477,7 @@ if (s.name == "Title2") {
                     for (penguin = 0; penguin <= 2; penguin += 10) {
                         if (this->hitdetection(j, penguin, true) == 5
                             && world.Sprite[penguin].name
-                            == world.playerName[(penguin / 10)]) {
+                            == world.player_data[(penguin / 10)].playerName) {
                             s.mode = "runner";
                             s.seekx = world.cameraStopX;
                             //.mhp = 10
@@ -1708,9 +1708,9 @@ private:
 
     long anyKey(int zed) {
         // Returns true if the player at the given index is pressing any key.
-        return ((world.RightKEY[zed] || world.LeftKEY[zed]
-                 || world.upKey[zed] || world.DownKEY[zed]
-                 || world.AttackKey[zed]) ? 1 : 0);
+        return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
+                 || world.player_data[zed].upKey || world.player_data[zed].DownKEY
+                 || world.player_data[zed].AttackKey) ? 1 : 0);
     }
 
     void centerSprite(int who) {
@@ -1780,7 +1780,7 @@ private:
                 }
             }
             if (world.Sprite[k].name == "fireball") {
-                if (world.slicer[(world.Sprite[k].parent) / 10] == false) {
+                if (world.player_data[(world.Sprite[k].parent) / 10].slicer == false) {
                     this->killS(k);
                 }
             }
@@ -1907,64 +1907,6 @@ private:
         if (redo == true) { HolderJ = j; j = k; k = HolderJ; }
 
         return;  // exit sub
-
-        //--------OLD FASHIONED SUBROUTINES
-        //TSNOW: Note - hurtj subroutine was defined here.
-        //TSNOW: All of the stuff after it was important looking code that
-        //       I don't think could ever be executed.
-        /*
-        'Thomas hits a goomba-
-        '----------------------------------------------------------------------------
-        '     THOMAS HITS CRAP
-        '----------------------------------------------------------------------------
-        If Sprite(j).name = "Thomas" Then   '----------------------DAVID IF CHUNK
-        If Sprite(k).name = "goomba" Then
-        If hitdetection(j, k) = 1 And Sprite(j).z > Sprite(k).length And Sprite(j).lastJump > Sprite(j).z And Sprite(k).flickerTime < clock Then
-        Sprite(k).hp = Sprite(k).hp - 1: Sprite(k).flickerTime = clock + 2
-        If Sprite(k).hp < 1 Then
-
-        Sprite(k).name = "Dying Explosion"
-        Sprite(k).seekx = Sprite(11).wide * 2
-        Sprite(k).mph = 2
-        PlaySound 1
-        End If
-
-        End If
-        End If
-
-        If Sprite(k).name = "Deadly Rat" And hitdetection(j, k) = 1 Then
-        If Sprite(j).flickerTime < clock Then
-        Sprite(j).hp = Sprite(j).hp - 1: Sprite(j).flickerTime = clock + 2
-        If Sprite(j).hp < 1 Then Sprite(j).name = "Dying Explosion": Sprite(j).mph = 2: Sprite(j).seekx = Sprite(j).wide * 5
-        End If
-
-        End If
-        End If
-        '----------------------------------------------------------------------------
-        '        END OF THOMAS HITS CRAP
-        '----------------------------------------------------------------------------
-        '----------------------------------------------------------------------------
-        '        FIREBALL TIME!
-        '----------------------------------------------------------------------------
-        If Sprite(j).name = "fireball" Then
-        If Sprite(k).name = "Deadly Rat" Then
-        If Sprite(k).name <> "Dying Explosion" And Sprite(k).flickerTime < clock Then
-        Sprite(k).hp = Sprite(10).hp - 1
-        Sprite(k).flickerTime = clock + 2
-        If Sprite(k).hp < 1 Then
-        Sprite(k).name = "Dying Explosion"
-        Sprite(k).seekx = Sprite(k).wide * 2
-        Sprite(k).mph = 2
-        End If
-        Sprite(j).visible = False
-        End If
-        End If
-
-        End If
-        '----------------------------------------------------------------------------
-        '        END OF FIRE BALL TIME!
-        '----------------------------------------------------------------------------
-        */
 	}
 
     int checkProx(int who) {
@@ -2037,8 +1979,8 @@ private:
     void createPlayer(int who) {
             int goatorg = 0;
 
-        if (world.playerName[(who / 10)] == "Thomas") {
-            world.weapon[who / 10] = "fireball";
+        if (world.player_data[(who / 10)].playerName == "Thomas") {
+            world.player_data[who / 10].weapon = "fireball";
             this->loadAnimation(who, "Thomas.ani");
             view.LoadTexture((who / 10) + 1, "Flip1.png", 254, 254);
             world.Sprite[who].texture = (who / 10) + 1;
@@ -2047,8 +1989,8 @@ private:
             }
         }
 
-        if (world.playerName[(who / 10)] == "Nick") {
-            world.weapon[who / 10] = "fireball";
+        if (world.player_data[(who / 10)].playerName == "Nick") {
+            world.player_data[who / 10].weapon = "fireball";
             this->loadAnimation(who, "nick.ani");
             view.LoadTexture((who / 10) + 1, "joel.png", 254, 258);
             world.Sprite[who].texture = (who / 10) + 1;
@@ -2057,8 +1999,8 @@ private:
             }
         }
 
-        if (world.playerName[(who / 10)] == "Nicky") {
-            world.weapon[who / 10] = "bomb";
+        if (world.player_data[(who / 10)].playerName == "Nicky") {
+            world.player_data[who / 10].weapon = "bomb";
             this->loadAnimation(who, "nicky.ani");
             view.LoadTexture((who / 10) + 1, "LilNicky.png", 84, 148);
             world.Sprite[who].texture = (who / 10) + 1;
@@ -2245,35 +2187,35 @@ private:
 
     void findPlayers() {
 		world.numberPlayers = 0;
-        if (world.playerName[0] == "") { world.playerName[0] = "zgjkl"; }
-        if (world.playerName[1] == "") { world.playerName[1] = "zgjkl"; }
-        if (world.playerName[2] == "") { world.playerName[2] = "zgjkl"; }
+        if (world.player_data[0].playerName == "") { world.player_data[0].playerName = "zgjkl"; }
+        if (world.player_data[1].playerName == "") { world.player_data[1].playerName = "zgjkl"; }
+        if (world.player_data[2].playerName == "") { world.player_data[2].playerName = "zgjkl"; }
 
 
-        if (world.Sprite[0].name == world.playerName[0]) {
+        if (world.Sprite[0].name == world.player_data[0].playerName) {
             world.numberPlayers = 1;
         }
-        if (world.Sprite[10].name == world.playerName[1]) {
+        if (world.Sprite[10].name == world.player_data[1].playerName) {
             world.numberPlayers = 4;
         }
-        if (world.Sprite[20].name == world.playerName[2]) {
+        if (world.Sprite[20].name == world.player_data[2].playerName) {
             world.numberPlayers = 5;
         }
-        if (world.Sprite[0].name == world.playerName[0]
-            && world.Sprite[10].name == world.playerName[1]) {
+        if (world.Sprite[0].name == world.player_data[0].playerName
+            && world.Sprite[10].name == world.player_data[1].playerName) {
             world.numberPlayers = 2;
         }
-        if (world.Sprite[0].name == world.playerName[0]
-            && world.Sprite[20].name == world.playerName[2]) {
+        if (world.Sprite[0].name == world.player_data[0].playerName
+            && world.Sprite[20].name == world.player_data[2].playerName) {
             world.numberPlayers = 6;
         }
-        if (world.Sprite[10].name == world.playerName[1]
-            && world.Sprite[20].name == world.playerName[2]) {
+        if (world.Sprite[10].name == world.player_data[1].playerName
+            && world.Sprite[20].name == world.player_data[2].playerName) {
             world.numberPlayers = 7;
         }
-        if (world.Sprite[0].name == world.playerName[0]
-            && world.Sprite[10].name == world.playerName[1]
-            && world.Sprite[20].name == world.playerName[2]) {
+        if (world.Sprite[0].name == world.player_data[0].playerName
+            && world.Sprite[10].name == world.player_data[1].playerName
+            && world.Sprite[20].name == world.player_data[2].playerName) {
             world.numberPlayers = 3;
         }
     }
@@ -2347,14 +2289,14 @@ private:
     }
 
     void GoSub_level1b() {
-        for (int penguin = 31; penguin <= 34; ++ penguin) {
-            if (penguin == 30) { continue; } //2017: WAT?
-            world.Sprite[penguin].visible = true;
-            world.Sprite[penguin].wide = (271 - 137) * 2;
-            world.Sprite[penguin].high = 81 * 2;
-            world.Sprite[penguin].seekx = 0;
-            world.Sprite[penguin].seeky = 1;
-            world.Sprite[penguin].texture = 9;
+        for (int i = 31; i <= 34; ++ i) {
+            if (i == 30) { continue; } //2017: WAT?
+            world.Sprite[i].visible = true;
+            world.Sprite[i].wide = (271 - 137) * 2;
+            world.Sprite[i].high = 81 * 2;
+            world.Sprite[i].seekx = 0;
+            world.Sprite[i].seeky = 1;
+            world.Sprite[i].texture = 9;
         }
     }
 
@@ -2368,19 +2310,19 @@ private:
         world.Sprite[34].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[33].seekx;
         world.Sprite[34].y = world.CameraY + world.CameraHeight - 180;
 
-        for (int penguin = 31; penguin <= 34; ++ penguin) {
-            // If penguin = 34 Then GoTo kiddy2
-            world.Sprite[penguin].seekx = world.Sprite[penguin].seekx + world.sFactor * 6;
-            world.Sprite[penguin].seeky = world.Sprite[penguin].seeky + 1;
-            if (world.Sprite[penguin].seeky == 3) {
-                world.Sprite[penguin].seeky = 1;
+        for (int i = 31; i <= 34; ++ i) {
+            // If i = 34 Then GoTo kiddy2
+            world.Sprite[i].seekx = world.Sprite[i].seekx + world.sFactor * 6;
+            world.Sprite[i].seeky = world.Sprite[i].seeky + 1;
+            if (world.Sprite[i].seeky == 3) {
+                world.Sprite[i].seeky = 1;
             }
-            world.Sprite[penguin].frame = world.Sprite[penguin].seeky;
+            world.Sprite[i].frame = world.Sprite[i].seeky;
         }
 
         if (world.Sprite[32].seekx > 268) {
-            for (int penguin = 31; penguin <= 34; ++ penguin) {
-                world.Sprite[penguin].visible = false;
+            for (int i = 31; i <= 34; ++ i) {
+                world.Sprite[i].visible = false;
             }
 
             world.Sprite[30].mode = "9";
@@ -2388,14 +2330,14 @@ private:
     }
 
     void GoSub_setUpLevel1() {
-        for (int penguin = 31; penguin <= 34; ++ penguin) {
-            if (penguin == 30) { continue; }
-            world.Sprite[penguin].visible = true;
-            world.Sprite[penguin].wide = (271 - 137) * 2;
-            world.Sprite[penguin].high = 81 * 2;
-            world.Sprite[penguin].seekx = 268;
-            world.Sprite[penguin].seeky = 1;
-            world.Sprite[penguin].texture = 9;
+        for (int i = 31; i <= 34; ++ i) {
+            if (i == 30) { continue; }
+            world.Sprite[i].visible = true;
+            world.Sprite[i].wide = (271 - 137) * 2;
+            world.Sprite[i].high = 81 * 2;
+            world.Sprite[i].seekx = 268;
+            world.Sprite[i].seeky = 1;
+            world.Sprite[i].texture = 9;
         }
     }
 
@@ -2630,7 +2572,7 @@ private:
         //Dim j As Integer
         int k = 0;
         for (k = 0; k <= 2; ++ k) {
-            if (world.playerName[k] == "") { world.playerName[k] = "redead"; }
+            if (world.player_data[k].playerName == "") { world.player_data[k].playerName = "redead"; }
         }
         //For j = 0 To (numberPlayers - 1)//
         //
@@ -2663,15 +2605,15 @@ private:
 
         if (world.numberPlayers == 1 || world.numberPlayers == 2
             || world.numberPlayers == 3 || world.numberPlayers == 6) {
-            world.Sprite[0].name = world.playerName[0];
+            world.Sprite[0].name = world.player_data[0].playerName;
             for (k = 0 + 1; k <= 9; ++ k) {
                 world.Sprite[k].x = 60;
                 world.Sprite[k].y = 70;
-                if (world.playerName[0] == "Thomas"
-                    || world.playerName[0] == "Nick") {
+                if (world.player_data[0].playerName == "Thomas"
+                    || world.player_data[0].playerName == "Nick") {
                     world.Sprite[k].name = "fireball";
                 }
-                if (world.playerName[0] == "Nicky") {
+                if (world.player_data[0].playerName == "Nicky") {
                     world.Sprite[k].name = "bomb";
                 }
             }
@@ -2679,15 +2621,15 @@ private:
 
         if (world.numberPlayers == 2 || world.numberPlayers == 3
             || world.numberPlayers == 4 || world.numberPlayers == 7) {
-            world.Sprite[10].name = world.playerName[1];
+            world.Sprite[10].name = world.player_data[1].playerName;
             for (k = 11 + 1; k <= 19; ++ k) {
                 world.Sprite[k].x = 60;
                 world.Sprite[k].y = 70;
-                if (world.playerName[1] == "Thomas"
-                    || world.playerName[1] == "Nick") {
+                if (world.player_data[1].playerName == "Thomas"
+                    || world.player_data[1].playerName == "Nick") {
                     world.Sprite[k].name = "fireball";
                 }
-                if (world.playerName[1] == "Nicky") {
+                if (world.player_data[1].playerName == "Nicky") {
                     world.Sprite[k].name = "bomb";
                 }
 
@@ -2696,7 +2638,7 @@ private:
 
         if (world.numberPlayers == 3 || world.numberPlayers == 5
             || world.numberPlayers == 6 || world.numberPlayers == 7) {
-            world.Sprite[20].name = world.playerName[2];
+            world.Sprite[20].name = world.player_data[2].playerName;
             for (k = 21 + 1; k <= 29; ++ k) {
                 world.Sprite[k].x = 60;
                 world.Sprite[k].y = 70;
@@ -2715,13 +2657,13 @@ private:
         //Rem- Spring.wav is then put into slot 15
         for (j = 0; j <= 2; ++ j) {
 
-            if (world.playerName[j] == "Thomas") {
+            if (world.player_data[j].playerName == "Thomas") {
                 sound.LoadSound((j * 5), "fireball.wav", "fireball");
                 sound.LoadSound((j * 5) + 1, "Death.wav", "DavidDeath");
                 sound.LoadSound((j * 5) + 2, "hurt.wav", "DavidHurt");
             }
 
-            if (world.playerName[j] == "Nicky") {
+            if (world.player_data[j].playerName == "Nicky") {
                 sound.LoadSound((j * 5), "NickyDeath.wav", "NickyDeath");
                 sound.LoadSound((j * 5) + 1, "NickyHurt.wav", "NickyHurt");
                 //2017: This file doesn't work, so don't play it
@@ -2729,7 +2671,7 @@ private:
                 sound.LoadSound((j * 5) + 3, "Bomb explode.wav", "bomb explode");
             }
 
-            if (world.playerName[j] == "Nick") {
+            if (world.player_data[j].playerName == "Nick") {
                 sound.LoadSound((j * 5), "nickdeath.wav", "nickdeath");
                 sound.LoadSound((j * 5) + 1, "nickhurt.wav", "nickhurt");
                 sound.LoadSound((j * 5) + 2, "iceshot.wav", "iceshot");
@@ -3506,13 +3448,12 @@ private:
 	void selectPlayerS() {
 		// after you all select players, it gets up the results
 
-        int penguin;
         if (world.Sprite[0].mode == "done" || world.Sprite[0].visible == false) {
             if (world.Sprite[1].mode == "done" || world.Sprite[1].visible == false) {
                 if (world.Sprite[2].mode == "done" || world.Sprite[2].visible == false) {
-                    for (penguin = 0; penguin <= 2; ++penguin) {
-                        if (world.Sprite[penguin].visible == false) {
-                            world.Sprite[penguin].mode = "";
+                    for (int i = 0; i <= 2; ++i) {
+                        if (world.Sprite[i].visible == false) {
+                            world.Sprite[i].mode = "";
                         }
                     }
                     if (world.Sprite[0].mode == "done") {
@@ -3539,19 +3480,19 @@ private:
                         world.numberPlayers = 3;
                     }
 
-                    for (penguin = 0; penguin <= 2; ++ penguin) {
+                    for (int penguin = 0; penguin <= 2; ++ penguin) {
                         auto & s = world.Sprite[penguin];
                         //Next penguin
                         if (s.frame == 1) {
-                            world.playerName[penguin] = "Thomas"; }
+                            world.player_data[penguin].playerName = "Thomas"; }
                         if (s.frame == 2) {
-                            world.playerName[penguin] = "Nick"; }
+                            world.player_data[penguin].playerName = "Nick"; }
                         if (s.frame == 3) {
-                            world.playerName[penguin] = "Andrew"; }
+                            world.player_data[penguin].playerName = "Andrew"; }
                         if (s.frame == 4) {
-                            world.playerName[penguin] = "Phil"; }
+                            world.player_data[penguin].playerName = "Phil"; }
                         if (s.frame == 5) {
-                            world.playerName[penguin] = "Nicky"; }
+                            world.player_data[penguin].playerName = "Nicky"; }
                     }
                     //1 Only player 1
                     //2 Player 1 and 2
@@ -3568,7 +3509,6 @@ private:
 	}
 
     void script() {
-        int penguin;
         if (world.Sprite[30].mode != "3" && world.Sprite[30].mode != "2") {
             // move all the faces so that they line up
             world.Sprite[31].x = world.CameraX; //  - world.Sprite[31].seekx
@@ -3631,14 +3571,14 @@ private:
                 world.Sprite[34].seekx = 0;
             }
 
-            for (penguin = 31; penguin <= 34; ++ penguin) {
-                if (penguin == 96) { continue; }
-                world.Sprite[penguin].seekx = world.Sprite[penguin].seekx - world.sFactor * 6;
-                world.Sprite[penguin].frame = world.Sprite[penguin].frame + 1;
-                if (world.Sprite[penguin].frame > 2) {
-                    world.Sprite[penguin].frame = 1;
+            for (int i = 31; i <= 34; ++ i) {
+                if (i == 96) { continue; }
+                world.Sprite[i].seekx = world.Sprite[i].seekx - world.sFactor * 6;
+                world.Sprite[i].frame = world.Sprite[i].frame + 1;
+                if (world.Sprite[i].frame > 2) {
+                    world.Sprite[i].frame = 1;
                 }
-                // Sprite(penguin).frame = Sprite(penguin).seeky
+                // Sprite(i).frame = Sprite(i).seeky
             }
         }
 	}
@@ -3702,7 +3642,7 @@ private:
 		int j = 0;
 
 		for (j = 0; j <= 2; ++j) {
-			world.lives[j] = 3;
+			world.player_data[j].lives = 3;
 			world.continues = 2;
 		}
 
