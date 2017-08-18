@@ -7,7 +7,7 @@
 #include "CinemaType.hpp"
 #include "PlayerData.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 // --------------------------------------------------------------------
 // World
@@ -90,6 +90,6 @@ struct World {
     std::string currentScreen;
 };
 
-}
+}   }
 
 #endif

@@ -1,7 +1,7 @@
 #include "World.hpp"
 #include <algorithm>
 
-namespace nnd3d {
+namespace nnd3d {	namespace game {
 
 const int World::FULLSCREENWIDTH = 640;
 const int World::FULLSCREENHEIGHT = 480;
@@ -55,4 +55,4 @@ World::World()
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
 }
 
-}   // end namespace
+}	}   // end namespace

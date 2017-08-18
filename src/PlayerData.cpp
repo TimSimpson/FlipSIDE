@@ -1,6 +1,6 @@
 #include "PlayerData.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 
 PlayerData::PlayerData()
@@ -28,4 +28,4 @@ PlayerData::PlayerData()
 {
 }
 
-}   // end namespace
+}	}   // end namespace

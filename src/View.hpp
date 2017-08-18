@@ -5,16 +5,17 @@
 #include <lp3/gfx.hpp>
 #include "World.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace view {
 
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
+namespace game = nnd3d::game;
 
 // Shows stuff
 class View
 {
 public:
-    View(core::MediaManager & media, World & world);
+    View(core::MediaManager & media, game::World & world);
 
     void operator()(const glm::mat4 & previous);
 
@@ -67,7 +68,7 @@ private:
 
 	std::vector<gfx::ElementWriter<gfx::TexCVert>> game_elements;
 
-	World & world;
+	game::World & world;
 	std::array<glm::vec2, 10> tex_size;
 	std::array<Vertex, 4> bgverts;
 	glm::vec2 bg_size;
@@ -100,6 +101,6 @@ private:
 
 };
 
-}   // end namespace
+}   }   // end namespace
 
 #endif

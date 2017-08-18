@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 struct CinemaType
 {
@@ -22,6 +22,6 @@ struct CinemaType
     CinemaType();
 };
 
-}
+}   }
 
 #endif

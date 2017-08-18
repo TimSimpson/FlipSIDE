@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 struct PlayerData {
     //Keyboard key states
@@ -34,6 +34,6 @@ struct PlayerData {
     PlayerData();
 };
 
-}
+}   }
 
 #endif

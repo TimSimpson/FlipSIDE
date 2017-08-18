@@ -1,6 +1,6 @@
 #include "AnimationFrame.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace view {
 
 AnimationFrame::AnimationFrame()
 :   x(0),
@@ -10,4 +10,4 @@ AnimationFrame::AnimationFrame()
 {
 }
 
-}   // end ns
+}   }   // end ns

@@ -9,7 +9,7 @@
 #include "AnimationFrame.hpp"
 #include "Vertex.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 struct CharacterSprite
 {
@@ -32,7 +32,7 @@ struct CharacterSprite
      int srcx2;
      int srcy2;
 
-     std::array<AnimationFrame, 20> Aframe;
+     std::array<view::AnimationFrame, 20> Aframe;
      int seekx;
      int seeky;
      double speed;  //this is tricky.  Every time this amount of seconds pass, its little routine is updated.
@@ -84,6 +84,6 @@ struct CharacterSprite
 };
 
 
-}
+}    }
 
 #endif

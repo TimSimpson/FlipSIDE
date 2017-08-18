@@ -11,7 +11,7 @@
 // TODO: Remove gotos!
 #define EMPTY_LABEL_HACK  { constexpr int dumb = 1; LP3_LOG_VAR(dumb) }
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 namespace {
     const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
@@ -21,7 +21,7 @@ namespace {
 class Game::GameImpl
 {
 public:
-    GameImpl(View & view_arg, Sound & sound_arg, Vb & vb_arg,
+    GameImpl(view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
              World & world_arg)
     :   vb(vb_arg),
 		view(view_arg),
@@ -1702,7 +1702,7 @@ if (s.name == "Title2") {
 
 private:
 	Vb & vb;
-    View & view;
+    view::View & view;
     Sound & sound;
     World & world;
 
@@ -1909,7 +1909,7 @@ private:
         return;  // exit sub
 	}
 
-    int checkProx(int who) {
+    int checkProx(const int who) {
         //numberPlayers integer legend
         //1 Only player 1
         //2 Player 1 and 2
@@ -3777,7 +3777,7 @@ private:
 
 };	// end of GameImpl class
 
-Game::Game(View & _view, Sound & _sound, Vb & vb, World & _world)
+Game::Game(view::View & _view, Sound & _sound, Vb & vb, World & _world)
 :   impl(new GameImpl(_view, _sound, vb, _world)) {
 }
 
@@ -3797,4 +3797,4 @@ void Game::TimedEvents() {
     impl->TimedEvents();
 }
 
-}   // end namespace
+}   }  // end namespace

@@ -1,6 +1,6 @@
 #include "CharacterSprite.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 CharacterSprite::CharacterSprite()
 :   x(0),
@@ -89,4 +89,4 @@ CharacterSprite::CharacterSprite()
     }
 }
 
-}   // end namespace
+}   }   // end namespace

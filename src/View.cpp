@@ -11,12 +11,13 @@
     #pragma warning(disable: 4244)
 #endif
 
-namespace nnd3d {
+namespace nnd3d { namespace view {
 
 namespace {
 	constexpr int letters_max = 80 * 24;
 	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-	const glm::ivec2 res2d(World::FULLSCREENWIDTH, World::FULLSCREENHEIGHT);
+	const glm::ivec2 res2d(game::World::FULLSCREENWIDTH, 
+		                   game::World::FULLSCREENHEIGHT);
 
     glm::vec2 find_texture_scale_factor(const glm::vec2 & original_size,
                                         const glm::vec2 current_size) {
@@ -61,7 +62,7 @@ namespace {
     }
 }
 
-View::View(core::MediaManager & _media, World & _world)
+View::View(core::MediaManager & _media, game::World & _world)
 :	disable_view(false),
 	history({}),
     media(_media),
@@ -83,7 +84,7 @@ View::View(core::MediaManager & _media, World & _world)
 	// might need to be to represent all sprites on the screen, even though
 	// this is wasteful.
 	for (std::size_t i = 0; i < AnimationTexture.size(); ++i) {
-		game_elements.emplace_back(World::NUMSPRITES * 4);
+		game_elements.emplace_back(game::World::NUMSPRITES * 4);
 	}
 
     // for (std::size_t i = 0; i < AnimationTexture.size() + 1; ++ i) {
@@ -446,4 +447,4 @@ void View::UpdateSprites() {
 }
 
 
-}   // end namespace
+}	}   // end namespace

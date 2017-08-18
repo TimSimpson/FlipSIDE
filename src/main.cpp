@@ -123,13 +123,13 @@ int _main(core::PlatformLoop & loop) {
 	#endif
 
 	nnd3d::Vb vb{ media };
-	nnd3d::World world;
-	nnd3d::View view{ media, world };
+	nnd3d::game::World world;
+	nnd3d::view::View view{ media, world };
 
 	nnd3d::MutableSound sound{ media };
 	(void)sound;
 
-	nnd3d::Game game(view, sound, vb, world);
+	nnd3d::game::Game game(view, sound, vb, world);
 
 	sims::FrameTimer frame_timer;
 

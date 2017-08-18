@@ -8,7 +8,7 @@
 #include "Vb.hpp"
 #include "View.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
@@ -23,7 +23,7 @@ namespace gfx = lp3::gfx;
 class Game
 {
 public:
-    Game(View & view, Sound & sound, Vb & vb, World & world);
+    Game(view::View & view, Sound & sound, Vb & vb, World & world);
 
 	~Game();
 
@@ -38,6 +38,6 @@ private:
 	gsl::owner<GameImpl *> impl;
 };
 
-}   // end namespace
+}   }  // end namespace
 
 #endif

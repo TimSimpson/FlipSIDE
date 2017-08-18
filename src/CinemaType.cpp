@@ -1,6 +1,6 @@
 #include "CinemaType.hpp"
 
-namespace nnd3d {
+namespace nnd3d { namespace game {
 
 CinemaType::CinemaType()
 :   frame1(0),
@@ -16,4 +16,4 @@ CinemaType::CinemaType()
 {
 }
 
-}   // end namespace
+}   }   // end namespace
