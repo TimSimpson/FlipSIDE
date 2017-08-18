@@ -6,12 +6,12 @@
 #include <lp3/sims.hpp>
 #include <lp3/main.hpp>
 
-#include "Game.hpp"
+#include "game/Game.hpp"
 #include "Input.hpp"
 #include "Sound.hpp"
 #include "Vb.hpp"
 #include "View.hpp"
-#include "World.hpp"
+#include "game/World.hpp"
 
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;

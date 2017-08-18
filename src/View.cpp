@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
-#include "World.hpp"
+#include "game/World.hpp"
 
 
 #ifdef _MSC_VER

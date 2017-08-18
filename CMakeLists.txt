@@ -6,18 +6,21 @@ project(lp3_nnd3d CXX)
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 add_library(Lp3_NND3d
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/PlayerData.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/PlayerData.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/CharacterSprite.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/CharacterSprite.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/CinemaType.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/CinemaType.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Game.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/PlayerData.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/PlayerData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.cpp
@@ -27,8 +30,6 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vertex.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/View.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/View.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/World.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/World.cpp
 )
 
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Emscripten")
