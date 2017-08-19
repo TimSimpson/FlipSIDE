@@ -2,6 +2,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include "CharacterProc.hpp"
 
 #ifdef _MSC_VER
     // Avoid the zillions implicit conversion warnings
@@ -22,11 +23,12 @@ class Game::GameImpl
 {
 public:
     GameImpl(view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
-             World & world_arg)
+             Random & random_arg, World & world_arg)
     :   vb(vb_arg),
 		view(view_arg),
         sound(sound_arg),
-        world(world_arg)
+        world(world_arg),
+        random(random_arg)
     {
         // Taken from "StartUp"
         world.debugOn = false;
@@ -104,7 +106,9 @@ public:
                 this->endgame();
                 break;
             case input::Key::skip_scene:
-                world.exitS = "true"; sound.PlayWave("FDis.wav");
+				if (event.value) {
+					world.exitS = "true"; sound.PlayWave("FDis.wav");
+				}
                 break;
             case input::Key::power_up:
                 world.player_data[0].slicer = true;
@@ -695,7 +699,7 @@ if (s.mode == "truck") {
                 this->seeker(j);
 
                 if (s.x == s.seekx && s.y == s.seeky) {
-                    k = (int)(vb.Rnd() * 4) + 1;
+                    k = (int)(random.next() * 4) + 1;
                     s.seekx = s.x;
                     s.seeky = s.y;
                     if (k == 1) { s.seekx = s.x + 25; }
@@ -721,13 +725,13 @@ if (s.mode == "truck") {
             }
 
             if (s.name == "Kerbose") {
-                k = (int) (vb.Rnd() * 2) + 1;
+                k = (int) (random.next() * 2) + 1;
                 if (k == 1) { s.x = s.x + world.sFactor; }
                 if (k == 2) { s.x = s.x - world.sFactor; }
-                k = (int) (vb.Rnd() * 2) + 1;
+                k = (int) (random.next() * 2) + 1;
                 if (k == 1) { s.y = s.y + world.sFactor; }
                 if (k == 2) { s.y = s.y - world.sFactor; }
-                k = (int) (vb.Rnd() * 20) + 1;
+                k = (int) (random.next() * 20) + 1;
                 if (k == 1) {
                     if (s.z == 0) {
                         s.jumpStart = s.z;
@@ -751,7 +755,7 @@ if (s.mode == "truck") {
                     if (s.color == view.QBColor(4)) { s.color = view.QBColor(1); }
                     if (s.color == view.QBColor(15)) { s.color = view.QBColor(4); }
 
-                    if ((int) (vb.Rnd() * 1) == 1) {
+                    if ((int) (random.next() * 1) == 1) {
                         s.jumpStrength = 75;
                         s.maxJump = 2;
                         this->makeJump(j);
@@ -1143,7 +1147,7 @@ if (s.name == "Title2") {
                     //playWave "conten.wav"
                     {
                         auto & s2 = world.Sprite[31];
-                        this->unstretch(31);
+                        unstretch(s2);
                         s2.wide = s2.wide * 2;
                         s2.high = s2.high * 2;
 
@@ -1472,7 +1476,7 @@ if (s.name == "Title2") {
 
             if (s.name == "tdigger") {
                 if (s.mode == "") {
-                    this->unstretch(j);
+                    unstretch(world.Sprite[j]);
                     //TSNOW: Another funky step 10 loop.
                     for (penguin = 0; penguin <= 2; penguin += 10) {
                         if (this->hitdetection(j, penguin, true) == 5
@@ -1705,6 +1709,7 @@ private:
     view::View & view;
     Sound & sound;
     World & world;
+    Random & random;
 
     long anyKey(int zed) {
         // Returns true if the player at the given index is pressing any key.
@@ -2676,373 +2681,15 @@ private:
                 sound.LoadSound((j * 5) + 1, "nickhurt.wav", "nickhurt");
                 sound.LoadSound((j * 5) + 2, "iceshot.wav", "iceshot");
             }
-
-
         }
-
         sound.LoadSound(15, "Spring.wav", "spring");
     }
 
     void initSprites(int which) {
-        //this makes all the sprites do their thing based on their name
-        int trueorg = 0;
+        // TODO: Pass the name in rather than relying on the name variable.
         auto & spr = world.Sprite[which];
-        //.color = normColor
-        spr.mph = 1;
-        if (spr.name == "Thomas") {
-            spr.zOrder = -99;
-            spr.soundFile = "DavidHurt";
-            spr.wide = 40;
-            spr.high = 50;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 75;
-            spr.kind = 1;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of David";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 1;
-        }
-
-        if (spr.name == "Nick") {
-            spr.zOrder = -99;
-            spr.soundFile = "nickhurt";
-            spr.wide = 40;
-            spr.high = 50;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 75;
-            spr.kind = 1;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of Nick";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 1;
-        }
-
-
-        if (spr.name == "Nicky") {
-            spr.zOrder = -99;
-            spr.soundFile = "NickyHurt";
-            spr.wide = 26;
-            spr.high = 30;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 50;
-            spr.kind = 1;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of Nicky";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 2;
-        }
-
-
-
-        if (spr.name == "Death of David") {
-            //StopSound which
-            //LoadSound which, "Deathspr.wav"
-            sound.PlaySound("DavidDeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = 0;
-            spr.frame = 17;
-            sound.PlayWave("Death.wav");
-        }
-        if (spr.name == "Death of Nicky") {
-            spr.srcx = 1;
-            spr.srcy = 46;
-            spr.srcx2 = 14;
-            spr.srcy2 = 60;
-            spr.name = "Death of David";
-            sound.PlaySound("NickyDeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = 0;
-        }
-        if (spr.name == "Death of Nick") {
-            spr.srcx = 1;
-            spr.srcy = 46;
-            spr.srcx2 = 14;
-            spr.srcy2 = 60;
-            spr.name = "Death of David";
-            sound.PlaySound("nickdeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = 0;
-
-        }
-
-
-
-
-        if (spr.name == "tdigger") {
-            this->loadAnimation(which, "tDigger.ani");
-            spr.hp = 1;
-        }
-
-        if (spr.name == "clouds") {
-            this->loadframe(which, 1, spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
-        }
-
-
-        if (spr.name == "paulrun") {
-            this->loadAnimation(which, "paulrun.ani");
-            spr.hp = 1;
-            spr.kind = 7;
-            spr.deathType = "gotmilkbs";
-            spr.invTime = 1;
-            spr.hp = 2;
-            spr.soundFile = "Paul Ouch";
-            spr.length = 20;
-        }
-
-
-        if (spr.name == "paulbullet") {
-            this->loadAnimation(which, "paulbullet.ani");
-            spr.hp = 999;
-            spr.kind = 2;
-            spr.deathType = "Kerbose";
-            spr.invTime = 0;
-            spr.wide = 10;
-            spr.high = 10;
-            spr.name = "bullet";
-            spr.mph = 2;
-        }
-
-
-        if (spr.name == "bs death") {
-            spr.visible = true;
-            spr.mover = false;
-            spr.kind = 0;
-            spr.frame = 3;
-            spr.miscTime = world.clock + 3;
-            sound.PlaySound("stick die");
-            spr.name = "Kerbose Death";
-        }
-
-
-        if (spr.name == "harharhar") {
-            spr.flickerTime = world.clock + 2;
-            sound.PlayWave("harharhar.wav");
-        }
-
-        if (spr.name == "expand") {
-            sound.PlayWave("WhaWhee.wav");
-            spr.reverse = false;
-        }
-
-        if (spr.name == "cinema") {
-            spr.visible = false;
-            spr.frame = 8;
-            this->unstretch(which);
-            spr.mode = "";
-        }
-
-
-
-        if (spr.name == "Dying Explosion") {
-            //StopSound which
-            //LoadSound which, "goombaspr.wav"
-            spr.flickerTime = world.clock + 10;
-            spr.seekx = spr.wide * 3;
-            spr.mph = 2;
-            spr.kind = 0;
-            //sound.PlaySound(which);
-            sound.PlaySound("dying explosion");
-        }
-
-        if (spr.name == "Kirbose" || spr.name == "Kerbose") {
-            spr.mover = true;
-            spr.name = "Kerbose";
-            spr.wide = 21;
-            spr.high = 19;
-            spr.visible = true;
-            spr.frame = 1;
-            spr.kind = 7;
-            spr.length = 10;
-            spr.deathType = "Kerbose Death";
-            spr.invTime = 1;
-            spr.hp = 3;
-            spr.soundFile = "Kerbose Ouch";
-            spr.jumpStrength = 25;
-            trueorg = (int) (vb.Rnd() * 2.0 + 1);
-            if (trueorg == 1) {
-                this->loadAnimation(which, "Kerbose.ani");
-            } else {
-                this->loadAnimation(which, "Putulo.ani");
-                spr.soundFile = "putulohurt";
-                spr.deathType = "putuloDeath";
-            }
-        }
-
-        if (spr.name == "gotmilkbs") {
-            sound.PlaySound("Paul Shrink");
-            spr.name = "bluestick";
-        }
-
-        if (spr.name == "greenspring") {
-            this->loadAnimation(which, "greenspring.ani");
-            spr.frame = 1;
-            spr.mode = "off";
-            spr.hp = 1;
-            spr.deathType = "greenspring";
-            spr.kind = 6;
-            spr.jumpM = 1.5;
-            spr.length = 10;
-            spr.wide = spr.wide * 2;
-            spr.high = spr.high * 2;
-        }
-
-
-        if (spr.name == "bluestick") {
-            spr.hp = 1;
-            spr.kind = 7;
-            spr.wide = 10;
-            spr.high = 17;
-            spr.length = 10;
-            this->loadframe(which, 1, 1, 173, 10, 190);
-            this->loadframe(which, 2, 13, 173, 23, 190);
-            this->loadframe(which, 3, 23, 174, 33, 190);
-            spr.deathType = "bs death";
-            spr.soundFile = "Stick Ouch";
-            //spr.name = "Kerbose"
-            sound.PlaySound("Stick Awaken");
-            spr.frame = 1;
-            this->unstretch(which);
-        }
-
-        if (spr.name == "Kerbose Death") {
-            spr.visible = true;
-            //spr.name = "Dying Explosion"
-            //spr.flickerTime = clock + 10
-            //spr.seekx = spr.wide * 3
-            //spr.mph = 2
-            //spr.kind = 0
-
-            spr.mover = false;
-            spr.kind = 0;
-            spr.frame = 3;
-            //srcx = 114: spr.srcy = 2
-            //spr.srcx2 = 134: spr.srcy2 = 19
-            spr.miscTime = world.clock + 3;
-            sound.PlaySound("Kerbose Die");
-        }
-
-        if (spr.name == "putuloDeath") {
-            spr.visible = true;
-            spr.mover = false;
-            spr.kind = 0;
-            spr.frame = 3;
-            spr.miscTime = world.clock + 3;
-            sound.PlaySound("putulodie");
-            spr.name = "Kerbose Death";
-        }
-
-        if (spr.name == "fireball") {
-            spr.wide = 40;
-            spr.high = 50;
-            spr.visible = false;
-            spr.texture = 1;
-            spr.frame = 1;
-            spr.name = "";
-            spr.zOrder = -99;
-        }
-
-
-
-        if (spr.name == "Deadly Rat") {
-            spr.wide = 50;
-            spr.high = 50;
-            spr.texture = 0;
-            spr.name = "Deadly Rat";
-            spr.hp = 5;
-            spr.visible = true;
-            spr.kind = 2;
-            spr.deathType = "Dying Explosion";
-            spr.invTime = 1;
-        }
-
-        if (spr.name == "falling") {
-            spr.kind = 0;
-            //spr.high = -30 //-1 * spr.high
-        }
-
-        if (spr.name == "pigeon") {
-            spr.visible = true;
-            spr.seekx = spr.x;
-            spr.seeky = spr.y;
-            spr.wide = 40;
-            spr.high = 30;
-            spr.hp = 1;
-            spr.z = 80;
-            spr.length = 30;
-            spr.frame = 1;
-            spr.deathType = "falling";
-            spr.kind = 7;
-        }
-
-        if (spr.name == "pigeonbomber") {
-            this->loadAnimation(which, "pigeon.ani");
-            spr.visible = true;
-            spr.seekx = -10;
-            spr.seeky = spr.y;
-            spr.wide = 40;
-            spr.high = 30;
-            spr.hp = 1;
-            spr.z = 80;
-            spr.length = 30;
-            spr.frame = 1;
-            spr.deathType = "falling";
-            spr.kind = 7;
-        }
-
-        if (spr.name == "goomba") {
-            spr.seekx = spr.x;
-            spr.seeky = spr.y;
-            spr.wide = 80;
-            spr.high = 80;
-            spr.length = 40;
-            spr.texture = 6;
-            spr.frame = 1;
-            spr.mph = 1;
-            spr.hp = 5;
-            spr.speed = 0.25;
-            spr.visible = true;
-            spr.kind = 4;
-            spr.invTime = 1;
-            spr.deathType = "Dying Explosion";
-            spr.soundFile = "Goomba Ouch";
-            //LoadSound which, spr.soundFile
-            spr.mover = true;
-        }
-
-        if (spr.name == "bullet") {
-            spr.kind = 8;
-        }
-
-
-        //if (.soundFile <> "" Then LoadSound which, .soundFile
-
+        spr.proc = load_process(spr.name);
+        spr.proc->initialize(view, sound, world.clock, random, spr);
     }
 
     void killLimit(int jex) {
@@ -3101,29 +2748,8 @@ private:
     }
 
     void loadAnimation(int who, const std::string & file) {
-        auto f = vb.OpenForInput(file);
-        std::string line;
         auto & s = world.Sprite[who];
-        for (int j = 1; j <= 20; ++ j) {
-            f.input(s.Aframe[j].x , s.Aframe[j].y,
-                    s.Aframe[j].x2, s.Aframe[j].y2);
-            LP3_LOG_DEBUG("%d, %d", s.Aframe[j].x, s.Aframe[j].y);
-            LP3_LOG_DEBUG("%d, %d", s.Aframe[j].x2, s.Aframe[j].y2);
-            if (s.Aframe[j].x == -1) {
-                //TSNOW: Unlike the original this will read into the other
-                //       vars, even if the first one was -1.
-                break;
-            }
-        }
-    }
-
-    void loadframe(int jex, int whichframe,
-                      int wx1, int wy1, int wx2, int wy2) {
-        auto & s = world.Sprite[jex].Aframe[whichframe];
-        s.x = wx1;
-        s.y = wy1;
-        s.x2 = wx2;
-        s.y2 = wy2;
+        view.load_animation_file(s.Aframe, file);
     }
 
     void level1() {
@@ -3226,13 +2852,13 @@ private:
             }
 
             if (ws.name == "bluestick") {
-                k = vb.Rnd() * 2 + 1;
+                k = random.next() * 2 + 1;
                 if (k == 1) { ws.x = ws.x + world.sFactor; }
                 if (k == 2) { ws.x = ws.x - world.sFactor; }
-                k = vb.Rnd() * 2 + 1;
+                k = random.next() * 2 + 1;
                 if (k == 1) { ws.y = ws.y + world.sFactor; }
                 if (k == 2) { ws.y = ws.y - world.sFactor; }
-                k = vb.Rnd() * 20 + 1;
+                k = random.next() * 20 + 1;
                 if (k == 1) { if (ws.z == 0) {
                     ws.jumpStart = ws.z; ws.jumpTime = world.clock; } }
             }
@@ -3764,21 +3390,10 @@ private:
 		this->findOrder();
 	}
 
-	void unstretch(int which) {
-		auto & s = world.Sprite[which];
-        if (s.frame == 0) {
-            s.wide = s.srcx2 - s.srcx;
-            s.high = s.srcy2 = s.srcy;
-        } else {
-            s.wide = s.Aframe[s.frame].x2 - s.Aframe[s.frame].x;
-            s.high = s.Aframe[s.frame].y2 - s.Aframe[s.frame].y;
-        }
-	}
-
 };	// end of GameImpl class
 
-Game::Game(view::View & _view, Sound & _sound, Vb & vb, World & _world)
-:   impl(new GameImpl(_view, _sound, vb, _world)) {
+Game::Game(view::View & _view, Sound & _sound, Vb & vb, Random & random, World & _world)
+:   impl(new GameImpl(_view, _sound, vb, random, _world)) {
 }
 
 Game::~Game() {

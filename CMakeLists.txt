@@ -6,6 +6,8 @@ project(lp3_nnd3d CXX)
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 add_library(Lp3_NND3d
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.hpp
@@ -22,6 +24,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Random.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Random.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/VbFile.hpp

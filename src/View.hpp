@@ -4,6 +4,7 @@
 
 #include <lp3/gfx.hpp>
 #include "game/World.hpp"
+#include "Vb.hpp"
 
 namespace nnd3d { namespace view {
 
@@ -15,7 +16,7 @@ namespace game = nnd3d::game;
 class View
 {
 public:
-    View(core::MediaManager & media, game::World & world);
+    View(core::MediaManager & media, game::World & world, Vb & vb);
 
     void operator()(const glm::mat4 & previous);
 
@@ -32,6 +33,10 @@ public:
 	glm::vec4 QBColor(int index);
 
     void UpdateSprites();
+
+    // Fills up the frames of a character sprite with stuff from a file.
+    void load_animation_file(std::array<view::AnimationFrame, 20> & frames,
+                             const std::string & file);
 
     struct LoadTextureCall {
         std::string fileName;
@@ -69,6 +74,7 @@ private:
 	std::vector<gfx::ElementWriter<gfx::TexCVert>> game_elements;
 
 	game::World & world;
+    Vb & vb;
 	std::array<glm::vec2, 10> tex_size;
 	std::array<Vertex, 4> bgverts;
 	glm::vec2 bg_size;

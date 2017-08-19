@@ -16,7 +16,7 @@ namespace nnd3d { namespace view {
 namespace {
 	constexpr int letters_max = 80 * 24;
 	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-	const glm::ivec2 res2d(game::World::FULLSCREENWIDTH, 
+	const glm::ivec2 res2d(game::World::FULLSCREENWIDTH,
 		                   game::World::FULLSCREENHEIGHT);
 
     glm::vec2 find_texture_scale_factor(const glm::vec2 & original_size,
@@ -62,10 +62,10 @@ namespace {
     }
 }
 
-View::View(core::MediaManager & _media, game::World & _world)
+View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 :	disable_view(false),
 	history({}),
-    media(_media),
+    media(media_arg),
 	bgtexture(),
 	AnimationTexture({}),
 	program(),
@@ -73,7 +73,8 @@ View::View(core::MediaManager & _media, game::World & _world)
 	font_elements{ (letters_max * 4) },
 	font_quads(font_elements.add_quads(letters_max)),
 	game_elements(),
-	world(_world),
+	world(world_arg),
+    vb(vb_arg),
 	tex_size(),
 	bgverts({}),
 	bg_size()
@@ -227,6 +228,23 @@ void View::enable() {
 		}
 		history[i] = boost::none;
 	}
+}
+
+void View::load_animation_file(std::array<view::AnimationFrame, 20> & frames,
+                               const std::string & file) {
+    auto f = vb.OpenForInput(file);
+    std::string line;
+    for (int j = 1; j <= 20; ++ j) {
+        f.input(frames[j].x , frames[j].y,
+                frames[j].x2, frames[j].y2);
+        LP3_LOG_DEBUG("%d, %d", frames[j].x, frames[j].y);
+        LP3_LOG_DEBUG("%d, %d", frames[j].x2, frames[j].y2);
+        if (frames[j].x == -1) {
+            //TSNOW: Unlike the original this will read into the other
+            //       vars, even if the first one was -1.
+            break;
+        }
+    }
 }
 
 void View::LoadTexture(int which, const std::string & fileName, int howWide,

@@ -51,7 +51,8 @@ CharacterSprite::CharacterSprite()
     mover(false),
     reverse(false),
     target(0),
-    jumpM(0)
+    jumpM(0),
+    proc()
 {
     // Copies this from the destroyEverything function, which looked
     // to be doing this.
@@ -87,6 +88,18 @@ CharacterSprite::CharacterSprite()
         v.tv = 0;
         v.rhw = 1;
     }
+}
+
+// Makes the sprite's size match it's current Animation Frame
+void unstretch(CharacterSprite & s) {
+	if (s.frame == 0) {
+		s.wide = s.srcx2 - s.srcx;
+		s.high = s.srcy2 = s.srcy;
+	}
+	else {
+		s.wide = s.Aframe[s.frame].x2 - s.Aframe[s.frame].x;
+		s.high = s.Aframe[s.frame].y2 - s.Aframe[s.frame].y;
+	}
 }
 
 }   }   // end namespace

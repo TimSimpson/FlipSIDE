@@ -122,14 +122,15 @@ int _main(core::PlatformLoop & loop) {
 		mix::Init mix_init(MIX_INIT_MP3);
 	#endif
 
+	nnd3d::Random random;
 	nnd3d::Vb vb{ media };
 	nnd3d::game::World world;
-	nnd3d::view::View view{ media, world };
+	nnd3d::view::View view{ media, world, vb };
 
 	nnd3d::MutableSound sound{ media };
 	(void)sound;
 
-	nnd3d::game::Game game(view, sound, vb, world);
+	nnd3d::game::Game game(view, sound, vb, random, world);
 
 	sims::FrameTimer frame_timer;
 

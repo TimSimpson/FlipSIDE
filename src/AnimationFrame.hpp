@@ -12,6 +12,8 @@ struct AnimationFrame
    int y2;
 
    AnimationFrame();
+
+   void set(int x, int y, int x2, int y2);
 };
 
 }   }

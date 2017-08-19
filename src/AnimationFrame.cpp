@@ -10,4 +10,11 @@ AnimationFrame::AnimationFrame()
 {
 }
 
+void AnimationFrame::set(int arg_x, int arg_y, int arg_x2, int arg_y2) {
+    this->x = arg_x;
+    this->y = arg_y;
+    this->x2 = arg_x2;
+    this->y2 = arg_y2;
+}
+
 }   }   // end ns

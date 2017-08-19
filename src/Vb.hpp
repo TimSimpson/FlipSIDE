@@ -16,13 +16,8 @@ public:
     Vb(lp3::core::MediaManager & media);
 
 	VbFile OpenForInput(const std::string & filePath);
-
-    double Rnd();
 private:
 	lp3::core::MediaManager & media;
-    std::random_device rnd_dev;
-    std::mt19937 rnd_gen;
-    std::uniform_real_distribution<double> rnd_distribution;
 };
 
 }

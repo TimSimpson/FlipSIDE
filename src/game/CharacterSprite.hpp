@@ -6,10 +6,12 @@
 #include <string>
 #include <lp3/core.hpp>
 #include <lp3/gfx.hpp>
-#include "AnimationFrame.hpp"
-#include "Vertex.hpp"
+#include "../AnimationFrame.hpp"
+#include "../Vertex.hpp"
 
 namespace nnd3d { namespace game {
+
+class CharacterProc;
 
 struct CharacterSprite
 {
@@ -81,8 +83,11 @@ struct CharacterSprite
 
      double jumpM;
 
+     // Behavior of this sprite.
+     CharacterProc * proc;
 };
 
+void unstretch(CharacterSprite & s);
 
 }    }
 
