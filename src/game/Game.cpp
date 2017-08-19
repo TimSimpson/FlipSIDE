@@ -448,7 +448,7 @@ public:
                         }
 					}
 				} //Nicky Bomb
- //Thomas Fire
+                //Thomas Fire
                 if (world.player_data[j / 10].weapon == "fireball"
                     && world.player_data[j / 10].ThreeWay == false) {
                     if (world.player_data[penguin].AttackKey == true
@@ -641,7 +641,7 @@ public:
                                 world.Sprite[k + 1].dir = "r";
                             }
                         }
-if (s.mode == "truck") {
+                        if (s.mode == "truck") {
                             world.Sprite[k].seeky
                                 = world.CameraY - world.CameraHeight;
                                 world.Sprite[k].seekx = s.x;
@@ -1043,7 +1043,7 @@ if (s.mode == "truck") {
                 }
             }
 
-if (s.name == "Title2") {
+            if (s.name == "Title2") {
                 if (s.miscTime < world.clock && s.mode != "stop") {
                     s.trueVisible = 1;
                     s.flickerTime = world.clock + 5;
