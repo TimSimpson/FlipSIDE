@@ -12,6 +12,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Env.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Env.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/PlayerData.hpp

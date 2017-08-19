@@ -13,6 +13,34 @@ namespace nnd3d { namespace game {
 
 class CharacterProc;
 
+// The party a sprite belongs to; this used to be an int.
+// Old docs:
+//   //if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
+ //Rem-KIND DEFINITIONS
+//1 is player
+//2 is enemy
+//3 is fireball
+//4 is goomba thing
+//5 is unmoveable
+//6 is trampoline
+
+//to do
+//7 is a enemy killable by jumping on it
+//8 is bullet by the enemy (can pass through 5//s)
+enum class Kind {
+     neutral=0,
+     player=1,
+     enemy=2,
+     fireball=3,
+     goomba_thing=4,
+     unmoveable=5,
+     trampoline=6,
+     enemy_weak_to_jumping=7,
+     enemy_bullet=8
+};
+
+std::istream & operator >>(std::istream & in, Kind & kind);
+
 struct CharacterSprite
 {
      // This initializer just zeroes everything out the way it would have been
@@ -66,7 +94,7 @@ struct CharacterSprite
      double invTime; //how many seconds they flicker when hit
 
      std::string mode; //which mode are they in?
-     int kind; //if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
+     Kind kind; //if kind is 0, they are neutral.  If 1, good guy.  If 2, bad guy, if 3 , good guy weapon...
      std::string deathType; //how do they die?
      double miscTime; // they must wait this long to do misc. actions
      glm::vec4 color; //lets throw some color into the mix

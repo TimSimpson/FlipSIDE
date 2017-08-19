@@ -2,6 +2,13 @@
 
 namespace nnd3d { namespace game {
 
+std::istream & operator >>(std::istream & in, Kind & kind) {
+	int original_int;
+	in >> original_int;
+	kind = static_cast<Kind>(original_int);
+	return in;
+}
+
 CharacterSprite::CharacterSprite()
 :   x(0),
     y(0),
@@ -41,7 +48,7 @@ CharacterSprite::CharacterSprite()
     trueVisible(0),
     invTime(0),
     mode(""),
-    kind(0),
+    kind(Kind::neutral),
     deathType(""),
     miscTime(0),
     color({1.0f, 1.0f, 1.0f, 1.0f}),
