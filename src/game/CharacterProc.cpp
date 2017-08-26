@@ -507,8 +507,7 @@ public:
             //Rem---------------------------------------------------------------
 
             if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
-                int penguin = 0;
-				LP3_ASSERT(player_data_ptr != nullptr);
+                LP3_ASSERT(player_data_ptr != nullptr);
 				PlayerData & player_data = *player_data_ptr;
                 if (player_data.upKey == true) {
                     if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
@@ -702,127 +701,124 @@ public:
 								break;
                             }
                         }
-						if (!starting_index) {
-                            goto outofammo3;
-                        }
-                        CharacterSprite & child = children[*starting_index];
-                        CharacterSprite & child_2 = children[*starting_index + 1];
-                        CharacterSprite & child_3 = children[*starting_index + 2];
-                        if (s.dir == "l") {
-                            child.seeky = s.y;
-                            child.seekx
-                                = s.x - (camera.width() * 2);
-                            child.dir = "l";
-                            child_2.seekx
-                                = s.x - (camera.width() * 2);
-                            child_2.seeky
-                                = s.y + (camera.height() * 2);
-                            child_2.dir = "l";
-                            child_3.seekx
-                                = s.x - (camera.width() * 2);
-                            child_3.seeky
-                                = s.y - (camera.height() * 2);
-                            child_3.dir = "l";
-                        }
-                        if (s.dir == "r") {
-                            child.seeky = s.y;
-                            child.seekx
-                                = s.x + (camera.width() * 2);
-                            child.dir = "r";
-                            child_2.seekx
-                                = s.x + (camera.width() * 2);
-                            child_2.seeky
-                                = s.y + (camera.height() * 2);
-                            child_2.dir = "r";
-                            child_3.seekx
-                                = s.x + (camera.width() * 2);
-                            child_3.seeky
-                                = s.y - (camera.height() * 2);
-                            child_3.dir = "r";
-                        }
-                        if (player_data.upKey == true || s.dir == "u") {
-                            child.seekx = s.x;
-                            child.seeky = s.y - (camera.height() * 2);
-                            child.dir = "u";
-                            child_2.seekx
-                                = s.x - (camera.width() * 2);
-                            child_2.seeky
-                                = s.y - (camera.height() * 2);
-                            child_2.dir = "u";
-                            child_3.seekx
-                                = s.x + (camera.width() * 2);
-                            child_3.seeky
-                                = s.y - (camera.height() * 2);
-                            child_3.dir = "u";
-                            if (player_data.LeftKEY == true) {
-                                child_3.seeky = s.y;
+						if (starting_index) {
+                            CharacterSprite & child = children[*starting_index];
+                            CharacterSprite & child_2 = children[*starting_index + 1];
+                            CharacterSprite & child_3 = children[*starting_index + 2];
+                            if (s.dir == "l") {
+                                child.seeky = s.y;
+                                child.seekx
+                                    = s.x - (camera.width() * 2);
+                                child.dir = "l";
+                                child_2.seekx
+                                    = s.x - (camera.width() * 2);
+                                child_2.seeky
+                                    = s.y + (camera.height() * 2);
+                                child_2.dir = "l";
                                 child_3.seekx
                                     = s.x - (camera.width() * 2);
+                                child_3.seeky
+                                    = s.y - (camera.height() * 2);
                                 child_3.dir = "l";
                             }
-                            if (player_data.RightKEY == true) {
-                                child_2.seeky = s.y;
+                            if (s.dir == "r") {
+                                child.seeky = s.y;
+                                child.seekx
+                                    = s.x + (camera.width() * 2);
+                                child.dir = "r";
                                 child_2.seekx
                                     = s.x + (camera.width() * 2);
+                                child_2.seeky
+                                    = s.y + (camera.height() * 2);
                                 child_2.dir = "r";
-                            }
-                        }
-                        if (player_data.DownKEY == true
-                            || s.dir == "d") {
-                            child.seekx = s.x;
-                            child.seeky = s.y + (2 * camera.height());
-                            child.dir = "d";
-                            child_2.seekx = s.x - (camera.width() * 2);
-                            child_2.seeky = s.y + (camera.height() * 2);
-                            child_2.dir = "d";
-                            child_3.seekx = s.x + (camera.width() * 2);
-                            child_3.seeky = s.y + (camera.height() * 2);
-                            child_3.dir = "d";
-                            if (player_data.LeftKEY == true) {
-                                child_3.seeky = s.y;
                                 child_3.seekx
-                                    = s.x - (camera.width() * 2);
-                                child_3.dir = "l";
-                            }
-                            if (player_data.RightKEY == true) {
-                                child_2.seeky = s.y;
-                                child_2.seekx
                                     = s.x + (camera.width() * 2);
-                                child_2.dir = "r";
+                                child_3.seeky
+                                    = s.y - (camera.height() * 2);
+                                child_3.dir = "r";
                             }
-                        }
-                        if (s.mode == "truck") {
-                            child.seeky
-                                = camera.y() - camera.height();
+                            if (player_data.upKey == true || s.dir == "u") {
                                 child.seekx = s.x;
+                                child.seeky = s.y - (camera.height() * 2);
                                 child.dir = "u";
+                                child_2.seekx
+                                    = s.x - (camera.width() * 2);
+                                child_2.seeky
+                                    = s.y - (camera.height() * 2);
+                                child_2.dir = "u";
+                                child_3.seekx
+                                    = s.x + (camera.width() * 2);
+                                child_3.seeky
+                                    = s.y - (camera.height() * 2);
+                                child_3.dir = "u";
+                                if (player_data.LeftKEY == true) {
+                                    child_3.seeky = s.y;
+                                    child_3.seekx
+                                        = s.x - (camera.width() * 2);
+                                    child_3.dir = "l";
+                                }
+                                if (player_data.RightKEY == true) {
+                                    child_2.seeky = s.y;
+                                    child_2.seekx
+                                        = s.x + (camera.width() * 2);
+                                    child_2.dir = "r";
+                                }
+                            }
+                            if (player_data.DownKEY == true
+                                || s.dir == "d") {
+                                child.seekx = s.x;
+                                child.seeky = s.y + (2 * camera.height());
+                                child.dir = "d";
+                                child_2.seekx = s.x - (camera.width() * 2);
+                                child_2.seeky = s.y + (camera.height() * 2);
+                                child_2.dir = "d";
+                                child_3.seekx = s.x + (camera.width() * 2);
+                                child_3.seeky = s.y + (camera.height() * 2);
+                                child_3.dir = "d";
+                                if (player_data.LeftKEY == true) {
+                                    child_3.seeky = s.y;
+                                    child_3.seekx
+                                        = s.x - (camera.width() * 2);
+                                    child_3.dir = "l";
+                                }
+                                if (player_data.RightKEY == true) {
+                                    child_2.seeky = s.y;
+                                    child_2.seekx
+                                        = s.x + (camera.width() * 2);
+                                    child_2.dir = "r";
+                                }
+                            }
+                            if (s.mode == "truck") {
+                                child.seeky
+                                    = camera.y() - camera.height();
+                                    child.seekx = s.x;
+                                    child.dir = "u";
+                            }
+                            //Sprite(1).visible = True
+    						for (CharacterSprite & child_itr : gsl::make_span(&children[*starting_index], &children[*starting_index] + 2)) {
+                                child_itr.speed = 0;  //0.00001
+                                child_itr.name = "fireball";
+                                child_itr.mph = 3;
+                                child_itr.x = s.x;
+                                child_itr.y = s.y;
+                                child_itr.z = s.z; //- (world.Sprite[0).lengh)
+                                child_itr.wide
+                                    = 30 * (player_data.GradeUp + 1);
+                                child_itr.high
+                                    = 30 * (player_data.GradeUp + 1);
+                                child_itr.length = 15;
+                                child_itr.texture
+                                    = s.texture;
+                                child_itr.visible = true;
+                                child_itr.kind = Kind::fireball;
+                                child_itr.frame = 1;
+                                child_itr.soundFile = "fireball.wav";
+                                child_itr.parent = player_data.sprite_index;
+                            }
+                            //LoadSound k, "fireball.wav"
+                            env.sound.PlaySound("fireball");
+                            s.miscTime = current_time + 0.25;
                         }
-                        //Sprite(1).visible = True
-						for (CharacterSprite & child_itr : gsl::make_span(&children[*starting_index], &children[*starting_index] + 2)) {
-                            child_itr.speed = 0;  //0.00001
-                            child_itr.name = "fireball";
-                            child_itr.mph = 3;
-                            child_itr.x = s.x;
-                            child_itr.y = s.y;
-                            child_itr.z = s.z; //- (world.Sprite[0).lengh)
-                            child_itr.wide
-                                = 30 * (player_data.GradeUp + 1);
-                            child_itr.high
-                                = 30 * (player_data.GradeUp + 1);
-                            child_itr.length = 15;
-                            child_itr.texture
-                                = s.texture;
-                            child_itr.visible = true;
-                            child_itr.kind = Kind::fireball;
-                            child_itr.frame = 1;
-                            child_itr.soundFile = "fireball.wav";
-                            child_itr.parent = player_data.sprite_index;
-                        }
-                        //LoadSound k, "fireball.wav"
-                        env.sound.PlaySound("fireball");
-                        s.miscTime = current_time + 0.25;
-                outofammo3:
-                        EMPTY_LABEL_HACK
                     }
                 } //if thomas if
 
@@ -1243,7 +1239,7 @@ public:
                         s.miscTime = current_time + 2; //: screen = "intro story"
                     }
                 }
-            }          
+            }
 
             if (s.name == "intro story") {
                 for (k = 0; k <= 2; ++ k) {
@@ -1524,9 +1520,9 @@ public:
 
             //playWave "conten.wav"
 
-            
 
-            
+
+
 
 
             if (s.name == "expand") {
