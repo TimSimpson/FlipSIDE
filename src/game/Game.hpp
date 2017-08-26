@@ -50,6 +50,8 @@ protected:
 		space.exec(proc);
     }
 
+	inline GameProcessSpace & get_process_space() { return space;  }
+
 private:
     GameProcessSpace & space;
 };
@@ -76,6 +78,7 @@ public:
 
 private:
     GameProcessSpace process;
+	World & world;
 };
 
 }   }  // end namespace

@@ -1,8 +1,9 @@
-#include "LegacyGame.hpp"
+#include "TitleScreen.hpp"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include "CharacterProc.hpp"
+#include "LegacyGame.hpp"
 
 #ifdef _MSC_VER
     // Avoid the zillions implicit conversion warnings
@@ -19,21 +20,31 @@ namespace {
 }
 
 
-class LegacyGame::GameImpl
+class TitleScreenImpl : public GameProcess
 {
+private:
+	Vb & vb;
+	view::View & view;
+	Sound & sound;
+	World & world;
+	Random & random;
+
 public:
-    GameImpl(view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
-             Random & random_arg, World & world_arg)
-    :   vb(vb_arg),
+	TitleScreenImpl(GameProcessSpace & space, 
+		            view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
+                    Random & random_arg, World & world_arg)
+    :   GameProcess(space),
+		vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
-        random(random_arg)
+        random(random_arg)		
     {
-
+        this->destroyEverything();
+        world.screen = "title";		
     }
 
-    void handle_input(const input::Event & event) {
+    void handle_input(const input::Event & event) override {
         switch(event.key) {
             case input::Key::up:
                 world.player_data[event.player].upKey = event.value != 0.0f;
@@ -53,27 +64,12 @@ public:
             case input::Key::jump:
                 world.player_data[event.player].JumpKey = event.value != 0.0f;
                 break;
-            case input::Key::skip_scene:
-                if (event.value) {
-                    world.exitS = "true"; sound.PlayWave("FDis.wav");
-                }
-                break;
-            case input::Key::power_up:
-                world.player_data[0].slicer = true;
-                world.player_data[0].GradeUp = 2;
-                world.Sprite[0].wide = 25;
-                world.Sprite[0].high = 25;
-                sound.PlayWave("SoupedUp.wav");
-                break;
-            case input::Key::lemon_time:
-                world.LemonTime = true;
-                break;
             default:
-                LP3_ASSERT(false);
+                break;
         }
     }
 
-    void PlayGame() {
+    void update() override {
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
@@ -84,113 +80,6 @@ public:
                      //                   CAMERA TIME
                      //----------------------------------------------------------------------
         this->findPlayers();
-        //If Sprite(0).name <> playerName(0) And Sprite(10).name <> playerName(1) And Sprite(20).name <> playerName(2) Then gotFocus = -6
-        if (world.numberPlayers == 0) { world.gotFocus = -1; }
-        if (world.numberPlayers == 1) { world.gotFocus = 0; }
-        if (world.numberPlayers == 2) { world.gotFocus = -2; j = 0; k = 10; }
-        if (world.numberPlayers == 3) { world.gotFocus = -3; }
-        if (world.numberPlayers == 4) { world.gotFocus = 10; }
-        if (world.numberPlayers == 5) { world.gotFocus = 20; }
-        if (world.numberPlayers == 6) { world.gotFocus = -2; j = 0; k = 20; }
-        if (world.numberPlayers == 7) { world.gotFocus = -2; j = 10; k = 20; }
-        //1 Only player 1
-        //2 Player 1 and 2
-        //3 All three Players
-        //4 Just player 2
-        //5 Just player 3
-        //6 Players 1 and 3
-        //7 Players 2 and 3
-
-        //Three Player Scrolling is kind of tricky...
-        if (world.gotFocus == -3) {
-            if (world.Sprite[0].x < world.Sprite[10].x
-                && world.Sprite[0].x < world.Sprite[20].x) {
-                if (world.Sprite[10].x < world.Sprite[20].x) {
-                    trueorg = world.Sprite[0].x
-                        + ((world.Sprite[20].x - world.Sprite[0].x) / 2);
-                }
-                else {
-                    trueorg = world.Sprite[0].x
-                        + ((world.Sprite[10].x - world.Sprite[0].x) / 2);
-                }
-            }
-
-            if (world.Sprite[10].x < world.Sprite[20].x
-                && world.Sprite[10].x < world.Sprite[0].x) {
-                if (world.Sprite[0].x < world.Sprite[20].x) {
-                    trueorg = world.Sprite[10].x
-                        + ((world.Sprite[20].x - world.Sprite[10].x) / 2);
-                }
-                else {
-                    trueorg = world.Sprite[10].x
-                        + ((world.Sprite[0].x - world.Sprite[10].x) / 2);
-                }
-            }
-
-            if (world.Sprite[20].x < world.Sprite[10].x
-                && world.Sprite[20].x < world.Sprite[0].x) {
-                if (world.Sprite[10].x < world.Sprite[0].x) {
-                    trueorg = world.Sprite[20].x
-                        + ((world.Sprite[0].x - world.Sprite[20].x) / 2);
-                }
-                else {
-                    trueorg = world.Sprite[20].x
-                        + ((world.Sprite[10].x - world.Sprite[20].x) / 2);
-                }
-            }
-
-        }
-
-        //rem End of 3 player scrolling
-
-        if (world.gotFocus == -2) {
-            if (world.Sprite[j].x < world.Sprite[k].x) {
-                trueorg = world.Sprite[k].x
-                    + ((world.Sprite[j].x - world.Sprite[k].x) / 2);
-            }
-            else {
-                trueorg = world.Sprite[j].x
-                    + ((world.Sprite[k].x - world.Sprite[j].x) / 2);
-            }
-            if (world.Sprite[j].y < world.Sprite[k].y) {
-                penguin = world.Sprite[k].y
-                    + ((world.Sprite[j].y - world.Sprite[k].y) / 2);
-            }
-            else {
-                penguin = world.Sprite[j].y
-                    + ((world.Sprite[k].y - world.Sprite[j].y) / 2);
-            }
-            k = 0;
-        }
-
-        if (world.gotFocus > -1) {
-            trueorg = world.Sprite[world.gotFocus].x;
-            penguin = world.Sprite[world.gotFocus].y;
-            k = world.gotFocus;
-        }
-
-        //if gotFocus <> -1 Then
-        //CameraX = (Sprite(gotFocus).x + (Sprite(gotFocus).wide * 0.5)) - 320
-        //if CameraX < 1 Then CameraX = 1
-        //if CameraX + CameraWidth >= cameraStopX Then CameraX = cameraStopX - 1 - CameraWidth
-        //CameraY = (Sprite(gotFocus).y + (Sprite(gotFocus).high * 0.5)) - 240
-        //if CameraY < 1 Then CameraY = 1
-        //if CameraY + CameraHeight >= cameraStopY Then CameraY = cameraStopY - 1 - CameraHeight
-        //End if
-
-        if (world.gotFocus != -1) {
-            world.CameraX = (trueorg + (world.Sprite[k].wide * 0.5)) - 320;
-            if (world.CameraX < 1) { world.CameraX = 1; }
-            if (world.CameraX + world.CameraWidth >= world.cameraStopX) {
-                world.CameraX = world.cameraStopX - 1 - world.CameraWidth;
-            }
-            world.CameraY = (penguin + (world.Sprite[k].high * 0.5)) - 240;
-            if (world.CameraY < 1) { world.CameraY = 1; }
-            if (world.CameraY + world.CameraHeight >= world.cameraStopY) {
-                world.CameraY = world.cameraStopY - 1 - world.CameraHeight;
-            }
-        }
-
 
 
         //-----------------------------------------------------------
@@ -206,13 +95,7 @@ public:
         //Rem-FLICKER-
         for (j = 0; j < world.spritesInUse; ++j) {
 
-            if (boost::starts_with(world.screen, "Level")) {
-                int sopoer;
-                //TSNOW: This may be wrong- old code was:
-                //       sopoer = Val(right(left(screen, 6), 1))
-                sopoer = boost::lexical_cast<double>(world.screen.substr(5, 1));
-                this->levelR(sopoer, j);
-            }
+
 
             {
                 auto & s = world.Sprite[j];
@@ -242,50 +125,8 @@ public:
         }
 
 
-        //Rem-------------------------------------------------------------------
-        //               THIS SECTION DOES THE JUMPING
-        //Rem-------------------------------------------------------------------
-        //The ancient key from the past?!!
-        //crapple = clock - jumptime(j)
-        //z(j) = jumpstart(j) + (jumpstrength(j) * crapple) - (gravity * (crapple ^ 2))
-        //If z(j) < 0 Then z(j) = 0: jumptime(j) = 0
-
         for (j = 0; j < world.spritesInUse; ++j) {
             auto & s = world.Sprite[j];
-
-            if (s.jumpTime != 0) {
-                s.lastJump = s.z;
-                //z=jt+(JS*T*2)-(g*t)*2^2
-                if (s.jumpM == 0) { s.jumpM = 1; }
-                s.z = s.jumpStart
-                    + (
-                    (s.jumpStrength * s.jumpM)
-                        * ((world.clock - s.jumpTime) * 2)
-                        )
-                    - (
-                        world.Gravity
-                        * std::pow(((world.clock - s.jumpTime) * 2), 2)
-                        );
-                //
-                if (s.z < 0) { s.z = 0; s.jumpTime = 0; s.jumpM = 1; }
-            }
-            else {
-
-                //REM------------------------------------------------------
-                //  THis is the added gravity that pulls them down   if the're in the ares.
-                if (s.z > 0) { s.z = s.z - world.sFactor; }
-            }
-        }
-
-
-
-        for (j = 0; j < world.spritesInUse; ++j) {
-            auto & s = world.Sprite[j];
-            //Rem-If s.time > clock Then GoTo gotDog
-            //.time = clock + .speed
-            //Rem---------------------------------------------------------------
-            //'               THIS SECTION UPDATES THE DAVID SPRITE
-            //Rem---------------------------------------------------------------
 
             if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
                 penguin = 0;
@@ -1574,6 +1415,12 @@ if (s.name == "Title2") {
             world.Sprite[j].lastY = world.Sprite[j].y;
         }
 
+		if (world.screen == "Select Player") {
+			world.screen = "SelectPlayerz";
+			this->selectPlayer();
+			this->exec(
+				new LegacyGame(get_process_space(), view, sound, vb, random, world));
+		}
     }
     //     End Sub for playGame--------------------------------------------!!!
     //     End Sub for playGame--------------------------------------------!!!
@@ -1581,12 +1428,6 @@ if (s.name == "Title2") {
     //     End Sub for playGame--------------------------------------------!!!
 
 private:
-    Vb & vb;
-    view::View & view;
-    Sound & sound;
-    World & world;
-    Random & random;
-
     long anyKey(int zed) {
         // Returns true if the player at the given index is pressing any key.
         return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
@@ -1946,6 +1787,10 @@ private:
         }
     }
 
+    void endgame() {
+        world.STOPGAME = true;
+    }
+
     void findOrder() {
         int texorg = 0;
         int davidorg1 = 0;
@@ -2044,21 +1889,6 @@ private:
             double boogeycrap = boost::lexical_cast<double>(crapple);
 
             this->goToLevel(boogeycrap);
-        }
-
-        if (world.screen == "Select Player") {
-            world.screen = "SelectPlayerz";
-            this->selectPlayer();
-        }
-
-        if (world.screen == "deadscreen") {
-            world.screen = "title";
-        }
-
-        if (world.Sprite[0].name == "dead"
-            && world.Sprite[10].name == "dead"
-            && world.Sprite[20].name == "dead") {
-            this->gameOver();
         }
     }
 
@@ -3264,21 +3094,11 @@ private:
 
 };  // end of GameImpl class
 
-LegacyGame::LegacyGame(GameProcessSpace & space, view::View & _view,
-	                   Sound & _sound, Vb & vb, Random & random, World & _world)
-:   GameProcess(space), impl(new GameImpl(_view, _sound, vb, random, _world)) {
-}
 
-LegacyGame::~LegacyGame() {
-    delete impl;
-}
-
-void LegacyGame::handle_input(const input::Event & event) {
-    impl->handle_input(event);
-}
-
-void LegacyGame::update() {
-    impl->PlayGame();
+GameProcess * create_title_screen(GameProcessSpace & space,
+                                  view::View & view, Sound & sound, Vb & vb, 
+	                              Random & random, World & world) {
+	return new TitleScreenImpl(space, view, sound, vb, random, world);
 }
 
 }   }  // end namespace
