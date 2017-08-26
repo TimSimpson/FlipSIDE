@@ -30,7 +30,54 @@ public:
         world(world_arg),
         random(random_arg)
     {
+        // the select player screen
 
+        this->destroyEverything();
+        this->NowLoading();
+        view.UpdateSprites();
+        view.LoadTexture(0, "PlayerS2.png", 320, 400);
+        view.LoadTexture(-1, "PlayerS.png", 320, 240);
+        world.CameraWidth = 320;
+        world.CameraHeight = 240;
+
+        {
+            auto & s = world.Sprite[0];
+            s.x = 2 * 2;
+            s.y = 36 * 2;
+            s.wide = 105 * 2;
+            s.high = (217 - 36) * 2;
+            if (this->anyKey(0) == 1) { s.visible = true; }
+            s.name = "Selecter";
+            s.frame = 1;
+            s.miscTime = world.clock + 2;
+        }
+        {
+            auto & s = world.Sprite[1];
+            s.x = 106 * 2;
+            s.y = 36 * 2;
+            s.wide = 105 * 2;
+            s.high = (217 - 36) * 2;
+            if (this->anyKey(1) == 1) { s.visible = true; };
+            s.name = "Selecter";
+            s.frame = 2;
+            s.miscTime = world.clock + 2;
+        }
+        {
+            auto & s = world.Sprite[2];
+            s.x = 212 * 2; s.y = 36 * 2;
+            s.wide = 105 * 2;
+            s.high = (217 - 36) * 2;
+            if (this->anyKey(2) == 1) { s.visible = true; };
+            s.name = "Selecter";
+            s.miscTime = world.clock + 2;
+            s.frame = 3;
+        }
+        this->loadAnimation(0, "Selector.ani");
+        this->loadAnimation(1, "Selector.ani");
+        this->loadAnimation(2, "Selector.ani");
+
+        sound.PlayBgm("Player SelectWAV.wav");
+        sound.PlayWave("Select Your Characters of Justice.wav");
     }
 
     void handle_input(const input::Event & event) {
