@@ -44,6 +44,11 @@ std::istream & operator >>(std::istream & in, Kind & kind);
 
 struct CharacterSprite
 {
+     // Allow it alone to set name.
+     friend void load_process(CharacterSprite &, const std::string &);
+
+	 friend void kill(CharacterSprite &);
+
      // This initializer just zeroes everything out the way it would have been
      // in Visual Basic.
      CharacterSprite();
@@ -77,7 +82,6 @@ struct CharacterSprite
 
      //Location As D3DVECTOR2
      int frame;
-     std::string name;
 
      double hp; //hp!
      double mhp;
@@ -114,6 +118,13 @@ struct CharacterSprite
 
      // Behavior of this sprite.
      CharacterProc * proc;
+
+     const std::string & name() const {
+          return _name;
+     }
+
+private:
+	std::string _name;
 };
 
 void off_camera_kill(CharacterSprite & sprite, Camera & camera);

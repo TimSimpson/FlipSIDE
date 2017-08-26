@@ -34,8 +34,7 @@ CharacterSprite::CharacterSprite()
     visible(false),
     parent(0),
     SpriteVerts(),
-    frame(0),
-    name(""),
+    frame(0),    
     hp(0),
     mhp(0),
     jumpStart(0),
@@ -60,7 +59,8 @@ CharacterSprite::CharacterSprite()
     reverse(false),
     target(0),
     jumpM(0),
-    proc()
+    proc(),
+	_name("")
 {
     // Copies this from the destroyEverything function, which looked
     // to be doing this.
@@ -113,7 +113,7 @@ void off_camera_kill(CharacterSprite & sprite, Camera & camera) {
 void kill(CharacterSprite & sprite) {
 	sprite.visible = false;
 	sprite.kind = Kind::neutral;
-	sprite.name = "";
+	sprite._name = "";
 	sprite.trueVisible = 2;
 	sprite.flickerTime = 0;
 	sprite.target = -1;
@@ -147,8 +147,8 @@ void kill(CharacterSprite & sprite) {
 	}
 	{
 		auto & ws = sprite.SpriteVerts[3];
-		ws.x = sprite.x + sprite.wide;
-		ws.y = sprite.y;
+		ws.x = lp3::narrow<float>(sprite.x + sprite.wide);
+		ws.y = lp3::narrow<float>(sprite.y);
 		ws.tu = 0.5;
 		ws.tv = 0;
 		ws.rhw = 1;

@@ -27,7 +27,7 @@ namespace {
 }
 
 void create_player(PlayerData & player_data, CharacterSprite & sprite,
-	gsl::span<std::reference_wrapper<CharacterSprite>> & children, Env & env)
+	gsl::span<CharacterSprite> & children, Env & env)
 {
 	LP3_ASSERT(children.size() == 9);
 
@@ -62,7 +62,7 @@ void create_player(PlayerData & player_data, CharacterSprite & sprite,
 	}
 
     for (CharacterSprite & child : children) {
-		child.name = "";
+		load_process(child, "");
 		child.zOrder = -90;
 	}
 }
@@ -76,7 +76,7 @@ public:
 
 	 void animate(CharacterSprite & s) override {
 
-			if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
+			if ((s.name() == "Thomas" || s.name() == "Nick") && s.mode != "truck") {
 				if (s.dir != "") { s.frame = s.frame + 1; }
 				if (s.dir == "u") {
 					if (s.frame > 8) { s.frame = 5; }
@@ -92,7 +92,7 @@ public:
 				}
 			}
 
-			if (s.name == "Nicky" && s.mode != "truck") {
+			if (s.name() == "Nicky" && s.mode != "truck") {
 				if (s.dir != "") { s.frame = s.frame + 1; }
 				if (s.dir == "u") {
 					if (s.frame > 6) { s.frame = 4; }
@@ -108,23 +108,23 @@ public:
 				}
 			}
 
-			if (s.name == "fireball") {
+			if (s.name() == "fireball") {
 				s.frame = s.frame + 1;
 				if (s.frame > 3 || s.frame < 1) { s.frame = 1; }
 			}
 
-			if (s.name == "goomba" || s.name == "Kerbose"
-				|| s.name == "paulrun" || s.name == "pigeonbomber") {
+			if (s.name() == "goomba" || s.name() == "Kerbose"
+				|| s.name() == "paulrun" || s.name() == "pigeonbomber") {
 				s.frame = s.frame + 1;
 				if (s.frame > 2) { s.frame = 1; }
 			}
 
-			if (s.name == "pigeon") {
+			if (s.name() == "pigeon") {
 				s.frame = s.frame + 1;
 				if (s.frame > 2) { s.frame = 1; }
 			}
 
-			if (s.name == "tdigger") {
+			if (s.name() == "tdigger") {
 				s.frame = s.frame + 1;
 				if (s.mode == "") {
 					if (s.frame > 5) { s.frame = 4; }
@@ -135,7 +135,7 @@ public:
 			}
 
 
-			if (s.name == "bluestick") {
+			if (s.name() == "bluestick") {
 				s.frame = s.frame + 1;
 				if (s.frame > 2) { s.frame = 1; }
 			}
@@ -144,7 +144,7 @@ public:
     void initialize(Env & env, const double current_time, CharacterSprite & spr) override {
         //this makes all the sprites do their thing based on their name
         spr.mph = 1;
-        if (spr.name == "Thomas") {
+        if (spr.name() == "Thomas") {
             spr.zOrder = -99;
             spr.soundFile = "DavidHurt";
             spr.wide = 40;
@@ -166,7 +166,7 @@ public:
             spr.maxJump = 1;
         }
 
-        if (spr.name == "Nick") {
+        if (spr.name() == "Nick") {
             spr.zOrder = -99;
             spr.soundFile = "nickhurt";
             spr.wide = 40;
@@ -189,7 +189,7 @@ public:
         }
 
 
-        if (spr.name == "Nicky") {
+        if (spr.name() == "Nicky") {
             spr.zOrder = -99;
             spr.soundFile = "NickyHurt";
             spr.wide = 26;
@@ -213,7 +213,7 @@ public:
 
 
 
-        if (spr.name == "Death of David") {
+        if (spr.name() == "Death of David") {
             //StopSound which
             //LoadSound which, "Deathspr.wav"
             env.sound.PlaySound("DavidDeath");
@@ -223,23 +223,23 @@ public:
             spr.frame = 17;
             env.sound.PlayWave("Death.wav");
         }
-        if (spr.name == "Death of Nicky") {
+        if (spr.name() == "Death of Nicky") {
             spr.srcx = 1;
             spr.srcy = 46;
             spr.srcx2 = 14;
             spr.srcy2 = 60;
-            spr.name = "Death of David";
+            load_process(spr, "Death of David");
             env.sound.PlaySound("NickyDeath");
             spr.seekx = spr.wide * 10;
             spr.mph = 2;
             spr.kind = Kind::neutral;
         }
-        if (spr.name == "Death of Nick") {
+        if (spr.name() == "Death of Nick") {
             spr.srcx = 1;
             spr.srcy = 46;
             spr.srcx2 = 14;
             spr.srcy2 = 60;
-            spr.name = "Death of David";
+            load_process(spr, "Death of David");
             env.sound.PlaySound("nickdeath");
             spr.seekx = spr.wide * 10;
             spr.mph = 2;
@@ -250,17 +250,17 @@ public:
 
 
 
-        if (spr.name == "tdigger") {
+        if (spr.name() == "tdigger") {
             env.view.load_animation_file(spr.Aframe, "tDigger.ani");
             spr.hp = 1;
         }
 
-        if (spr.name == "clouds") {
+        if (spr.name() == "clouds") {
             spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
         }
 
 
-        if (spr.name == "paulrun") {
+        if (spr.name() == "paulrun") {
             env.view.load_animation_file(spr.Aframe, "paulrun.ani");
             spr.hp = 1;
             spr.kind = Kind::enemy_weak_to_jumping;
@@ -272,7 +272,7 @@ public:
         }
 
 
-        if (spr.name == "paulbullet") {
+        if (spr.name() == "paulbullet") {
             env.view.load_animation_file(spr.Aframe, "paulbullet.ani");
             spr.hp = 999;
             spr.kind = Kind::enemy;
@@ -280,33 +280,33 @@ public:
             spr.invTime = 0;
             spr.wide = 10;
             spr.high = 10;
-            spr.name = "bullet";
+            load_process(spr, "bullet");
             spr.mph = 2;
         }
 
 
-        if (spr.name == "bs death") {
+        if (spr.name() == "bs death") {
             spr.visible = true;
             spr.mover = false;
             spr.kind = Kind::neutral;
             spr.frame = 3;
             spr.miscTime = current_time + 3;
             env.sound.PlaySound("stick die");
-            spr.name = "Kerbose Death";
+            load_process(spr, "Kerbose Death");
         }
 
 
-        if (spr.name == "harharhar") {
+        if (spr.name() == "harharhar") {
             spr.flickerTime = current_time + 2;
             env.sound.PlayWave("harharhar.wav");
         }
 
-        if (spr.name == "expand") {
+        if (spr.name() == "expand") {
             env.sound.PlayWave("WhaWhee.wav");
             spr.reverse = false;
         }
 
-        if (spr.name == "cinema") {
+        if (spr.name() == "cinema") {
             spr.visible = false;
             spr.frame = 8;
             unstretch(spr);
@@ -315,7 +315,7 @@ public:
 
 
 
-        if (spr.name == "Dying Explosion") {
+        if (spr.name() == "Dying Explosion") {
             //StopSound which
             //LoadSound which, "goombaspr.wav"
             spr.flickerTime = current_time + 10;
@@ -326,9 +326,9 @@ public:
             env.sound.PlaySound("dying explosion");
         }
 
-        if (spr.name == "Kirbose" || spr.name == "Kerbose") {
+        if (spr.name() == "Kirbose" || spr.name() == "Kerbose") {
             spr.mover = true;
-            spr.name = "Kerbose";
+            load_process(spr, "Kerbose");
             spr.wide = 21;
             spr.high = 19;
             spr.visible = true;
@@ -350,12 +350,12 @@ public:
             }
         }
 
-        if (spr.name == "gotmilkbs") {
+        if (spr.name() == "gotmilkbs") {
             env.sound.PlaySound("Paul Shrink");
-            spr.name = "bluestick";
+            load_process(spr, "bluestick");
         }
 
-        if (spr.name == "greenspring") {
+        if (spr.name() == "greenspring") {
             env.view.load_animation_file(spr.Aframe, "greenspring.ani");
             spr.frame = 1;
             spr.mode = "off";
@@ -369,7 +369,7 @@ public:
         }
 
 
-        if (spr.name == "bluestick") {
+        if (spr.name() == "bluestick") {
             spr.hp = 1;
             spr.kind = Kind::enemy_weak_to_jumping;
             spr.wide = 10;
@@ -380,19 +380,13 @@ public:
             spr.Aframe[3].set(23, 174, 33, 190);
             spr.deathType = "bs death";
             spr.soundFile = "Stick Ouch";
-            //spr.name = "Kerbose"
             env.sound.PlaySound("Stick Awaken");
             spr.frame = 1;
             unstretch(spr);
         }
 
-        if (spr.name == "Kerbose Death") {
+        if (spr.name() == "Kerbose Death") {
             spr.visible = true;
-            //spr.name = "Dying Explosion"
-            //spr.flickerTime = clock + 10
-            //spr.seekx = spr.wide * 3
-            //spr.mph = 2
-            //spr.kind = 0
 
             spr.mover = false;
             spr.kind = Kind::neutral;
@@ -403,33 +397,33 @@ public:
             env.sound.PlaySound("Kerbose Die");
         }
 
-        if (spr.name == "putuloDeath") {
+        if (spr.name() == "putuloDeath") {
             spr.visible = true;
             spr.mover = false;
             spr.kind = Kind::neutral;
             spr.frame = 3;
             spr.miscTime = current_time + 3;
             env.sound.PlaySound("putulodie");
-            spr.name = "Kerbose Death";
+            load_process(spr, "Kerbose Death");
         }
 
-        if (spr.name == "fireball") {
+        if (spr.name() == "fireball") {
             spr.wide = 40;
             spr.high = 50;
             spr.visible = false;
             spr.texture = 1;
             spr.frame = 1;
-            spr.name = "";
+            load_process(spr, "");
             spr.zOrder = -99;
         }
 
 
 
-        if (spr.name == "Deadly Rat") {
+        if (spr.name() == "Deadly Rat") {
             spr.wide = 50;
             spr.high = 50;
             spr.texture = 0;
-            spr.name = "Deadly Rat";
+            load_process(spr, "Deadly Rat");
             spr.hp = 5;
             spr.visible = true;
             spr.kind = Kind::enemy;
@@ -437,12 +431,12 @@ public:
             spr.invTime = 1;
         }
 
-        if (spr.name == "falling") {
+        if (spr.name() == "falling") {
             spr.kind = Kind::neutral;
             //spr.high = -30 //-1 * spr.high
         }
 
-        if (spr.name == "pigeon") {
+        if (spr.name() == "pigeon") {
             spr.visible = true;
             spr.seekx = spr.x;
             spr.seeky = spr.y;
@@ -456,7 +450,7 @@ public:
             spr.kind = Kind::enemy_weak_to_jumping;
         }
 
-        if (spr.name == "pigeonbomber") {
+        if (spr.name() == "pigeonbomber") {
             env.view.load_animation_file(spr.Aframe, "pigeon.ani");
             spr.visible = true;
             spr.seekx = -10;
@@ -471,7 +465,7 @@ public:
             spr.kind = Kind::enemy_weak_to_jumping;
         }
 
-        if (spr.name == "goomba") {
+        if (spr.name() == "goomba") {
             spr.seekx = spr.x;
             spr.seeky = spr.y;
             spr.wide = 80;
@@ -491,14 +485,15 @@ public:
             spr.mover = true;
         }
 
-        if (spr.name == "bullet") {
+        if (spr.name() == "bullet") {
             spr.kind = Kind::enemy_bullet;
         }
     }
 
     void update(Env & env, const double current_time, CharacterSprite & s,
 		        Camera & camera, PlayerData * player_data_ptr,
-				gsl::span<std::reference_wrapper<CharacterSprite>> & children)
+				gsl::span<CharacterSprite> & children,
+				World & world)
 	{
                     //Rem-If s.time > clock Then GoTo gotDog
             //.time = clock + .speed
@@ -506,7 +501,7 @@ public:
             //'               THIS SECTION UPDATES THE DAVID SPRITE
             //Rem---------------------------------------------------------------
 
-            if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
+            if (s.name() == "Thomas" || s.name() == "Nicky" || s.name() == "Nick") {
                 LP3_ASSERT(player_data_ptr != nullptr);
 				PlayerData & player_data = *player_data_ptr;
                 if (player_data.upKey == true) {
@@ -554,7 +549,7 @@ public:
 
                 if (s.z == 0) { s.multiJump = 0; }
 
-                if (s.name == "Nicky" && player_data.JumpKey == true
+                if (s.name() == "Nicky" && player_data.JumpKey == true
                     && s.multiJump < 3) {
                     player_data.JumpKey = false;
                     //If .z = 0 Then .multiJump = 0
@@ -576,10 +571,10 @@ public:
                         && s.miscTime < current_time) {
 						for (CharacterSprite & child : children) {
                         // for (int k = j + 1; k < j + 10; ++k) {
-							if (child.name == "reserved" || child.name == "")
+							if (child.name() == "reserved" || child.name() == "")
 							{
 								child.speed = 0; //0.00001
-								child.name = "bomb";
+								load_process(child, "bomb");
 								child.x = s.x;
 								child.y = s.y;
 								child.z = s.z; //- (Sprite(0).length);
@@ -612,7 +607,7 @@ public:
                     if (player_data.AttackKey == true
                         && s.miscTime < current_time) {
 						for (CharacterSprite & child : children) {
-							if (child.name == "reserved" || child.name == "") {
+							if (child.name() == "reserved" || child.name() == "") {
 								if (s.dir == "u") {
 									child.seekx = s.x;
 									child.seeky =
@@ -661,7 +656,7 @@ public:
 								}
 								//Sprite(1).visible = true
 								child.speed = 0; //0.00001
-								child.name = "fireball";
+								load_process(child, "fireball");
 								child.mph = 3;
 								child.x = s.x;
 								child.y = s.y;
@@ -695,8 +690,8 @@ public:
 						boost::optional<int> starting_index;
                         for (int k = 0; k <= 5; ++k) {
 							CharacterSprite & child = children[k];
-                            if (child.name == "reserved"
-                                || child.name == "") {
+                            if (child.name() == "reserved"
+                                || child.name() == "") {
 								starting_index = k;
 								break;
                             }
@@ -797,7 +792,7 @@ public:
                             //Sprite(1).visible = True
     						for (CharacterSprite & child_itr : gsl::make_span(&children[*starting_index], &children[*starting_index] + 2)) {
                                 child_itr.speed = 0;  //0.00001
-                                child_itr.name = "fireball";
+                                load_process(child_itr, "fireball");
                                 child_itr.mph = 3;
                                 child_itr.x = s.x;
                                 child_itr.y = s.y;
@@ -841,7 +836,7 @@ public:
             //Rem--------------------------------------------------------------
 
 
-            if (s.name == "goomba") {
+            if (s.name() == "goomba") {
                 seek(s);
 
                 if (s.x == s.seekx && s.y == s.seeky) {
@@ -859,18 +854,18 @@ public:
                 }
             }
 
-            if (s.name == "Kerbose Death") {
+            if (s.name() == "Kerbose Death") {
                 //.flickerTime = clock + 2
                 //if (.color = QBColor(1) Then .color = normColor Else .color = QBColor(1)
                 if (s.miscTime < current_time) {
-                    s.name = "";
+                    load_process(s, "");
                     s.visible = false;
                     s.trueVisible = 2;
                     s.flickerTime = current_time + 1;
                 }
             }
 
-            if (s.name == "Kerbose") {
+            if (s.name() == "Kerbose") {
                 const int k = (int) (env.random.next() * 2) + 1;
                 if (k == 1) { s.x = s.x + speed_factor; }
                 if (k == 2) { s.x = s.x - speed_factor; }
@@ -888,7 +883,7 @@ public:
 
 
 
-            if (s.name == "fireball") {
+            if (s.name() == "fireball") {
 
                 if (player_data_ptr->slicer == true) {
                     if (s.color == env.view.QBColor(2)) {
@@ -940,14 +935,14 @@ public:
                     || s.y < (camera.y() - camera.height())) {
                     s.visible = false;
                     s.flickerTime = 0;
-                    s.name = "reserved";
+                    load_process(s, "reserved");
                     s.trueVisible = 2;
                 }
 
                 off_camera_kill(s, camera);
             }
 
-            if (s.name == "bomb") {
+            if (s.name() == "bomb") {
                 s.frame = s.frame + 1;
                 if (s.mode != "explode") {
                     if (s.frame > 3) { s.frame = 2; }
@@ -958,7 +953,7 @@ public:
                 if (s.kind == Kind::fireball && s.miscTime < current_time) {
                     s.visible = false;
                     s.flickerTime = 0;
-                    s.name = "reserved";
+                    load_process(s, "reserved");
                     s.trueVisible = 2;
                     s.kind = Kind::neutral;
                     goto fuddle;
@@ -979,12 +974,12 @@ public:
             }
 
 
-            if (s.name == "falling") {
+            if (s.name() == "falling") {
                 //.flickerTime = clock + 1
                 s.z = s.z - speed_factor;
                 if (s.z < 1) {
                     s.z = 1;
-                    s.name = "deceased";
+                    load_process(s, "deceased");
                     s.visible = false;
                     s.trueVisible = 2;
                     s.flickerTime = 0;
@@ -993,7 +988,7 @@ public:
                 if (s.frame > 4) { s.frame = 3; }
             }
 
-            if (s.name == "Dying Explosion") {
+            if (s.name() == "Dying Explosion") {
                 if (s.wide < s.seekx) {
                     s.wide = s.wide + s.mph;
                     s.x = s.x - (s.mph * 0.5 * speed_factor);
@@ -1004,13 +999,13 @@ public:
                     s.high = s.high - s.mph;
                     s.y = s.y + (s.mph * 0.5 * speed_factor);
                     if (s.high < 1) {
-                        s.name = "deceased";
+                        load_process(s, "deceased");
                         s.visible = false;
                     }
                 }
             }
 
-            if (s.name == "Death of David") {
+            if (s.name() == "Death of David") {
 				LP3_ASSERT(player_data_ptr);
 				PlayerData & player_data = *player_data_ptr;
 				// Oh this is gross. Basically the player character changes
@@ -1031,9 +1026,9 @@ public:
                     s.high = s.high - s.mph * 3;
                     if (s.high < (-1 * s.high)) {
                         //what to do if dead
-                        s.name = "deceased";
+                        load_process(s, "deceased");
                         s.visible = false;
-                        s.name = "dead";
+                        load_process(s, "dead");
                         s.srcx = 2;
                         s.srcy = 363;
                         s.srcx2 = 96;
@@ -1043,7 +1038,7 @@ public:
                         player_data.lives = player_data.lives - 1;
                         if (player_data.lives < 1) {
                             if (world.continues > 0) {
-                                s.name = "continue";
+                                load_process(s, "continue");
                                 s.texture = 0;
                                 s.srcx = 3;
                                 s.srcy = 345;
@@ -1054,7 +1049,7 @@ public:
                                 s.frame = 0;
 
 								CharacterSprite & cnt_number = children[1];
-                                cnt_number.name = "continue number";
+                                load_process(cnt_number, "continue number");
 								cnt_number.color = normal_color;
 								cnt_number.frame = 11;
 								cnt_number.texture = 0;
@@ -1075,12 +1070,11 @@ public:
                         } //end lives if
                         if (player_data.lives > 0) {
 							create_player(player_data, s, children, env);
-                            s.name = player_data.playerName;
+                            load_process(s, player_data.playerName);
                             s.kind = Kind::player;
 
 							// TODO: Maybe make this the same somehow?
-							s.proc = load_process(s.name);
-							s.proc->initialize(env, current_time, s);
+							load_process_init(s, s.name(), env, current_time);
 
                             s.flickerTime = current_time + 5;
                             //Sprite[j].x = .seekx: .seekx = 0
@@ -1092,19 +1086,16 @@ public:
                 }
             }
 
-            if (s.name == "continue") {
+            if (s.name() == "continue") {
 				LP3_ASSERT(player_data_ptr);
 				PlayerData & player_data = *player_data_ptr;
                 if (player_data.any_key_down()) {
                     world.continues = world.continues - 1;
                     player_data.lives = 2;
-					create_player(player_data, s, children, env);
-                    s.name = player_data.playerName;
+					create_player(player_data, s, children, env);                    
                     s.kind = Kind::player;
                     s.flickerTime = current_time + 5;
-
-					s.proc = load_process(s.name);
-					s.proc->initialize(env, current_time, s);
+					load_process_init(s, player_data.playerName, env, current_time);					
                 }
                 s.visible = true;
                 if (player_data.player_index == 0) {
@@ -1121,7 +1112,7 @@ public:
                 s.y = camera.y() + 10;
             }
 
-            if (s.name == "continue number") {
+            if (s.name() == "continue number") {
 				LP3_ASSERT(player_data_ptr);
 				PlayerData & player_data = *player_data_ptr;
                 s.trueVisible = 1;
@@ -1156,366 +1147,13 @@ public:
                     if (s.frame == 1) { env.sound.PlayWave("ConOne.wav"); }
                     if (s.frame == 13) { env.sound.PlayWave("ConZero.wav"); }
                     if (s.frame == 12) {
-						player_data.sprite->name = "dead";
+						load_process(*player_data.sprite, "dead");
 						player_data.sprite->visible = false;
 						kill(s);
                     }
                 }
             }
 
-            if (s.name == "GameOverCloudTitle") {
-                if (current_time > s.miscTime) {
-                    s.high = s.high + 2 * speed_factor;
-                    s.y = s.y - speed_factor;
-                    if (s.y < 0) { s.flickerTime = current_time + 1; }
-                    if (s.y < -300) {
-                        s.wide = s.wide - (10 * speed_factor);
-                        s.x = s.x + 5 * speed_factor;
-                        if (s.wide < 0) {
-                            s.visible = false;
-                            world.screen = "title";
-                        }
-                    }
-                }
-            }
-
-            if (s.name == "Title1") {
-                if (s.miscTime < current_time) {
-                    if (s.miscTime + 3 > current_time) {
-                        s.visible = true;
-                    } else {
-                        s.visible = false;
-                    }
-                }
-            }
-
-            if (s.name == "TitleBg1") {
-                //if (s.mode = "part2") then
-                for (k = 0; k <= 2; ++ k) {
-                    if (world.player_data[k].RightKEY == true || world.player_data[k].LeftKEY == true
-                        || world.player_data[k].upKey == true || world.player_data[k].DownKEY == true
-                        || world.player_data[k].AttackKey == true) {
-                        world.screen = "Select Player";
-                    }
-                }
-
-                //End If
-                //if (s.mode <> "part2") then
-                //if (sRightKEY = True Or LeftKEY = True Or UpKEY = True Or DownKEY = True Or AttackKey = True) then
-                //For k = 1 To 4: Sprite(k).miscTime = clock - 100: Sprite(k).visible = False: Next k
-                //End If
-                //End If
-                if (s.miscTime < current_time && s.mode != "part2") {
-                    s.visible = true;
-                    s.mode = "part2"; //: .miscTime = clock + 5
-                }
-            }
-
-            if (s.name == "Title2") {
-                if (s.miscTime < current_time && s.mode != "stop") {
-                    s.trueVisible = 1;
-                    s.flickerTime = current_time + 5;
-                    s.high = s.high - 5 * speed_factor;
-                    s.y = s.y + speed_factor * 2.5;
-                    if (s.high < 213) {
-                        s.mode = "stop";
-                        s.flickerTime = current_time;
-                    }
-                }
-            }
-
-            if (s.name == "Title3") {
-                if (s.miscTime < current_time && s.mode == "stop") {
-                    world.screen = "intro story";
-                }
-                if (s.miscTime < current_time && s.mode != "stop") {
-                    s.trueVisible = 1;
-                    s.flickerTime = current_time + 5;
-                    s.wide = s.wide - speed_factor * 5;
-                    s.x = s.x + speed_factor * 2.5;
-                    if (s.wide < 640) {
-                        s.mode = "stop";
-                        s.flickerTime = current_time;
-                        s.miscTime = current_time + 2; //: screen = "intro story"
-                    }
-                }
-            }
-
-            if (s.name == "intro story") {
-                for (k = 0; k <= 2; ++ k) {
-                    if (this->anyKey(k) == 1) {
-                        world.screen = "Select Player";
-                    }
-                }
-                if (s.mode == "") {
-
-                    world.Sprite[1].invTime = 40;
-                    env.sound.PlayWave("IntroStory.ogg"); // play it once then stop
-                    s.mode = "waka do";  // so it won't load non stop
-                }
-                if (world.Sprite[1].mode == "words1") {
-                    //Sprite(1).length = 6
-                    if (s.mode == "waka do") {
-                        //playWave "conSix.wav"
-                        auto & s2 = world.Sprite[1];
-                        s2.length = 3;
-                        s2.texture = 1;
-                        s2.visible = true;
-                        //s2.srcx = 2: s2.srcy = 44;
-                        //s2.srcx2 = 303: s2.srcy2 = 152;
-                        s2.srcx = 2;
-                        s2.srcy = 1;
-                        s2.srcx2 = 166;
-                        s2.srcy2 = 41;
-                        s2.wide = 164 * 2;
-                        s2.high = 40 * 2;
-                        s2.x = 1;
-                        s2.y = 178;
-                    }
-                    if (s.mode == "word 2") {
-                        auto & s2 = world.Sprite[1];
-                        s2.length = 6;
-                        s2.texture = 1;
-                        s2.visible = true;
-                        s2.srcx = 2;
-                        s2.srcy = 44;
-                        s2.srcx2 = 303;
-                        s2.srcy2 = 152;
-                        s2.wide = 301 * 2;
-                        s2.high = (152 - 44) * 2;
-                        s2.x = 1;
-                        s2.y = 178;
-                    }
-                    if (s.mode == "word 3") {
-                        auto & s2 = world.Sprite[1];
-                        s2.length = 2;
-                        s2.texture = 1;
-                        s2.visible = true;
-                        s2.srcx = 2;
-                        s2.srcy = 153;
-                        s2.srcx2 = 123;
-                        s2.srcy2 = 173;
-                        s2.wide = 121 * 2;
-                        s2.high = (20) * 2;
-                        s2.x = 1;
-                        s2.y = 178;
-                    }
-                    if (s.mode == "word 4") {
-                        auto & s2 = world.Sprite[1];
-                        s2.length = 6;
-                        s2.texture = 1;
-                        s2.visible = true;
-                        s2.srcx = 3;
-                        s2.srcy = 174;
-                        s2.srcx2 = 311;
-                        s2.srcy2 = 263;
-                        s2.wide = 308 * 2;
-                        s2.high = (89) * 2;
-                        s2.x = 1;
-                        s2.y = 178;
-                    }
-                    if (s.mode == "word 5") {
-                        s.length = 5;
-                        env.view.LoadTexture(-1, "Open2.png", 320, 240);
-                        camera.width() = 320;
-                        camera.height() = 240;
-                        {
-                            auto & s2 = world.Sprite[1];
-                            s2.texture = 2; //1
-                            s2.visible = true;
-                            s2.srcx = 2;
-                            s2.srcy = 5;
-                            s2.srcx2 = 307;
-                            s2.srcy2 = 48;
-                            s2.wide = 305 * 2;
-                            s2.high = (43) * 2;
-                            s2.x = 2 * 2;
-                            s2.y = 173 * 2;
-                        }
-                    }
-                    if (s.mode == "word 6") {
-                        auto & s2 = world.Sprite[1];
-                        s2.length = 3;
-                        s2.texture = 2; //1
-                        s2.visible = true;
-                        s2.srcx = 2;
-                        s2.srcy = 51;
-                        s2.srcx2 = 311;
-                        s2.srcy2 = 71;
-                        s2.wide = 309 * 2;
-                        s2.high = (20) * 2;
-                        //.x = 1: .y = 178
-                    }
-                    if (s.mode == "word 7") {
-                        {
-                            auto & s2 = world.Sprite[1];
-                            s2.length = 4;
-                            //s2.texture = 1;
-                            s2.visible = true;
-                            s2.srcx = 2;
-                            s2.srcy = 75;
-                            s2.srcx2 = 295;
-                            s2.srcy2 = 117;
-                            s2.wide = 293 * 2;
-                            s2.high = (42) * 2;
-                            //s2.x = 1: s2.y = 178;
-                        } //end with
-                    }
-                    if (s.mode == "word 8") {
-                        {
-                            auto & s2 = world.Sprite[1];
-                            s2.length = 6;
-                            //s2.texture = 1;
-                            s2.visible = true;
-                            s2.srcx = 2;
-                            s2.srcy = 120;
-                            s2.srcx2 = 294;
-                            s2.srcy2 = 185;
-                            s2.wide = 292 * 2;
-                            s2.high = (65) * 2;
-                            //s2.x = 1: s2.y = 178;
-                        } //end with
-                    }
-                    if (s.mode == "word 9") {
-                        env.view.LoadTexture(-1, "Open3.png", 320, 240);
-                        {
-                            auto & s2 = world.Sprite[1];
-                            //.texture = 1
-                            s2.length = 6;
-                            s2.visible = true;
-                            s2.srcx = 2;
-                            s2.srcy = 189;
-                            s2.srcx2 = 305;
-                            s2.srcy2 = 254;
-                            s2.wide = 303 * 2;
-                            s2.high = (65) * 2;
-                            //.x = 1: .y = 178
-                        } //end with
-                    }
-                    if (s.mode == "word 10") {
-                        env.view.LoadTexture(-1, "Open4.png", 320, 240);
-                        {
-                            auto & s2 = world.Sprite[1];
-                            s2.length = 6;
-                            s2.texture = 3;
-                            s2.visible = true;
-                            s2.length = 7;
-                            s2.srcx = 1;
-                            s2.srcy = 4;
-                            s2.srcx2 = 312;
-                            s2.srcy2 = 69;
-                            s2.wide = 313 * 2;
-                            s2.high = (65) * 2;
-                            //.x = 1: .y = 178
-                        } //end with
-                    }
-                    if (s.mode == "word 11") {
-                        env.view.LoadTexture(-1, "Open5.png", 320, 240);
-                        {
-                            auto & s2 = world.Sprite[1];
-                            s2.length = 6;
-                            //s2.texture = 1;
-                            s2.visible = true;
-                            s2.srcx = 1;
-                            s2.srcy = 72;
-                            s2.srcx2 = 258;
-                            s2.srcy2 = 115;
-                            s2.wide = 259 * 2;
-                            s2.high = (43) * 2;
-                            s2.x = 58 * 2;
-                            s2.y = 188 * 2;
-                        }
-                    }
-                    if (s.mode == "word 12") {
-                        //if (s.miscTime < clock) then
-                        //killS (1)
-                        env.view.LoadTexture(-1, "PlainBlack.png", 320, 240);
-                        s.mode = "word 13";
-                        {
-                            auto & s2 = world.Sprite[1];
-                            s2.invTime = 10;
-                            s2.length = 6;
-                            //s2.miscTime = 0;
-                            s2.mode = "words1";
-                            s2.texture = 4;
-                            s2.visible = true;
-                            s2.srcx = 1;
-                            s2.srcy = 1;
-                            s2.srcx2 = 320;
-                            s2.srcy2 = 240;
-                            s2.wide = 320 * 2;
-                            s2.high = (240) * 2;
-                            s2.x = 1;
-                            s2.y = 1;
-                            world.Sprite[0].mode = "KILLDEATH";
-                        }
-                        //End If
-                    }
-
-                }
-                if (world.Sprite[1].mode == "words2") {
-                    //playWave "conzero.wav"
-                    world.Sprite[1].mode = "words1";
-                    s.miscTime = 0;
-                    if (s.mode == "word 11") {
-                        s.mode = "word 12"; //: .miscTime = clock + 3: Sprite[1].length = 0
-                    }
-                    if (s.mode == "word 10") {
-                        s.mode = "word 11"; //: Sprite[1].length = 0
-                    }
-                    if (s.mode == "word 9") { s.mode = "word 10"; }
-                    if (s.mode == "word 8") { s.mode = "word 9"; }
-                    if (s.mode == "word 7") { s.mode = "word 8"; }
-                    if (s.mode == "word 6") { s.mode = "word 7"; }
-                    if (s.mode == "word 5") { s.mode = "word 6"; }
-                    if (s.mode == "word 4") { s.mode = "word 5"; }
-                    if (s.mode == "word 3") { s.mode = "word 4"; }
-                    if (s.mode == "word 2") { s.mode = "word 3"; }
-                    if (s.mode == "waka do") { s.mode = "word 2"; }
-                }
-            }
-
-            //WORDS 1
-            if (s.name == "words1") {
-
-                if (s.mode == "words1") {
-                    if (s.miscTime < 255) {
-                        s.miscTime = s.miscTime + (speed_factor * s.invTime);
-                        //0s.3 * sFactor
-                        s.color = env.view.Rgb(s.miscTime, s.miscTime, s.miscTime);
-                    }
-                    if (s.miscTime > 245) {
-                        //playWave "conten.wav"
-                        s.color = env.view.QBColor(15);
-                        s.mode = "words1b";
-                        s.miscTime = current_time + s.length;
-                    }
-                }
-
-                if (world.Sprite[0].mode == "KILLDEATH" && s.mode == "words1b") {
-                    s.name = "";
-                }
-
-                if (s.mode == "words1b" && s.miscTime < current_time) {
-                    s.mode = "words1c";
-                    s.miscTime = 255;
-                }
-
-                if (s.mode == "words1c") {
-                    if (s.miscTime > 0) {
-                        s.miscTime = s.miscTime - (speed_factor * 20); //0.3 * sFactor
-                        if (s.miscTime > 0) {
-                            s.color = env.view.Rgb(s.miscTime, s.miscTime, s.miscTime);
-                        }
-                    }
-                    if (s.miscTime < 1) {
-                        //playWave "conten.wav"
-                        s.color = env.view.QBColor(0);
-                        s.mode = "words2";
-                    }
-                }
-
-            }
 
 
             //playWave "conten.wav"
@@ -1525,7 +1163,7 @@ public:
 
 
 
-            if (s.name == "expand") {
+            if (s.name() == "expand") {
                 s.kind = Kind::neutral;
                 //if (s.mode = "runner") then
                 s.frame = 3;
@@ -1538,28 +1176,28 @@ public:
                 s.high = s.high + (speed_factor);
                 s.y = s.y - (speed_factor / 2);
                 if (s.SpriteVerts[3].rhw > 2) {
-                    s.name = "harharhar";
-					s.proc = load_process(s.name);
-					s.proc->initialize(env, current_time, s);
+                    load_process_init(s, "harharhar", env, current_time);
                 }
             }
 
-            if (s.name == "harharhar") {
+            if (s.name() == "harharhar") {
                 if (s.flickerTime < current_time) {
 					kill(s);
                 }
             }
 
-            if (s.name == "dead") {
+            if (s.name() == "dead") {
+				LP3_ASSERT(player_data_ptr);
+				const PlayerData & player_data = *player_data_ptr;
                 //Stop
-                if ((j / 10) == 0) {
+                if (player_data.player_index == 0) {
                     s.x = camera.x() + 10;
                 }
-                if ((j / 10) == 1) {
+                if (player_data.player_index == 1) {
                     s.x = camera.x() + 250;
                     s.color = env.view.QBColor(10);
                 }
-                if ((j / 10) == 2) {
+                if (player_data.player_index == 2) {
                     s.x = camera.x() + 450;
                     s.color = env.view.QBColor(14);
                 }
@@ -1578,10 +1216,17 @@ public:
 };
 
 
-CharacterProc * load_process(const std::string &) {
+void load_process(CharacterSprite & s, const std::string & name) {
+    // TODO: Some weirdo factory logic here
     static LegacyProc legacy_proc;
-    // TODO: Return other things
-    return &legacy_proc;
+    s.proc = &legacy_proc;
+    s._name = name;
+}
+
+void load_process_init(CharacterSprite & s, const std::string & name, Env & env,
+                       const double current_time) {
+    load_process(s, name);
+    s.proc->initialize(env, current_time, s);
 }
 
 }   }

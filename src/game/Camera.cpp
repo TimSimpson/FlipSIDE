@@ -12,4 +12,8 @@ CameraGuts::CameraGuts()
     gotFocus(0)
 {}
 
+Camera::Camera(CameraGuts & _guts)
+:	guts(_guts)
+{}
+
 }	}

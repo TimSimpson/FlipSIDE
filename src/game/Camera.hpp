@@ -52,7 +52,7 @@ public:
 
     // The size before the camera stops (I'm assuming there's also an implicit
     // boundary at 0,0).
-    inline glm::ivec2 boundary() {
+    inline glm::ivec2 boundary() const {
         return glm::ivec2{guts.cameraStopX, guts.cameraStopY };
     }
 private:

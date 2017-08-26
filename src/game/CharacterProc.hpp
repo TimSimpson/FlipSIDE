@@ -24,13 +24,17 @@ public:
                          CharacterSprite & sprite,
 						 Camera & camera,
 						 PlayerData * player_data,
-                         gsl::span<std::reference_wrapper<CharacterSprite>> & children) = 0;
+                         gsl::span<CharacterSprite> & children,
+						 World & world) = 0;
 };
 
-CharacterProc * load_process(const std::string & name);
+void load_process(CharacterSprite & s, const std::string & name);
+
+void load_process_init(CharacterSprite & s, const std::string & name, Env & env,
+                       const double current_time);
 
 void create_player(PlayerData & player_data, CharacterSprite & sprite,
-	               gsl::span<std::reference_wrapper<CharacterSprite>> & children,
+	               gsl::span<CharacterSprite> & children,
                    Env & env);
 
 }    }
