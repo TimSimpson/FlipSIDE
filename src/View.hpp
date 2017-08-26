@@ -19,6 +19,9 @@ public:
     View(core::MediaManager & media, game::World & world, Vb & vb);
 
     void operator()(const glm::mat4 & previous);
+	
+	// Call this to update periodic animations 
+	void animate();
 
 	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
 	void DrawStuff(float fps);

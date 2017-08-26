@@ -171,7 +171,7 @@ int _main(core::PlatformLoop & loop) {
 		// that). So we multiple the number we just had by 120.
 		world.sFactor *= 120;
 
-		game.PlayGame();
+		game.update();
 	};
 
 	if (args.skip_playback_to_end) {
@@ -230,8 +230,8 @@ int _main(core::PlatformLoop & loop) {
 
 		clock.run_updates(run_game);
 
-		old_timer.run_updates([&game](std::int64_t) {
-			game.TimedEvents();
+		old_timer.run_updates([&view](std::int64_t) {
+			view.animate();
 		});
 
 		frame_timer.next_frame();

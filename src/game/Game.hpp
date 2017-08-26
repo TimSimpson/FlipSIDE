@@ -14,6 +14,48 @@ namespace nnd3d { namespace game {
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
 
+
+class GameProcess;
+
+class GameProcessSpace {
+public:
+    GameProcessSpace();
+	
+	~GameProcessSpace();
+
+    void exec(gsl::owner<GameProcess *> proc);
+
+    inline GameProcess * get_proc() {
+        return proc;
+    }
+private:
+    gsl::owner<GameProcess *> proc;
+};
+
+class GameProcess {
+public:
+    GameProcess(GameProcessSpace & space);
+
+    virtual ~GameProcess() = default;
+
+    // Drives the game
+    virtual void handle_input(const input::Event &) = 0;
+
+    // As a rule, this is called every 16ms.
+    virtual void update() = 0;
+
+protected:
+    // Replace the currently executing game process with a different one.
+    void exec(gsl::owner<GameProcess *> proc) {
+		space.exec(proc);
+    }
+
+private:
+    GameProcessSpace & space;
+};
+
+
+
 // --------------------------------------------------------------------
 // Game
 // --------------------------------------------------------------------
@@ -30,13 +72,10 @@ public:
 
     void handle_input(const input::Event & even);
 
-    void PlayGame();
-
-    void TimedEvents();
+    void update();
 
 private:
-    class GameImpl;
-	gsl::owner<GameImpl *> impl;
+    GameProcessSpace process;
 };
 
 }   }  // end namespace
