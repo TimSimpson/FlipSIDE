@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include "CharacterSprite.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -31,7 +32,13 @@ struct PlayerData {
     int GradeUp;
     std::string weapon;
 
+    int sprite_index;
+    CharacterSprite * sprite;
+	int player_index;
+
     PlayerData();
+
+	bool any_key_down() const;
 };
 
 }   }

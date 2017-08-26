@@ -7,6 +7,7 @@
 #include <lp3/core.hpp>
 #include <lp3/gfx.hpp>
 #include "../AnimationFrame.hpp"
+#include "Camera.hpp"
 #include "../Vertex.hpp"
 
 namespace nnd3d { namespace game {
@@ -114,6 +115,12 @@ struct CharacterSprite
      // Behavior of this sprite.
      CharacterProc * proc;
 };
+
+void off_camera_kill(CharacterSprite & sprite, Camera & camera);
+
+void kill(CharacterSprite & sprite);
+
+void seek(CharacterSprite & s);
 
 void unstretch(CharacterSprite & s);
 

@@ -6,6 +6,7 @@
 #include <lp3/sims.hpp>
 #include <lp3/main.hpp>
 
+#include "game/constants.hpp"
 #include "game/Game.hpp"
 #include "Input.hpp"
 #include "Sound.hpp"
@@ -138,7 +139,7 @@ int _main(core::PlatformLoop & loop) {
     //       In the old code, this ran in an endless loop which called
     //       `doEvents` and used a suspect method of calculating the percentage
     //       of a second each frame took. Here we can just use a GameClock.
-	const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
+	const std::int64_t ms_per_update = nnd3d::game::ms_per_update;  //16 ms for 60 fps
 	sims::GameClock clock(ms_per_update);
 
     // 2017: This next clock stands in for a Visual Basic Timer that the
@@ -161,7 +162,7 @@ int _main(core::PlatformLoop & loop) {
 		// in existence by. That's actually a bad approach for several
 		// reasons, but the take away is here we introducing a constant
 		// speed mod which will always be 0.016
-		world.sFactor = lp3::narrow<double>(ms) / 1000.0;
+		world.sFactor = nnd3d::game::speed_factor;
 		world.clock = world.clock + world.sFactor;
 		if (world.LemonTime) {
 			world.sFactor *= 2;

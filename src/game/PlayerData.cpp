@@ -24,8 +24,16 @@ PlayerData::PlayerData()
     ThreeWay(false),
     slicer(false),
     GradeUp(0),
-    weapon()
+    weapon(),
+    sprite_index(-1),
+    sprite(nullptr),
+	player_index(-1)
 {
+}
+
+bool PlayerData::any_key_down() const {
+	// Returns true if the player at the given index is pressing any key.
+	return (RightKEY || LeftKEY || upKey || DownKEY || AttackKey);
 }
 
 }	}   // end namespace

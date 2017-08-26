@@ -358,15 +358,16 @@ void View::UpdateSprites() {
     //              THIS PART HERE'S THE KICKER
     //----------------------------------------------------------------------
 
+	game::Camera camera(world.camera);
+
     {
         auto & v = this->bgverts[0];
         v.x = 0; v.y = 480; // RealHeight
    //      v.tu = lp3::narrow<float>(world.CameraX) / lp3::narrow<float>(world.bgWidth);
    //      v.tv = (lp3::narrow<float>(world.CameraY) + lp3::narrow<float>(world.CameraHeight))
 			// / lp3::narrow<float>(world.bgHeight);
-        v.tu = lp3::narrow<float>(world.CameraX) / lp3::narrow<float>(bg_size.x);
-        v.tv = (lp3::narrow<float>(world.CameraY) + lp3::narrow<float>(world.CameraHeight))
-            / lp3::narrow<float>(bg_size.y);
+        v.tu = lp3::narrow<float>(camera.x()) / lp3::narrow<float>(bg_size.x);
+        v.tv = (lp3::narrow<float>(camera.y2())) / lp3::narrow<float>(bg_size.y);
         v.rhw = 1;
         v.color = normColor;
     }
@@ -374,9 +375,9 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[1];
         v.x = 0; v.y = 0;
-        v.tu = lp3::narrow<float>(world.CameraX) /
+        v.tu = lp3::narrow<float>(camera.x()) /
 					lp3::narrow<float>(bg_size.x);
-		v.tv = lp3::narrow<float>(world.CameraY) / lp3::narrow<float>(bg_size.y);
+		v.tv = lp3::narrow<float>(camera.y()) / lp3::narrow<float>(bg_size.y);
         v.rhw = 1;
         v.color = normColor;
     }
@@ -384,8 +385,8 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[2];
         v.x = 640; v.y = 480; // RealWidth; v.y = RealHeight
-        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth) / bg_size.x;
-        v.tv = lp3::narrow<float>(world.CameraY + world.CameraHeight) / bg_size.y;
+        v.tu = lp3::narrow<float>(camera.x2()) / bg_size.x;
+        v.tv = lp3::narrow<float>(camera.y2()) / bg_size.y;
         v.rhw = 1;
         v.color = normColor;
     }
@@ -393,9 +394,9 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[3];
         v.x = 640; v.y = 0;
-        v.tu = lp3::narrow<float>(world.CameraX + world.CameraWidth)
+        v.tu = lp3::narrow<float>(camera.x2())
 				/ bg_size.x;
-		v.tv = lp3::narrow<float>(world.CameraY) / bg_size.y;
+		v.tv = lp3::narrow<float>(camera.y()) / bg_size.y;
         v.rhw = 1;
         v.color = normColor;
     }
@@ -411,9 +412,9 @@ void View::UpdateSprites() {
 
         {
             auto & v = sprite.SpriteVerts[0];
-            v.x = lp3::narrow<float>(sprite.x - world.CameraX);
+            v.x = lp3::narrow<float>(sprite.x - camera.x());
             v.y = lp3::narrow<float>(
-				sprite.y + sprite.high - (sprite.z) - world.CameraY);
+				sprite.y + sprite.high - (sprite.z) - camera.y());
             if (sprite.srcx != 0) {
                 v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
             }
@@ -424,8 +425,8 @@ void View::UpdateSprites() {
         }
         {
             auto & v = sprite.SpriteVerts[1];
-            v.x = sprite.x - world.CameraX;
-            v.y = sprite.y - (sprite.z) - world.CameraY;
+            v.x = sprite.x - camera.x();
+            v.y = sprite.y - (sprite.z) - camera.y();
             if (sprite.srcx != 0) {
                 v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
             }
@@ -437,8 +438,8 @@ void View::UpdateSprites() {
         }
         {
             auto & v = sprite.SpriteVerts[2];
-            v.x = sprite.x + sprite.wide - world.CameraX;
-            v.y = sprite.y + sprite.high - (sprite.z) - world.CameraY;
+            v.x = sprite.x + sprite.wide - camera.x();
+            v.y = sprite.y + sprite.high - (sprite.z) - camera.y();
             if (sprite.srcx2 != 0) {
                 v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
             }
@@ -450,8 +451,8 @@ void View::UpdateSprites() {
         }
         {
             auto & v = sprite.SpriteVerts[3];
-            v.x = sprite.x + sprite.wide - world.CameraX;
-            v.y = sprite.y - (sprite.z) - world.CameraY;
+            v.x = sprite.x + sprite.wide - camera.x();
+            v.y = sprite.y - (sprite.z) - camera.y();
             if (sprite.srcx2 != 0) {
                 v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
             }

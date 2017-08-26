@@ -6,10 +6,13 @@ project(lp3_nnd3d CXX)
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 add_library(Lp3_NND3d
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Camera.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/constants.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Env.hpp

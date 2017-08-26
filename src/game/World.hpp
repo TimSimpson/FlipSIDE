@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include "Camera.hpp"
 #include "CharacterSprite.hpp"
 #include "CinemaType.hpp"
 #include "PlayerData.hpp"
@@ -42,13 +43,7 @@ struct World {
     // Note from 2017: decreased from 125
     int const tRate = 60; //125; //The target frame rate
 
-    int CameraX;
-    int CameraY;
-    int CameraWidth;
-    int CameraHeight;
-    int cameraStopX;  //this is where the cameraHALTS!
-    int cameraStopY; //this is where the cameraHALTS! for y
-    int gotFocus;
+	CameraGuts camera;
 
 	std::array<CinemaType, 40> cinema; // Dialogue!
 	int cinemaCounter;

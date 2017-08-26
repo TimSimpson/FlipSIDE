@@ -1,4 +1,5 @@
 #include "CharacterSprite.hpp"
+#include "constants.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -96,6 +97,73 @@ CharacterSprite::CharacterSprite()
         v.rhw = 1;
     }
 }
+
+void off_camera_kill(CharacterSprite & sprite, Camera & camera) {
+	if (sprite.x > camera.x() + 640 || (sprite.x + sprite.wide) < camera.x()) {
+		kill(sprite);
+	}
+	if (sprite.y > camera.y() + 480 || (sprite.y + sprite.high) < camera.y()) {
+		kill(sprite);
+	}
+}
+
+// From an old function called `killS`, I'm not sure what it's supposed to do.
+// It doesn't seem as general as the name would imply and doesn't set enough
+// of the fields (unless these are all that's needed to effectively kill a sprite)
+void kill(CharacterSprite & sprite) {
+	sprite.visible = false;
+	sprite.kind = Kind::neutral;
+	sprite.name = "";
+	sprite.trueVisible = 2;
+	sprite.flickerTime = 0;
+	sprite.target = -1;
+
+	{
+		auto & ws = sprite.SpriteVerts[0];
+		ws.x = lp3::narrow<float>(sprite.x);
+		ws.y = lp3::narrow<float>(sprite.y + sprite.high);
+		ws.tu = 0;
+		ws.tv = 0.5;
+		ws.rhw = 1;
+		ws.color = normal_color;
+	}
+	{
+		auto & ws = sprite.SpriteVerts[1];
+		ws.x = lp3::narrow<float>(sprite.x);
+		ws.y = lp3::narrow<float>(sprite.y);
+		ws.tu = 0;
+		ws.tv = 0;
+		ws.rhw = 1;
+		ws.color = normal_color;
+	}
+	{
+		auto & ws = sprite.SpriteVerts[2];
+		ws.x = lp3::narrow<float>(sprite.x + sprite.wide);
+		ws.y = lp3::narrow<float>(sprite.y + sprite.high);
+		ws.tu = 0.5;
+		ws.tv = 0.5;
+		ws.rhw = 1;
+		ws.color = normal_color;
+	}
+	{
+		auto & ws = sprite.SpriteVerts[3];
+		ws.x = sprite.x + sprite.wide;
+		ws.y = sprite.y;
+		ws.tu = 0.5;
+		ws.tv = 0;
+		ws.rhw = 1;
+		ws.color = normal_color;
+	}
+}
+
+// Makes the sprite seek out it's "seek" vars
+void seek(CharacterSprite & s) {
+   if (s.x < s.seekx) { s.x = s.x + (s.mph * speed_factor); }
+   if (s.x > s.seekx) { s.x = s.x - (s.mph * speed_factor); }
+   if (s.y < s.seeky) { s.y = s.y + (s.mph * speed_factor); }
+   if (s.y > s.seeky) { s.y = s.y - (s.mph * speed_factor); }
+}
+
 
 // Makes the sprite's size match it's current Animation Frame
 void unstretch(CharacterSprite & s) {
