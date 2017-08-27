@@ -27,6 +27,7 @@ private:
 	view::View & view;
 	Sound & sound;
 	World & world;
+	std::array<bool, 3> keys_pressed;
 
 public:
 	TitleScreenImpl(GameProcessSpace & space, 
@@ -36,7 +37,8 @@ public:
 		vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
-        world(world_arg)		
+        world(world_arg),
+		keys_pressed{}
     {
 		world = World{};
 		this->destroyEverything();
@@ -47,22 +49,14 @@ public:
     void handle_input(const input::Event & event) override {
         switch(event.key) {
             case input::Key::up:
-                world.player_data[event.player].upKey = event.value != 0.0f;
-                break;
             case input::Key::down:
-                world.player_data[event.player].DownKEY = event.value != 0.0f;
-                break;
             case input::Key::left:
-                world.player_data[event.player].LeftKEY = event.value != 0.0f;
-                break;
             case input::Key::right:
-                world.player_data[event.player].RightKEY = event.value != 0.0f;
-                break;
             case input::Key::attack:
-                world.player_data[event.player].AttackKey = event.value != 0.0f;
-                break;
             case input::Key::jump:
-                world.player_data[event.player].JumpKey = event.value != 0.0f;
+				if (event.value) {
+					keys_pressed[event.player] = true;
+				}
                 break;
             default:
                 break;
@@ -122,9 +116,7 @@ public:
             if (s.name == "TitleBg1") {
                 //if (s.mode = "part2") then
                 for (k = 0; k <= 2; ++ k) {
-                    if (world.player_data[k].RightKEY == true || world.player_data[k].LeftKEY == true
-                        || world.player_data[k].upKey == true || world.player_data[k].DownKEY == true
-                        || world.player_data[k].AttackKey == true) {
+                    if (this->keys_pressed[k]) {
                         world.screen = "Select Player";
                     }
                 }
@@ -175,7 +167,7 @@ public:
 
             if (s.name == "intro story") {
                 for (k = 0; k <= 2; ++ k) {
-                    if (this->anyKey(k) == 1) {
+					if (this->keys_pressed[k]) {
                         world.screen = "Select Player";
                     }
                 }
@@ -469,20 +461,12 @@ public:
 			world.screen = "SelectPlayerz";
 			this->exec(
 				create_legacy_screen(
-					get_process_space(), view, sound, vb, world));
+					get_process_space(), view, sound, vb, world, keys_pressed));
 		}
     }
    
 
 private:
-    long anyKey(int zed) {
-        // Returns true if the player at the given index is pressing any key.
-        return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
-                 || world.player_data[zed].upKey || world.player_data[zed].DownKEY
-                 || world.player_data[zed].AttackKey) ? 1 : 0);
-    }
-
-
     // 2017: Initializes the game. Port uses a lot of constructors so it misses
     // the sheer joy of initializing hundreds of global variables sitting in a
     // big static array like the old code did.
@@ -585,10 +569,7 @@ private:
     void titleScreen() {
         int j = 0;
 
-        for (j = 0; j <= 2; ++j) {
-            world.player_data[j].lives = 3;
-            world.continues = 2;
-        }
+
 
         this->destroyEverything();
         sound.PlayWave("OpeningWAV.wav");

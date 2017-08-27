@@ -31,7 +31,8 @@ private:
 
 public:
 	LegacyGame(GameProcessSpace & space, view::View & view_arg,
-		       Sound & sound_arg, Vb & vb_arg, World & world_arg)
+		       Sound & sound_arg, Vb & vb_arg, World & world_arg,
+			   std::array<bool, 3> keys_pressed)
     :   GameProcess(space),
 		vb(vb_arg),
         view(view_arg),
@@ -40,8 +41,14 @@ public:
         random()
     {
         // the select player screen
-
+		world = World{};
         this->destroyEverything();
+		world.screen = "SelectPlayerz";
+		for (int j = 0; j <= 2; ++j) {
+			world.player_data[j].lives = 3;
+			world.continues = 2;
+		}
+
         this->NowLoading();
         view.UpdateSprites();
         view.LoadTexture(0, "PlayerS2.png", 320, 400);
@@ -55,7 +62,7 @@ public:
             s.y = 36 * 2;
             s.wide = 105 * 2;
             s.high = (217 - 36) * 2;
-            if (this->anyKey(0) == 1) { s.visible = true; }
+            if (keys_pressed[0]) { s.visible = true; }
             s.name = "Selecter";
             s.frame = 1;
             s.miscTime = world.clock + 2;
@@ -66,7 +73,7 @@ public:
             s.y = 36 * 2;
             s.wide = 105 * 2;
             s.high = (217 - 36) * 2;
-            if (this->anyKey(1) == 1) { s.visible = true; };
+            if (keys_pressed[1] == 1) { s.visible = true; };
             s.name = "Selecter";
             s.frame = 2;
             s.miscTime = world.clock + 2;
@@ -76,7 +83,7 @@ public:
             s.x = 212 * 2; s.y = 36 * 2;
             s.wide = 105 * 2;
             s.high = (217 - 36) * 2;
-            if (this->anyKey(2) == 1) { s.visible = true; };
+            if (keys_pressed[2]) { s.visible = true; };
             s.name = "Selecter";
             s.miscTime = world.clock + 2;
             s.frame = 3;
@@ -2837,9 +2844,10 @@ private:
 
 gsl::owner<GameProcess *> create_legacy_screen(
 	GameProcessSpace & space,
-	view::View & view, Sound & sound, Vb & vb, World & world)
+	view::View & view, Sound & sound, Vb & vb, World & world,
+	std::array<bool, 3> keys_pressed)
 {
-	return new LegacyGame(space, view, sound, vb, world);
+	return new LegacyGame(space, view, sound, vb, world, keys_pressed);
 }
 
 }   }  // end namespace
