@@ -2,6 +2,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
 #include "SelectScreen.hpp"
 
@@ -41,7 +42,7 @@ public:
 		keys_pressed{}
     {
 		world = World{};
-		this->destroyEverything();
+		destroyEverything(world, view, sound);
         world.screen = "title2";
 		this->titleScreen();
     }
@@ -439,7 +440,7 @@ public:
 
 		if (world.screen == "intro story") {
 			world.screen = "intro story 2";
-			destroyEverything();
+			destroyEverything(world, view, sound);
 			view.LoadTexture(1, "Open1.png", 313, 263);
 			view.LoadTexture(2, "Open6.png", 320, 258);
 			view.LoadTexture(3, "Open7.png", 320, 194);
@@ -471,37 +472,7 @@ public:
 
 
 private:
-    // 2017: Initializes the game. Port uses a lot of constructors so it misses
-    // the sheer joy of initializing hundreds of global variables sitting in a
-    // big static array like the old code did.
-    void destroyEverything(int how=0) {
-        int penguin;
-        int goatorg;
-        if (world.Sprite[1].name != "Selecter"
-			&& world.Sprite[0].name != "GameOverCloudBg")
-		{
-			sound.silence_sfx();
-        }
-
-        sound.PlayIsoWave("nothing.wav");
-
-        if (how != 2) {
-            sound.PlayBgm("");
-        }
-
-        view.LoadTexture(-1, "PlainBlack.png", 25, 25);
-        world.gotFocus = -1;
-        world.CameraX = 0;
-        world.CameraY = 0;
-        goatorg = 0;
-        penguin = world.spritesInUse;
-        //If how = 2 Then goatorg = 30: penguin = 95
-
-        for (int j = goatorg; j <= penguin; ++ j) {
-            world.Sprite[j] = CharacterSprite{};
-        }
-    }
-
+    
     void findOrder() {
         int texorg = 0;
         int davidorg1 = 0;
@@ -541,7 +512,7 @@ private:
     }
 
     void titleScreen() {
-        this->destroyEverything();
+		destroyEverything(world, view, sound); 
         sound.PlayWave("OpeningWAV.wav");
 
         view.LoadTexture(0, "title2ALT.png", 285, 427);

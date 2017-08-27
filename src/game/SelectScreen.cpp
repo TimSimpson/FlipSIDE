@@ -2,6 +2,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
 #include "LegacyGame.hpp"
 
@@ -42,7 +43,7 @@ public:
     {
         // the select player screen
         world = World{};
-        this->destroyEverything();
+		destroyEverything(world, view, sound);
         world.screen = "SelectPlayerz";
         for (int j = 0; j <= 2; ++j) {
             world.player_data[j].lives = 3;
@@ -187,49 +188,7 @@ public:
     }
 
 private:
-    // 2017: Initializes the game. Port uses a lot of constructors so it misses
-    // the sheer joy of initializing hundreds of global variables sitting in a
-    // big static array like the old code did.
-    void destroyEverything(int how=0) {
-        int penguin;
-        int goatorg;
-        if (world.Sprite[1].name == "Selecter") {
-            goto dogyup;
-        }
-        if (world.Sprite[0].name == "GameOverCloudBg") {
-            goto dogyup;
-        }
-
-        sound.silence_sfx();
-        //for (int j = 1; j <= 15; ++ j) {
-        //    sound.PlayWave("nothing.wav");
-        //}
-
-     dogyup:
-
-        sound.PlayIsoWave("nothing.wav");
-
-        if (how != 2) {
-            sound.PlayBgm("");
-        }
-
-        view.LoadTexture(-1, "PlainBlack.png", 25, 25);
-        //bgtexture = Nothing
-        //for (int j = 0; j < 9; ++ j) {
-            // Set AnimationTexture(j) = Nothing
-        //}
-        world.gotFocus = -1;
-        world.CameraX = 0;
-        world.CameraY = 0;
-        goatorg = 0;
-        penguin = world.spritesInUse;
-        //If how = 2 Then goatorg = 30: penguin = 95
-
-        for (int j = goatorg; j <= penguin; ++ j) {
-            world.Sprite[j] = CharacterSprite{};
-        }
-    }
-
+    
     void loadAnimation(int who, const std::string & file) {
         auto & s = world.Sprite[who];
         view.load_animation_file(s.Aframe, file);

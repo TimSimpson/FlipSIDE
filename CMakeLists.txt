@@ -6,6 +6,8 @@ project(lp3_nnd3d CXX)
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 
 add_library(Lp3_NND3d
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/BaseScreen.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/BaseScreen.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.hpp
@@ -14,6 +16,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameOverScreen.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameOverScreen.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/LegacyGame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/LegacyGame.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/PlayerData.hpp

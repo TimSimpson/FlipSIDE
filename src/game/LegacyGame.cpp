@@ -2,7 +2,9 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
+#include "GameOverScreen.hpp"
 #include "TitleScreen.hpp"
 
 #ifdef _MSC_VER
@@ -41,6 +43,8 @@ public:
     {
 		LP3_ASSERT(boost::starts_with(world.screen, "Level"));
 		LP3_ASSERT(world.currentScreen != world.screen);
+		
+		sound.silence_sfx();
 
         //as long as this is set to this crazy value, it won't load it again.
         world.currentScreen = world.screen;
@@ -98,7 +102,6 @@ public:
         int penguin = 0;
         int trueorg; //penguin and true org are buddies and also junk variables
 
-                     //----------------------------------------------------------------------
                      //                   CAMERA TIME
                      //----------------------------------------------------------------------
         this->findPlayers();
@@ -231,33 +234,9 @@ public:
                 sopoer = boost::lexical_cast<double>(world.screen.substr(5, 1));
                 this->levelR(sopoer, j);
             }
-
-            {
-                auto & s = world.Sprite[j];
-
-                if (s.trueVisible != 0) {
-                    if (s.trueVisible == 1) { s.visible = true; }
-                    if (s.trueVisible == 2) { s.visible = false; }
-                    //s.trueVisible = 0
-                }
-
-                if (s.flickerTime > world.clock) {
-                    if (s.trueVisible == 0) {
-                        if (s.visible == false) { s.trueVisible = 2; }
-                        if (s.visible == true) { s.trueVisible = 1; }
-                    }
-
-                    if (s.flickOn == true) { s.visible = false; }
-                    if (s.flickOn == false) { s.visible = true; }
-                    if (s.flickOn == true) {
-                        s.flickOn = false;
-                    }
-                    else {
-                        s.flickOn = true;
-                    }
-                }
-            }
         }
+
+        flicker(world);
 
 
         //Rem-------------------------------------------------------------------
@@ -961,22 +940,6 @@ if (s.mode == "truck") {
                 }
             }
 
-            if (s.name == "GameOverCloudTitle") {
-                if (world.clock > s.miscTime) {
-                    s.high = s.high + 2 * world.sFactor;
-                    s.y = s.y - world.sFactor;
-                    if (s.y < 0) { s.flickerTime = world.clock + 1; }
-                    if (s.y < -300) {
-                        s.wide = s.wide - (10 * world.sFactor);
-                        s.x = s.x + 5 * world.sFactor;
-                        if (s.wide < 0) {
-                            s.visible = false;
-                            world.screen = "title";
-                        }
-                    }
-                }
-            }
-
             if (s.name == "Selecter") {
                 if (world.clock > s.miscTime) {
                     s.miscTime = world.clock + 0.1;  //this way, the person won't scream through the selection box because it moves at 40 FPS!
@@ -1018,7 +981,7 @@ if (s.mode == "truck") {
                     if (s.miscTime == 0) {
                         s.miscTime = world.clock + 2;
                         world.Sprite[31].zOrder = -100;
-                        this->findOrder();
+                        findOrder(world);
                     }
 
                     {
@@ -1067,7 +1030,7 @@ if (s.mode == "truck") {
                     if (s.miscTime < world.clock) {
                         s.mode = "2";
                         s.name = "script";
-                        this->findOrder();
+                        findOrder(world);
                     }
                 }
 
@@ -1579,87 +1542,6 @@ private:
         LP3_ASSERT(false); // TODO
     }
 
-    // 2017: Initializes the game. Port uses a lot of constructors so it misses
-    // the sheer joy of initializing hundreds of global variables sitting in a
-    // big static array like the old code did.
-    void destroyEverything(int how=0) {
-        int penguin;
-        int goatorg;
-        if (world.Sprite[1].name == "Selecter") {
-            goto dogyup;
-        }
-        if (world.Sprite[0].name == "GameOverCloudBg") {
-            goto dogyup;
-        }
-
-        sound.silence_sfx();
-        //for (int j = 1; j <= 15; ++ j) {
-        //    sound.PlayWave("nothing.wav");
-        //}
-
-     dogyup:
-
-        sound.PlayIsoWave("nothing.wav");
-
-        if (how != 2) {
-            sound.PlayBgm("");
-        }
-
-        view.LoadTexture(-1, "PlainBlack.png", 25, 25);
-        //bgtexture = Nothing
-        //for (int j = 0; j < 9; ++ j) {
-            // Set AnimationTexture(j) = Nothing
-        //}
-        world.gotFocus = -1;
-        world.CameraX = 0;
-        world.CameraY = 0;
-        goatorg = 0;
-        penguin = world.spritesInUse;
-        //If how = 2 Then goatorg = 30: penguin = 95
-
-        for (int j = goatorg; j <= penguin; ++ j) {
-            world.Sprite[j] = CharacterSprite{};
-        }
-    }
-
-    void findOrder() {
-        int texorg = 0;
-        int davidorg1 = 0;
-
-        //2017: This is madness. Looks like it set `drawTrue` to false for
-        //      everything, then went through and found the sprites with the
-        //      highest z order first and put them in the drawOrder array.
-        //      At the end the drawOrder array has indices of sprites from
-        //      the close (high z order) ones to the far away (low z order)
-        //      ones.
-        for (int j = 0; j <= world.spritesInUse; ++ j) {
-         world.Sprite[j].drawTrue = false;
-         world.drawOrder[j] = -150;
-        }
-
-        for (int j = 0; j <= world.spritesInUse; ++ j) {
-         texorg = -150;
-         davidorg1 = 0;
-         for (int k = 0; k <= world.spritesInUse; ++ k) {
-             if (world.Sprite[k].zOrder > texorg
-                 && world.Sprite[k].drawTrue == false) {
-                 texorg = world.Sprite[k].zOrder;
-                 davidorg1 = k;
-             }
-         }
-         world.drawOrder[j] = davidorg1;
-         world.Sprite[davidorg1].drawTrue = true;
-        }
-
-        //2017: Sanity check
-        int last_value = 9999;
-        for (int i = 0; i <= world.spritesInUse; ++i) {
-            int next_value = world.Sprite[world.drawOrder[i]].zOrder;
-            LP3_ASSERT(last_value >= next_value);
-            last_value = next_value;
-        }
-    }
-
     bool flipGame() {
         // I think this handles switching to different rooms or levels.
         int penguin;
@@ -1716,7 +1598,9 @@ private:
         if (world.Sprite[0].name == "dead"
             && world.Sprite[10].name == "dead"
             && world.Sprite[20].name == "dead") {
-            this->gameOver();
+			this->exec(create_gameover_screen(
+				this->get_process_space(), view, sound, vb, world));
+			return true;
         }
 
         return false;
@@ -1768,32 +1652,6 @@ private:
         }
 
         return goatX;
-    }
-
-    void gameOver() {
-        sound.PlayBgm("");
-        world.screen = "gameOver";
-        this->destroyEverything();
-        view.LoadTexture(0, "GameOver.png", 320, 287);
-        {
-            auto & s = world.Sprite[0];
-            s.srcx = 1; s.srcy = 1; s.srcx2 = 320; s.srcy2 = 240;
-            s.x = 0; s.y = 0; s.wide = 640; s.high = 480; s.visible = true;
-            s.trueVisible = 1;
-            s.name = "GameOverCloudBg";
-            s.texture = 0;
-            s.color = normColor;
-        }
-        {
-            auto & s = world.Sprite[1];
-            s.srcx = 1; s.srcy = 243; s.srcx2 = 320; s.srcy2 = 287;
-            s.x = 0; s.y = 180; s.wide = 640; s.high = 94; s.visible = true;
-            s.trueVisible = 1;
-            s.name = "GameOverCloudTitle"; s.texture = 0;
-            s.miscTime = world.clock + 4;
-        }
-        sound.PlayWave("GameOver.wav");
-        this->findOrder();
     }
 
     double getMiddleX(int who) {
@@ -1882,7 +1740,7 @@ private:
         world.Gravity = 0;
 
         if (which == 1.1 || which == 1) {
-            this->destroyEverything();
+			destroyEverything(world, view, sound);
             this->MakeLevel("Level1Opening.ogg", "Level1.cap",
 // TSNOW: This is such a hack, but honestly the graphic for the apartment
 //        carpet- which already looked terrible - makes the eyes bleed
@@ -2440,7 +2298,7 @@ private:
                         s.kind, s.zOrder);
             }
         }
-        this->findOrder();
+        findOrder(world);
     }
 
     void makeJump(int which) {
@@ -2462,10 +2320,8 @@ private:
         const std::string & CinemaAnimationFile,
         const bool stopMusic,
         const bool loadScreen) {
-        //destroyEverything
-
-        this->destroyEverything(2);
-
+        
+		destroyEverything(world, view, sound, 2);
 
         if (loadScreen == true) { this->NowLoading(); }
 
@@ -2474,9 +2330,6 @@ private:
         if (stopMusic == true) { sound.PlayBgm(""); }
 
 
-        //playBGM ""
-
-        //destroyEverything 2
         this->loadLevel(levelFile); //"Level1b.cap"
 
         world.Gravity = 20;
@@ -2506,7 +2359,7 @@ private:
             this->initSprites(j);
         }
 
-        this->findOrder();
+        findOrder(world);
         world.Sprite[33].name = "cinema"; world.Sprite[33].zOrder = -149;
         world.Sprite[32].name = "cinema"; world.Sprite[32].zOrder = -149;
         world.Sprite[31].name = "cinema"; world.Sprite[31].zOrder = -149;
@@ -2557,7 +2410,7 @@ private:
     void selectPlayer() {
         // the select player screen
 
-        this->destroyEverything();
+		destroyEverything(world, view, sound);
         this->NowLoading();
         view.UpdateSprites();
         view.LoadTexture(0, "PlayerS2.png", 320, 400);
@@ -2795,7 +2648,7 @@ private:
         world.Sprite[opera].z = world.Sprite[who].z;
         world.Sprite[opera].seekx = wherex;
         world.Sprite[opera].seeky = wherey;
-        findOrder();
+        findOrder(world);
     }
 
 };  // end of GameImpl class
