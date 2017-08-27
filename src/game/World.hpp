@@ -39,8 +39,7 @@ struct World {
     bool debugOn;
     double sFactor; //makes objects move at speeds irrelevent to frame rate
 
-    // Note from 2017: decreased from 125
-    int const tRate = 60; //125; //The target frame rate
+    // Note from 2017: decreased from 125    
 
     int CameraX;
     int CameraY;

@@ -40,8 +40,10 @@ public:
         world(world_arg),
         random(random_arg)		
     {
-        this->destroyEverything();
-        world.screen = "title";		
+		world = World{};
+		this->destroyEverything();
+        world.screen = "title2";	
+		this->titleScreen();
     }
 
     void handle_input(const input::Event & event) override {
@@ -468,7 +470,8 @@ public:
 		if (world.screen == "Select Player") {
 			world.screen = "SelectPlayerz";
 			this->exec(
-				new LegacyGame(get_process_space(), view, sound, vb, random, world));
+				create_legacy_screen(
+					get_process_space(), view, sound, vb, random, world));
 		}
     }
    
@@ -579,14 +582,6 @@ private:
             world.Sprite[0].visible = false;
         }  //End of intro story with
 
-
-        //playWave "conzero.wav"
-        if (world.screen == "title") {
-            //playWave "conTen.wav"
-            world.screen = "title2";
-            this->titleScreen();
-            //screen = "intro story"
-        }
     }
 
     void titleScreen() {
