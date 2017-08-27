@@ -75,23 +75,8 @@ public:
         int k = 0;
         int penguin = 0;
        
-      
-
-        //-----------------------------------------------------------
-        //START OF NORMAL ROUTINE
-        //------------------------------------------------------------
-
-
-
-
-
-
-
         //Rem-FLICKER-
         for (j = 0; j < world.spritesInUse; ++j) {
-
-
-
             {
                 auto & s = world.Sprite[j];
 
@@ -156,7 +141,7 @@ public:
                 }
             }
 
-if (s.name == "Title2") {
+			if (s.name == "Title2") {
                 if (s.miscTime < world.clock && s.mode != "stop") {
                     s.trueVisible = 1;
                     s.flickerTime = world.clock + 5;
@@ -478,17 +463,7 @@ if (s.name == "Title2") {
 
         view.UpdateSprites();
 
-        this->flipGame();
-        world.gpRate2 = world.gpRate2 + 1;
-        if (world.clock > world.cranBerry2) {
-            world.cranBerry2 = (world.clock + 1);
-            world.gpRate = world.gpRate2;
-            world.gpRate2 = 0;
-        }
-        for (j = 0; j < world.spritesInUse; ++ j) {
-            world.Sprite[j].lastX = world.Sprite[j].x;
-            world.Sprite[j].lastY = world.Sprite[j].y;
-        }
+        this->flipGame();       
 
 		if (world.screen == "Select Player") {
 			world.screen = "SelectPlayerz";
@@ -506,14 +481,6 @@ private:
                  || world.player_data[zed].AttackKey) ? 1 : 0);
     }
 
-    void centerSprite(int who) {
-        // Aims the camera on the given sprite.
-        auto & s = world.Sprite[who];
-        s.x = (world.CameraX + (world.CameraWidth / 2)) - (s.wide / 2);
-        s.y = (world.CameraY + (world.CameraHeight / 2)) - (s.high / 2);
-    }
-
-  
 
     // 2017: Initializes the game. Port uses a lot of constructors so it misses
     // the sheer joy of initializing hundreds of global variables sitting in a
@@ -521,19 +488,11 @@ private:
     void destroyEverything(int how=0) {
         int penguin;
         int goatorg;
-        if (world.Sprite[1].name == "Selecter") {
-            goto dogyup;
+        if (world.Sprite[1].name != "Selecter" 
+			&& world.Sprite[0].name != "GameOverCloudBg") 
+		{
+			sound.silence_sfx();
         }
-        if (world.Sprite[0].name == "GameOverCloudBg") {
-            goto dogyup;
-        }
-
-        sound.silence_sfx();
-        //for (int j = 1; j <= 15; ++ j) {
-        //    sound.PlayWave("nothing.wav");
-        //}
-
-     dogyup:
 
         sound.PlayIsoWave("nothing.wav");
 
@@ -542,10 +501,6 @@ private:
         }
 
         view.LoadTexture(-1, "PlainBlack.png", 25, 25);
-        //bgtexture = Nothing
-        //for (int j = 0; j < 9; ++ j) {
-            // Set AnimationTexture(j) = Nothing
-        //}
         world.gotFocus = -1;
         world.CameraX = 0;
         world.CameraY = 0;
@@ -634,45 +589,6 @@ private:
         }
     }
 
- 
-    double getMiddleX(int who) {
-        return world.Sprite[who].x + (world.Sprite[who].wide / 2);
-    }
-
-    double getMiddleY(int who) {
-        return world.Sprite[who].y + (world.Sprite[who].high / 2);
-    }
-
-    double getProx(int who, int who2) {
-        // Finds who is closet
-        return std::abs(getMiddleX(who) - getMiddleX(who2)) + std::abs(getMiddleY(who) - getMiddleY(who));
-        // amount of pixels they are close
-    }
-
-
-
-    void initSprites(int which) {
-        // TODO: Pass the name in rather than relying on the name variable.
-        auto & spr = world.Sprite[which];
-        spr.proc = load_process(spr.name);
-        spr.proc->initialize(view, sound, world.clock, random, spr);
-    }
-
-
-
-    void NowLoading() {
-        view.LoadTexture(-1, "NowLoading.png", 320, 240);
-        world.CameraWidth = 320;
-        world.CameraHeight = 240;
-        view.UpdateSprites();
-        //Call DrawStuff
-        world.CameraWidth = 640;
-        world.CameraHeight = 480;
-        view.ForceShowBackground();
-    }
-
- 
-  
     void titleScreen() {
         int j = 0;
 
@@ -681,19 +597,11 @@ private:
             world.continues = 2;
         }
 
-        //playBGM ""
-
-
-        //Call loadTexture(-1, "bg.png", 300, 300)
-
         this->destroyEverything();
         sound.PlayWave("OpeningWAV.wav");
 
         view.LoadTexture(0, "title2ALT.png", 285, 427);
         view.LoadTexture(1, "title1.png", 440, 427);
-        //loadTexture 2, "goomba.png", 240, 240
-        //Sprite(11).name = "goomba"
-        //Call initSprites(11)
         {
             auto & s = world.Sprite[0];
             s.srcx = 5;
