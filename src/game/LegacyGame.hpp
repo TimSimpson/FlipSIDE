@@ -16,8 +16,7 @@ namespace nnd3d { namespace game {
 // --------------------------------------------------------------------
 gsl::owner<GameProcess *> create_legacy_screen(
 		GameProcessSpace & space,
-		view::View & view, Sound & sound, Vb & vb,
-		Random & random, World & world);
+		view::View & view, Sound & sound, Vb & vb, World & world);
 ////
 ////class LegacyGame : public GameProcess
 ////{

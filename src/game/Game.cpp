@@ -40,13 +40,11 @@ GameProcess::GameProcess(GameProcessSpace & _space)
 :	space(_space)
 {}
 
-Game::Game(view::View & _view, Sound & _sound, Vb & vb, Random & random, World & _world)
+Game::Game(view::View & _view, Sound & _sound, Vb & vb, World & _world)
 :   process(),
 	world(_world)
 {
-
-
-    process.exec(create_title_screen(process, _view, _sound, vb, random, _world));
+    process.exec(create_title_screen(process, _view, _sound, vb, _world));
 }
 
 Game::~Game() {

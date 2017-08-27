@@ -27,18 +27,16 @@ private:
 	view::View & view;
 	Sound & sound;
 	World & world;
-	Random & random;
 
 public:
 	TitleScreenImpl(GameProcessSpace & space, 
 		            view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
-                    Random & random_arg, World & world_arg)
+                    World & world_arg)
     :   GameProcess(space),
 		vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
-        world(world_arg),
-        random(random_arg)		
+        world(world_arg)		
     {
 		world = World{};
 		this->destroyEverything();
@@ -471,7 +469,7 @@ public:
 			world.screen = "SelectPlayerz";
 			this->exec(
 				create_legacy_screen(
-					get_process_space(), view, sound, vb, random, world));
+					get_process_space(), view, sound, vb, world));
 		}
     }
    
@@ -707,8 +705,8 @@ private:
 
 GameProcess * create_title_screen(GameProcessSpace & space,
                                   view::View & view, Sound & sound, Vb & vb, 
-	                              Random & random, World & world) {
-	return new TitleScreenImpl(space, view, sound, vb, random, world);
+	                              World & world) {
+	return new TitleScreenImpl(space, view, sound, vb, world);
 }
 
 }   }  // end namespace

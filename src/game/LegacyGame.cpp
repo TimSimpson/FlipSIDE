@@ -22,16 +22,22 @@ namespace {
 
 class LegacyGame : public GameProcess
 {
+private:
+	Vb & vb;
+	view::View & view;
+	Sound & sound;
+	World & world;
+	Random random;
+
 public:
 	LegacyGame(GameProcessSpace & space, view::View & view_arg,
-		       Sound & sound_arg, Vb & vb_arg,
-               Random & random_arg, World & world_arg)
+		       Sound & sound_arg, Vb & vb_arg, World & world_arg)
     :   GameProcess(space),
 		vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
-        random(random_arg)
+        random()
     {
         // the select player screen
 
@@ -1295,12 +1301,6 @@ if (s.mode == "truck") {
     //     End Sub for playGame--------------------------------------------!!!
 
 private:
-    Vb & vb;
-    view::View & view;
-    Sound & sound;
-    World & world;
-    Random & random;
-
     long anyKey(int zed) {
         // Returns true if the player at the given index is pressing any key.
         return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
@@ -1720,7 +1720,7 @@ private:
             world.screen = "title2";
             this->exec(
                 create_title_screen(
-                    get_process_space(), view, sound, vb, random, world));
+					get_process_space(), view, sound, vb, world));
             return true;
         }
 
@@ -2837,10 +2837,9 @@ private:
 
 gsl::owner<GameProcess *> create_legacy_screen(
 	GameProcessSpace & space,
-	view::View & view, Sound & sound, Vb & vb,
-	Random & random, World & world)
+	view::View & view, Sound & sound, Vb & vb, World & world)
 {
-	return new LegacyGame(space, view, sound, vb, random, world);
+	return new LegacyGame(space, view, sound, vb, world);
 }
 
 }   }  // end namespace

@@ -68,7 +68,7 @@ private:
 class Game
 {
 public:
-    Game(view::View & view, Sound & sound, Vb & vb, Random & random, World & world);
+    Game(view::View & view, Sound & sound, Vb & vb, World & world);
 
 	~Game();
 

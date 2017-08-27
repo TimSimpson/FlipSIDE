@@ -121,8 +121,7 @@ int _main(core::PlatformLoop & loop) {
 	#else
 		mix::Init mix_init(MIX_INIT_MP3);
 	#endif
-
-	nnd3d::Random random;
+	
 	nnd3d::Vb vb{ media };
 	nnd3d::game::World world;
 	nnd3d::view::View view{ media, world, vb };
@@ -130,7 +129,7 @@ int _main(core::PlatformLoop & loop) {
 	nnd3d::MutableSound sound{ media };
 	(void)sound;
 
-	nnd3d::game::Game game(view, sound, vb, random, world);
+	nnd3d::game::Game game(view, sound, vb, world);
 
 	sims::FrameTimer frame_timer;
 
@@ -139,19 +138,20 @@ int _main(core::PlatformLoop & loop) {
     //       `doEvents` and used a suspect method of calculating the percentage
     //       of a second each frame took. Here we can just use a GameClock.
 	const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
+
 	sims::GameClock clock(ms_per_update);
 
     // 2017: This next clock stands in for a Visual Basic Timer that the
     //       old code would fire once every 200 ms.
     sims::GameClock old_timer(200);
 
-	auto run_game = [&world, &game, &input, &sound](std::int64_t ms) {
+	auto run_game = [&world, &game, &input, &sound, &ms_per_update](std::int64_t) {
 		// Garbage collect sound to avoid out of channel problems.
 		sound.garbage_collect();
 
 		// Handle input
 		{
-			for (const auto & event : input->retrieve_events(ms)) {
+			for (const auto & event : input->retrieve_events(ms_per_update)) {
 				game.handle_input(event);
 			}
 		}
@@ -161,7 +161,7 @@ int _main(core::PlatformLoop & loop) {
 		// in existence by. That's actually a bad approach for several
 		// reasons, but the take away is here we introducing a constant
 		// speed mod which will always be 0.016
-		world.sFactor = lp3::narrow<double>(ms) / 1000.0;
+		world.sFactor = lp3::narrow<double>(ms_per_update) / 1000.0;
 		world.clock = world.clock + world.sFactor;
 		if (world.LemonTime) {
 			world.sFactor *= 2;
@@ -229,6 +229,7 @@ int _main(core::PlatformLoop & loop) {
 		controls.update();
 
 		clock.run_updates(run_game);
+
 
 		old_timer.run_updates([&view](std::int64_t) {
 			view.animate();
