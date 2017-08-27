@@ -29,6 +29,8 @@ private:
     World & world;
     Random random;
 
+	CharacterSprite & game_over_cloud_bg;
+	CharacterSprite & game_over_title;
 public:
     GameOverScreen(GameProcessSpace & space, view::View & view_arg,
                Sound & sound_arg, Vb & vb_arg, World & world_arg)
@@ -37,7 +39,9 @@ public:
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
-        random()
+        random(),
+		game_over_cloud_bg(world.Sprite[0]),
+		game_over_title(world.Sprite[1])
     {
 		sound.silence_sfx();
         world = World{};
@@ -46,7 +50,7 @@ public:
         destroyEverything(world, view, sound);
         view.LoadTexture(0, "GameOver.png", 320, 287);
         {
-            auto & s = world.Sprite[0];
+            auto & s = game_over_cloud_bg;
             s.srcx = 1; s.srcy = 1; s.srcx2 = 320; s.srcy2 = 240;
             s.x = 0; s.y = 0; s.wide = 640; s.high = 480; s.visible = true;
             s.trueVisible = 1;
@@ -55,7 +59,7 @@ public:
             s.color = normColor;
         }
         {
-            auto & s = world.Sprite[1];
+            auto & s = game_over_title;
             s.srcx = 1; s.srcy = 243; s.srcx2 = 320; s.srcy2 = 287;
             s.x = 0; s.y = 180; s.wide = 640; s.high = 94; s.visible = true;
             s.trueVisible = 1;
@@ -74,49 +78,26 @@ public:
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
-        int penguin = 0;
-
+        
 		flicker(world);
 
-        for (j = 0; j < world.spritesInUse; ++j) {
-            auto & s = world.Sprite[j];			
-
-            if (s.name == "GameOverCloudTitle") {
-                if (world.clock > s.miscTime) {
-                    s.high = s.high + 2 * world.sFactor;
-                    s.y = s.y - world.sFactor;
-                    if (s.y < 0) { s.flickerTime = world.clock + 1; }
-                    if (s.y < -300) {
-                        s.wide = s.wide - (10 * world.sFactor);
-                        s.x = s.x + 5 * world.sFactor;
-                        if (s.wide < 0) {
-                            s.visible = false;
-							this->exec(create_title_screen(get_process_space(), view, sound, vb, world));
-							return;
-                        }
-                    }
-                }
-            }
-        }
+		auto & s = game_over_title;
+		if (world.clock > s.miscTime) {
+			s.high = s.high + 2 * world.sFactor;
+			s.y = s.y - world.sFactor;
+			if (s.y < 0) { s.flickerTime = world.clock + 1; }
+			if (s.y < -300) {
+				s.wide = s.wide - (10 * world.sFactor);
+				s.x = s.x + 5 * world.sFactor;
+				if (s.wide < 0) {
+					s.visible = false;
+					this->exec(create_title_screen(get_process_space(), view, sound, vb, world));
+					return;
+				}
+			}
+		}
 
         view.UpdateSprites();
-
-        if (world.exitS == "true" && boost::starts_with(world.screen, "Level")) {
-            double sapple = boost::lexical_cast<double>(world.screen.substr(5));
-            sapple = sapple + 0.1; // WTF, right? It's in the original code though...
-            world.screen = str(boost::format("Level%s") % sapple);
-        } // End If
-
-		world.gpRate2 = world.gpRate2 + 1;
-		if (world.clock > world.cranBerry2) {
-			world.cranBerry2 = (world.clock + 1);
-			world.gpRate = world.gpRate2;
-			world.gpRate2 = 0;
-		}
-		for (j = 0; j < world.spritesInUse; ++j) {
-			world.Sprite[j].lastX = world.Sprite[j].x;
-			world.Sprite[j].lastY = world.Sprite[j].y;
-		}
     }
 
 private:
