@@ -17,24 +17,8 @@ namespace nnd3d { namespace game {
 gsl::owner<GameProcess *> create_legacy_screen(
 		GameProcessSpace & space,
 		view::View & view, Sound & sound, Vb & vb, World & world,
-		std::array<bool, 3> keys_pressed);
-////
-////class LegacyGame : public GameProcess
-////{
-////public:
-////    LegacyGame(GameProcessSpace & space,
-////		       view::View & view, Sound & sound, Vb & vb, Random & random, World & world);
-////
-////    ~LegacyGame();
-////
-////    void handle_input(const input::Event & even) override;
-////
-////    void update() override;
-////
-////private:
-////    class GameImpl;
-////    gsl::owner<GameImpl *> impl;
-////};
+		std::array<boost::optional<std::string>, 3> players);
+
 
 }   }  // end namespace
 

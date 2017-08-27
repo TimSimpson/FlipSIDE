@@ -3,7 +3,7 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include "CharacterProc.hpp"
-#include "LegacyGame.hpp"
+#include "SelectScreen.hpp"
 
 #ifdef _MSC_VER
     // Avoid the zillions implicit conversion warnings
@@ -30,7 +30,7 @@ private:
 	std::array<bool, 3> keys_pressed;
 
 public:
-	TitleScreenImpl(GameProcessSpace & space, 
+	TitleScreenImpl(GameProcessSpace & space,
 		            view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
                     World & world_arg)
     :   GameProcess(space),
@@ -42,7 +42,7 @@ public:
     {
 		world = World{};
 		this->destroyEverything();
-        world.screen = "title2";	
+        world.screen = "title2";
 		this->titleScreen();
     }
 
@@ -68,7 +68,7 @@ public:
         int j = 0;
         int k = 0;
         int penguin = 0;
-       
+
         //Rem-FLICKER-
         for (j = 0; j < world.spritesInUse; ++j) {
             {
@@ -121,12 +121,6 @@ public:
                     }
                 }
 
-                //End If
-                //if (s.mode <> "part2") then
-                //if (sRightKEY = True Or LeftKEY = True Or UpKEY = True Or DownKEY = True Or AttackKey = True) then
-                //For k = 1 To 4: Sprite(k).miscTime = clock - 100: Sprite(k).visible = False: Next k
-                //End If
-                //End If
                 if (s.miscTime < world.clock && s.mode != "part2") {
                     s.visible = true;
                     s.mode = "part2"; //: .miscTime = clock + 5
@@ -438,33 +432,43 @@ public:
                         s.mode = "words2";
                     }
                 }
-
             }
-
-
-
         }
-        //TSNOW: end of the emulated with statement that creates variable "s",
-        //       along with the for loop that used the "j" variable.
-        //       Holy crap, after formatting that it's 1259 lines long.
-        //       In Visual Basic it was 910 lines long.
-
-        //---------------------------------------------------------------------
-        //      END OF AN ERA
-        //---------------------------------------------------------------------
 
         view.UpdateSprites();
 
-        this->flipGame();       
+		if (world.screen == "intro story") {
+			world.screen = "intro story 2";
+			destroyEverything();
+			view.LoadTexture(1, "Open1.png", 313, 263);
+			view.LoadTexture(2, "Open6.png", 320, 258);
+			view.LoadTexture(3, "Open7.png", 320, 194);
+			view.LoadTexture(4, "TitleScreen.png", 320, 240);
+			sound.PlayBgm("");
+			world.Sprite[0].name = "intro story";
+			{
+				auto & s = world.Sprite[1];
+				s.name = "words1";
+				s.x = 1;
+				s.y = 175;
+				s.miscTime = 0;
+				s.mode = "words1";
+				s.visible = false;
+				s.color = view.QBColor(0);
+			}
+
+			world.Sprite[0].color = view.QBColor(0);
+			world.Sprite[0].visible = false;
+		}  //End of intro story with
 
 		if (world.screen == "Select Player") {
 			world.screen = "SelectPlayerz";
 			this->exec(
-				create_legacy_screen(
+				create_select_screen(
 					get_process_space(), view, sound, vb, world, keys_pressed));
 		}
     }
-   
+
 
 private:
     // 2017: Initializes the game. Port uses a lot of constructors so it misses
@@ -473,8 +477,8 @@ private:
     void destroyEverything(int how=0) {
         int penguin;
         int goatorg;
-        if (world.Sprite[1].name != "Selecter" 
-			&& world.Sprite[0].name != "GameOverCloudBg") 
+        if (world.Sprite[1].name != "Selecter"
+			&& world.Sprite[0].name != "GameOverCloudBg")
 		{
 			sound.silence_sfx();
         }
@@ -536,41 +540,7 @@ private:
         }
     }
 
-    void flipGame() {
-        // I think this handles switching to different rooms or levels.
-
-
-        if (world.screen == "intro story") {
-            world.screen = "intro story 2";
-            destroyEverything();
-            view.LoadTexture(1, "Open1.png", 313, 263);
-            view.LoadTexture(2, "Open6.png", 320, 258);
-            view.LoadTexture(3, "Open7.png", 320, 194);
-            view.LoadTexture(4, "TitleScreen.png", 320, 240);
-            sound.PlayBgm("");
-            world.Sprite[0].name = "intro story";
-            {
-                auto & s = world.Sprite[1];
-                s.name = "words1";
-                s.x = 1;
-                s.y = 175;
-                s.miscTime = 0;
-                s.mode = "words1";
-                s.visible = false;
-                s.color = view.QBColor(0);
-            }
-
-            world.Sprite[0].color = view.QBColor(0);
-            world.Sprite[0].visible = false;
-        }  //End of intro story with
-
-    }
-
     void titleScreen() {
-        int j = 0;
-
-
-
         this->destroyEverything();
         sound.PlayWave("OpeningWAV.wav");
 
@@ -685,7 +655,7 @@ private:
 
 
 GameProcess * create_title_screen(GameProcessSpace & space,
-                                  view::View & view, Sound & sound, Vb & vb, 
+                                  view::View & view, Sound & sound, Vb & vb,
 	                              World & world) {
 	return new TitleScreenImpl(space, view, sound, vb, world);
 }

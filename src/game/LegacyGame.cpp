@@ -31,8 +31,7 @@ private:
 
 public:
 	LegacyGame(GameProcessSpace & space, view::View & view_arg,
-		       Sound & sound_arg, Vb & vb_arg, World & world_arg,
-			   std::array<bool, 3> keys_pressed)
+		       Sound & sound_arg, Vb & vb_arg, World & world_arg)
     :   GameProcess(space),
 		vb(vb_arg),
         view(view_arg),
@@ -40,60 +39,16 @@ public:
         world(world_arg),
         random()
     {
-        // the select player screen
-		world = World{};
-        this->destroyEverything();
-		world.screen = "SelectPlayerz";
-		for (int j = 0; j <= 2; ++j) {
-			world.player_data[j].lives = 3;
-			world.continues = 2;
-		}
+		LP3_ASSERT(boost::starts_with(world.screen, "Level"));
+		LP3_ASSERT(world.currentScreen != world.screen);
 
-        this->NowLoading();
-        view.UpdateSprites();
-        view.LoadTexture(0, "PlayerS2.png", 320, 400);
-        view.LoadTexture(-1, "PlayerS.png", 320, 240);
-        world.CameraWidth = 320;
-        world.CameraHeight = 240;
+        //as long as this is set to this crazy value, it won't load it again.
+        world.currentScreen = world.screen;
 
-        {
-            auto & s = world.Sprite[0];
-            s.x = 2 * 2;
-            s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (keys_pressed[0]) { s.visible = true; }
-            s.name = "Selecter";
-            s.frame = 1;
-            s.miscTime = world.clock + 2;
-        }
-        {
-            auto & s = world.Sprite[1];
-            s.x = 106 * 2;
-            s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (keys_pressed[1] == 1) { s.visible = true; };
-            s.name = "Selecter";
-            s.frame = 2;
-            s.miscTime = world.clock + 2;
-        }
-        {
-            auto & s = world.Sprite[2];
-            s.x = 212 * 2; s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (keys_pressed[2]) { s.visible = true; };
-            s.name = "Selecter";
-            s.miscTime = world.clock + 2;
-            s.frame = 3;
-        }
-        this->loadAnimation(0, "Selector.ani");
-        this->loadAnimation(1, "Selector.ani");
-        this->loadAnimation(2, "Selector.ani");
+        std::string crapple = world.screen.substr(5);
+        double boogeycrap = boost::lexical_cast<double>(crapple);
 
-        sound.PlayBgm("Player SelectWAV.wav");
-        sound.PlayWave("Select Your Characters of Justice.wav");
+        this->goToLevel(boogeycrap);
     }
 
     void handle_input(const input::Event & event) override {
@@ -1714,6 +1669,9 @@ private:
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
             world.screen = str(boost::format("Level%s") % sapple);
+			this->exec(
+				new LegacyGame(this->get_process_space(), view, sound, vb, world));
+			return true;
         } // End If
 
 
@@ -1731,19 +1689,20 @@ private:
             return true;
         }
 
-        //************************************************************
-        // LOADS A NEW LEVEL!------------------------------------
-        //************************************************************
-        if (boost::starts_with(world.screen, "Level")
-            && world.currentScreen != world.screen) {
-            //as long as this is set to this crazy value, it won't load it again.
-            world.currentScreen = world.screen;
+		// MOVED THIS TO CONSTRUCTOR:
+        //////************************************************************
+        ////// LOADS A NEW LEVEL!------------------------------------
+        //////************************************************************
+        ////if (boost::starts_with(world.screen, "Level")
+        ////    && world.currentScreen != world.screen) {
+        ////    //as long as this is set to this crazy value, it won't load it again.
+        ////    world.currentScreen = world.screen;
 
-            std::string crapple = world.screen.substr(5);
-            double boogeycrap = boost::lexical_cast<double>(crapple);
+        ////    std::string crapple = world.screen.substr(5);
+        ////    double boogeycrap = boost::lexical_cast<double>(crapple);
 
-            this->goToLevel(boogeycrap);
-        }
+        ////    this->goToLevel(boogeycrap);
+        ////}
 
         if (world.screen == "Select Player") {
             world.screen = "SelectPlayerz";
@@ -2845,9 +2804,10 @@ private:
 gsl::owner<GameProcess *> create_legacy_screen(
 	GameProcessSpace & space,
 	view::View & view, Sound & sound, Vb & vb, World & world,
-	std::array<bool, 3> keys_pressed)
+	std::array<boost::optional<std::string>, 3> players)
 {
-	return new LegacyGame(space, view, sound, vb, world, keys_pressed);
+	//TODO: Use players, somehow
+	return new LegacyGame(space, view, sound, vb, world);
 }
 
 }   }  // end namespace
