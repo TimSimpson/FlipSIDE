@@ -204,7 +204,6 @@ private:
         //Call DrawStuff
         world.CameraWidth = 640;
         world.CameraHeight = 480;
-        view.ForceShowBackground();
     }
 
 

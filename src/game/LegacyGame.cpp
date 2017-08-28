@@ -2395,8 +2395,7 @@ private:
         view.UpdateSprites();
         //Call DrawStuff
         world.CameraWidth = 640;
-        world.CameraHeight = 480;
-        view.ForceShowBackground();
+        world.CameraHeight = 480;        
     }
 
     void offCameraKill(int jex) {

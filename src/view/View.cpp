@@ -232,33 +232,6 @@ void View::draw_verts_as_quad(const Vertex * v, const int texIndex, float z) {
 	draw_vert_to_quad(v, quad, z);
 }
 
-void View::ForceShowBackground() {
-	// This was originally a block of code in the "NowLoading" function.
-        // It appears it would force the background to display, pre-empting
-        // the loop, so that while busy work took place at least the loading
-        // screen would be visible.
-        /*if (Form1.WindowState != vbMinimized) {
-
-            //cranBerry = Timer
-
-            With dev
-                Call .Clear(0, ByVal 0&, D3DCLEAR_TARGET, &HFF, 0, 0)
-
-                Call .BeginScene
-
-
-
-                'Call .CopyRects(bgSurface, 1, 1, .GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO), 1)
-
-
-                Call .SetTexture(0, bgtexture)
-                 Call .DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, bgverts(0), Len(bgverts(0)))
-                .EndScene
-                Call .Present(ByVal 0&, ByVal 0&, 0, ByVal 0&)
-            End With
-        }*/
-}
-
 void View::LoadHistory(const TextureHistory & other_history)
 {
     for (int i = 0; i < lp3::narrow<int>(other_history.size()); ++i) {

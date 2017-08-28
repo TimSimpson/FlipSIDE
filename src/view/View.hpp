@@ -1,5 +1,5 @@
-#ifndef NND3D_VIEW_HPP
-#define NND3D_VIEW_HPP
+#ifndef NND3D_VIEW_VIEW_HPP
+#define NND3D_VIEW_VIEW_HPP
 #pragma once
 
 #include <lp3/gfx.hpp>
@@ -19,14 +19,12 @@ public:
     View(core::MediaManager & media, game::World & world, Vb & vb);
 
     void operator()(const glm::mat4 & previous);
-	
-	// Call this to update periodic animations 
+
+	// Call this to update periodic animations
 	void animate();
 
 	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
 	void DrawStuff(float fps);
-
-	void ForceShowBackground();
 
     void LoadTexture(int which, const std::string & fileName, int howWide,
                      int howHigh);
