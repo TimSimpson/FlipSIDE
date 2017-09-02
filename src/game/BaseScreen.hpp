@@ -6,7 +6,7 @@
 #pragma once
 
 #include "Game.hpp"
-#include "../View.hpp"
+#include "../view.hpp"
 
 namespace nnd3d { namespace game {
 

@@ -32,9 +32,9 @@ private:
 	CharacterSprite & game_over_cloud_bg;
 	CharacterSprite & game_over_title;
 public:
-    GameOverScreen(GameProcessSpace & space, view::View & view_arg,
+    GameOverScreen(GameProcessSpace & _space, view::View & view_arg,
                Sound & sound_arg, Vb & vb_arg, World & world_arg)
-    :   GameProcess(space),
+    :   GameProcess(_space),
         vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
@@ -76,9 +76,7 @@ public:
 
     void update() override {
         world.lasttime = world.clock + 3.33333333333333E-02;
-        int j = 0;
-        int k = 0;
-        
+
 		flicker(world);
 
 		auto & s = game_over_title;
@@ -101,7 +99,7 @@ public:
     }
 
 private:
-    
+
     void loadAnimation(int who, const std::string & file) {
         auto & s = world.Sprite[who];
         view.load_animation_file(s.Aframe, file);

@@ -7,7 +7,7 @@
 #include "../Sound.hpp"
 #include "World.hpp"
 #include "../Vb.hpp"
-#include "../View.hpp"
+#include "../view.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -20,7 +20,7 @@ class GameProcess;
 class GameProcessSpace {
 public:
     GameProcessSpace();
-	
+
 	~GameProcessSpace();
 
     void exec(gsl::owner<GameProcess *> proc);

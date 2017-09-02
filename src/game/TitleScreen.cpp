@@ -31,10 +31,10 @@ private:
 	std::array<bool, 3> keys_pressed;
 
 public:
-	TitleScreenImpl(GameProcessSpace & space,
+	TitleScreenImpl(GameProcessSpace & _space,
 		            view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
                     World & world_arg)
-    :   GameProcess(space),
+    :   GameProcess(_space),
 		vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
@@ -68,7 +68,6 @@ public:
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
-        int penguin = 0;
 
         //Rem-FLICKER-
         for (j = 0; j < world.spritesInUse; ++j) {
@@ -472,7 +471,7 @@ public:
 
 
 private:
-    
+
     void findOrder() {
         int texorg = 0;
         int davidorg1 = 0;
@@ -512,7 +511,7 @@ private:
     }
 
     void titleScreen() {
-		destroyEverything(world, view, sound); 
+		destroyEverything(world, view, sound);
         sound.PlayWave("OpeningWAV.wav");
 
         view.LoadTexture(0, "title2ALT.png", 285, 427);

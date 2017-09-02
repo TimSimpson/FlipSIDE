@@ -31,10 +31,10 @@ private:
     Random random;
 
 public:
-    SelectScreen(GameProcessSpace & space, view::View & view_arg,
+    SelectScreen(GameProcessSpace & _space, view::View & view_arg,
                Sound & sound_arg, Vb & vb_arg, World & world_arg,
                std::array<bool, 3> keys_pressed)
-    :   GameProcess(space),
+    :   GameProcess(_space),
         vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
@@ -141,7 +141,6 @@ public:
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
-        int penguin = 0;
 
         for (j = 0; j < world.spritesInUse; ++j) {
             auto & s = world.Sprite[j];
@@ -188,7 +187,7 @@ public:
     }
 
 private:
-    
+
     void loadAnimation(int who, const std::string & file) {
         auto & s = world.Sprite[who];
         view.load_animation_file(s.Aframe, file);

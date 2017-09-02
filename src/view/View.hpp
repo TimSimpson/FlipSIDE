@@ -3,8 +3,8 @@
 #pragma once
 
 #include <lp3/gfx.hpp>
-#include "game/World.hpp"
-#include "Vb.hpp"
+#include "../game/World.hpp"
+#include "../Vb.hpp"
 
 namespace nnd3d { namespace view {
 

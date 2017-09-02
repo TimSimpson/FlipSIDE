@@ -5,7 +5,7 @@
 #include "CharacterSprite.hpp"
 #include "../Random.hpp"
 #include "../Sound.hpp"
-#include "../View.hpp"
+#include "../view.hpp"
 
 namespace nnd3d { namespace game {
 

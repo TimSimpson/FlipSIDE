@@ -32,9 +32,9 @@ private:
 	Random random;
 
 public:
-	LegacyGame(GameProcessSpace & space, view::View & view_arg,
+	LegacyGame(GameProcessSpace & _space, view::View & view_arg,
 		       Sound & sound_arg, Vb & vb_arg, World & world_arg)
-    :   GameProcess(space),
+    :   GameProcess(_space),
 		vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
@@ -43,7 +43,7 @@ public:
     {
 		LP3_ASSERT(boost::starts_with(world.screen, "Level"));
 		LP3_ASSERT(world.currentScreen != world.screen);
-		
+
 		sound.silence_sfx();
 
         //as long as this is set to this crazy value, it won't load it again.
@@ -2320,7 +2320,7 @@ private:
         const std::string & CinemaAnimationFile,
         const bool stopMusic,
         const bool loadScreen) {
-        
+
 		destroyEverything(world, view, sound, 2);
 
         if (loadScreen == true) { this->NowLoading(); }
@@ -2395,7 +2395,7 @@ private:
         view.UpdateSprites();
         //Call DrawStuff
         world.CameraWidth = 640;
-        world.CameraHeight = 480;        
+        world.CameraHeight = 480;
     }
 
     void offCameraKill(int jex) {
@@ -2656,7 +2656,7 @@ private:
 gsl::owner<GameProcess *> create_legacy_screen(
 	GameProcessSpace & space,
 	view::View & view, Sound & sound, Vb & vb, World & world,
-	std::array<boost::optional<std::string>, 3> players)
+	std::array<boost::optional<std::string>, 3>)
 {
 	//TODO: Use players, somehow
 	return new LegacyGame(space, view, sound, vb, world);
