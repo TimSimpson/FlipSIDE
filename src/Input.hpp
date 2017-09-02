@@ -4,24 +4,25 @@
 
 #include <fstream>
 #include <lp3/core.hpp>
+#include <lp3/input.hpp>
 #include <lp3/sims.hpp>
 #include <string>
 
 namespace nnd3d { namespace input {
 
 
-enum class Key {
-    up,
-    down,
-    left,
-    right,
-    attack,
-    jump,
-    pause,
-    quit,
-    skip_scene,
-    power_up,
-    lemon_time,
+enum class Key : int {
+    up = 0,
+    down = 1,
+    left = 2,
+    right = 3,
+    attack = 4,
+    jump = 5,
+    pause = 6,
+    quit = 7,
+    skip_scene = 8,
+    power_up = 9,
+    lemon_time = 10,
 };
 
 struct Event {
@@ -70,14 +71,16 @@ private:
 };
 
 // --------------------------------------------------------------------
-// KeyboardInputProvider
+// LegacyInputProvider
 // --------------------------------------------------------------------
 //      Grabs events from the keyboard, translates to game input.
+//      The keys used are based on the goofy layout of the original
+//      VB game.
 // --------------------------------------------------------------------
-class KeyboardInputProvider : public InputProvider {
+class LegacyInputProvider : public InputProvider {
 public:
-	KeyboardInputProvider();
-    ~KeyboardInputProvider() override = default;
+	LegacyInputProvider();
+    ~LegacyInputProvider() override = default;
 
     void handle_events(const SDL_Event & event);
 
@@ -85,6 +88,24 @@ public:
 private:
 	std::vector<Event> changes;
 };
+
+// --------------------------------------------------------------------
+// ModernInputProvider
+// --------------------------------------------------------------------
+//      Reads from lp3::input Controls. It expects the instance passed
+//      in to persist as long as this class does.
+// --------------------------------------------------------------------
+class ModernInputProvider : public InputProvider {
+public:
+    ModernInputProvider(lp3::input::Controls & controls);
+    ~ModernInputProvider() override = default;
+
+    std::vector<Event> retrieve_events(std::int64_t ms) override;
+private:
+    lp3::input::Controls & controls;
+    std::array<lp3::input::ControlMemory, 3> memory;
+};
+
 
 // --------------------------------------------------------------------
 // InputRecorder

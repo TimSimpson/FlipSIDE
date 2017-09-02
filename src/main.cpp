@@ -10,7 +10,7 @@
 #include "Input.hpp"
 #include "Sound.hpp"
 #include "Vb.hpp"
-#include "View.hpp"
+#include "view.hpp"
 #include "game/World.hpp"
 
 namespace core = lp3::core;
@@ -25,6 +25,7 @@ struct CommandLineArgs {
 	bool skip_playback_to_end;
 	boost::optional<std::string> record_input;
 	boost::optional<std::string> playback_input;
+	bool legacy_input;
 };
 
 boost::optional<CommandLineArgs> parse_args(
@@ -32,6 +33,7 @@ boost::optional<CommandLineArgs> parse_args(
 {
 	CommandLineArgs args;
 	args.skip_playback_to_end = false;
+	args.legacy_input = false;
 
 	for (std::size_t i = 1; i < string_args.size(); ++i) {
 		if (string_args[i] == "--record-input") {
@@ -54,6 +56,8 @@ boost::optional<CommandLineArgs> parse_args(
 				return boost::none;
 			}
 			args.skip_playback_to_end = true;
+		} else if (string_args[i] == "--legacy-input") {
+			args.legacy_input = true;
 		} else {
 			std::cerr << "Unknown argument: " << string_args[i] << "\n"
 				"Options: \n"
@@ -66,10 +70,31 @@ boost::optional<CommandLineArgs> parse_args(
 	return args;
 }
 
+void set_default_controls(lp3::input::Controls & controls) {
+	input::PreferredButtonMapping game_pad_mapping;
+	game_pad_mapping.device = input::PreferredDevice::GAME_PAD;
+
+	game_pad_mapping.set_mapping(
+		"Left Analog Up", "Left Analog Down", "Left Analog Left",
+		"Left Analog Right", "X", "A", "Start", "LB", "Back", "RB", "Y");
+
+	input::PreferredButtonMapping kb_mapping;
+	kb_mapping.device = input::PreferredDevice::KEYBOARD;
+	kb_mapping.set_mapping(
+		"Up", "Down", "Left", "Right",
+		"Z", "X", "Return", "Escape", "T", "R", "Y");
+
+	std::vector<input::PreferredButtonMapping> preferred_mappings = {
+		game_pad_mapping, kb_mapping
+	};
+
+	controls.set_defaults(0, preferred_mappings);
+}
+
 int _main(core::PlatformLoop & loop) {
 	const auto start_time = std::chrono::high_resolution_clock::now();
 
-	sdl::SDL2 sdl2(SDL_INIT_VIDEO);
+	sdl::SDL2 sdl2(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK| SDL_INIT_GAMECONTROLLER);
 	core::LogSystem log;
 
 	auto op_args = parse_args(loop.command_line_args());
@@ -87,11 +112,17 @@ int _main(core::PlatformLoop & loop) {
 		#endif
 	);
 	input::Controls controls;
+	set_default_controls(controls);
 
 	// Set up input stuff
-	nnd3d::input::KeyboardInputProvider kb_input;
+	nnd3d::input::LegacyInputProvider kb_input;
+	nnd3d::input::ModernInputProvider m_input(controls);
 	nnd3d::input::InputMultiplexer input_multiplexer;
-	input_multiplexer.add_input(&kb_input);
+	if (args.legacy_input) {
+		input_multiplexer.add_input(&kb_input);
+	} else {
+		input_multiplexer.add_input(&m_input);
+	}
 	nnd3d::input::InputProvider * input = &input_multiplexer;
 
 	// Playback input if requested
@@ -121,7 +152,7 @@ int _main(core::PlatformLoop & loop) {
 	#else
 		mix::Init mix_init(MIX_INIT_MP3);
 	#endif
-	
+
 	nnd3d::Vb vb{ media };
 	nnd3d::game::World world;
 	nnd3d::view::View view{ media, world, vb };

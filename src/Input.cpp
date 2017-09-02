@@ -81,11 +81,11 @@ namespace {
 	}
 }
 
-KeyboardInputProvider::KeyboardInputProvider()
+LegacyInputProvider::LegacyInputProvider()
 :	changes()
 {}
 
-void KeyboardInputProvider::handle_events(const SDL_Event & event) {
+void LegacyInputProvider::handle_events(const SDL_Event & event) {
 	if (SDL_KEYDOWN == event.type) {
 		StateChange state{ true, key_name_from_sdl(event.key.keysym.sym) };
 		auto ev = state_change_to_event(state);
@@ -101,11 +101,40 @@ void KeyboardInputProvider::handle_events(const SDL_Event & event) {
 	}
 }
 
-std::vector<Event> KeyboardInputProvider::retrieve_events(std::int64_t) {
+std::vector<Event> LegacyInputProvider::retrieve_events(std::int64_t) {
 	auto old_changes = std::move(changes);
 	changes.clear();
 	return old_changes;
 }
+
+
+ModernInputProvider::ModernInputProvider(lp3::input::Controls & _controls)
+:	controls(_controls),
+	memory()
+{}
+
+
+std::vector<Event> ModernInputProvider::retrieve_events(std::int64_t) {
+	std::vector<Event> events;
+
+	for (int i = 0; i < 3; ++ i) {
+		lp3::input::Control & c = controls.get_control(i);
+		auto updates = c.get_updates(memory[i]);
+		for (const auto & button : updates) {
+			events.push_back(
+				Event{
+					lp3::narrow<std::int8_t>(i),
+					static_cast<Key>(button.index),
+					button.value,
+				}
+			);
+		}
+		memory[i] = c.remember();
+	}
+
+	return std::move(events);
+}
+
 
 InputMultiplexer::InputMultiplexer()
 : providers()
