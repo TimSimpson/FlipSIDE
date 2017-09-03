@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include "Camera.hpp"
 #include "CharacterSprite.hpp"
 #include "CinemaType.hpp"
 #include "PlayerData.hpp"
@@ -39,14 +40,9 @@ struct World {
     bool debugOn;
     double sFactor; //makes objects move at speeds irrelevent to frame rate
 
-    // Note from 2017: decreased from 125    
+    // Note from 2017: decreased from 125
 
-    int CameraX;
-    int CameraY;
-    int CameraWidth;
-    int CameraHeight;
-    int cameraStopX;  //this is where the cameraHALTS!
-    int cameraStopY; //this is where the cameraHALTS! for y
+    CameraGuts camera;
     int gotFocus;
 
 	std::array<CinemaType, 40> cinema; // Dialogue!

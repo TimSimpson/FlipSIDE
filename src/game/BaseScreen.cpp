@@ -4,7 +4,7 @@ namespace nnd3d { namespace game {
 
 void destroyEverything(World & world, view::View & view, Sound & sound, int how) {
 	int penguin;
-	int goatorg;	
+	int goatorg;
 
 	//sound.PlayIsoWave("nothing.wav");
 
@@ -14,8 +14,8 @@ void destroyEverything(World & world, view::View & view, Sound & sound, int how)
 
 	view.LoadTexture(-1, "PlainBlack.png", 25, 25);
 	world.gotFocus = -1;
-	world.CameraX = 0;
-	world.CameraY = 0;
+	world.camera.CameraX = 0;
+	world.camera.CameraY = 0;
 	goatorg = 0;
 	penguin = world.spritesInUse;
 	//If how = 2 Then goatorg = 30: penguin = 95

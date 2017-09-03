@@ -200,15 +200,15 @@ public:
         //End if
 
         if (world.gotFocus != -1) {
-            world.CameraX = (trueorg + (world.Sprite[k].wide * 0.5)) - 320;
-            if (world.CameraX < 1) { world.CameraX = 1; }
-            if (world.CameraX + world.CameraWidth >= world.cameraStopX) {
-                world.CameraX = world.cameraStopX - 1 - world.CameraWidth;
+            world.camera.CameraX = (trueorg + (world.Sprite[k].wide * 0.5)) - 320;
+            if (world.camera.CameraX < 1) { world.camera.CameraX = 1; }
+            if (world.camera.CameraX + world.camera.CameraWidth >= world.camera.cameraStopX) {
+                world.camera.CameraX = world.camera.cameraStopX - 1 - world.camera.CameraWidth;
             }
-            world.CameraY = (penguin + (world.Sprite[k].high * 0.5)) - 240;
-            if (world.CameraY < 1) { world.CameraY = 1; }
-            if (world.CameraY + world.CameraHeight >= world.cameraStopY) {
-                world.CameraY = world.cameraStopY - 1 - world.CameraHeight;
+            world.camera.CameraY = (penguin + (world.Sprite[k].high * 0.5)) - 240;
+            if (world.camera.CameraY < 1) { world.camera.CameraY = 1; }
+            if (world.camera.CameraY + world.camera.CameraHeight >= world.camera.cameraStopY) {
+                world.camera.CameraY = world.camera.cameraStopY - 1 - world.camera.CameraHeight;
             }
         }
 
@@ -295,15 +295,15 @@ public:
                     s.y = s.y - world.sFactor;
                     //s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
                     s.speed = 0; //0.00001
-                    if (s.y < world.CameraY) { s.y = world.CameraY; }
+                    if (s.y < world.camera.CameraY) { s.y = world.camera.CameraY; }
                 }
                 if (world.player_data[penguin].DownKEY == true) {
                     if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
                     s.y = s.y + world.sFactor;
                     //s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
                     s.speed = 0; //0.00001
-                    if (s.y > world.CameraY + world.CameraHeight - s.high) {
-                        s.y = world.CameraY + world.CameraHeight - s.high;
+                    if (s.y > world.camera.CameraY + world.camera.CameraHeight - s.high) {
+                        s.y = world.camera.CameraY + world.camera.CameraHeight - s.high;
                     }
                 }
                 if (world.player_data[penguin].LeftKEY == true) {
@@ -315,7 +315,7 @@ public:
                     s.x = s.x - world.sFactor;
                     //s.Frame = s.Frame + 1: if s.Frame > 12 Then s.Frame = 10
                     s.speed = 0;  //0.00001
-                    if (s.x < world.CameraX) { s.x = world.CameraX; }
+                    if (s.x < world.camera.CameraX) { s.x = world.camera.CameraX; }
                 }
                 if (world.player_data[penguin].RightKEY == true) {
                     if (s.dir != "r" && world.player_data[penguin].upKey == false
@@ -327,8 +327,8 @@ public:
                     //s.Frame = s.Frame + 1: if s.Frame > 3 Then s.Frame = 1
                     s.speed = 0;  //0s.00001
 
-                    if (s.x > world.CameraX + world.CameraWidth - s.wide) {
-                        s.x = world.CameraX + world.CameraWidth - s.wide;
+                    if (s.x > world.camera.CameraX + world.camera.CameraWidth - s.wide) {
+                        s.x = world.camera.CameraX + world.camera.CameraWidth - s.wide;
                     }
                 }
 
@@ -414,46 +414,46 @@ public:
                         if (s.dir == "u") {
                             world.Sprite[k].seekx = s.x;
                             world.Sprite[k].seeky =
-                                s.y - (world.CameraHeight * 2);
+                                s.y - (world.camera.CameraHeight * 2);
                             world.Sprite[k].dir = "u";
                         }
                         if (s.dir == "d") {
                             world.Sprite[k].seekx = s.x;
                             world.Sprite[k].seeky =
-                                s.y + (2 * world.CameraHeight);
+                                s.y + (2 * world.camera.CameraHeight);
                             world.Sprite[k].dir = "d";
                         }
                         if (s.dir == "l") {
                             world.Sprite[k].seeky = s.y;
                             world.Sprite[k].seekx
-                                = s.x - (world.CameraWidth * 2);
+                                = s.x - (world.camera.CameraWidth * 2);
                             world.Sprite[k].dir = "l";
                         }
                         if (s.dir == "r") {
                             world.Sprite[k].seeky = s.y;
                             world.Sprite[k].seekx
-                                = s.x + (world.CameraWidth * 2);
+                                = s.x + (world.camera.CameraWidth * 2);
                             world.Sprite[k].dir = "r";
                         }
                         if (world.player_data[penguin].RightKEY == true) {
                             world.Sprite[k].seekx
-                                = s.x + (2 * world.CameraWidth);
+                                = s.x + (2 * world.camera.CameraWidth);
                         }
                         if (world.player_data[penguin].LeftKEY == true) {
                             world.Sprite[k].seekx
-                                = s.x - (world.CameraWidth * 2);
+                                = s.x - (world.camera.CameraWidth * 2);
                         }
                         if (world.player_data[penguin].upKey == true) {
                             world.Sprite[k].seeky
-                                = s.y - (world.CameraHeight * 2);
+                                = s.y - (world.camera.CameraHeight * 2);
                         }
                         if (world.player_data[penguin].DownKEY == true) {
                             world.Sprite[k].seeky
-                                = s.y + (world.CameraHeight * 2);
+                                = s.y + (world.camera.CameraHeight * 2);
                         }
                         if (s.mode == "truck") {
                             world.Sprite[k].seeky
-                                = world.CameraY - world.CameraHeight;
+                                = world.camera.CameraY - world.camera.CameraHeight;
                             world.Sprite[k].seekx = s.x;
                             world.Sprite[k].dir = "u";
                         }
@@ -506,89 +506,89 @@ public:
                         if (s.dir == "l") {
                             world.Sprite[k].seeky = s.y;
                             world.Sprite[k].seekx
-                                = s.x - (world.CameraWidth * 2);
+                                = s.x - (world.camera.CameraWidth * 2);
                             world.Sprite[k].dir = "l";
                             world.Sprite[k + 1].seekx
-                                = s.x - (world.CameraWidth * 2);
+                                = s.x - (world.camera.CameraWidth * 2);
                             world.Sprite[k + 1].seeky
-                                = s.y + (world.CameraHeight * 2);
+                                = s.y + (world.camera.CameraHeight * 2);
                             world.Sprite[k + 1].dir = "l";
                             world.Sprite[k + 2].seekx
-                                = s.x - (world.CameraWidth * 2);
+                                = s.x - (world.camera.CameraWidth * 2);
                             world.Sprite[k + 2].seeky
-                                = s.y - (world.CameraHeight * 2);
+                                = s.y - (world.camera.CameraHeight * 2);
                             world.Sprite[k + 2].dir = "l";
                         }
                         if (s.dir == "r") {
                             world.Sprite[k].seeky = s.y;
                             world.Sprite[k].seekx
-                                = s.x + (world.CameraWidth * 2);
+                                = s.x + (world.camera.CameraWidth * 2);
                             world.Sprite[k].dir = "r";
                             world.Sprite[k + 1].seekx
-                                = s.x + (world.CameraWidth * 2);
+                                = s.x + (world.camera.CameraWidth * 2);
                             world.Sprite[k + 1].seeky
-                                = s.y + (world.CameraHeight * 2);
+                                = s.y + (world.camera.CameraHeight * 2);
                             world.Sprite[k + 1].dir = "r";
                             world.Sprite[k + 2].seekx
-                                = s.x + (world.CameraWidth * 2);
+                                = s.x + (world.camera.CameraWidth * 2);
                             world.Sprite[k + 2].seeky
-                                = s.y - (world.CameraHeight * 2);
+                                = s.y - (world.camera.CameraHeight * 2);
                             world.Sprite[k + 2].dir = "r";
                         }
                         if (world.player_data[penguin].upKey == true || s.dir == "u") {
                             world.Sprite[k].seekx = s.x;
-                            world.Sprite[k].seeky = s.y - (world.CameraHeight * 2);
+                            world.Sprite[k].seeky = s.y - (world.camera.CameraHeight * 2);
                             world.Sprite[k].dir = "u";
                             world.Sprite[k + 1].seekx
-                                = s.x - (world.CameraWidth * 2);
+                                = s.x - (world.camera.CameraWidth * 2);
                             world.Sprite[k + 1].seeky
-                                = s.y - (world.CameraHeight * 2);
+                                = s.y - (world.camera.CameraHeight * 2);
                             world.Sprite[k + 1].dir = "u";
                             world.Sprite[k + 2].seekx
-                                = s.x + (world.CameraWidth * 2);
+                                = s.x + (world.camera.CameraWidth * 2);
                             world.Sprite[k + 2].seeky
-                                = s.y - (world.CameraHeight * 2);
+                                = s.y - (world.camera.CameraHeight * 2);
                             world.Sprite[k + 2].dir = "u";
                             if (world.player_data[penguin].LeftKEY == true) {
                                 world.Sprite[k + 2].seeky = s.y;
                                 world.Sprite[k + 2].seekx
-                                    = s.x - (world.CameraWidth * 2);
+                                    = s.x - (world.camera.CameraWidth * 2);
                                 world.Sprite[k + 2].dir = "l";
                             }
                             if (world.player_data[penguin].RightKEY == true) {
                                 world.Sprite[k + 1].seeky = s.y;
                                 world.Sprite[k + 1].seekx
-                                    = s.x + (world.CameraWidth * 2);
+                                    = s.x + (world.camera.CameraWidth * 2);
                                 world.Sprite[k + 1].dir = "r";
                             }
                         }
                         if (world.player_data[penguin].DownKEY == true
                             || s.dir == "d") {
                             world.Sprite[k].seekx = s.x;
-                            world.Sprite[k].seeky = s.y + (2 * world.CameraHeight);
+                            world.Sprite[k].seeky = s.y + (2 * world.camera.CameraHeight);
                             world.Sprite[k].dir = "d";
-                            world.Sprite[k + 1].seekx = s.x - (world.CameraWidth * 2);
-                            world.Sprite[k + 1].seeky = s.y + (world.CameraHeight * 2);
+                            world.Sprite[k + 1].seekx = s.x - (world.camera.CameraWidth * 2);
+                            world.Sprite[k + 1].seeky = s.y + (world.camera.CameraHeight * 2);
                             world.Sprite[k + 1].dir = "d";
-                            world.Sprite[k + 2].seekx = s.x + (world.CameraWidth * 2);
-                            world.Sprite[k + 2].seeky = s.y + (world.CameraHeight * 2);
+                            world.Sprite[k + 2].seekx = s.x + (world.camera.CameraWidth * 2);
+                            world.Sprite[k + 2].seeky = s.y + (world.camera.CameraHeight * 2);
                             world.Sprite[k + 2].dir = "d";
                             if (world.player_data[penguin].LeftKEY == true) {
                                 world.Sprite[k + 2].seeky = s.y;
                                 world.Sprite[k + 2].seekx
-                                    = s.x - (world.CameraWidth * 2);
+                                    = s.x - (world.camera.CameraWidth * 2);
                                 world.Sprite[k + 2].dir = "l";
                             }
                             if (world.player_data[penguin].RightKEY == true) {
                                 world.Sprite[k + 1].seeky = s.y;
                                 world.Sprite[k + 1].seekx
-                                    = s.x + (world.CameraWidth * 2);
+                                    = s.x + (world.camera.CameraWidth * 2);
                                 world.Sprite[k + 1].dir = "r";
                             }
                         }
 if (s.mode == "truck") {
                             world.Sprite[k].seeky
-                                = world.CameraY - world.CameraHeight;
+                                = world.camera.CameraY - world.camera.CameraHeight;
                                 world.Sprite[k].seekx = s.x;
                                 world.Sprite[k].dir = "u";
                         }
@@ -733,10 +733,10 @@ if (s.mode == "truck") {
                 //if (.x = .seekx And .y = .seeky Or (.x + .wide) < 1 Or .x > 640 Or (.y + .high) < 1 Or .y > 480 Then .visible = False: .name = "reserved"
                 //if (.x >= .seekx And .x <= (.seekx + .mph) And .y >= .seeky And .y <= (.seeky + .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
                 //if (.x <= .seekx And .x >= (.seekx - .mph) And .y <= .seeky And .y >= (.seeky - .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
-                if (s.x > (world.CameraX + world.CameraWidth)
-                    || s.x < (world.CameraX - world.CameraWidth)
-                    || s.y > (world.CameraY + world.CameraHeight)
-                    || s.y < (world.CameraY - world.CameraHeight)) {
+                if (s.x > (world.camera.CameraX + world.camera.CameraWidth)
+                    || s.x < (world.camera.CameraX - world.camera.CameraWidth)
+                    || s.y > (world.camera.CameraY + world.camera.CameraHeight)
+                    || s.y < (world.camera.CameraY - world.camera.CameraHeight)) {
                     s.visible = false;
                     s.flickerTime = 0;
                     s.name = "reserved";
@@ -887,31 +887,31 @@ if (s.mode == "truck") {
                 }
                 s.visible = true;
                 if ((j / 10) == 0) {
-                    s.x = world.CameraX + 10;
+                    s.x = world.camera.CameraX + 10;
                 }
                 if ((j / 10) == 1) {
-                    s.x = world.CameraX + 250;
+                    s.x = world.camera.CameraX + 250;
                     s.color = view.QBColor(10);
                 }
                 if ((j / 10) == 2) {
-                    s.x = world.CameraX + 450;
+                    s.x = world.camera.CameraX + 450;
                     s.color = view.QBColor(14);
                 }
-                s.y = world.CameraY + 10;
+                s.y = world.camera.CameraY + 10;
             }
 
             if (s.name == "continue number") {
                 s.trueVisible = 1;
                 if (((j - 1) / 10) == 0) {
-                    s.x = world.CameraX + 10 + 93;
+                    s.x = world.camera.CameraX + 10 + 93;
                 }
                 if (((j - 1) / 10) == 1) {
-                    s.x = world.CameraX + 250 + 93;
+                    s.x = world.camera.CameraX + 250 + 93;
                 }
                 if (((j - 1) / 10) == 2) {
-                    s.x = world.CameraX + 450 + 93;
+                    s.x = world.camera.CameraX + 450 + 93;
                 }
-                s.y = world.CameraY + 10;
+                s.y = world.camera.CameraY + 10;
 
                 if (s.miscTime < world.clock) {
                     s.miscTime = world.clock + 2;
@@ -988,8 +988,8 @@ if (s.mode == "truck") {
                         //TSNOW: No idea why this is hardcoded.
                         auto & s2 = world.Sprite[31];
                         if (world.Sprite[j].miscTime > world.clock) {
-                            s2.x = world.CameraX;
-                            s2.y = world.CameraY;
+                            s2.x = world.camera.CameraX;
+                            s2.y = world.camera.CameraY;
                             s2.wide = 640;
                             s2.high = 480;
                             s2.frame = 9;
@@ -1073,7 +1073,7 @@ if (s.mode == "truck") {
                             && world.Sprite[penguin].name
                             == world.player_data[(penguin / 10)].playerName) {
                             s.mode = "runner";
-                            s.seekx = world.cameraStopX;
+                            s.seekx = world.camera.cameraStopX;
                             //.mhp = 10
                             s.kind = 2;
                             s.deathType = "expand";
@@ -1152,17 +1152,17 @@ if (s.mode == "truck") {
             if (s.name == "dead") {
                 //Stop
                 if ((j / 10) == 0) {
-                    s.x = world.CameraX + 10;
+                    s.x = world.camera.CameraX + 10;
                 }
                 if ((j / 10) == 1) {
-                    s.x = world.CameraX + 250;
+                    s.x = world.camera.CameraX + 250;
                     s.color = view.QBColor(10);
                 }
                 if ((j / 10) == 2) {
-                    s.x = world.CameraX + 450;
+                    s.x = world.camera.CameraX + 450;
                     s.color = view.QBColor(14);
                 }
-                s.y = world.CameraY + 10;
+                s.y = world.camera.CameraY + 10;
                 s.frame = 0;
                 s.visible = false;
                 s.srcx = 2;
@@ -1236,8 +1236,8 @@ private:
     void centerSprite(int who) {
         // Aims the camera on the given sprite.
         auto & s = world.Sprite[who];
-        s.x = (world.CameraX + (world.CameraWidth / 2)) - (s.wide / 2);
-        s.y = (world.CameraY + (world.CameraHeight / 2)) - (s.high / 2);
+        s.x = (world.camera.CameraX + (world.camera.CameraWidth / 2)) - (s.wide / 2);
+        s.y = (world.camera.CameraY + (world.camera.CameraHeight / 2)) - (s.high / 2);
     }
 
     void checkHit(int j, int k) {
@@ -1696,14 +1696,14 @@ private:
     }
 
     void GoSub_level1c() {
-        world.Sprite[31].x = world.CameraX - world.Sprite[31].seekx;
-        world.Sprite[31].y = world.CameraY + 20;
-        world.Sprite[32].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[32].seekx;
-        world.Sprite[32].y = world.CameraY + 20;
-        world.Sprite[33].x = world.CameraX - world.Sprite[33].seekx;
-        world.Sprite[33].y = world.CameraY + world.CameraHeight - 180;
-        world.Sprite[34].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[33].seekx;
-        world.Sprite[34].y = world.CameraY + world.CameraHeight - 180;
+        world.Sprite[31].x = world.camera.CameraX - world.Sprite[31].seekx;
+        world.Sprite[31].y = world.camera.CameraY + 20;
+        world.Sprite[32].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[32].seekx;
+        world.Sprite[32].y = world.camera.CameraY + 20;
+        world.Sprite[33].x = world.camera.CameraX - world.Sprite[33].seekx;
+        world.Sprite[33].y = world.camera.CameraY + world.camera.CameraHeight - 180;
+        world.Sprite[34].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[33].seekx;
+        world.Sprite[34].y = world.camera.CameraY + world.camera.CameraHeight - 180;
 
         for (int i = 31; i <= 34; ++ i) {
             // If i = 34 Then GoTo kiddy2
@@ -1763,8 +1763,8 @@ private:
             world.Sprite[10].y = 220;
             world.Sprite[20].x = 50;
             world.Sprite[20].y = 220;
-            world.cameraStopX = 1010;
-            world.cameraStopY = 905 + 480;
+            world.camera.cameraStopX = 1010;
+            world.camera.cameraStopY = 905 + 480;
 
             sound.LoadSound(16, "goomba.wav", "dying explosion");
             sound.LoadSound(17, "GoombaOuch.wav", "Goomba Ouch");
@@ -1789,8 +1789,8 @@ private:
             world.Sprite[10].y = 1650;
             world.Sprite[20].x = 1122;
             world.Sprite[20].y = 1650;
-            world.cameraStopX = 1194;
-            world.cameraStopY = 1900;
+            world.camera.cameraStopX = 1194;
+            world.camera.cameraStopY = 1900;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
             sound.LoadSound(17, "BS Death2.wav", "stick die");
             sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
@@ -1813,8 +1813,8 @@ private:
             world.Sprite[10].y = 300;
             world.Sprite[20].x = 42;
             world.Sprite[20].y = 300;
-            world.cameraStopX = 1244;
-            world.cameraStopY = 2273;
+            world.camera.cameraStopX = 1244;
+            world.camera.cameraStopY = 2273;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
             sound.LoadSound(17, "BS Death2.wav", "stick die");
             sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
@@ -1837,8 +1837,8 @@ private:
             world.Sprite[10].y = 300;
             world.Sprite[20].x = 42;
             world.Sprite[20].y = 300;
-            world.cameraStopX = 3000;
-            world.cameraStopY = 480;
+            world.camera.cameraStopX = 3000;
+            world.camera.cameraStopY = 480;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
             sound.LoadSound(17, "BS Death2.wav", "stick die");
             sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
@@ -2087,9 +2087,9 @@ private:
     void killLimit(int jex) {
         // Rem- Kills unruly sprites who are out of bounds
         auto & s = world.Sprite[jex];
-        if (s.x > world.cameraStopX || s.x < -10) { killS(jex); }
+        if (s.x > world.camera.cameraStopX || s.x < -10) { killS(jex); }
 
-        if (s.y > world.cameraStopX || s.y < -10) { killS(jex); }
+        if (s.y > world.camera.cameraStopX || s.y < -10) { killS(jex); }
     }
 
     void killS(int goatX) {
@@ -2192,8 +2192,8 @@ private:
 
 
                 while(!(
-                    (ws.seekx > world.cameraStopX || ws.seekx < 0)
-                        || (ws.seeky > world.cameraStopY || ws.seeky < 0)
+                    (ws.seekx > world.camera.cameraStopX || ws.seekx < 0)
+                        || (ws.seeky > world.camera.cameraStopY || ws.seeky < 0)
                     )) {
                     if (ws.seekx > ws.x) {
                         ws.seekx = ws.seekx + ((ws.seekx - ws.x));
@@ -2262,7 +2262,7 @@ private:
                 //if (ws.frame > 2) then ws.frame = 1
 
                 this->seeker(who);
-                if (ws.x < 1) { ws.x = world.cameraStopX; }
+                if (ws.x < 1) { ws.x = world.camera.cameraStopX; }
 
                 if (ws.miscTime < world.clock) {
                     this->shoot(who, "bluestick",
@@ -2325,7 +2325,7 @@ private:
 
         if (loadScreen == true) { this->NowLoading(); }
 
-        world.CameraWidth = 640; world.CameraHeight = 480;
+        world.camera.CameraWidth = 640; world.camera.CameraHeight = 480;
 
         if (stopMusic == true) { sound.PlayBgm(""); }
 
@@ -2336,7 +2336,7 @@ private:
 
         int j = 0;
 
-        world.CameraX = 0; world.CameraY = 0;
+        world.camera.CameraX = 0; world.camera.CameraY = 0;
         view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight); //"lv1bg2.png", 10, 10)
                                                                     //Call loadTexture(0, "smile.png", 255, 255)
 
@@ -2390,19 +2390,19 @@ private:
 
     void NowLoading() {
         view.LoadTexture(-1, "NowLoading.png", 320, 240);
-        world.CameraWidth = 320;
-        world.CameraHeight = 240;
+        world.camera.CameraWidth = 320;
+        world.camera.CameraHeight = 240;
         view.UpdateSprites();
         //Call DrawStuff
-        world.CameraWidth = 640;
-        world.CameraHeight = 480;
+        world.camera.CameraWidth = 640;
+        world.camera.CameraHeight = 480;
     }
 
     void offCameraKill(int jex) {
         auto & s = world.Sprite[jex];
-        if (s.x > world.CameraX + 640 || (s.x + s.wide) < world.CameraX) {
+        if (s.x > world.camera.CameraX + 640 || (s.x + s.wide) < world.camera.CameraX) {
             this->killS(jex); }
-        if (s.y > world.CameraY + 480 || (s.y + s.high) < world.CameraY) {
+        if (s.y > world.camera.CameraY + 480 || (s.y + s.high) < world.camera.CameraY) {
             this->killS(jex); }
     }
 
@@ -2414,8 +2414,8 @@ private:
         view.UpdateSprites();
         view.LoadTexture(0, "PlayerS2.png", 320, 400);
         view.LoadTexture(-1, "PlayerS.png", 320, 240);
-        world.CameraWidth = 320;
-        world.CameraHeight = 240;
+        world.camera.CameraWidth = 320;
+        world.camera.CameraHeight = 240;
 
         {
             auto & s = world.Sprite[0];
@@ -2523,14 +2523,14 @@ private:
     void script() {
         if (world.Sprite[30].mode != "3" && world.Sprite[30].mode != "2") {
             // move all the faces so that they line up
-            world.Sprite[31].x = world.CameraX; //  - world.Sprite[31].seekx
-            world.Sprite[31].y = world.CameraY + 20;
-            world.Sprite[32].x = world.CameraX + world.CameraWidth - 268; // + world.Sprite[32].seekx
-            world.Sprite[32].y = world.CameraY + 20;
-            world.Sprite[33].x = world.CameraX; //  - world.Sprite[33].seekx
-            world.Sprite[33].y = world.CameraY + world.CameraHeight - 180;
-            world.Sprite[34].x = world.CameraX + world.CameraWidth - 268; //  + world.Sprite[33].seekx
-            world.Sprite[34].y = world.CameraY + world.CameraHeight - 180;
+            world.Sprite[31].x = world.camera.CameraX; //  - world.Sprite[31].seekx
+            world.Sprite[31].y = world.camera.CameraY + 20;
+            world.Sprite[32].x = world.camera.CameraX + world.camera.CameraWidth - 268; // + world.Sprite[32].seekx
+            world.Sprite[32].y = world.camera.CameraY + 20;
+            world.Sprite[33].x = world.camera.CameraX; //  - world.Sprite[33].seekx
+            world.Sprite[33].y = world.camera.CameraY + world.camera.CameraHeight - 180;
+            world.Sprite[34].x = world.camera.CameraX + world.camera.CameraWidth - 268; //  + world.Sprite[33].seekx
+            world.Sprite[34].y = world.camera.CameraY + world.camera.CameraHeight - 180;
         }
 
         if (world.Sprite[30].mode == "6") {
@@ -2566,14 +2566,14 @@ private:
             // Sprite(31).wide = 275 - 188
             // Sprite(31).high = 376 - 353
 
-            world.Sprite[31].x = world.CameraX - world.Sprite[31].seekx;
-            world.Sprite[31].y = world.CameraY + 20;
-            world.Sprite[32].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[32].seekx;
-            world.Sprite[32].y = world.CameraY + 20;
-            world.Sprite[33].x = world.CameraX - world.Sprite[33].seekx;
-            world.Sprite[33].y = world.CameraY + world.CameraHeight - 180;
-            world.Sprite[34].x = world.CameraX + world.CameraWidth - 268 + world.Sprite[33].seekx;
-            world.Sprite[34].y = world.CameraY + world.CameraHeight - 180;
+            world.Sprite[31].x = world.camera.CameraX - world.Sprite[31].seekx;
+            world.Sprite[31].y = world.camera.CameraY + 20;
+            world.Sprite[32].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[32].seekx;
+            world.Sprite[32].y = world.camera.CameraY + 20;
+            world.Sprite[33].x = world.camera.CameraX - world.Sprite[33].seekx;
+            world.Sprite[33].y = world.camera.CameraY + world.camera.CameraHeight - 180;
+            world.Sprite[34].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[33].seekx;
+            world.Sprite[34].y = world.camera.CameraY + world.camera.CameraHeight - 180;
 
             if (world.Sprite[31].seekx < 0) {
                 world.Sprite[30].mode = "4";

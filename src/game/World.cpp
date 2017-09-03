@@ -21,12 +21,7 @@ World::World()
     cranBerry2(0),
     debugOn(false),
     sFactor(0),
-    CameraX(0),
-    CameraY(0),
-    CameraWidth(0),
-    CameraHeight(0),
-    cameraStopX(0),
-    cameraStopY(0),
+    camera{},
     gotFocus(0),
     cinema({}),
     cinemaCounter(0),
@@ -88,7 +83,7 @@ World::World()
 	//KeyAttack = " "
 	//KeyJump = "J"
 
-	this->CameraWidth = 640;  this->CameraHeight = 480;
+	this->camera.CameraWidth = 640;  this->camera.CameraHeight = 480;
 	this->spritesInUse = World::NUMSPRITES;
 
 	for (int j = 0; j < 100; ++j)

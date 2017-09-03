@@ -235,8 +235,8 @@ public:
                     if (s.mode == "word 5") {
                         s.length = 5;
                         view.LoadTexture(-1, "Open2.png", 320, 240);
-                        world.CameraWidth = 320;
-                        world.CameraHeight = 240;
+                        world.camera.CameraWidth = 320;
+                        world.camera.CameraHeight = 240;
                         {
                             auto & s2 = world.Sprite[1];
                             s2.texture = 2; //1

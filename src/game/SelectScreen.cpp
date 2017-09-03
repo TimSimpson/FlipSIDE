@@ -41,6 +41,8 @@ public:
         world(world_arg),
         random()
     {
+        sound.silence_sfx();
+
         // the select player screen
         world = World{};
 		destroyEverything(world, view, sound);
@@ -54,8 +56,8 @@ public:
         view.UpdateSprites();
         view.LoadTexture(0, "PlayerS2.png", 320, 400);
         view.LoadTexture(-1, "PlayerS.png", 320, 240);
-        world.CameraWidth = 320;
-        world.CameraHeight = 240;
+        world.camera.CameraWidth = 320;
+        world.camera.CameraHeight = 240;
 
         {
             auto & s = world.Sprite[0];
@@ -197,12 +199,12 @@ private:
 
     void NowLoading() {
         view.LoadTexture(-1, "NowLoading.png", 320, 240);
-        world.CameraWidth = 320;
-        world.CameraHeight = 240;
+        world.camera.CameraWidth = 320;
+        world.camera.CameraHeight = 240;
         view.UpdateSprites();
         //Call DrawStuff
-        world.CameraWidth = 640;
-        world.CameraHeight = 480;
+        world.camera.CameraWidth = 640;
+        world.camera.CameraHeight = 480;
     }
 
 

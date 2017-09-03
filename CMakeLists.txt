@@ -8,6 +8,8 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/BaseScreen.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/BaseScreen.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Camera.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Camera.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterProc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.hpp
