@@ -15,10 +15,20 @@ namespace game = nnd3d::game;
 
 glm::vec4 qb_color(int index);
 
+// An index from the old code, where -1 meant the bg texture
+// This has an assertion that the index is in bounds. Also using it in the
+// method signatures lets me see what has yet to be updated.
+struct StupidIndex {
+    StupidIndex(int);
+    int value;
+};
+
 // Shows stuff
 class View
 {
 public:
+    static constexpr int texture_count = 11;
+
     View(core::MediaManager & media, game::World & world, Vb & vb);
 
     void operator()(const glm::mat4 & previous);
@@ -29,8 +39,8 @@ public:
 	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
 	void DrawStuff(float fps);
 
-    void LoadTexture(int which, const std::string & fileName, int howWide,
-                     int howHigh);
+    void LoadTexture(StupidIndex which, const std::string & fileName,
+                     int howWide, int howHigh);
 
     void UpdateSprites();
 
@@ -44,7 +54,8 @@ public:
         int howHigh;
     };
 
-	typedef std::array<boost::optional<LoadTextureCall>, 11> TextureHistory;
+	typedef std::array<boost::optional<LoadTextureCall>, texture_count>
+         TextureHistory;
 
 	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
 	// Turn off view
@@ -64,8 +75,7 @@ private:
 	TextureHistory history;
 
 	core::MediaManager & media;
-    std::unique_ptr<gfx::Texture> bgtexture;
-    std::array<std::unique_ptr<gfx::Texture>, 10> AnimationTexture;
+    std::array<std::unique_ptr<gfx::Texture>, texture_count> textures;
 	gfx::programs::ColoredTexture program;
 	gfx::Font font; // for fps
 	gfx::ElementWriter<gfx::TexCVert> font_elements;
@@ -76,9 +86,9 @@ private:
 	game::World & world;
     game::Camera camera;
     Vb & vb;
-	std::array<glm::vec2, 10> tex_size;
+	std::array<glm::vec2, texture_count> texture_sizes;
 	std::array<Vertex, 4> bgverts;
-	glm::vec2 bg_size;
+
 
 	// Maps old vert array to a quad
 	inline void draw_vert_to_quad(const Vertex * v,
@@ -94,18 +104,9 @@ private:
                       v[3].color.r, v[3].color.g, v[3].color.b, v[3].color.a);
 	}
 
-	void draw_verts_as_quad(const Vertex * v, const int texIndex, float z);
+	void draw_verts_as_quad(const Vertex * v, const StupidIndex texIndex, float z);
 
     gsl::owner<gfx::Texture *> load_image(const std::string & fileName);
-
-	// This used to be an array. The problem is in the old code bgWidth is a
-	// different value, which leads to one off duplications EVERYWHERE.
-	// So instead passing -1 here will return bgWidth.
-	int texWidth(int index);
-
-	// Similar notes on bgHeight and -1 applies as with texWidth above.
-	int texHeight(int index);
-
 };
 
 }   }   // end namespace

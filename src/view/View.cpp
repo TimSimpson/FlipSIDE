@@ -60,6 +60,10 @@ namespace {
         //return desired_max_dimension / current_size.x;
         return glm::vec2{desired_max_dimension, desired_max_dimension};
     }
+
+    int get_smart(StupidIndex index) {
+        return index.value + 1;
+    }
 }
 
 glm::vec4 qb_color(int index) {
@@ -103,12 +107,17 @@ glm::vec4 qb_color(int index) {
     }
 }
 
+StupidIndex::StupidIndex(int _value)
+:   value(_value)
+{
+    LP3_ASSERT(_value >= -1 && value < View::texture_count - 1);
+}
+
 View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 :	disable_view(false),
 	history({}),
     media(media_arg),
-	bgtexture(),
-	AnimationTexture({}),
+	textures({}),
 	program(),
 	font{ media.load("apple_kid.fnt") },
 	font_elements{ (letters_max * 4) },
@@ -117,16 +126,15 @@ View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 	world(world_arg),
     camera(world_arg.camera),
     vb(vb_arg),
-	tex_size(),
-	bgverts({}),
-	bg_size()
+	texture_sizes(),
+	bgverts({})
 {
 	// Create one vertex buffer for the bgtexture
 	game_elements.emplace_back(letters_max * 4);
 	// Then others for each other texture. Make each one the maximum size it
 	// might need to be to represent all sprites on the screen, even though
 	// this is wasteful.
-	for (std::size_t i = 0; i < AnimationTexture.size(); ++i) {
+	for (std::size_t i = 0; i < textures.size(); ++i) {
 		game_elements.emplace_back(game::World::NUMSPRITES * 4);
 	}
 
@@ -141,12 +149,7 @@ void View::operator()(const glm::mat4 & previous) {
 	program.set_mvp(_2d);
 
 	for (int i = 0; i <= 10; ++ i) {
-		lp3::gfx::Texture * tex;
-		if (i == 0) {
-			tex = bgtexture.get();
-		} else {
-			tex = AnimationTexture[i - 1].get();
-		}
+		lp3::gfx::Texture * tex = textures[i].get();
 		if (tex && 0 < game_elements[i].count()) {
 			program.set_texture(tex->gl_id());
 			program.draw(game_elements[i]);
@@ -239,8 +242,12 @@ void View::DrawStuff(float fps) {
 	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
 
 	float z = 0.9999f;
-	if (bgtexture) {
-		LP3_ASSERT(nullptr != bgtexture);
+    // So, if we had the stupid old background texture set, then draw
+    // the also unique background verts.
+    // To be fair, some extra logic goes into rendering this versus everything
+    // else which is affected by the camera's cordinates.
+	if (textures[0]) {
+		LP3_ASSERT(nullptr != textures[0]);
 		draw_verts_as_quad(bgverts.data(), -1, z);
 	}
     //2017: So, the old game has verts that in fact have a Z coordinate,
@@ -256,18 +263,17 @@ void View::DrawStuff(float fps) {
 
 		if (sprite.visible) {
             z -= 0.0067f;
-			draw_verts_as_quad(sprite.SpriteVerts.data(), sprite.texture, z);
+			draw_verts_as_quad(sprite.SpriteVerts.data(),
+                               StupidIndex(sprite.texture), z);
 		}
 	}
 }
 
-void View::draw_verts_as_quad(const Vertex * v, const int texIndex, float z) {
-	LP3_ASSERT(texIndex >= -1);
-	LP3_ASSERT(texIndex < lp3::narrow<int>(AnimationTexture.size()));
-
+void View::draw_verts_as_quad(const Vertex * v,
+                              const StupidIndex texIndex, float z) {
 	// Using old game logic, -1 could be the "background" texture which was
 	// reasonlessly treated differently from everything else.
-	const int realIndex = texIndex + 1;
+	const int realIndex = texIndex.value + 1;
 	gfx::Quad<gfx::TexCVert> quad = game_elements[realIndex].add_quad();
 	draw_vert_to_quad(v, quad, z);
 }
@@ -306,7 +312,7 @@ void View::enable() {
 	for (std::size_t i = 0; i < history.size(); ++ i) {
 		const auto & call = history[i];
 		if (call) {
-			LoadTexture(lp3::narrow<int>(i) - 1,
+			LoadTexture(StupidIndex(lp3::narrow<int>(i) - 1),
 				        call->fileName, call->howWide, call->howHigh);
 		}
 		history[i] = boost::none;
@@ -330,50 +336,30 @@ void View::load_animation_file(std::array<view::AnimationFrame, 20> & frames,
     }
 }
 
-void View::LoadTexture(int which, const std::string & fileName, int howWide,
+void View::LoadTexture(StupidIndex which, const std::string & fileName,
+                       int howWide,
                        int howHigh) {
 	if (this->disable_view) {
-		history[which + 1] = LoadTextureCall{ fileName, howWide, howHigh };
+		history[which.value + 1] = LoadTextureCall{ fileName, howWide, howHigh };
 		return;
 	}
 
-	LP3_LOG_DEBUG("LoadTexture %i %s %i %i", which, fileName, howWide, howHigh);
-    if (which == -1) {
-        bgtexture.reset(load_image(fileName));
-		if (boost::algorithm::ends_with(fileName, ".bmp")) {
-			bg_size = bgtexture->size();
-		} else {
-			bg_size = find_texture_scale_factor(
-				glm::vec2{ howWide, howHigh }, bgtexture->size());
-		}
-		LP3_LOG_DEBUG("   size = %i, %i", bg_size.x, bg_size.y);
+	LP3_LOG_DEBUG("LoadTexture %i %s %i %i",
+                  which.value, fileName, howWide, howHigh);
+
+    textures[which.value + 1].reset(load_image(fileName));
+    if (boost::algorithm::ends_with(fileName, ".bmp")) {
+        texture_sizes[get_smart(which)] = textures[which.value + 1]->size();
     } else {
-        AnimationTexture[which].reset(load_image(fileName));
-		if (boost::algorithm::ends_with(fileName, ".bmp")) {
-			tex_size[which] = AnimationTexture[which]->size();
-		} else {
-			tex_size[which] = find_texture_scale_factor(
-				glm::vec2{ howWide, howHigh },
-				AnimationTexture[which]->size());
-		}
-		LP3_LOG_DEBUG("   size = %i, %i", tex_size[which].x, tex_size[which].y);
+        texture_sizes[get_smart(which)] = find_texture_scale_factor(
+            glm::vec2{ howWide, howHigh },
+            textures[which.value + 1]->size());
     }
+    LP3_LOG_DEBUG("   size = %i, %i",
+                  texture_sizes[get_smart(which)].x,
+                  texture_sizes[get_smart(which)].y);
 }
 
-
-int View::texWidth(int index) {
-	if (index < 0) {
-		return this->bg_size.x;
-	}
-	return this->tex_size[index].x;
-}
-
-int View::texHeight(int index) {
-	if (index < 0) {
-		return this->bg_size.y;
-	}
-	return this->tex_size[index].y;
-}
 
 void View::UpdateSprites() {
      //int j = 0; // in old code, not needed?
@@ -392,7 +378,7 @@ void View::UpdateSprites() {
     //----------------------------------------------------------------------
     //              THIS PART HERE'S THE KICKER
     //----------------------------------------------------------------------
-
+    const auto & bg_size = texture_sizes[0];
     {
         auto & v = this->bgverts[0];
         v.x = 0; v.y = 480; // RealHeight
@@ -437,7 +423,7 @@ void View::UpdateSprites() {
 
     for (int j = 0; j < world.spritesInUse; ++ j) {
         auto & sprite = world.Sprite[j];
-
+        const auto & tex_size = texture_sizes[get_smart(StupidIndex(sprite.texture))];
         if (sprite.reverse == true) {
             k = sprite.srcx2;
             sprite.srcx2 = sprite.srcx;
@@ -450,10 +436,10 @@ void View::UpdateSprites() {
             v.y = lp3::narrow<float>(
 				sprite.y + sprite.high - (sprite.z) - camera.y());
             if (sprite.srcx != 0) {
-                v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx / tex_size.x;
             }
             if (sprite.srcy2 != 0) {
-                v.tv = (float) sprite.srcy2 / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy2 / tex_size.y;
             }
             v.color = sprite.color;
         }
@@ -462,10 +448,10 @@ void View::UpdateSprites() {
             v.x = sprite.x - camera.x();
             v.y = sprite.y - (sprite.z) - camera.y();
             if (sprite.srcx != 0) {
-                v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx / tex_size.x;
             }
             if (sprite.srcy != 0) {
-                v.tv = (float) sprite.srcy / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy / tex_size.y;
             }
             // v.rhw = 1
             v.color = sprite.color;
@@ -475,10 +461,10 @@ void View::UpdateSprites() {
             v.x = sprite.x + sprite.wide - camera.x();
             v.y = sprite.y + sprite.high - (sprite.z) - camera.y();
             if (sprite.srcx2 != 0) {
-                v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx2 / tex_size.x;
             }
             if (sprite.srcy2 != 0) {
-                v.tv = (float) sprite.srcy2 / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy2 / tex_size.y;
             }
             // v.rhw = 1
             v.color = sprite.color;
@@ -488,10 +474,10 @@ void View::UpdateSprites() {
             v.x = sprite.x + sprite.wide - camera.x();
             v.y = sprite.y - (sprite.z) - camera.y();
             if (sprite.srcx2 != 0) {
-                v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
+                v.tu = (float) sprite.srcx2 / tex_size.x;
             }
             if (sprite.srcy != 0) {
-                v.tv = (float) sprite.srcy / this->texHeight(sprite.texture);
+                v.tv = (float) sprite.srcy / tex_size.y;
             }
             // v.rhw = 1
             v.color = sprite.color;
