@@ -55,7 +55,7 @@ public:
         return glm::ivec2{guts.cameraStopX, guts.cameraStopY };
     }
 private:
-    CameraGuts guts;
+    CameraGuts & guts;
 };
 
 }   }

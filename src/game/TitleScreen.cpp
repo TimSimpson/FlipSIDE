@@ -18,6 +18,14 @@ namespace nnd3d { namespace game {
 
 namespace {
     const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
+
+    glm::ivec4 to_rgb(int r, int g, int b) {
+        // Emulates old VB RGB function. Named 'to_rgb' due to probable windows.h
+        // issues. >:(
+        const glm::vec4 rgb(r/255.0f, g/255.0f, b/255.0f, 1.0f);
+        // LP3_ASSERT(rgb.r == r && rgb.g == g && rgb.b == b);
+        return rgb;
+    }
 }
 
 
@@ -400,11 +408,11 @@ public:
                     if (s.miscTime < 255) {
                         s.miscTime = s.miscTime + (world.sFactor * s.invTime);
                         //0s.3 * sFactor
-                        s.color = view.Rgb(s.miscTime, s.miscTime, s.miscTime);
+                        s.color = to_rgb(s.miscTime, s.miscTime, s.miscTime);
                     }
                     if (s.miscTime > 245) {
                         //playWave "conten.wav"
-                        s.color = view.QBColor(15);
+                        s.color = view::qb_color(15);
                         s.mode = "words1b";
                         s.miscTime = world.clock + s.length;
                     }
@@ -423,12 +431,12 @@ public:
                     if (s.miscTime > 0) {
                         s.miscTime = s.miscTime - (world.sFactor * 20); //0.3 * sFactor
                         if (s.miscTime > 0) {
-                            s.color = view.Rgb(s.miscTime, s.miscTime, s.miscTime);
+                            s.color = to_rgb(s.miscTime, s.miscTime, s.miscTime);
                         }
                     }
                     if (s.miscTime < 1) {
                         //playWave "conten.wav"
-                        s.color = view.QBColor(0);
+                        s.color = view::qb_color(0);
                         s.mode = "words2";
                     }
                 }
@@ -454,10 +462,10 @@ public:
 				s.miscTime = 0;
 				s.mode = "words1";
 				s.visible = false;
-				s.color = view.QBColor(0);
+				s.color = view::qb_color(0);
 			}
 
-			world.Sprite[0].color = view.QBColor(0);
+			world.Sprite[0].color = view::qb_color(0);
 			world.Sprite[0].visible = false;
 		}  //End of intro story with
 

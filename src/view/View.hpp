@@ -12,6 +12,9 @@ namespace core = lp3::core;
 namespace gfx = lp3::gfx;
 namespace game = nnd3d::game;
 
+
+glm::vec4 qb_color(int index);
+
 // Shows stuff
 class View
 {
@@ -28,10 +31,6 @@ public:
 
     void LoadTexture(int which, const std::string & fileName, int howWide,
                      int howHigh);
-
-	glm::ivec4 Rgb(int r, int g, int b) const;
-
-	glm::vec4 QBColor(int index);
 
     void UpdateSprites();
 
@@ -75,6 +74,7 @@ private:
 	std::vector<gfx::ElementWriter<gfx::TexCVert>> game_elements;
 
 	game::World & world;
+    game::Camera camera;
     Vb & vb;
 	std::array<glm::vec2, 10> tex_size;
 	std::array<Vertex, 4> bgverts;

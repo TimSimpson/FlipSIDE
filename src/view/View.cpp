@@ -62,6 +62,47 @@ namespace {
     }
 }
 
+glm::vec4 qb_color(int index) {
+    // If the code picks wrong, they get translucent yellow.
+    switch(index) {
+        case 0:
+            return glm::vec4{0.0f, 0.0f, 0.0f, 1.0f};
+        case 1:
+            return glm::vec4{0.0f, 0.0f, 0.5f, 1.0f};
+        case 2:
+            return glm::vec4{0.0f, 0.5f, 0.0f, 1.0f};
+        case 3:
+            return glm::vec4{0.5f, 1.0f, 0.5f, 1.0f};
+        case 4:
+            return glm::vec4{0.5f, 0.0f, 0.0f, 1.0f};
+        case 5:
+            return glm::vec4{0.5f, 0.0f, 0.5f, 1.0f};
+        case 6:
+            return glm::vec4{0.5f, 0.5f, 0.0f, 1.0f};
+        case 7:
+            return glm::vec4{0.75f, 0.75f, 0.75f, 1.0f};
+        case 8:
+            return glm::vec4{0.25f, 0.25f, 0.25f, 1.0f};
+        case 9:
+            return glm::vec4{0.0f, 0.0f, 1.0f, 1.0f};
+        case 10:
+            return glm::vec4{0.0f, 1.0f, 0.0f, 1.0f};
+        case 11:
+            return glm::vec4{0.5f, 0.5f, 1.0f, 1.0f};
+        case 12:
+            return glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
+        case 13:
+            return glm::vec4{1.0f, 0.0f, 1.0f, 1.0f};
+        case 14:
+            return glm::vec4{1.0f, 1.0f, 0.0f, 1.0f};
+        case 15:
+            return glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
+        default:
+            LP3_ASSERT(false);  // Bad color selection.
+            return glm::vec4{1.0f, 1.0f, 0.0f, 0.5f};
+    }
+}
+
 View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 :	disable_view(false),
 	history({}),
@@ -74,6 +115,7 @@ View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 	font_quads(font_elements.add_quads(letters_max)),
 	game_elements(),
 	world(world_arg),
+    camera(world_arg.camera),
     vb(vb_arg),
 	tex_size(),
 	bgverts({}),
@@ -217,8 +259,6 @@ void View::DrawStuff(float fps) {
 			draw_verts_as_quad(sprite.SpriteVerts.data(), sprite.texture, z);
 		}
 	}
-	// If ((GetTickCount / 1000) > cranBerry) Then cranBerry = ((GetTickCount / 1000) + 1): frRate = frRate2: frRate2 = 0
-	//If debugOn = True Then Form1.PSet (1, 1): Form1.Print "FPS:" + Str$(frRate): Form1.Print "GPS:" + Str$(gpRate)
 }
 
 void View::draw_verts_as_quad(const Vertex * v, const int texIndex, float z) {
@@ -320,54 +360,6 @@ void View::LoadTexture(int which, const std::string & fileName, int howWide,
     }
 }
 
-glm::ivec4 View::Rgb(int r, int g, int b) const {
-	// Emulates old VB RGB function. Named 'Rgb' due to probable windows.h
-	// issues. >:(
-	const glm::vec4 rgb(r/255.0f, g/255.0f, b/255.0f, 1.0f);
-	// LP3_ASSERT(rgb.r == r && rgb.g == g && rgb.b == b);
-	return rgb;
-}
-
-glm::vec4 View::QBColor(int index) {
-	// If the code picks wrong, they get translucent yellow.
-    switch(index) {
-        case 0:
-            return glm::vec4{0.0f, 0.0f, 0.0f, 1.0f};
-        case 1:
-            return glm::vec4{0.0f, 0.0f, 0.5f, 1.0f};
-        case 2:
-            return glm::vec4{0.0f, 0.5f, 0.0f, 1.0f};
-        case 3:
-            return glm::vec4{0.5f, 1.0f, 0.5f, 1.0f};
-        case 4:
-            return glm::vec4{0.5f, 0.0f, 0.0f, 1.0f};
-        case 5:
-            return glm::vec4{0.5f, 0.0f, 0.5f, 1.0f};
-        case 6:
-            return glm::vec4{0.5f, 0.5f, 0.0f, 1.0f};
-        case 7:
-            return glm::vec4{0.75f, 0.75f, 0.75f, 1.0f};
-        case 8:
-            return glm::vec4{0.25f, 0.25f, 0.25f, 1.0f};
-        case 9:
-            return glm::vec4{0.0f, 0.0f, 1.0f, 1.0f};
-        case 10:
-            return glm::vec4{0.0f, 1.0f, 0.0f, 1.0f};
-        case 11:
-            return glm::vec4{0.5f, 0.5f, 1.0f, 1.0f};
-        case 12:
-            return glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
-        case 13:
-            return glm::vec4{1.0f, 0.0f, 1.0f, 1.0f};
-        case 14:
-            return glm::vec4{1.0f, 1.0f, 0.0f, 1.0f};
-        case 15:
-            return glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
-        default:
-			LP3_ASSERT(false);  // Bad color selection.
-            return glm::vec4{1.0f, 1.0f, 0.0f, 0.5f};
-    }
-}
 
 int View::texWidth(int index) {
 	if (index < 0) {
@@ -404,11 +396,11 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[0];
         v.x = 0; v.y = 480; // RealHeight
-   //      v.tu = lp3::narrow<float>(world.camera.CameraX) / lp3::narrow<float>(world.bgWidth);
-   //      v.tv = (lp3::narrow<float>(world.camera.CameraY) + lp3::narrow<float>(world.camera.CameraHeight))
+   //      v.tu = lp3::narrow<float>(camera.x) / lp3::narrow<float>(world.bgWidth);
+   //      v.tv = (lp3::narrow<float>(camera.y()) + lp3::narrow<float>(camera.height()))
 			// / lp3::narrow<float>(world.bgHeight);
-        v.tu = lp3::narrow<float>(world.camera.CameraX) / lp3::narrow<float>(bg_size.x);
-        v.tv = (lp3::narrow<float>(world.camera.CameraY) + lp3::narrow<float>(world.camera.CameraHeight))
+        v.tu = lp3::narrow<float>(camera.x()) / lp3::narrow<float>(bg_size.x);
+        v.tv = (lp3::narrow<float>(camera.y()) + lp3::narrow<float>(camera.height()))
             / lp3::narrow<float>(bg_size.y);
         v.rhw = 1;
         v.color = normColor;
@@ -417,9 +409,9 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[1];
         v.x = 0; v.y = 0;
-        v.tu = lp3::narrow<float>(world.camera.CameraX) /
+        v.tu = lp3::narrow<float>(camera.x()) /
 					lp3::narrow<float>(bg_size.x);
-		v.tv = lp3::narrow<float>(world.camera.CameraY) / lp3::narrow<float>(bg_size.y);
+		v.tv = lp3::narrow<float>(camera.y()) / lp3::narrow<float>(bg_size.y);
         v.rhw = 1;
         v.color = normColor;
     }
@@ -427,8 +419,8 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[2];
         v.x = 640; v.y = 480; // RealWidth; v.y = RealHeight
-        v.tu = lp3::narrow<float>(world.camera.CameraX + world.camera.CameraWidth) / bg_size.x;
-        v.tv = lp3::narrow<float>(world.camera.CameraY + world.camera.CameraHeight) / bg_size.y;
+        v.tu = lp3::narrow<float>(camera.x() + camera.width()) / bg_size.x;
+        v.tv = lp3::narrow<float>(camera.y() + camera.height()) / bg_size.y;
         v.rhw = 1;
         v.color = normColor;
     }
@@ -436,9 +428,9 @@ void View::UpdateSprites() {
     {
         auto & v = this->bgverts[3];
         v.x = 640; v.y = 0;
-        v.tu = lp3::narrow<float>(world.camera.CameraX + world.camera.CameraWidth)
+        v.tu = lp3::narrow<float>(camera.x() + camera.width())
 				/ bg_size.x;
-		v.tv = lp3::narrow<float>(world.camera.CameraY) / bg_size.y;
+		v.tv = lp3::narrow<float>(camera.y()) / bg_size.y;
         v.rhw = 1;
         v.color = normColor;
     }
@@ -454,9 +446,9 @@ void View::UpdateSprites() {
 
         {
             auto & v = sprite.SpriteVerts[0];
-            v.x = lp3::narrow<float>(sprite.x - world.camera.CameraX);
+            v.x = lp3::narrow<float>(sprite.x - camera.x());
             v.y = lp3::narrow<float>(
-				sprite.y + sprite.high - (sprite.z) - world.camera.CameraY);
+				sprite.y + sprite.high - (sprite.z) - camera.y());
             if (sprite.srcx != 0) {
                 v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
             }
@@ -467,8 +459,8 @@ void View::UpdateSprites() {
         }
         {
             auto & v = sprite.SpriteVerts[1];
-            v.x = sprite.x - world.camera.CameraX;
-            v.y = sprite.y - (sprite.z) - world.camera.CameraY;
+            v.x = sprite.x - camera.x();
+            v.y = sprite.y - (sprite.z) - camera.y();
             if (sprite.srcx != 0) {
                 v.tu = (float) sprite.srcx / this->texWidth(sprite.texture);
             }
@@ -480,8 +472,8 @@ void View::UpdateSprites() {
         }
         {
             auto & v = sprite.SpriteVerts[2];
-            v.x = sprite.x + sprite.wide - world.camera.CameraX;
-            v.y = sprite.y + sprite.high - (sprite.z) - world.camera.CameraY;
+            v.x = sprite.x + sprite.wide - camera.x();
+            v.y = sprite.y + sprite.high - (sprite.z) - camera.y();
             if (sprite.srcx2 != 0) {
                 v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
             }
@@ -493,8 +485,8 @@ void View::UpdateSprites() {
         }
         {
             auto & v = sprite.SpriteVerts[3];
-            v.x = sprite.x + sprite.wide - world.camera.CameraX;
-            v.y = sprite.y - (sprite.z) - world.camera.CameraY;
+            v.x = sprite.x + sprite.wide - camera.x();
+            v.y = sprite.y - (sprite.z) - camera.y();
             if (sprite.srcx2 != 0) {
                 v.tu = (float) sprite.srcx2 / this->texWidth(sprite.texture);
             }

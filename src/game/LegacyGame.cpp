@@ -690,15 +690,15 @@ if (s.mode == "truck") {
             if (s.name == "fireball") {
 
                 if (world.player_data[s.parent / 10].slicer == true) {
-                    if (s.color == view.QBColor(2)) {
-                        s.color = view.QBColor(15);
+                    if (s.color == view::qb_color(2)) {
+                        s.color = view::qb_color(15);
                     }
-                    if (s.color == view.QBColor(7)) { s.color = view.QBColor(2); }
-                    if (s.color == view.QBColor(10)) { s.color = view.QBColor(7); }
-                    if (s.color == view.QBColor(14)) {s.color = view.QBColor(10); }
-                    if (s.color == view.QBColor(1)) {s.color = view.QBColor(14); }
-                    if (s.color == view.QBColor(4)) { s.color = view.QBColor(1); }
-                    if (s.color == view.QBColor(15)) { s.color = view.QBColor(4); }
+                    if (s.color == view::qb_color(7)) { s.color = view::qb_color(2); }
+                    if (s.color == view::qb_color(10)) { s.color = view::qb_color(7); }
+                    if (s.color == view::qb_color(14)) {s.color = view::qb_color(10); }
+                    if (s.color == view::qb_color(1)) {s.color = view::qb_color(14); }
+                    if (s.color == view::qb_color(4)) { s.color = view::qb_color(1); }
+                    if (s.color == view::qb_color(15)) { s.color = view::qb_color(4); }
 
                     if ((int) (random.next() * 1) == 1) {
                         s.jumpStrength = 75;
@@ -891,11 +891,11 @@ if (s.mode == "truck") {
                 }
                 if ((j / 10) == 1) {
                     s.x = world.camera.CameraX + 250;
-                    s.color = view.QBColor(10);
+                    s.color = view::qb_color(10);
                 }
                 if ((j / 10) == 2) {
                     s.x = world.camera.CameraX + 450;
-                    s.color = view.QBColor(14);
+                    s.color = view::qb_color(14);
                 }
                 s.y = world.camera.CameraY + 10;
             }
@@ -1156,11 +1156,11 @@ if (s.mode == "truck") {
                 }
                 if ((j / 10) == 1) {
                     s.x = world.camera.CameraX + 250;
-                    s.color = view.QBColor(10);
+                    s.color = view::qb_color(10);
                 }
                 if ((j / 10) == 2) {
                     s.x = world.camera.CameraX + 450;
-                    s.color = view.QBColor(14);
+                    s.color = view::qb_color(14);
                 }
                 s.y = world.camera.CameraY + 10;
                 s.frame = 0;
@@ -1673,10 +1673,10 @@ private:
         world.Sprite[32].frame = world.cinema[world.cinemaCounter].frame2;
         world.Sprite[33].frame = world.cinema[world.cinemaCounter].frame3;
         world.Sprite[34].frame = world.cinema[world.cinemaCounter].frame4;
-        world.Sprite[31].color = view.QBColor(world.cinema[world.cinemaCounter].color1);
-        world.Sprite[32].color = view.QBColor(world.cinema[world.cinemaCounter].color2);
-        world.Sprite[33].color = view.QBColor(world.cinema[world.cinemaCounter].color3);
-        world.Sprite[34].color = view.QBColor(world.cinema[world.cinemaCounter].color4);
+        world.Sprite[31].color = view::qb_color(world.cinema[world.cinemaCounter].color1);
+        world.Sprite[32].color = view::qb_color(world.cinema[world.cinemaCounter].color2);
+        world.Sprite[33].color = view::qb_color(world.cinema[world.cinemaCounter].color3);
+        world.Sprite[34].color = view::qb_color(world.cinema[world.cinemaCounter].color4);
 
         sound.PlayIsoWave(world.cinema[world.cinemaCounter].wavefile);
         world.Sprite[30].miscTime = world.clock + world.cinema[world.cinemaCounter].miscTime;
@@ -2046,7 +2046,7 @@ private:
 
         //Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
         if (world.Sprite[0].name == world.Sprite[10].name) {
-            world.Sprite[10].color = view.QBColor(10);
+            world.Sprite[10].color = view::qb_color(10);
         }
 
 
