@@ -1077,6 +1077,7 @@ if (s.mode == "truck") {
                             //.mhp = 10
                             s.kind = 2;
                             s.deathType = "expand";
+                            s.time = 1;
                             //.hp = 1
                             s.reverse = true;
                         }
@@ -1128,15 +1129,12 @@ if (s.mode == "truck") {
                 s.kind = 0;
                 //if (s.mode = "runner") then
                 s.frame = 3;
-                s.SpriteVerts[0].rhw
-                    = s.SpriteVerts[0].rhw + (0.01 * world.sFactor);
-                s.SpriteVerts[3].rhw
-                    = s.SpriteVerts[3].rhw + (0.01 * world.sFactor);
+                s.time += (0.01 * world.sFactor);
                 s.wide = s.wide + (world.sFactor);
                 s.x = s.x - (world.sFactor / 2);
                 s.high = s.high + (world.sFactor);
                 s.y = s.y - (world.sFactor / 2);
-                if (s.SpriteVerts[3].rhw > 2) {
+                if (s.time > 2) {
                     s.name = "harharhar";
                     this->initSprites(j); //: killS j
                 }
@@ -2098,43 +2096,6 @@ private:
         s.trueVisible = 2;
         s.flickerTime = 0;
         s.target = -1;
-
-        {
-            auto & ws = s.SpriteVerts[0];
-            ws.x = world.Sprite[goatX].x;
-            ws.y = world.Sprite[goatX].y + world.Sprite[goatX].high;
-            ws.tu = 0;
-            ws.tv = 0.5;
-            ws.rhw = 1;
-            ws.color = normColor;
-        }
-        {
-            auto & ws = s.SpriteVerts[1];
-            ws.x = world.Sprite[goatX].x;
-            ws.y = world.Sprite[goatX].y;
-            ws.tu = 0;
-            ws.tv = 0;
-            ws.rhw = 1;
-            ws.color = normColor;
-        }
-        {
-            auto & ws = s.SpriteVerts[2];
-            ws.x = world.Sprite[goatX].x + world.Sprite[goatX].wide;
-            ws.y = world.Sprite[goatX].y + world.Sprite[goatX].high;
-            ws.tu = 0.5;
-            ws.tv = 0.5;
-            ws.rhw = 1;
-            ws.color = normColor;
-        }
-        {
-            auto & ws = s.SpriteVerts[3];
-            ws.x = world.Sprite[goatX].x + world.Sprite[goatX].wide;
-            ws.y = world.Sprite[goatX].y;
-            ws.tu = 0.5;
-            ws.tv = 0;
-            ws.rhw = 1;
-            ws.color = normColor;
-        }
     }
 
     void loadAnimation(int who, const std::string & file) {
