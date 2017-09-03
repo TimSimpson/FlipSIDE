@@ -95,7 +95,6 @@ public:
 			}
 		}
 
-        view.UpdateSprites();
     }
 
 private:

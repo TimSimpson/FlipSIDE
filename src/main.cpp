@@ -268,7 +268,7 @@ int _main(core::PlatformLoop & loop) {
 
 		frame_timer.next_frame();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		view.DrawStuff(frame_timer.get_fps());
+		view.report_fps(frame_timer.get_fps());
 		window.render(std::ref(view));
 		return !quit;
 	});

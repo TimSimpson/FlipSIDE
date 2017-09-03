@@ -53,7 +53,6 @@ public:
         }
 
         this->NowLoading();
-        view.UpdateSprites();
         view.LoadTexture(0, "PlayerS2.png", 320, 400);
         view.LoadTexture(-1, "PlayerS.png", 320, 240);
         world.camera.CameraWidth = 320;
@@ -175,8 +174,6 @@ public:
             }
         }
 
-        view.UpdateSprites();
-
 		if (world.exitS == "true" && boost::starts_with(world.screen, "Level")) {
 			double sapple = boost::lexical_cast<double>(world.screen.substr(5));
 			sapple = sapple + 0.1; // WTF, right? It's in the original code though...
@@ -201,8 +198,7 @@ private:
         view.LoadTexture(-1, "NowLoading.png", 320, 240);
         world.camera.CameraWidth = 320;
         world.camera.CameraHeight = 240;
-        view.UpdateSprites();
-        //Call DrawStuff
+
         world.camera.CameraWidth = 640;
         world.camera.CameraHeight = 480;
     }

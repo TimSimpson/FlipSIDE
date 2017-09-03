@@ -443,8 +443,6 @@ public:
             }
         }
 
-        view.UpdateSprites();
-
 		if (world.screen == "intro story") {
 			world.screen = "intro story 2";
 			destroyEverything(world, view, sound);

@@ -1183,8 +1183,6 @@ if (s.mode == "truck") {
         //      END OF AN ERA
         //---------------------------------------------------------------------
 
-        view.UpdateSprites();
-
         for (j = 0; j <= world.spritesInUse; ++ j) {
             //If Sprite(j).mover = True Then
             for (k = j + 1; k <= world.spritesInUse; ++k) {
@@ -2392,8 +2390,7 @@ private:
         view.LoadTexture(-1, "NowLoading.png", 320, 240);
         world.camera.CameraWidth = 320;
         world.camera.CameraHeight = 240;
-        view.UpdateSprites();
-        //Call DrawStuff
+
         world.camera.CameraWidth = 640;
         world.camera.CameraHeight = 480;
     }
@@ -2411,7 +2408,6 @@ private:
 
 		destroyEverything(world, view, sound);
         this->NowLoading();
-        view.UpdateSprites();
         view.LoadTexture(0, "PlayerS2.png", 320, 400);
         view.LoadTexture(-1, "PlayerS.png", 320, 240);
         world.camera.CameraWidth = 320;

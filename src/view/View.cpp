@@ -115,6 +115,7 @@ StupidIndex::StupidIndex(int _value)
 
 View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 :	disable_view(false),
+    fps(0),
 	history({}),
     media(media_arg),
 	textures({}),
@@ -144,6 +145,9 @@ View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 }
 
 void View::operator()(const glm::mat4 & previous) {
+    UpdateSprites();
+    DrawStuff();
+
 	program.use();
 	auto _2d = gfx::create_2d_screen(previous, res2d);
 	program.set_mvp(_2d);
@@ -230,7 +234,7 @@ void View::animate() {
 	}
 }
 
-void View::DrawStuff(float fps) {
+void View::DrawStuff() {
 	// 2017- draw FPS text
 
 	// Clear theses
@@ -360,6 +364,9 @@ void View::LoadTexture(StupidIndex which, const std::string & fileName,
                   texture_sizes[get_smart(which)].y);
 }
 
+void View::report_fps(float _fps) {
+    fps = _fps;
+}
 
 void View::UpdateSprites() {
      //int j = 0; // in old code, not needed?

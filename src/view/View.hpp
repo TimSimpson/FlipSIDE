@@ -36,13 +36,8 @@ public:
 	// Call this to update periodic animations
 	void animate();
 
-	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
-	void DrawStuff(float fps);
-
     void LoadTexture(StupidIndex which, const std::string & fileName,
                      int howWide, int howHigh);
-
-    void UpdateSprites();
 
     // Fills up the frames of a character sprite with stuff from a file.
     void load_animation_file(std::array<view::AnimationFrame, 20> & frames,
@@ -66,11 +61,16 @@ public:
 	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
     void LoadHistory(const TextureHistory & history);
 
+    // Tell the view what the FPS was
+    void report_fps(float fps);
+
 	// TODO: Called by Main Loop - move this somewhere Game doesn't need to touch it.
     const TextureHistory &  SaveHistory();
 
 private:
 	bool disable_view;
+
+    float fps;
 
 	TextureHistory history;
 
@@ -89,6 +89,7 @@ private:
 	std::array<glm::vec2, texture_count> texture_sizes;
 	std::array<Vertex, 4> bgverts;
 
+    void DrawStuff();
 
 	// Maps old vert array to a quad
 	inline void draw_vert_to_quad(const Vertex * v,
@@ -107,6 +108,8 @@ private:
 	void draw_verts_as_quad(const Vertex * v, const StupidIndex texIndex, float z);
 
     gsl::owner<gfx::Texture *> load_image(const std::string & fileName);
+
+    void UpdateSprites();
 };
 
 }   }   // end namespace
