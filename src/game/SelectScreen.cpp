@@ -181,8 +181,11 @@ public:
 		} // End If
 
 		if (world.screen == "SelectPlayerz") {
-			this->selectPlayerS();
+			if (this->selectPlayerS()) {
+				return;
+			}
 		}
+		create_billboards(world, view.billboards());
     }
 
 private:

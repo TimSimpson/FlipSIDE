@@ -113,7 +113,7 @@ StupidIndex::StupidIndex(int _value)
     LP3_ASSERT(_value >= -1 && value < View::texture_count - 1);
 }
 
-View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
+View::View(core::MediaManager & media_arg, Vb & vb_arg)
 :	disable_view(false),
     fps(0),
 	history({}),
@@ -124,9 +124,7 @@ View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 	font_elements{ (letters_max * 4) },
 	font_quads(font_elements.add_quads(letters_max)),
 	game_elements(),
-	world(world_arg),
-    camera(world_arg.camera),
-    vb(vb_arg),
+	vb(vb_arg),
 	texture_sizes(),
 	bgverts({})
 {
@@ -138,21 +136,30 @@ View::View(core::MediaManager & media_arg, game::World & world_arg, Vb & vb_arg)
 	for (std::size_t i = 0; i < textures.size(); ++i) {
 		game_elements.emplace_back(game::World::NUMSPRITES * 4);
 	}
-
-    // for (std::size_t i = 0; i < AnimationTexture.size() + 1; ++ i) {
-    //     history.push_back(boost::none);
-    // }
 }
 
 void View::operator()(const glm::mat4 & previous) {
-    UpdateSprites();
-    DrawStuff();
+	//UpdateSprites();
+	//DrawStuff();
+	
+	for (auto & ge : game_elements) {
+		ge.reset();
+	}
 
+	for (const auto & b : _billboards) {
+		gfx::Quad<gfx::TexCVert> quad
+			= game_elements[b.texture_index].add_quad();
+		gfx::upright_quad(quad, b.ul, (b.ul + b.size), b.z,
+			b.tex_src_ul / texture_sizes[b.texture_index],
+			b.tex_src_dr / texture_sizes[b.texture_index]);
+	}
+
+	// Now start calling OpenGL 
 	program.use();
 	auto _2d = gfx::create_2d_screen(previous, res2d);
 	program.set_mvp(_2d);
 
-	for (int i = 0; i <= 10; ++ i) {
+	for (int i = 0; i <= 10; ++i) {
 		lp3::gfx::Texture * tex = textures[i].get();
 		if (tex && 0 < game_elements[i].count()) {
 			program.set_texture(tex->gl_id());
@@ -162,124 +169,6 @@ void View::operator()(const glm::mat4 & previous) {
 
 	program.set_texture(font.texture().gl_id());
 	program.draw(font_elements);
-}
-
-void View::animate() {
-	for (int j = 0; j <= world.spritesInUse; ++j) {
-		auto & s = world.Sprite[j];
-
-		if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
-			if (s.dir != "") { s.frame = s.frame + 1; }
-			if (s.dir == "u") {
-				if (s.frame > 8) { s.frame = 5; }
-			}
-			if (s.dir == "d") {
-				if (s.frame > 12) { s.frame = 9; }
-			}
-			if (s.dir == "l") {
-				if (s.frame > 16) { s.frame = 13; }
-			}
-			if (s.dir == "r") {
-				if (s.frame > 4) { s.frame = 1; }
-			}
-		}
-
-		if (s.name == "Nicky" && s.mode != "truck") {
-			if (s.dir != "") { s.frame = s.frame + 1; }
-			if (s.dir == "u") {
-				if (s.frame > 6) { s.frame = 4; }
-			}
-			if (s.dir == "d") {
-				if (s.frame > 9) { s.frame = 7; }
-			}
-			if (s.dir == "l") {
-				if (s.frame > 12) { s.frame = 10; }
-			}
-			if (s.dir == "r") {
-				if (s.frame > 3) { s.frame = 1; }
-			}
-		}
-
-		if (s.name == "fireball") {
-			s.frame = s.frame + 1;
-			if (s.frame > 3 || s.frame < 1) { s.frame = 1; }
-		}
-
-		if (s.name == "goomba" || s.name == "Kerbose"
-			|| s.name == "paulrun" || s.name == "pigeonbomber") {
-			s.frame = s.frame + 1;
-			if (s.frame > 2) { s.frame = 1; }
-		}
-
-		if (s.name == "pigeon") {
-			s.frame = s.frame + 1;
-			if (s.frame > 2) { s.frame = 1; }
-		}
-
-		if (s.name == "tdigger") {
-			s.frame = s.frame + 1;
-			if (s.mode == "") {
-				if (s.frame > 5) { s.frame = 4; }
-			}
-			if (s.mode == "runner") {
-				if (s.frame > 2) { s.frame = 1; }
-			}
-		}
-
-
-		if (s.name == "bluestick") {
-			s.frame = s.frame + 1;
-			if (s.frame > 2) { s.frame = 1; }
-		}
-	}
-}
-
-void View::DrawStuff() {
-	// 2017- draw FPS text
-
-	// Clear theses
-	for (auto & ge : game_elements) {
-		ge.reset();
-	}
-
-	std::string s = str(boost::format("FPS: %d") % fps);
-	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
-
-	float z = 0.9999f;
-    // So, if we had the stupid old background texture set, then draw
-    // the also unique background verts.
-    // To be fair, some extra logic goes into rendering this versus everything
-    // else which is affected by the camera's cordinates.
-	if (textures[0]) {
-		LP3_ASSERT(nullptr != textures[0]);
-		draw_verts_as_quad(bgverts.data(), -1, z);
-	}
-    //2017: So, the old game has verts that in fact have a Z coordinate,
-    //      but it looks like it wasn't used (or I didn't copy the logic
-    //      in correctly).
-
-	for (int j = 0; j < world.spritesInUse; ++j) {
-		if (world.drawOrder[j] == -1) {
-			continue;   // goto suckIt
-		}
-		const int index = world.drawOrder[j];
-		const auto & sprite = world.Sprite[index];
-
-		if (sprite.visible) {
-            z -= 0.0067f;
-			draw_verts_as_quad(sprite.SpriteVerts.data(),
-                               StupidIndex(sprite.texture), z);
-		}
-	}
-}
-
-void View::draw_verts_as_quad(const Vertex * v,
-                              const StupidIndex texIndex, float z) {
-	// Using old game logic, -1 could be the "background" texture which was
-	// reasonlessly treated differently from everything else.
-	const int realIndex = texIndex.value + 1;
-	gfx::Quad<gfx::TexCVert> quad = game_elements[realIndex].add_quad();
-	draw_vert_to_quad(v, quad, z);
 }
 
 void View::LoadHistory(const TextureHistory & other_history)
@@ -368,129 +257,6 @@ void View::report_fps(float _fps) {
     fps = _fps;
 }
 
-void View::UpdateSprites() {
-     //int j = 0; // in old code, not needed?
-    int k = 0;
-
-    for (int j = 0; j < world.spritesInUse; ++ j) {
-        auto & s = world.Sprite[j];
-        if (s.frame > 0) {
-            s.srcx = s.Aframe[s.frame].x;
-            s.srcy = s.Aframe[s.frame].y;
-            s.srcx2 = s.Aframe[s.frame].x2;
-            s.srcy2 = s.Aframe[s.frame].y2;
-        }
-    }
-
-    //----------------------------------------------------------------------
-    //              THIS PART HERE'S THE KICKER
-    //----------------------------------------------------------------------
-    const auto & bg_size = texture_sizes[0];
-    {
-        auto & v = this->bgverts[0];
-        v.x = 0; v.y = 480; // RealHeight
-   //      v.tu = lp3::narrow<float>(camera.x) / lp3::narrow<float>(world.bgWidth);
-   //      v.tv = (lp3::narrow<float>(camera.y()) + lp3::narrow<float>(camera.height()))
-			// / lp3::narrow<float>(world.bgHeight);
-        v.tu = lp3::narrow<float>(camera.x()) / lp3::narrow<float>(bg_size.x);
-        v.tv = (lp3::narrow<float>(camera.y()) + lp3::narrow<float>(camera.height()))
-            / lp3::narrow<float>(bg_size.y);
-        v.rhw = 1;
-        v.color = normColor;
-    }
-
-    {
-        auto & v = this->bgverts[1];
-        v.x = 0; v.y = 0;
-        v.tu = lp3::narrow<float>(camera.x()) /
-					lp3::narrow<float>(bg_size.x);
-		v.tv = lp3::narrow<float>(camera.y()) / lp3::narrow<float>(bg_size.y);
-        v.rhw = 1;
-        v.color = normColor;
-    }
-
-    {
-        auto & v = this->bgverts[2];
-        v.x = 640; v.y = 480; // RealWidth; v.y = RealHeight
-        v.tu = lp3::narrow<float>(camera.x() + camera.width()) / bg_size.x;
-        v.tv = lp3::narrow<float>(camera.y() + camera.height()) / bg_size.y;
-        v.rhw = 1;
-        v.color = normColor;
-    }
-
-    {
-        auto & v = this->bgverts[3];
-        v.x = 640; v.y = 0;
-        v.tu = lp3::narrow<float>(camera.x() + camera.width())
-				/ bg_size.x;
-		v.tv = lp3::narrow<float>(camera.y()) / bg_size.y;
-        v.rhw = 1;
-        v.color = normColor;
-    }
-
-    for (int j = 0; j < world.spritesInUse; ++ j) {
-        auto & sprite = world.Sprite[j];
-        const auto & tex_size = texture_sizes[get_smart(StupidIndex(sprite.texture))];
-        if (sprite.reverse == true) {
-            k = sprite.srcx2;
-            sprite.srcx2 = sprite.srcx;
-            sprite.srcx = k;
-        }
-
-        {
-            auto & v = sprite.SpriteVerts[0];
-            v.x = lp3::narrow<float>(sprite.x - camera.x());
-            v.y = lp3::narrow<float>(
-				sprite.y + sprite.high - (sprite.z) - camera.y());
-            if (sprite.srcx != 0) {
-                v.tu = (float) sprite.srcx / tex_size.x;
-            }
-            if (sprite.srcy2 != 0) {
-                v.tv = (float) sprite.srcy2 / tex_size.y;
-            }
-            v.color = sprite.color;
-        }
-        {
-            auto & v = sprite.SpriteVerts[1];
-            v.x = sprite.x - camera.x();
-            v.y = sprite.y - (sprite.z) - camera.y();
-            if (sprite.srcx != 0) {
-                v.tu = (float) sprite.srcx / tex_size.x;
-            }
-            if (sprite.srcy != 0) {
-                v.tv = (float) sprite.srcy / tex_size.y;
-            }
-            // v.rhw = 1
-            v.color = sprite.color;
-        }
-        {
-            auto & v = sprite.SpriteVerts[2];
-            v.x = sprite.x + sprite.wide - camera.x();
-            v.y = sprite.y + sprite.high - (sprite.z) - camera.y();
-            if (sprite.srcx2 != 0) {
-                v.tu = (float) sprite.srcx2 / tex_size.x;
-            }
-            if (sprite.srcy2 != 0) {
-                v.tv = (float) sprite.srcy2 / tex_size.y;
-            }
-            // v.rhw = 1
-            v.color = sprite.color;
-        }
-        {
-            auto & v = sprite.SpriteVerts[3];
-            v.x = sprite.x + sprite.wide - camera.x();
-            v.y = sprite.y - (sprite.z) - camera.y();
-            if (sprite.srcx2 != 0) {
-                v.tu = (float) sprite.srcx2 / tex_size.x;
-            }
-            if (sprite.srcy != 0) {
-                v.tv = (float) sprite.srcy / tex_size.y;
-            }
-            // v.rhw = 1
-            v.color = sprite.color;
-        }
-    }  // end for loop
-}
 
 
 }	}   // end namespace

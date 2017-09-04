@@ -30,6 +30,7 @@ private:
 	Sound & sound;
 	World & world;
 	Random random;
+	std::int64_t animation_timer;
 
 public:
 	LegacyGame(GameProcessSpace & _space, view::View & view_arg,
@@ -39,7 +40,8 @@ public:
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
-        random()
+        random(),
+		animation_timer(0)
     {
 		LP3_ASSERT(boost::starts_with(world.screen, "Level"));
 		LP3_ASSERT(world.currentScreen != world.screen);
@@ -1214,7 +1216,8 @@ if (s.mode == "truck") {
             world.Sprite[j].lastX = world.Sprite[j].x;
             world.Sprite[j].lastY = world.Sprite[j].y;
         }
-
+		animate();
+		create_billboards(world, view.billboards());
     }
     //     End Sub for playGame--------------------------------------------!!!
     //     End Sub for playGame--------------------------------------------!!!
@@ -1222,6 +1225,83 @@ if (s.mode == "truck") {
     //     End Sub for playGame--------------------------------------------!!!
 
 private:
+	void animate() {
+		animation_timer += 16;
+		// emulates old timer that fired once every 200 ms
+		if (animation_timer < 200) {
+			return;
+		}
+		animation_timer -= 200;
+
+		for (int j = 0; j <= world.spritesInUse; ++j) {
+			auto & s = world.Sprite[j];
+
+			if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
+				if (s.dir != "") { s.frame = s.frame + 1; }
+				if (s.dir == "u") {
+					if (s.frame > 8) { s.frame = 5; }
+				}
+				if (s.dir == "d") {
+					if (s.frame > 12) { s.frame = 9; }
+				}
+				if (s.dir == "l") {
+					if (s.frame > 16) { s.frame = 13; }
+				}
+				if (s.dir == "r") {
+					if (s.frame > 4) { s.frame = 1; }
+				}
+			}
+
+			if (s.name == "Nicky" && s.mode != "truck") {
+				if (s.dir != "") { s.frame = s.frame + 1; }
+				if (s.dir == "u") {
+					if (s.frame > 6) { s.frame = 4; }
+				}
+				if (s.dir == "d") {
+					if (s.frame > 9) { s.frame = 7; }
+				}
+				if (s.dir == "l") {
+					if (s.frame > 12) { s.frame = 10; }
+				}
+				if (s.dir == "r") {
+					if (s.frame > 3) { s.frame = 1; }
+				}
+			}
+
+			if (s.name == "fireball") {
+				s.frame = s.frame + 1;
+				if (s.frame > 3 || s.frame < 1) { s.frame = 1; }
+			}
+
+			if (s.name == "goomba" || s.name == "Kerbose"
+				|| s.name == "paulrun" || s.name == "pigeonbomber") {
+				s.frame = s.frame + 1;
+				if (s.frame > 2) { s.frame = 1; }
+			}
+
+			if (s.name == "pigeon") {
+				s.frame = s.frame + 1;
+				if (s.frame > 2) { s.frame = 1; }
+			}
+
+			if (s.name == "tdigger") {
+				s.frame = s.frame + 1;
+				if (s.mode == "") {
+					if (s.frame > 5) { s.frame = 4; }
+				}
+				if (s.mode == "runner") {
+					if (s.frame > 2) { s.frame = 1; }
+				}
+			}
+
+
+			if (s.name == "bluestick") {
+				s.frame = s.frame + 1;
+				if (s.frame > 2) { s.frame = 1; }
+			}
+		}
+	}
+
     long anyKey(int zed) {
         // Returns true if the player at the given index is pressing any key.
         return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY

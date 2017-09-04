@@ -155,7 +155,7 @@ int _main(core::PlatformLoop & loop) {
 
 	nnd3d::Vb vb{ media };
 	nnd3d::game::World world;
-	nnd3d::view::View view{ media, world, vb };
+	nnd3d::view::View view{ media, vb };
 
 	nnd3d::MutableSound sound{ media };
 	(void)sound;
@@ -171,11 +171,7 @@ int _main(core::PlatformLoop & loop) {
 	const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 
 	sims::GameClock clock(ms_per_update);
-
-    // 2017: This next clock stands in for a Visual Basic Timer that the
-    //       old code would fire once every 200 ms.
-    sims::GameClock old_timer(200);
-
+    
 	auto run_game = [&world, &game, &input, &sound, &ms_per_update](std::int64_t) {
 		// Garbage collect sound to avoid out of channel problems.
 		sound.garbage_collect();
@@ -260,11 +256,6 @@ int _main(core::PlatformLoop & loop) {
 		controls.update();
 
 		clock.run_updates(run_game);
-
-
-		old_timer.run_updates([&view](std::int64_t) {
-			view.animate();
-		});
 
 		frame_timer.next_frame();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

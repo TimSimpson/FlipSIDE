@@ -5,6 +5,7 @@
 #include "CharacterProc.hpp"
 
 #include "TitleScreen.hpp"
+#include "GameOverScreen.hpp"
 
 #ifdef _MSC_VER
     // Avoid the zillions implicit conversion warnings
@@ -45,6 +46,7 @@ Game::Game(view::View & _view, Sound & _sound, Vb & vb, World & _world)
 	world(_world)
 {
     process.exec(create_title_screen(process, _view, _sound, vb, _world));
+	//process.exec(create_gameover_screen(process, _view, _sound, vb, _world));
 }
 
 Game::~Game() {

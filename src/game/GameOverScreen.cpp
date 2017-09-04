@@ -94,7 +94,7 @@ public:
 				}
 			}
 		}
-
+		create_billboards(world, view.billboards());
     }
 
 private:

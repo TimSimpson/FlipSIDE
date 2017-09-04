@@ -472,7 +472,9 @@ public:
 			this->exec(
 				create_select_screen(
 					get_process_space(), view, sound, vb, world, keys_pressed));
+			return;
 		}
+		create_billboards(world, view.billboards());
     }
 
 

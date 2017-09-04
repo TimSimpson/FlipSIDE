@@ -19,6 +19,7 @@ void flicker(World & world);
 
 void findOrder(World & world);
 
+void create_billboards(World & world, std::vector<view::Billboard> & billboards);
 
 }   }  // end namespace
 
