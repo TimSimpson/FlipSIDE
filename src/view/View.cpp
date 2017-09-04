@@ -107,6 +107,36 @@ glm::vec4 qb_color(int index) {
     }
 }
 
+Billboard::Billboard() 
+:	ul{},
+	size{},
+	z(0),
+	tex_src_ul{},
+	tex_src_dr{},
+	texture_index(0),
+	_visible(true),
+	_flicker(false)
+{
+}
+
+void Billboard::set_visibility(Visibility value) {
+	switch (value) {
+		case Visibility::normal:
+			this->_visible = true;
+			this->_flicker = false;
+			break;
+		case Visibility::flicker:
+			this->_flicker = true;
+			break;
+		case Visibility::invisible:
+			this->_visible = false;
+			this->_flicker = false;
+			break;
+		default:
+			LP3_ASSERT(false);
+	}
+}
+
 StupidIndex::StupidIndex(int _value)
 :   value(_value)
 {
@@ -146,12 +176,18 @@ void View::operator()(const glm::mat4 & previous) {
 		ge.reset();
 	}
 
-	for (const auto & b : _billboards) {
-		gfx::Quad<gfx::TexCVert> quad
-			= game_elements[b.texture_index].add_quad();
-		gfx::upright_quad(quad, b.ul, (b.ul + b.size), b.z,
-			b.tex_src_ul / texture_sizes[b.texture_index],
-			b.tex_src_dr / texture_sizes[b.texture_index]);
+	for (auto & m_b : _billboards) {
+		const auto & b = m_b;
+		if (b._visible) {
+			gfx::Quad<gfx::TexCVert> quad
+				= game_elements[b.texture_index].add_quad();
+			gfx::upright_quad(quad, b.ul, (b.ul + b.size), b.z,
+				b.tex_src_ul / texture_sizes[b.texture_index],
+				b.tex_src_dr / texture_sizes[b.texture_index]);
+		}		
+		if (b._flicker) {
+			m_b._visible = !b._visible;
+		}
 	}
 
 	// Now start calling OpenGL 

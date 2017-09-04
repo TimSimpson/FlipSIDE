@@ -13,6 +13,12 @@ namespace gfx = lp3::gfx;
 namespace game = nnd3d::game;
 
 
+enum class Visibility {
+	normal,
+	invisible,
+	flicker
+};
+
 struct Billboard {
 	glm::vec2 ul;
 	glm::vec2 size;
@@ -20,6 +26,13 @@ struct Billboard {
 	glm::vec2 tex_src_ul;
 	glm::vec2 tex_src_dr;
 	int texture_index;
+	
+	void set_visibility(Visibility value);
+
+	bool _visible;
+	bool _flicker;
+
+	Billboard();
 };
 
 glm::vec4 qb_color(int index);

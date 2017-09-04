@@ -1,6 +1,7 @@
 #include "GameOverScreen.hpp"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/lexical_cast.hpp>
+#include <lp3/sims.hpp>
 
 #include "BaseScreen.hpp"
 #include "TitleScreen.hpp"
@@ -19,6 +20,7 @@ namespace {
     const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
 }
 
+namespace sims = lp3::sims;
 
 class GameOverScreen : public GameProcess
 {
@@ -28,9 +30,18 @@ private:
     Sound & sound;
     World & world;
     Random random;
+	
+	struct AllocateBillboards {
+		AllocateBillboards(std::vector<view::Billboard> & billboards) {
+			billboards.resize(2);
+		}
+	} allocate_billboards;
 
-	CharacterSprite & game_over_cloud_bg;
-	CharacterSprite & game_over_title;
+	view::Billboard & game_over_cloud_bg;
+	view::Billboard & game_over_title;
+	std::int64_t wait_time;
+	
+	sims::CoroutineState coro_state;
 public:
     GameOverScreen(GameProcessSpace & _space, view::View & view_arg,
                Sound & sound_arg, Vb & vb_arg, World & world_arg)
@@ -40,61 +51,67 @@ public:
         sound(sound_arg),
         world(world_arg),
         random(),
-		game_over_cloud_bg(world.Sprite[0]),
-		game_over_title(world.Sprite[1])
-    {
+		allocate_billboards(view.billboards()),
+		game_over_cloud_bg(view.billboards()[0]),
+		game_over_title(view.billboards()[1]),
+		wait_time(4000)
+    {	
 		sound.silence_sfx();
         world = World{};
         sound.PlayBgm("");
         world.screen = "gameOver";
         destroyEverything(world, view, sound);
         view.LoadTexture(0, "GameOver.png", 320, 287);
-        {
-            auto & s = game_over_cloud_bg;
-            s.srcx = 1; s.srcy = 1; s.srcx2 = 320; s.srcy2 = 240;
-            s.x = 0; s.y = 0; s.wide = 640; s.high = 480; s.visible = true;
-            s.trueVisible = 1;
-            s.name = "GameOverCloudBg";
-            s.texture = 0;
-            s.color = normColor;
-        }
-        {
-            auto & s = game_over_title;
-            s.srcx = 1; s.srcy = 243; s.srcx2 = 320; s.srcy2 = 287;
-            s.x = 0; s.y = 180; s.wide = 640; s.high = 94; s.visible = true;
-            s.trueVisible = 1;
-            s.name = "GameOverCloudTitle"; s.texture = 0;
-            s.miscTime = world.clock + 4;
-        }
-        sound.PlayWave("GameOver.wav");
+		
+		game_over_cloud_bg.ul = { 0, 0 };
+		game_over_cloud_bg.size = { 640, 480 };
+		game_over_cloud_bg.tex_src_ul = { 1, 1 };
+		game_over_cloud_bg.tex_src_dr = { 320, 240 };
+		game_over_cloud_bg.texture_index = 1;
+		game_over_cloud_bg.z = 0.9f;
 
-        findOrder(world);
+		game_over_title.ul = { 0, 180 };
+		game_over_title.size = { 640, 94 };
+		game_over_title.tex_src_ul = { 1, 243 };
+		game_over_title.tex_src_dr = { 320, 287 };
+		game_over_title.texture_index = 1;
+		game_over_title.z = 0.5f;
+
+        sound.PlayWave("GameOver.wav");
     }
 
     void handle_input(const input::Event &) override {
     }
 
-    void update() override {
-        world.lasttime = world.clock + 3.33333333333333E-02;
-
-		flicker(world);
-
-		auto & s = game_over_title;
-		if (world.clock > s.miscTime) {
-			s.high = s.high + 2 * world.sFactor;
-			s.y = s.y - world.sFactor;
-			if (s.y < 0) { s.flickerTime = world.clock + 1; }
-			if (s.y < -300) {
-				s.wide = s.wide - (10 * world.sFactor);
-				s.x = s.x + 5 * world.sFactor;
-				if (s.wide < 0) {
-					s.visible = false;
-					this->exec(create_title_screen(get_process_space(), view, sound, vb, world));
-					return;
-				}
+	void animation() {
+		LP3_COROUTINE_BEGIN(coro_state);
+		while (wait_time > 0) {
+			wait_time -= 16;
+			LP3_YIELD();
+		}		
+		while (game_over_title.ul.y >= -300) {
+			game_over_title.size.y += (2 * world.sFactor);
+			game_over_title.ul.y -= world.sFactor;
+			if (game_over_title.ul.y < 0) {
+				game_over_title.set_visibility(view::Visibility::flicker);
 			}
+			LP3_YIELD();
 		}
-		create_billboards(world, view.billboards());
+		while (game_over_title.size.x >= 0) {
+			game_over_title.size.x -= (10 * world.sFactor);
+			game_over_title.ul.x += (5 * world.sFactor);			
+			LP3_YIELD();
+		}
+		LP3_COROUTINE_END();
+	}
+
+    void update() override {
+		if (coro_state) {
+			animation();			
+		}
+		else {
+			this->exec(create_title_screen(get_process_space(), view, sound, vb, world));
+		}      				
     }
 
 private:
