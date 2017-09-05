@@ -28,7 +28,6 @@ private:
     Vb & vb;
     view::View & view;
     Sound & sound;
-    World & world;
     Random random;
 	
 	struct AllocateBillboards {
@@ -44,11 +43,10 @@ private:
 	sims::CoroutineState coro_state;
 public:
     GameOverScreen(view::View & view_arg,
-               Sound & sound_arg, Vb & vb_arg, World & world_arg)
+               Sound & sound_arg, Vb & vb_arg)
     :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
-        world(world_arg),
         random(),
 		allocate_billboards(view.billboards()),
 		game_over_cloud_bg(view.billboards()[0]),
@@ -56,10 +54,7 @@ public:
 		wait_time(4000)
     {	
 		sound.silence_sfx();
-        world = World{};
         sound.PlayBgm("");
-        world.screen = "gameOver";
-        destroyEverything(world, view, sound);
         view.LoadTexture(0, "GameOver.png", 320, 287);
 		
 		game_over_cloud_bg.ul = { 0, 0 };
@@ -89,20 +84,20 @@ public:
 			LP3_YIELD(nullptr);
 		}
 		while (game_over_title.ul.y >= -300) {
-			game_over_title.size.y += (2 * world.sFactor);
-			game_over_title.ul.y -= world.sFactor;
+			game_over_title.size.y += lp3::narrow<float>(2.0f * speed_factor);
+			game_over_title.ul.y -= lp3::narrow<float>(speed_factor);
 			if (game_over_title.ul.y < 0) {
 				game_over_title.set_visibility(view::Visibility::flicker);
 			}
 			LP3_YIELD(nullptr);
 		}
 		while (game_over_title.size.x >= 0) {
-			game_over_title.size.x -= (10 * world.sFactor);
-			game_over_title.ul.x += (5 * world.sFactor);
+			game_over_title.size.x -= lp3::narrow<float>(10.0f * speed_factor);
+			game_over_title.ul.x += lp3::narrow<float>(5.0f * speed_factor);
 			LP3_YIELD(nullptr);
 		}
 		LP3_COROUTINE_END();
-		return create_title_screen(view, sound, vb, world);
+		return create_title_screen(view, sound, vb);
     }
 
 
@@ -111,9 +106,9 @@ public:
 
 
 gsl::owner<GameProcess *> create_gameover_screen(
-    view::View & view, Sound & sound, Vb & vb, World & world)
+    view::View & view, Sound & sound, Vb & vb)
 {
-    return new GameOverScreen(view, sound, vb, world);
+    return new GameOverScreen(view, sound, vb);
 }
 
 }   }  // end namespace

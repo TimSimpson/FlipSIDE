@@ -8,8 +8,7 @@ namespace nnd3d { namespace game {
 
 
 GameProcess * create_select_screen(view::View & view, Sound & sound, Vb & vb,
-                                   World & world,
-	                               std::array<bool, 3> keys_pressed);
+                                   std::array<bool, 3> keys_pressed);
 
 }   }  // end namespace
 

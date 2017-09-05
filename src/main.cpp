@@ -11,7 +11,6 @@
 #include "Sound.hpp"
 #include "Vb.hpp"
 #include "view.hpp"
-#include "game/World.hpp"
 
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
@@ -154,13 +153,12 @@ int _main(core::PlatformLoop & loop) {
 	#endif
 
 	nnd3d::Vb vb{ media };
-	nnd3d::game::World world;
 	nnd3d::view::View view{ media, vb };
 
 	nnd3d::MutableSound sound{ media };
 	(void)sound;
 
-	nnd3d::game::Game game(view, sound, vb, world);
+	nnd3d::game::Game game(view, sound, vb);
 
 	sims::FrameTimer frame_timer;
 
@@ -172,7 +170,7 @@ int _main(core::PlatformLoop & loop) {
 
 	sims::GameClock clock(ms_per_update);
     
-	auto run_game = [&world, &game, &input, &sound, &ms_per_update](std::int64_t) {
+	auto run_game = [&game, &input, &sound, &ms_per_update](std::int64_t) {
 		// Garbage collect sound to avoid out of channel problems.
 		sound.garbage_collect();
 
@@ -181,22 +179,7 @@ int _main(core::PlatformLoop & loop) {
 			for (const auto & event : input->retrieve_events(ms_per_update)) {
 				game.handle_input(event);
 			}
-		}
-
-		// The old code figured out the percentage of a second each frame
-		// took, and created a "speed factor" which it multiplied everything
-		// in existence by. That's actually a bad approach for several
-		// reasons, but the take away is here we introducing a constant
-		// speed mod which will always be 0.016
-		world.sFactor = lp3::narrow<double>(ms_per_update) / 1000.0;
-		world.clock = world.clock + world.sFactor;
-		if (world.LemonTime) {
-			world.sFactor *= 2;
-		}
-		// So the game created a speed factor that tried to make it
-		// target 120fps (kind of cool my old Pentium 2 machine could do
-		// that). So we multiple the number we just had by 120.
-		world.sFactor *= 120;
+		}		
 
 		game.update();
 	};
@@ -238,7 +221,7 @@ int _main(core::PlatformLoop & loop) {
 	}
 
 	const auto result = loop.run([&]() {
-		bool quit = world.STOPGAME;
+		bool quit = game.quit();
 		SDL_Event e;
 		while (SDL_PollEvent(&e)) {
 			switch (e.type) {

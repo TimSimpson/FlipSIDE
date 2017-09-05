@@ -14,8 +14,17 @@ namespace nnd3d { namespace game {
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
 
+// The old code figured out the percentage of a second each frame
+// took, and created a "speed factor" which it multiplied everything
+// in existence by. That's actually a bad approach for several
+// reasons, but the take away is here we introducing a constant
+// speed mod which will always be 0.016
 constexpr std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
-constexpr double speed_factor = ms_per_update / 1000.0;
+
+// So the game created a speed factor that tried to make it
+// target 120fps (kind of cool my old Pentium 2 machine could do
+// that). So we multiple the number we just had by 120.
+constexpr double speed_factor = (ms_per_update / 1000.0) * 120;
 
 class GameProcess;
 
@@ -56,17 +65,19 @@ public:
 class Game
 {
 public:
-    Game(view::View & view, Sound & sound, Vb & vb, World & world);
+    Game(view::View & view, Sound & sound, Vb & vb);
 
 	~Game();
 
     void handle_input(const input::Event & even);
 
+	bool quit() const;
+
     void update();
 
 private:
     GameProcessSpace process;
-	World & world;
+	bool _quit;
 };
 
 }   }  // end namespace

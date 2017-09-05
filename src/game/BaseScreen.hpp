@@ -21,6 +21,8 @@ void findOrder(World & world);
 
 void create_billboards(World & world, std::vector<view::Billboard> & billboards);
 
+void set_time_stuff(World & world);
+
 }   }  // end namespace
 
 #endif

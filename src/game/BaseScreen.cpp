@@ -185,5 +185,11 @@ void findOrder(World & world) {
     }
 }
 
+void set_time_stuff(World & world) {
+	world.sFactor = speed_factor;
+	world.clock += 0.016f; 
+	// TODO: lemon time is ignored, for now
+	// used to affect sFactory, but not the clock
+}
 
 }   }

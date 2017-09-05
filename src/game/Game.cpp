@@ -39,12 +39,12 @@ void GameProcessSpace::exec(gsl::owner<GameProcess *> new_proc) {
     proc = new_proc;
 }
 
-Game::Game(view::View & _view, Sound & _sound, Vb & vb, World & _world)
+Game::Game(view::View & _view, Sound & _sound, Vb & vb)
 :   process(),
-	world(_world)
+	_quit(false)
 {
-    //process.exec(create_title_screen(process, _view, _sound, vb, _world));
-	process.exec(create_gameover_screen(_view, _sound, vb, _world));
+    process.exec(create_title_screen(_view, _sound, vb));
+	//process.exec(create_gameover_screen(_view, _sound, vb));
 }
 
 Game::~Game() {
@@ -53,15 +53,20 @@ Game::~Game() {
 void Game::handle_input(const input::Event & event) {
 	switch (event.key) {
 	case input::Key::quit:
-		world.STOPGAME = true;
+		_quit = true;
 		break;
 	case input::Key::lemon_time:
-		world.LemonTime = true;
+		// TODO: fix Lemon time. For now, I want to stop World from spreading.
+		// world.LemonTime = true;
 		break;
 	default:
 		process.get_proc()->handle_input(event);
 	}
     
+}
+
+bool Game::quit() const {
+	return _quit;
 }
 
 void Game::update() {

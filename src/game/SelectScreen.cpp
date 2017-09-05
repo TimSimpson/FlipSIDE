@@ -27,24 +27,23 @@ private:
     Vb & vb;
     view::View & view;
     Sound & sound;
-    World & world;
+    World world;
     Random random;
 
 public:
     SelectScreen(view::View & view_arg,
-               Sound & sound_arg, Vb & vb_arg, World & world_arg,
+               Sound & sound_arg, Vb & vb_arg,
                std::array<bool, 3> keys_pressed)
     :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
-        world(world_arg),
+		world{},
         random()
     {
         sound.silence_sfx();
 
         // the select player screen
-        world = World{};
-		destroyEverything(world, view, sound);
+        destroyEverything(world, view, sound);
         world.screen = "SelectPlayerz";
         for (int j = 0; j <= 2; ++j) {
             world.player_data[j].lives = 3;
@@ -138,6 +137,8 @@ public:
     }
 
     gsl::owner<GameProcess *> update() override {
+		set_time_stuff(world);
+
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
@@ -278,7 +279,8 @@ private:
                     //7 Players 2 and 3
 
                     world.screen = "Level1.1";					
-					return create_legacy_screen(view, sound, vb, world, players);
+					return create_legacy_screen(view, sound, vb, 
+						                        std::move(world), players);
                 }
             }
         }
@@ -290,10 +292,10 @@ private:
 
 
 gsl::owner<GameProcess *> create_select_screen(
-    view::View & view, Sound & sound, Vb & vb, World & world,
+    view::View & view, Sound & sound, Vb & vb,
     std::array<bool, 3> keys_pressed)
 {
-    return new SelectScreen(view, sound, vb, world, keys_pressed);
+    return new SelectScreen(view, sound, vb, keys_pressed);
 }
 
 }   }  // end namespace

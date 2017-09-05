@@ -28,13 +28,13 @@ private:
 	Vb & vb;
 	view::View & view;
 	Sound & sound;
-	World & world;
+	World world;
 	Random random;
 	std::int64_t animation_timer;
 
 public:
 	LegacyGame(view::View & view_arg,
-		       Sound & sound_arg, Vb & vb_arg, World & world_arg)
+		       Sound & sound_arg, Vb & vb_arg, World && world_arg)
     :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
@@ -97,6 +97,8 @@ public:
     }
 
     gsl::owner<GameProcess *> update() override {
+		set_time_stuff(world);
+
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
@@ -1628,7 +1630,7 @@ private:
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
             world.screen = str(boost::format("Level%s") % sapple);
-			return new LegacyGame(view, sound, vb, world);
+			return new LegacyGame(view, sound, vb, std::move(world));
         } // End If
 
 
@@ -1640,7 +1642,7 @@ private:
         if (world.screen == "title") {
             //playWave "conTen.wav"
             world.screen = "title2";
-            return create_title_screen(view, sound, vb, world);
+            return create_title_screen(view, sound, vb);
         }
 
 		// MOVED THIS TO CONSTRUCTOR:
@@ -1670,7 +1672,7 @@ private:
         if (world.Sprite[0].name == "dead"
             && world.Sprite[10].name == "dead"
             && world.Sprite[20].name == "dead") {
-			return create_gameover_screen(view, sound, vb, world);
+			return create_gameover_screen(view, sound, vb);
         }
 
 		return nullptr;
@@ -2685,11 +2687,11 @@ private:
 
 
 gsl::owner<GameProcess *> create_legacy_screen(
-	view::View & view, Sound & sound, Vb & vb, World & world,
+	view::View & view, Sound & sound, Vb & vb, World && world,
 	std::array<boost::optional<std::string>, 3>)
 {
 	//TODO: Use players, somehow
-	return new LegacyGame(view, sound, vb, world);
+	return new LegacyGame(view, sound, vb, std::move(world));
 }
 
 }   }  // end namespace
