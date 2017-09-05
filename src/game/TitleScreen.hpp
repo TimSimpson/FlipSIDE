@@ -7,8 +7,7 @@
 namespace nnd3d { namespace game {
 
 
-GameProcess * create_title_screen(GameProcessSpace & space,
-                                  view::View & view, Sound & sound, Vb & vb, 
+GameProcess * create_title_screen(view::View & view, Sound & sound, Vb & vb, 
 	                              World & world);
 
 }   }  // end namespace

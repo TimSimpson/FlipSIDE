@@ -39,11 +39,9 @@ private:
 	std::array<bool, 3> keys_pressed;
 
 public:
-	TitleScreenImpl(GameProcessSpace & _space,
-		            view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
+	TitleScreenImpl(view::View & view_arg, Sound & sound_arg, Vb & vb_arg,
                     World & world_arg)
-    :   GameProcess(_space),
-		vb(vb_arg),
+    :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
@@ -72,7 +70,7 @@ public:
         }
     }
 
-    void update() override {
+    gsl::owner<GameProcess *> update() override {
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
@@ -469,12 +467,10 @@ public:
 
 		if (world.screen == "Select Player") {
 			world.screen = "SelectPlayerz";
-			this->exec(
-				create_select_screen(
-					get_process_space(), view, sound, vb, world, keys_pressed));
-			return;
+			return create_select_screen(view, sound, vb, world, keys_pressed);
 		}
 		create_billboards(world, view.billboards());
+		return nullptr;
     }
 
 
@@ -632,10 +628,9 @@ private:
 };  // end of GameImpl class
 
 
-GameProcess * create_title_screen(GameProcessSpace & space,
-                                  view::View & view, Sound & sound, Vb & vb,
+GameProcess * create_title_screen(view::View & view, Sound & sound, Vb & vb,
 	                              World & world) {
-	return new TitleScreenImpl(space, view, sound, vb, world);
+	return new TitleScreenImpl(view, sound, vb, world);
 }
 
 }   }  // end namespace

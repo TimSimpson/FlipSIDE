@@ -21,32 +21,30 @@ namespace {
     const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
 }
 
-
 GameProcessSpace::GameProcessSpace()
 :   proc(nullptr)
 {}
 
 GameProcessSpace::~GameProcessSpace() {
-	exec(nullptr);
+	if (proc) {
+		delete proc;
+	}
 }
 
 void GameProcessSpace::exec(gsl::owner<GameProcess *> new_proc) {
+	LP3_ASSERT(new_proc);
     if (proc) {
         delete proc;
     }
     proc = new_proc;
 }
 
-GameProcess::GameProcess(GameProcessSpace & _space)
-:	space(_space)
-{}
-
 Game::Game(view::View & _view, Sound & _sound, Vb & vb, World & _world)
 :   process(),
 	world(_world)
 {
-    process.exec(create_title_screen(process, _view, _sound, vb, _world));
-	//process.exec(create_gameover_screen(process, _view, _sound, vb, _world));
+    //process.exec(create_title_screen(process, _view, _sound, vb, _world));
+	process.exec(create_gameover_screen(_view, _sound, vb, _world));
 }
 
 Game::~Game() {
@@ -67,7 +65,11 @@ void Game::handle_input(const input::Event & event) {
 }
 
 void Game::update() {
-    process.get_proc()->update();
+    auto result = process.get_proc()->update();
+	if (result) {
+		process.exec(result);
+	}
 }
+
 
 }   }  // end namespace

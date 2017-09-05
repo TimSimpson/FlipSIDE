@@ -31,11 +31,10 @@ private:
     Random random;
 
 public:
-    SelectScreen(GameProcessSpace & _space, view::View & view_arg,
+    SelectScreen(view::View & view_arg,
                Sound & sound_arg, Vb & vb_arg, World & world_arg,
                std::array<bool, 3> keys_pressed)
-    :   GameProcess(_space),
-        vb(vb_arg),
+    :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
@@ -138,7 +137,7 @@ public:
         }
     }
 
-    void update() override {
+    gsl::owner<GameProcess *> update() override {
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
@@ -181,11 +180,13 @@ public:
 		} // End If
 
 		if (world.screen == "SelectPlayerz") {
-			if (this->selectPlayerS()) {
-				return;
+			auto result = this->selectPlayerS();
+			if (result) {
+				return result;
 			}
 		}
 		create_billboards(world, view.billboards());
+		return nullptr;
     }
 
 private:
@@ -208,7 +209,7 @@ private:
 
 
 
-    bool selectPlayerS() {
+    gsl::owner<GameProcess *> selectPlayerS() {
         // after you all select players, it gets up the results
 
         if (world.Sprite[0].mode == "done" || world.Sprite[0].visible == false) {
@@ -276,15 +277,12 @@ private:
                     //6 Players 1 and 3
                     //7 Players 2 and 3
 
-                    world.screen = "Level1.1";
-					this->exec(
-						create_legacy_screen(this->get_process_space(),
-						view, sound, vb, world, players));
-					return true;
+                    world.screen = "Level1.1";					
+					return create_legacy_screen(view, sound, vb, world, players);
                 }
             }
         }
-		return false;
+		return nullptr;
     }
 
 
@@ -292,11 +290,10 @@ private:
 
 
 gsl::owner<GameProcess *> create_select_screen(
-    GameProcessSpace & space,
     view::View & view, Sound & sound, Vb & vb, World & world,
     std::array<bool, 3> keys_pressed)
 {
-    return new SelectScreen(space, view, sound, vb, world, keys_pressed);
+    return new SelectScreen(view, sound, vb, world, keys_pressed);
 }
 
 }   }  // end namespace

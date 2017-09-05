@@ -14,6 +14,8 @@ namespace nnd3d { namespace game {
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
 
+constexpr std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
+constexpr double speed_factor = ms_per_update / 1000.0;
 
 class GameProcess;
 
@@ -33,29 +35,15 @@ private:
 };
 
 class GameProcess {
-public:
-    GameProcess(GameProcessSpace & space);
-
+public:    
     virtual ~GameProcess() = default;
 
     // Drives the game
     virtual void handle_input(const input::Event &) = 0;
 
     // As a rule, this is called every 16ms.
-    virtual void update() = 0;
-
-protected:
-    // Replace the currently executing game process with a different one.
-    void exec(gsl::owner<GameProcess *> proc) {
-		space.exec(proc);
-    }
-
-	inline GameProcessSpace & get_process_space() { return space;  }
-
-private:
-    GameProcessSpace & space;
+	virtual gsl::owner<GameProcess *> update() = 0;
 };
-
 
 
 // --------------------------------------------------------------------

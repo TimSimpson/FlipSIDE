@@ -33,10 +33,9 @@ private:
 	std::int64_t animation_timer;
 
 public:
-	LegacyGame(GameProcessSpace & _space, view::View & view_arg,
+	LegacyGame(view::View & view_arg,
 		       Sound & sound_arg, Vb & vb_arg, World & world_arg)
-    :   GameProcess(_space),
-		vb(vb_arg),
+    :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
@@ -97,7 +96,7 @@ public:
         }
     }
 
-    void update() override {
+    gsl::owner<GameProcess *> update() override {
         world.lasttime = world.clock + 3.33333333333333E-02;
         int j = 0;
         int k = 0;
@@ -1202,9 +1201,9 @@ if (s.mode == "truck") {
 
         }
 
-        if (this->flipGame()) {
-            // Return early since we just destroyed this object... :/
-            return;
+		gsl::owner<GameProcess *> result = this->flipGame();
+        if (result) {
+            return result;
         }
         world.gpRate2 = world.gpRate2 + 1;
         if (world.clock > world.cranBerry2) {
@@ -1218,6 +1217,8 @@ if (s.mode == "truck") {
         }
 		animate();
 		create_billboards(world, view.billboards());
+		
+		return nullptr;
     }
     //     End Sub for playGame--------------------------------------------!!!
     //     End Sub for playGame--------------------------------------------!!!
@@ -1618,7 +1619,7 @@ private:
         LP3_ASSERT(false); // TODO
     }
 
-    bool flipGame() {
+    gsl::owner<GameProcess *> flipGame() {
         // I think this handles switching to different rooms or levels.
         int penguin;
         (void)penguin;  //2017- is this unused?
@@ -1627,9 +1628,7 @@ private:
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
             world.screen = str(boost::format("Level%s") % sapple);
-			this->exec(
-				new LegacyGame(this->get_process_space(), view, sound, vb, world));
-			return true;
+			return new LegacyGame(view, sound, vb, world);
         } // End If
 
 
@@ -1641,10 +1640,7 @@ private:
         if (world.screen == "title") {
             //playWave "conTen.wav"
             world.screen = "title2";
-            this->exec(
-                create_title_screen(
-					get_process_space(), view, sound, vb, world));
-            return true;
+            return create_title_screen(view, sound, vb, world);
         }
 
 		// MOVED THIS TO CONSTRUCTOR:
@@ -1674,12 +1670,10 @@ private:
         if (world.Sprite[0].name == "dead"
             && world.Sprite[10].name == "dead"
             && world.Sprite[20].name == "dead") {
-			this->exec(create_gameover_screen(
-				this->get_process_space(), view, sound, vb, world));
-			return true;
+			return create_gameover_screen(view, sound, vb, world);
         }
 
-        return false;
+		return nullptr;
     }
 
     void findPlayers() {
@@ -2691,12 +2685,11 @@ private:
 
 
 gsl::owner<GameProcess *> create_legacy_screen(
-	GameProcessSpace & space,
 	view::View & view, Sound & sound, Vb & vb, World & world,
 	std::array<boost::optional<std::string>, 3>)
 {
 	//TODO: Use players, somehow
-	return new LegacyGame(space, view, sound, vb, world);
+	return new LegacyGame(view, sound, vb, world);
 }
 
 }   }  // end namespace

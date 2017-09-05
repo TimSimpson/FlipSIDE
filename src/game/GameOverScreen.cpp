@@ -43,10 +43,9 @@ private:
 	
 	sims::CoroutineState coro_state;
 public:
-    GameOverScreen(GameProcessSpace & _space, view::View & view_arg,
+    GameOverScreen(view::View & view_arg,
                Sound & sound_arg, Vb & vb_arg, World & world_arg)
-    :   GameProcess(_space),
-        vb(vb_arg),
+    :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
         world(world_arg),
@@ -83,53 +82,38 @@ public:
     void handle_input(const input::Event &) override {
     }
 
-	void animation() {
+    gsl::owner<GameProcess *> update() override {
 		LP3_COROUTINE_BEGIN(coro_state);
 		while (wait_time > 0) {
 			wait_time -= 16;
-			LP3_YIELD();
-		}		
+			LP3_YIELD(nullptr);
+		}
 		while (game_over_title.ul.y >= -300) {
 			game_over_title.size.y += (2 * world.sFactor);
 			game_over_title.ul.y -= world.sFactor;
 			if (game_over_title.ul.y < 0) {
 				game_over_title.set_visibility(view::Visibility::flicker);
 			}
-			LP3_YIELD();
+			LP3_YIELD(nullptr);
 		}
 		while (game_over_title.size.x >= 0) {
 			game_over_title.size.x -= (10 * world.sFactor);
-			game_over_title.ul.x += (5 * world.sFactor);			
-			LP3_YIELD();
+			game_over_title.ul.x += (5 * world.sFactor);
+			LP3_YIELD(nullptr);
 		}
 		LP3_COROUTINE_END();
-	}
-
-    void update() override {
-		if (coro_state) {
-			animation();			
-		}
-		else {
-			this->exec(create_title_screen(get_process_space(), view, sound, vb, world));
-		}      				
+		return create_title_screen(view, sound, vb, world);
     }
 
-private:
-
-    void loadAnimation(int who, const std::string & file) {
-        auto & s = world.Sprite[who];
-        view.load_animation_file(s.Aframe, file);
-    }
 
 
 };  // end of GameImpl class
 
 
 gsl::owner<GameProcess *> create_gameover_screen(
-    GameProcessSpace & space,
     view::View & view, Sound & sound, Vb & vb, World & world)
 {
-    return new GameOverScreen(space, view, sound, vb, world);
+    return new GameOverScreen(view, sound, vb, world);
 }
 
 }   }  // end namespace
