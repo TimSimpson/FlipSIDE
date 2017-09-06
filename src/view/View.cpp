@@ -169,12 +169,12 @@ View::View(core::MediaManager & media_arg, Vb & vb_arg)
 }
 
 void View::operator()(const glm::mat4 & previous) {
-	//UpdateSprites();
-	//DrawStuff();
-	
 	for (auto & ge : game_elements) {
 		ge.reset();
 	}
+
+	std::string s = str(boost::format("FPS: %d") % fps);
+	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
 
 	for (auto & m_b : _billboards) {
 		const auto & b = m_b;
