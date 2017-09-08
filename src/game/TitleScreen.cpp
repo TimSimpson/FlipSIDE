@@ -2,9 +2,13 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <lp3/sims.hpp>
 #include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
 #include "SelectScreen.hpp"
+
+#define WAIT(ms) while(time < ms) { LP3_YIELD(); }
+
 
 #ifdef _MSC_VER
     // Avoid the zillions implicit conversion warnings
@@ -37,6 +41,9 @@ private:
 	Sound & sound;
 	World world;
 	std::array<bool, 3> keys_pressed;
+	lp3::sims::CoroutineState coro_state;
+	lp3::sims::CoroutineState titles_coro_state;
+	std::int64_t time;
 
 public:
 	TitleScreenImpl(view::View & view_arg, Sound & sound_arg, Vb & vb_arg)
@@ -44,11 +51,24 @@ public:
         view(view_arg),
         sound(sound_arg),
 		world{},
-		keys_pressed{}
+		keys_pressed{},
+		coro_state(),
+		time(0)
     {
 		destroyEverything(world, view, sound);
         world.screen = "title2";
-		this->titleScreen();
+		destroyEverything(world, view, sound);
+		sound.PlayWave("OpeningWAV.wav");
+
+		view.LoadTexture(0, "title2ALT.png", 285, 427);
+		view.LoadTexture(1, "title1.png", 440, 427);
+		
+		this->findOrder();
+
+		view.billboards().resize(3);
+		for (auto & b : view.billboards()) {
+			b.set_visibility(view::Visibility::invisible);
+		}
     }
 
     void handle_input(const input::Event & event) override {
@@ -68,109 +88,175 @@ public:
         }
     }
 
-    gsl::owner<GameProcess *> update() override {
-		set_time_stuff(world);
+	void opening_titles() {
+		if (!titles_coro_state) {
+			return;
+		}
 
-        world.lasttime = world.clock + 3.33333333333333E-02;
-        int j = 0;
+		view::Billboard & words = view.billboards()[0];
+		view::Billboard & title_bg_1 = view.billboards()[1];
+		view::Billboard & subtitle = view.billboards()[2];
+			
+		LP3_COROUTINE_BEGIN(titles_coro_state);
+			
+		words.set_visibility(view::Visibility::invisible);
+		WAIT(2 * 1000)
+		words.set_visibility(view::Visibility::normal);
+		words.tex_src_ul = { 1, 3 };
+		words.tex_src_dr = { 196, 107 };
+		words.ul = { 0, 180 };
+		words.size = { 193, 106 };
+		words.texture_index = 1;
+
+		WAIT(5 * 1000)
+		words.set_visibility(view::Visibility::invisible);
+			
+		WAIT(6 * 1000)			
+		words.set_visibility(view::Visibility::normal);
+		words.tex_src_ul = { 2, 111 };
+		words.tex_src_dr = { 279, 230 };
+		words.ul = { 0, 174 };
+		words.size = { 277, 119 };
+			
+		WAIT(9 * 1000)
+		words.set_visibility(view::Visibility::invisible);
+
+		WAIT(10 * 1000)
+		words.set_visibility(view::Visibility::normal);
+		words.tex_src_ul = { 1, 233 };
+		words.tex_src_dr = { 224, 363 };
+		words.ul = { 0, 168 };
+		words.size = { 232, 130 };
+
+		WAIT(13 * 1000)
+		words.set_visibility(view::Visibility::invisible);
+
+		WAIT(14 * 1000)
+		words.set_visibility(view::Visibility::normal);
+		words.tex_src_ul = { 1, 366 };
+		words.tex_src_dr = { 198, 424 };
+		words.ul = { 0, 228 };
+		words.size = { 197, 58 };
+
+		WAIT(17 * 1000)
+		words.set_visibility(view::Visibility::invisible);
+
+		WAIT(20 * 1000)
+		// Show background, have the title and subtitle be stretched and 
+		// pull in to the right size.
+		title_bg_1.set_visibility(view::Visibility::normal);
+		title_bg_1.tex_src_ul = { 5, 137 };
+		title_bg_1.tex_src_dr = { 324, 318 };
+		title_bg_1.ul = { 1, 1 };
+		title_bg_1.size = { 640, 480 };
+		title_bg_1.texture_index = 2;
+		title_bg_1.z = 0.99f;
+
+		subtitle.set_visibility(view::Visibility::flicker);
+		subtitle.tex_src_ul = { 7, 91 };
+		subtitle.tex_src_dr = { 437, 128 };
+		subtitle.ul = { -320, 140 + 213 };
+		subtitle.size = { 1280, 110 };
+		subtitle.texture_index = 2;
+		subtitle.z = 0.75f;
+
+		words.set_visibility(view::Visibility::flicker);
+		words.tex_src_ul = { 9, 6 };
+		words.tex_src_dr = { 348, 81 };
+		words.ul = { 1, -240 };
+		words.size = { 640, 960 };
+		words.texture_index = 2;
+		words.z = 0.5f;
+			
+		while (subtitle.size.x >= 640) {
+			if (words.size.y >= 213) {
+				words.size.y -= (5 * speed_factor);
+				words.ul.y += (2.5 * speed_factor);
+			} else {
+				LP3_ASSERT(false);
+			}
+
+			subtitle.size.x -= (5 * speed_factor);
+			subtitle.ul.x += (2.5 * speed_factor);
+			LP3_YIELD();
+		}
+
+		while (words.size.y >= 213) {
+			words.size.y -= (5 * speed_factor);
+			words.ul.y += (2.5 * speed_factor);
+			LP3_YIELD();
+		}
+		words.set_visibility(view::Visibility::normal);
+
+		words.set_visibility(view::Visibility::normal);
+		subtitle.set_visibility(view::Visibility::normal);
+
+		WAIT(23072)
+
+		world.screen = "intro story";
+			
+		LP3_COROUTINE_END()
+	}
+
+	gsl::owner<GameProcess *> update() override {
+		for (int i = 0; i <= 2; ++i) {
+			if (this->keys_pressed[i]) {
+				return create_select_screen(view, sound, vb, keys_pressed);
+			}
+		}
+
+		time += ms_per_update;
+
+		set_time_stuff(world);
+		flicker(world);
+		world.lasttime = world.clock + 3.33333333333333E-02;
+
+		if (coro_state) {
+			LP3_COROUTINE_BEGIN(coro_state);
+			while (titles_coro_state) {
+				opening_titles();
+				LP3_YIELD(nullptr);
+			}			
+
+			world.screen = "intro story 2";
+			destroyEverything(world, view, sound);
+			view.LoadTexture(1, "Open1.png", 313, 263);
+			view.LoadTexture(2, "Open6.png", 320, 258);
+			view.LoadTexture(3, "Open7.png", 320, 194);
+			view.LoadTexture(4, "TitleScreen.png", 320, 240);
+			sound.PlayBgm("");
+			world.Sprite[0].name = "intro story";
+			{
+				auto & s = world.Sprite[1];
+				s.name = "words1";
+				s.x = 1;
+				s.y = 175;
+				s.miscTime = 0;
+				s.mode = "words1";
+				s.visible = false;
+				s.color = view::qb_color(0);
+			}
+
+			world.Sprite[0].color = view::qb_color(0);
+			world.Sprite[0].visible = false;
+
+			LP3_YIELD(nullptr)
+
+			LP3_COROUTINE_END()
+		}
+
+        
         int k = 0;
 
-        //Rem-FLICKER-
-        for (j = 0; j < world.spritesInUse; ++j) {
-            {
-                auto & s = world.Sprite[j];
-
-                if (s.trueVisible != 0) {
-                    if (s.trueVisible == 1) { s.visible = true; }
-                    if (s.trueVisible == 2) { s.visible = false; }
-                    //s.trueVisible = 0
-                }
-
-                if (s.flickerTime > world.clock) {
-                    if (s.trueVisible == 0) {
-                        if (s.visible == false) { s.trueVisible = 2; }
-                        if (s.visible == true) { s.trueVisible = 1; }
-                    }
-
-                    if (s.flickOn == true) { s.visible = false; }
-                    if (s.flickOn == false) { s.visible = true; }
-                    if (s.flickOn == true) {
-                        s.flickOn = false;
-                    }
-                    else {
-                        s.flickOn = true;
-                    }
-                }
-            }
-        }
+		
+        
 
 
-        for (j = 0; j < world.spritesInUse; ++j) {
+        for (int j = 0; j < world.spritesInUse; ++j) {
             auto & s = world.Sprite[j];
 
-
-            if (s.name == "Title1") {
-                if (s.miscTime < world.clock) {
-                    if (s.miscTime + 3 > world.clock) {
-                        s.visible = true;
-                    } else {
-                        s.visible = false;
-                    }
-                }
-            }
-
-            if (s.name == "TitleBg1") {
-                //if (s.mode = "part2") then
-                for (k = 0; k <= 2; ++ k) {
-                    if (this->keys_pressed[k]) {
-                        world.screen = "Select Player";
-                    }
-                }
-
-                if (s.miscTime < world.clock && s.mode != "part2") {
-                    s.visible = true;
-                    s.mode = "part2"; //: .miscTime = clock + 5
-                }
-            }
-
-			if (s.name == "Title2") {
-                if (s.miscTime < world.clock && s.mode != "stop") {
-                    s.trueVisible = 1;
-                    s.flickerTime = world.clock + 5;
-                    s.high = s.high - 5 * world.sFactor;
-                    s.y = s.y + world.sFactor * 2.5;
-                    if (s.high < 213) {
-                        s.mode = "stop";
-                        s.flickerTime = world.clock;
-                    }
-                }
-            }
-
-            if (s.name == "Title3") {
-                if (s.miscTime < world.clock && s.mode == "stop") {
-                    world.screen = "intro story";
-                }
-                if (s.miscTime < world.clock && s.mode != "stop") {
-                    s.trueVisible = 1;
-                    s.flickerTime = world.clock + 5;
-                    s.wide = s.wide - world.sFactor * 5;
-                    s.x = s.x + world.sFactor * 2.5;
-                    if (s.wide < 640) {
-                        s.mode = "stop";
-                        s.flickerTime = world.clock;
-                        s.miscTime = world.clock + 2; //: screen = "intro story"
-                    }
-                }
-            }
-
-
-
             if (s.name == "intro story") {
-                for (k = 0; k <= 2; ++ k) {
-					if (this->keys_pressed[k]) {
-                        world.screen = "Select Player";
-                    }
-                }
+               
                 if (s.mode == "") {
 
                     world.Sprite[1].invTime = 40;
@@ -441,29 +527,6 @@ public:
             }
         }
 
-		if (world.screen == "intro story") {
-			world.screen = "intro story 2";
-			destroyEverything(world, view, sound);
-			view.LoadTexture(1, "Open1.png", 313, 263);
-			view.LoadTexture(2, "Open6.png", 320, 258);
-			view.LoadTexture(3, "Open7.png", 320, 194);
-			view.LoadTexture(4, "TitleScreen.png", 320, 240);
-			sound.PlayBgm("");
-			world.Sprite[0].name = "intro story";
-			{
-				auto & s = world.Sprite[1];
-				s.name = "words1";
-				s.x = 1;
-				s.y = 175;
-				s.miscTime = 0;
-				s.mode = "words1";
-				s.visible = false;
-				s.color = view::qb_color(0);
-			}
-
-			world.Sprite[0].color = view::qb_color(0);
-			world.Sprite[0].visible = false;
-		}  //End of intro story with
 
 		if (world.screen == "Select Player") {
 			world.screen = "SelectPlayerz";
@@ -514,116 +577,6 @@ private:
         }
     }
 
-    void titleScreen() {
-		destroyEverything(world, view, sound);
-        sound.PlayWave("OpeningWAV.wav");
-
-        view.LoadTexture(0, "title2ALT.png", 285, 427);
-        view.LoadTexture(1, "title1.png", 440, 427);
-        {
-            auto & s = world.Sprite[0];
-            s.srcx = 5;
-            s.srcy = 137;
-            s.srcx2 = 324;
-            s.srcy2 = 318;
-            s.x = 1;
-            s.y = 1;
-            s.wide = 640;
-            s.high = 480;
-            s.visible = false;
-            s.name = "TitleBg1";
-            s.texture = 1;
-            s.miscTime = world.clock + 20;
-        }
-        {
-            auto & s = world.Sprite[1];
-            s.srcx = 1;
-            s.srcy = 3;
-            s.srcx2 = 196;
-            s.srcy2 = 107;
-            s.x = 0;
-            s.y = 180;
-            s.wide = 193;
-            s.high = 106;
-            s.visible = false;
-            s.name = "Title1";
-            s.miscTime = world.clock + 2;
-        }
-        {
-            auto & s = world.Sprite[2];
-            s.srcx = 2;
-            s.srcy = 111;
-            s.srcx2 = 279;
-            s.srcy2 = 230;
-            s.x = 0;
-            s.y = 174;
-            s.wide = 277;
-            s.high = 119;
-            s.visible = false;
-            s.name = "Title1";
-            s.miscTime = world.clock + 6;
-        }
-        {
-            auto & s = world.Sprite[3];
-            s.srcx = 1;
-            s.srcy = 233;
-            s.srcx2 = 224;
-            s.srcy2 = 363;
-            s.x = 0;
-            s.y = 168;
-            s.wide = 232;
-            s.high = 130;
-            s.visible = false;
-            s.name = "Title1";
-            s.miscTime = world.clock + 10;
-        }
-        {
-            auto & s = world.Sprite[4];
-            s.srcx = 1;
-            s.srcy = 366;
-            s.srcx2 = 198;
-            s.srcy2 = 424;
-            s.x = 0;
-            s.y = 228;
-            s.wide = 197;
-            s.high = 58;
-            s.visible = false;
-            s.name = "Title1";
-            s.miscTime = world.clock + 14;
-        }
-        {
-            auto & s = world.Sprite[5];
-            s.srcx = 9;
-            s.srcy = 6;
-            s.srcx2 = 348;
-            s.srcy2 = 81;
-            s.x = 1;
-            s.y = -240;
-            s.wide = 640;
-            s.high = 960;
-            s.visible = false;
-            s.name = "Title2";
-            s.miscTime = world.clock + 20;
-            s.texture = 1;
-        }
-        {
-            auto & s = world.Sprite[6];
-            s.srcx = 7;
-            s.srcy = 91;
-            s.srcx2 = 437;
-            s.srcy2 = 128;
-            s.x = -320;
-            s.y = 140 + 213;
-            s.wide = 1280;
-            s.high = 110;
-            s.visible = false;
-            s.name = "Title3";
-            s.miscTime = world.clock + 20;
-            s.texture = 1;
-        }
-
-        this->findOrder();
-    }
 
 };  // end of GameImpl class
 

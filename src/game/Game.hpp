@@ -24,7 +24,7 @@ constexpr std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 // So the game created a speed factor that tried to make it
 // target 120fps (kind of cool my old Pentium 2 machine could do
 // that). So we multiple the number we just had by 120.
-constexpr double speed_factor = (ms_per_update / 1000.0) * 120;
+constexpr float speed_factor = (ms_per_update / 1000.0f) * 120;
 
 class GameProcess;
 
