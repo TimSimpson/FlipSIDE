@@ -114,6 +114,7 @@ Billboard::Billboard()
 	tex_src_ul{},
 	tex_src_dr{},
 	texture_index(0),
+	color{ 1, 1, 1, 1 },
 	_visible(true),
 	_flicker(false)
 {
@@ -184,6 +185,10 @@ void View::operator()(const glm::mat4 & previous) {
 			gfx::upright_quad(quad, b.ul, (b.ul + b.size), b.z,
 				b.tex_src_ul / texture_sizes[b.texture_index],
 				b.tex_src_dr / texture_sizes[b.texture_index]);
+			quad.dl().set_rgb(m_b.color);
+			quad.dr().set_rgb(m_b.color);
+			quad.ul().set_rgb(m_b.color);
+			quad.ur().set_rgb(m_b.color);
 		}		
 		if (b._flicker) {
 			m_b._visible = !b._visible;

@@ -27,6 +27,8 @@ struct Billboard {
 	glm::vec2 tex_src_dr;
 	int texture_index;
 	
+	glm::vec4 color;
+
 	void set_visibility(Visibility value);
 
 	bool _visible;

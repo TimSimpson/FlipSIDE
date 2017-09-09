@@ -46,6 +46,10 @@ private:
 	lp3::sims::CoroutineState fade_in_and_out_words_state;
 	lp3::sims::CoroutineState intro_story_state;
 	std::int64_t time;
+	std::int64_t fade_value;
+	std::int64_t fade_length;
+	std::int64_t fade_speed;
+	bool fade_in_only;
 
 public:
 	TitleScreenImpl(view::View & view_arg, Sound & sound_arg, Vb & vb_arg)
@@ -58,18 +62,12 @@ public:
 		titles_coro_state{},
 		fade_in_and_out_words_state{},
 		intro_story_state{},
-		time(0)
+		time(0),
+		fade_value(0),
+		fade_length(0),
+		fade_speed(0),
+		fade_in_only(false)
     {
-		destroyEverything(world, view, sound);
-        world.screen = "title2";
-		destroyEverything(world, view, sound);
-		sound.PlayWave("OpeningWAV.wav");
-
-		view.LoadTexture(0, "title2ALT.png", 285, 427);
-		view.LoadTexture(1, "title1.png", 440, 427);
-		
-		this->findOrder();
-
 		view.billboards().resize(3);
 		for (auto & b : view.billboards()) {
 			b.set_visibility(view::Visibility::invisible);
@@ -99,11 +97,18 @@ public:
 		}
 
 		view::Billboard & words = view.billboards()[0];
+		words.z = 0.3f;
 		view::Billboard & title_bg_1 = view.billboards()[1];
+		title_bg_1.z = 0.9f;
 		view::Billboard & subtitle = view.billboards()[2];
-			
+		subtitle.z = 0.4f;
+				
 		LP3_COROUTINE_BEGIN(titles_coro_state);
-			
+
+		view.LoadTexture(0, "title2ALT.png", 285, 427);
+		view.LoadTexture(1, "title1.png", 440, 427);
+		sound.PlayWave("OpeningWAV.wav");
+		
 		words.set_visibility(view::Visibility::invisible);
 		WAIT(2 * 1000)
 		words.set_visibility(view::Visibility::normal);
@@ -198,298 +203,203 @@ public:
 	}
 
 	void fade_in_and_out_words() {
-		auto & s = world.Sprite[1];
-
+		auto & bg = view.billboards()[0];
+		auto & words = view.billboards()[1];
+		
 		LP3_COROUTINE_BEGIN(fade_in_and_out_words_state);		
-		s.color = view::qb_color(0);
-		s.miscTime = 0;
+		fade_value = 0;
 
-		while (s.miscTime <= 245) {
-			s.miscTime = s.miscTime + (world.sFactor * s.invTime);
+		words.color = view::qb_color(0);
+
+		while (fade_value <= 245) {
+			fade_value += fade_speed; // (world.sFactor * s.invTime);
 			//0s.3 * sFactor
-			s.color = to_rgb(s.miscTime, s.miscTime, s.miscTime);
+			words.color = to_rgb(fade_value, fade_value, fade_value);
 			LP3_YIELD();
 		}
-		s.color = view::qb_color(15);
-		s.mode = "words1b";
+		words.color = view::qb_color(15);
+		
 		// 'length' apparently drives how long the word stays up
-		s.miscTime = world.clock + s.length;
+		// s.miscTime = fade_length;  // world.clock + s.length;
 
-		if (world.Sprite[0].mode == "KILLDEATH") {
-			s.name = "";
+		if (fade_in_only) {
 			goto the_end;
 		}
 
-		// Let words get displayed for a bit of time.
-		while (s.miscTime >= world.clock) {
+		time = 0;
+		while (time < fade_length) {
 			LP3_YIELD();
 		}
 
-		s.mode = "words1c";
-		s.miscTime = 255;
+		fade_value = 255;
 
 		// Fade out
-		while (s.miscTime >= 1) {
-			s.miscTime = s.miscTime - (world.sFactor * 20); //0.3 * sFactor
-			if (s.miscTime > 0) {
-				s.color = to_rgb(s.miscTime, s.miscTime, s.miscTime);
+		while (fade_value >= 1) {
+			//LP3_ASSERT(world.sFactor * 20 == 40);
+			fade_value -= 38; // = s.miscTime - (world.sFactor * 20); //0.3 * sFactor
+			if (fade_value >= 0) {
+				words.color = to_rgb(fade_value, fade_value, fade_value);
 			}
 			LP3_YIELD();
 		}
 
-		s.color = view::qb_color(0);
-		s.mode = "words2";
-
+		words.color = view::qb_color(0);
+		
 	the_end:
 		LP3_COROUTINE_END()
 	}
 
 	void intro_story() {
-		LP3_COROUTINE_BEGIN(intro_story_state);
+		auto & bg = view.billboards()[0];
+		auto & words = view.billboards()[1];
 
-		world.screen = "intro story 2";
-		destroyEverything(world, view, sound);
+		LP3_COROUTINE_BEGIN(intro_story_state);
+				
+		// This came from the following expression in the old code:
+		//  (world.sFactor * s.invTime);  
+		// invTime was 40, and later was 10 for a more dramatic fade in
+		// I believe 80 is correct, but am not sure.
+		fade_speed = 77;
+		fade_in_only = false;
+		fade_length = 3120;
+		bg.z = 0.9f;
+		words.z = 0.3f;
+		bg.set_visibility(view::Visibility::invisible);
+			
 		view.LoadTexture(1, "Open1.png", 313, 263);
 		view.LoadTexture(2, "Open6.png", 320, 258);
 		view.LoadTexture(3, "Open7.png", 320, 194);
 		view.LoadTexture(4, "TitleScreen.png", 320, 240);
 		sound.PlayBgm("");
-		world.Sprite[0].name = "intro story";
-		{
-			auto & s = world.Sprite[1];
-			s.name = "words1";
-			s.x = 1;
-			s.y = 175;
-			s.miscTime = 0;
-			s.mode = "words1";
-			s.visible = false;
-			s.color = view::qb_color(0);
-		}
+		
+		words.texture_index = 2;
 
-		world.Sprite[0].color = view::qb_color(0);
-		world.Sprite[0].visible = false;
+		words.ul = { 1, 175 };
 
-		LP3_YIELD()
-
-			world.Sprite[1].invTime = 40;
 		sound.PlayWave("IntroStory.ogg"); // play it once then stop
-		world.Sprite[0].mode = "waka do";  // so it won't load non stop
 
-		{
-			auto & s2 = world.Sprite[1];
-			s2.length = 3;
-			s2.texture = 1;
-			s2.visible = true;
-			//s2.srcx = 2: s2.srcy = 44;
-			//s2.srcx2 = 303: s2.srcy2 = 152;
-			s2.srcx = 2;
-			s2.srcy = 1;
-			s2.srcx2 = 166;
-			s2.srcy2 = 41;
-			s2.wide = 164 * 2;
-			s2.high = 40 * 2;
-			s2.x = 1;
-			s2.y = 178;
-		}
+		words.ul = { 1, 178 };
+		words.size = { 164, 40 }; words.size *= 2;
+		words.tex_src_ul = { 2, 1 };
+		words.tex_src_dr = { 166, 41 };
+		words.set_visibility(view::Visibility::normal);
+				
 
 		// Don't judge me for this:
 #define FADE_IN_AND_OUT \
 			fade_in_and_out_words_state = {};	\
 			while (fade_in_and_out_words_state) {	\
 				fade_in_and_out_words();	\
-				create_billboards(world, view.billboards());	\
+				/*create_billboards(world, view.billboards());	*/\
 				LP3_YIELD();	\
 			}
 
 		FADE_IN_AND_OUT
 
-		{
-			auto & s2 = world.Sprite[1];
-		s2.length = 6;
-		s2.texture = 1;
-		s2.visible = true;
-		s2.srcx = 2;
-		s2.srcy = 44;
-		s2.srcx2 = 303;
-		s2.srcy2 = 152;
-		s2.wide = 301 * 2;
-		s2.high = (152 - 44) * 2;
-		s2.x = 1;
-		s2.y = 178;
-		}
-			FADE_IN_AND_OUT
+		words.ul = { 1, 178 };
+		words.size = { 301, 152 - 44 }; words.size *= 2;
+		words.tex_src_ul = { 2, 44 };
+		words.tex_src_dr = { 303, 152 };
 
-		{
-			auto & s2 = world.Sprite[1];
-		s2.length = 2;
-		s2.texture = 1;
-		s2.visible = true;
-		s2.srcx = 2;
-		s2.srcy = 153;
-		s2.srcx2 = 123;
-		s2.srcy2 = 173;
-		s2.wide = 121 * 2;
-		s2.high = (20) * 2;
-		s2.x = 1;
-		s2.y = 178;
-		}
-			FADE_IN_AND_OUT
+		FADE_IN_AND_OUT
 
-		{
-			auto & s2 = world.Sprite[1];
-		s2.length = 6;
-		s2.texture = 1;
-		s2.visible = true;
-		s2.srcx = 3;
-		s2.srcy = 174;
-		s2.srcx2 = 311;
-		s2.srcy2 = 263;
-		s2.wide = 308 * 2;
-		s2.high = (89) * 2;
-		s2.x = 1;
-		s2.y = 178;
-		}
-			FADE_IN_AND_OUT
+		words.ul = { 2, 153 };
+		words.size = { 121, 20 }; words.size *= 2;
+		words.tex_src_ul = { 2, 153 };
+		words.tex_src_dr = { 123, 173 };
+		
+		FADE_IN_AND_OUT
 
-			// Show the characters:
-		{
-			auto & s = world.Sprite[0];
-		s.length = 5;
+		words.ul = { 1, 178 };
+		words.size = { 308, 89 }; words.size *= 2;
+		words.tex_src_ul = { 3, 174 };
+		words.tex_src_dr = { 311, 263 };
+		
+		FADE_IN_AND_OUT
+
+		// Show the characters:
+		fade_length = 5000;
 		view.LoadTexture(-1, "Open2.png", 320, 240);
-		world.camera.CameraWidth = 320;
-		world.camera.CameraHeight = 240;
-		{
-			auto & s2 = world.Sprite[1];
-			s2.texture = 2; //1
-			s2.visible = true;
-			s2.srcx = 2;
-			s2.srcy = 5;
-			s2.srcx2 = 307;
-			s2.srcy2 = 48;
-			s2.wide = 305 * 2;
-			s2.high = (43) * 2;
-			s2.x = 2 * 2;
-			s2.y = 173 * 2;
-		}
-		}
-			FADE_IN_AND_OUT
 
+		bg.size = { 640, 480 };
+		bg.ul = { 0, 0 };
+		bg.tex_src_ul = { 0, 0 };
+		bg.tex_src_dr = { 320, 240 };
+		bg.set_visibility(view::Visibility::normal);
 
-		{
-			auto & s2 = world.Sprite[1];
-		s2.length = 3;
-		s2.texture = 2; //1
-		s2.visible = true;
-		s2.srcx = 2;
-		s2.srcy = 51;
-		s2.srcx2 = 311;
-		s2.srcy2 = 71;
-		s2.wide = 309 * 2;
-		s2.high = (20) * 2;
-		//.x = 1: .y = 178
-		}
-			FADE_IN_AND_OUT
-
-		{
-			auto & s2 = world.Sprite[1];
-		s2.length = 4;
-		//s2.texture = 1;
-		s2.visible = true;
-		s2.srcx = 2;
-		s2.srcy = 75;
-		s2.srcx2 = 295;
-		s2.srcy2 = 117;
-		s2.wide = 293 * 2;
-		s2.high = (42) * 2;
-		//s2.x = 1: s2.y = 178;
-		} //end with
-			FADE_IN_AND_OUT
-
-		{
-			auto & s2 = world.Sprite[1];
-		s2.length = 6;
-		//s2.texture = 1;
-		s2.visible = true;
-		s2.srcx = 2;
-		s2.srcy = 120;
-		s2.srcx2 = 294;
-		s2.srcy2 = 185;
-		s2.wide = 292 * 2;
-		s2.high = (65) * 2;
-		//s2.x = 1: s2.y = 178;
-		} //end with
-			FADE_IN_AND_OUT
-
-			view.LoadTexture(-1, "Open3.png", 320, 240);
-		{
-			auto & s2 = world.Sprite[1];
-			//.texture = 1
-			s2.length = 6;
-			s2.visible = true;
-			s2.srcx = 2;
-			s2.srcy = 189;
-			s2.srcx2 = 305;
-			s2.srcy2 = 254;
-			s2.wide = 303 * 2;
-			s2.high = (65) * 2;
-			//.x = 1: .y = 178
-		} //end with
+		words.ul = { 2, 173 }; words.ul *= 2;
+		words.size = { 305, 43 }; words.size *= 2;
+		words.tex_src_ul = { 2, 5 };
+		words.tex_src_dr = { 307, 48 };
+		words.texture_index = 3;
+		
 		FADE_IN_AND_OUT
 
-			view.LoadTexture(-1, "Open4.png", 320, 240);
-		{
-			auto & s2 = world.Sprite[1];
-			s2.length = 6;
-			s2.texture = 3;
-			s2.visible = true;
-			s2.length = 7;
-			s2.srcx = 1;
-			s2.srcy = 4;
-			s2.srcx2 = 312;
-			s2.srcy2 = 69;
-			s2.wide = 313 * 2;
-			s2.high = (65) * 2;
-			//.x = 1: .y = 178
-		} //end with
+
+		fade_length = 3120;
+		words.size = { 309, 20 }; words.size *= 2;
+		words.tex_src_ul = { 2, 51 };
+		words.tex_src_dr = { 311, 71 };
+
 		FADE_IN_AND_OUT
 
-			view.LoadTexture(-1, "Open5.png", 320, 240);
-		{
-			auto & s2 = world.Sprite[1];
-			s2.length = 6;
-			//s2.texture = 1;
-			s2.visible = true;
-			s2.srcx = 1;
-			s2.srcy = 72;
-			s2.srcx2 = 258;
-			s2.srcy2 = 115;
-			s2.wide = 259 * 2;
-			s2.high = (43) * 2;
-			s2.x = 58 * 2;
-			s2.y = 188 * 2;
-		}
+		words.size = { 293, 42 }; words.size *= 2;
+		words.tex_src_ul = { 2, 75 };
+		words.tex_src_dr = { 295, 117 };
+		fade_length = 4160;
+
 		FADE_IN_AND_OUT
 
-			view.LoadTexture(-1, "PlainBlack.png", 320, 240);
-		//s.mode = "word 13";
-		{
-			auto & s2 = world.Sprite[1];
-			s2.invTime = 10;
-			s2.length = 6;
-			//s2.miscTime = 0;
-			s2.mode = "words1";
-			s2.texture = 4;
-			s2.visible = true;
-			s2.srcx = 1;
-			s2.srcy = 1;
-			s2.srcx2 = 320;
-			s2.srcy2 = 240;
-			s2.wide = 320 * 2;
-			s2.high = (240) * 2;
-			s2.x = 1;
-			s2.y = 1;
-			world.Sprite[0].mode = "KILLDEATH";  // Means "stop doing stuff for this sprite after the fade-in."
-		}
+		words.size = { 292, 65 }; words.size *= 2;
+		words.tex_src_ul = { 2, 120 };
+		words.tex_src_dr = { 294, 185 };
+		fade_length = 6240;
+
+		FADE_IN_AND_OUT
+
+		view.LoadTexture(-1, "Open3.png", 320, 240);
+
+		words.size = { 303, 65 }; words.size *= 2;
+		words.tex_src_ul = { 2, 189 };
+		words.tex_src_dr = { 305, 254 };
+		fade_length = 6240;
+
+		FADE_IN_AND_OUT
+
+		view.LoadTexture(-1, "Open4.png", 320, 240);
+
+		fade_length = 6240;
+		words.size = { 313, 65 }; words.size *= 2;
+		words.tex_src_ul = { 1, 4 };
+		words.tex_src_dr = { 312, 69 };
+		words.texture_index = 4;
+
+		FADE_IN_AND_OUT
+
+		view.LoadTexture(-1, "Open5.png", 320, 240);
+
+		words.ul = { 58, 188 }; words.ul *= 2;
+		words.size = { 259, 43 }; words.size *= 2;
+		words.tex_src_ul = { 1, 72 };
+		words.tex_src_dr = { 258, 115 };
+		fade_length = 6240;
+
+		FADE_IN_AND_OUT
+
+		// Don't bother loading the plainblack texture, just turn the bg off.
+		// view.LoadTexture(-1, "PlainBlack.png", 320, 240);
+		bg.set_visibility(view::Visibility::invisible);
+		
+		words.ul = { 1, 1 };
+		words.size = { 320, 240 }; words.size *= 2;
+		words.tex_src_ul = { 1, 1 };
+		words.tex_src_dr = { 320, 240 };
+		words.texture_index = 5;
+		fade_length = 6240;
+		
+		fade_speed = fade_speed / 4;
+		fade_in_only = true;
+
 		FADE_IN_AND_OUT
 
 		LP3_COROUTINE_END()
@@ -503,11 +413,7 @@ public:
 		}
 
 		time += ms_per_update;
-
-		set_time_stuff(world);
-		flicker(world);
-		world.lasttime = world.clock + 3.33333333333333E-02;
-
+	
 		if (coro_state) {
 			LP3_COROUTINE_BEGIN(coro_state);
 				titles_coro_state = {};
@@ -515,6 +421,9 @@ public:
 					opening_titles();
 					LP3_YIELD(nullptr);
 				}
+
+				view.billboards().clear();
+				view.billboards().resize(2);
 
 				intro_story_state = {};
 				while (intro_story_state) {
@@ -525,49 +434,6 @@ public:
         }
 		return nullptr;
     }
-
-
-private:
-
-    void findOrder() {
-        int texorg = 0;
-        int davidorg1 = 0;
-
-        //2017: This is madness. Looks like it set `drawTrue` to false for
-        //      everything, then went through and found the sprites with the
-        //      highest z order first and put them in the drawOrder array.
-        //      At the end the drawOrder array has indices of sprites from
-        //      the close (high z order) ones to the far away (low z order)
-        //      ones.
-        for (int j = 0; j <= world.spritesInUse; ++ j) {
-         world.Sprite[j].drawTrue = false;
-         world.drawOrder[j] = -150;
-        }
-
-        for (int j = 0; j <= world.spritesInUse; ++ j) {
-         texorg = -150;
-         davidorg1 = 0;
-         for (int k = 0; k <= world.spritesInUse; ++ k) {
-             if (world.Sprite[k].zOrder > texorg
-                 && world.Sprite[k].drawTrue == false) {
-                 texorg = world.Sprite[k].zOrder;
-                 davidorg1 = k;
-             }
-         }
-         world.drawOrder[j] = davidorg1;
-         world.Sprite[davidorg1].drawTrue = true;
-        }
-
-        //2017: Sanity check
-        int last_value = 9999;
-        for (int i = 0; i <= world.spritesInUse; ++i) {
-            int next_value = world.Sprite[world.drawOrder[i]].zOrder;
-            LP3_ASSERT(last_value >= next_value);
-            last_value = next_value;
-        }
-    }
-
-
 };  // end of GameImpl class
 
 
