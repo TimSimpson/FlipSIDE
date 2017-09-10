@@ -1,34 +1,15 @@
 
 #include "TitleScreen.hpp"
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <lp3/sims.hpp>
-#include "BaseScreen.hpp"
-#include "CharacterProc.hpp"
 #include "SelectScreen.hpp"
-
-#define WAIT(ms) while(time < ms) { LP3_YIELD(); }
-
-
-#ifdef _MSC_VER
-    // Avoid the zillions implicit conversion warnings
-    #pragma warning(disable: 4244)
-#endif
-
-// TODO: Remove gotos!
-#define EMPTY_LABEL_HACK  { constexpr int dumb = 1; LP3_LOG_VAR(dumb) }
 
 namespace nnd3d { namespace game {
 
-namespace {
-    const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
-
+namespace {    
     glm::vec4 to_rgb(int r, int g, int b) {
         // Emulates old VB RGB function. Named 'to_rgb' due to probable windows.h
         // issues. >:(
         const glm::vec4 rgb(r/255.0f, g/255.0f, b/255.0f, 1.0f);
-        // LP3_ASSERT(rgb.r == r && rgb.g == g && rgb.b == b);
         return rgb;
     }
 }
@@ -40,16 +21,13 @@ private:
     Vb & vb;
     view::View & view;
     Sound & sound;
-    World world;
     std::array<bool, 3> keys_pressed;
-    lp3::sims::CoroutineState coro_state;
-    lp3::sims::CoroutineState titles_coro_state;
     lp3::sims::CoroutineState fade_in_and_out_words_state;
     lp3::sims::CoroutineState intro_story_state;
     std::int64_t time;
-    std::int64_t fade_value;
-    std::int64_t fade_length;
-    std::int64_t fade_speed;
+    int fade_value;
+    int fade_length;
+    int fade_speed;
     bool fade_in_only;
 
 public:
@@ -57,10 +35,7 @@ public:
     :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
-        world{},
         keys_pressed{},
-        coro_state(),
-        titles_coro_state{},
         fade_in_and_out_words_state{},
         intro_story_state{},
         time(0),

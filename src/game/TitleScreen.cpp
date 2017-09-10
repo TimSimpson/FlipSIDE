@@ -1,35 +1,10 @@
 #include "TitleScreen.hpp"
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <lp3/sims.hpp>
-#include "BaseScreen.hpp"
-#include "CharacterProc.hpp"
 #include "IntroStory.hpp"
 #include "SelectScreen.hpp"
 
 
-#ifdef _MSC_VER
-    // Avoid the zillions implicit conversion warnings
-    #pragma warning(disable: 4244)
-#endif
-
-// TODO: Remove gotos!
-#define EMPTY_LABEL_HACK  { constexpr int dumb = 1; LP3_LOG_VAR(dumb) }
-
 namespace nnd3d { namespace game {
-
-namespace {
-    const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
-
-    glm::vec4 to_rgb(int r, int g, int b) {
-        // Emulates old VB RGB function. Named 'to_rgb' due to probable windows.h
-        // issues. >:(
-        const glm::vec4 rgb(r/255.0f, g/255.0f, b/255.0f, 1.0f);
-        // LP3_ASSERT(rgb.r == r && rgb.g == g && rgb.b == b);
-        return rgb;
-    }
-}
 
 
 class TitleScreenImpl : public GameProcess
@@ -38,7 +13,6 @@ private:
 	Vb & vb;
 	view::View & view;
 	Sound & sound;
-	World world;
 	std::array<bool, 3> keys_pressed;
 	lp3::sims::CoroutineState coro_state;
 	std::int64_t time;
@@ -48,7 +22,6 @@ public:
     :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
-		world{},
 		keys_pressed{},
 		coro_state(),		
 		time(0)
