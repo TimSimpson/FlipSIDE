@@ -2,12 +2,10 @@
 
 namespace nnd3d { namespace game {
 
-void create_billboards(World & world, std::vector<view::Billboard> & billboards) { 
+void create_billboards(World & world, std::vector<view::Billboard> & billboards) {
 	billboards.clear();
 
 	glm::vec2 res2d{ world.FULLSCREENWIDTH, world.FULLSCREENHEIGHT };
-
-	float z = 0.9999f;
 
 	// Do goofy animation stuff - maybe this should be moved
 	for (int j = 0; j < world.spritesInUse; ++j) {
@@ -61,7 +59,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 		case -100:	// Used by the clock / time shown at start
 			b.z = 0.0001f;  // On top of everything
 			break;
-		case -99:	// When the player is hurt- I guess I want it to appear 
+		case -99:	// When the player is hurt- I guess I want it to appear
 					// over everything else.
 			b.z = 0.0002f;  // on top of lots of stuff
 			break;
@@ -89,7 +87,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 		}
 
 
-		// Now subtract sprite's z value, which is how high off the ground 
+		// Now subtract sprite's z value, which is how high off the ground
 		// they are.
 		b.ul.y -= lp3::narrow<float>(sprite.z);
 		billboards.push_back(b);
@@ -187,7 +185,7 @@ void findOrder(World & world) {
 
 void set_time_stuff(World & world) {
 	world.sFactor = speed_factor;
-	world.clock += 0.016f; 
+	world.clock += 0.016f;
 	// TODO: lemon time is ignored, for now
 	// used to affect sFactory, but not the clock
 }

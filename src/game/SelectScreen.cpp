@@ -1,23 +1,115 @@
 #include "SelectScreen.hpp"
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
-#include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
 #include "LegacyGame.hpp"
-
-#ifdef _MSC_VER
-    // Avoid the zillions implicit conversion warnings
-    #pragma warning(disable: 4244)
-#endif
-
-// TODO: Remove gotos!
-#define EMPTY_LABEL_HACK  { constexpr int dumb = 1; LP3_LOG_VAR(dumb) }
 
 namespace nnd3d { namespace game {
 
 namespace {
-    const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
+    struct Frame {
+        glm::ivec2 ul;
+        glm::ivec2 dr;
+    };
+
+    Frame frames[] = {
+        {{1, 1}, {106, 182}},
+        {{106, 1}, {210, 182}},
+        {{210, 1}, {316, 182}},
+        {{1, 183}, {106, 364}},
+        {{106, 183}, {210, 364}},
+    };
+    constexpr int frame_count = sizeof(frames) / sizeof(frames[0]);
+
+    struct SelectBox {
+        SelectBox(const int _index, view::Billboard & _sprite, Sound & _sound)
+        :   character(-1),
+            finished(false),
+            index(_index),
+            sound(_sound),
+            sprite(_sprite)
+        {
+            sprite.size = { 105 * 2, (217-36) * 2 };
+            sprite.set_visibility(view::Visibility::invisible);
+        }
+
+        int character;
+        bool finished;
+        const int index;
+        Sound & sound;
+        view::Billboard & sprite;
+
+        void activate() {
+            sprite.set_visibility(view::Visibility::normal);
+            sprite.texture_index = 1;
+            set_character(index);
+        }
+
+        bool activated() const {
+            return character != -1;
+        }
+
+        boost::optional<std::string> get_player_name() const {
+            if (!finished) {
+                return boost::none;
+            }
+            switch(character) {
+                case 0:
+                    return std::string{"Thomas"};
+                case 1:
+                    return std::string{"Nick"};
+                case 2:
+                    return std::string{"Andrew"};
+                case 3:
+                    return std::string{"Phil"};
+                case 4:
+                    return std::string{"Nicky"};
+                default:
+                    LP3_ASSERT(false);
+                    return std::string("error");
+            }
+        }
+
+        void handle_input(nnd3d::input::Key key, bool value) {
+            if (value) {    // ignore everything but key down events
+                if (!activated()) {
+                    activate();
+                    return;
+                }
+                switch(key) {
+                    case input::Key::up:
+                        set_character(character - 1);
+                        break;
+                    case input::Key::down:
+                        set_character(character + 1);
+                        break;
+                    case input::Key::attack:
+                    case input::Key::jump:
+                        select();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        void select() {
+            if (character == 0) { sound.PlayWave("PickTom.wav"); }
+            if (character == 1) { sound.PlayWave("PickNick.wav"); }
+            if (character == 2) { sound.PlayWave("PickDrew.wav"); }
+            if (character == 4) { sound.PlayWave("PickNicky.wav"); }
+            finished = true;
+        }
+
+        void set_character(int _character) {
+            if (_character >= frame_count) {
+                _character = frame_count - 1;
+            } else if (_character < 0) {
+                _character = 0;
+            }
+            character = _character;
+            sprite.tex_src_ul = frames[character].ul;
+            sprite.tex_src_dr = frames[character].dr;
+        }
+    };
 }
 
 
@@ -27,8 +119,15 @@ private:
     Vb & vb;
     view::View & view;
     Sound & sound;
-    World world;
-    Random random;
+	struct ClearBillboards {
+		ClearBillboards(view::View & view) {
+			view.billboards().clear();
+			view.billboards().resize(4);
+		}
+	} clear_billboards;
+	view::Billboard & bg;
+	std::vector<SelectBox> boxes;
+
 
 public:
     SelectScreen(view::View & view_arg,
@@ -37,61 +136,30 @@ public:
     :   vb(vb_arg),
         view(view_arg),
         sound(sound_arg),
-		world{},
-        random()
+		clear_billboards(view),
+        bg(view.billboards()[0]),
+        boxes()
     {
-        sound.silence_sfx();
+        view.load_texture(0, "PlayerS.png", glm::ivec2{320, 240});
+        bg.set(0, 0, 640, 480, 0, 0, 320, 240);
+        bg.texture_index = 0;
 
-        // the select player screen
-        destroyEverything(world, view, sound);
-        world.screen = "SelectPlayerz";
-        for (int j = 0; j <= 2; ++j) {
-            world.player_data[j].lives = 3;
-            world.continues = 2;
+        view.load_texture(1, "PlayerS2.png", glm::ivec2{320, 400});
+        for (int i = 0; i < 3; ++ i) {
+            boxes.emplace_back(i, view.billboards()[i + 1], sound);
         }
 
-        this->NowLoading();
-        view.LoadTexture(0, "PlayerS2.png", 320, 400);
-        view.LoadTexture(-1, "PlayerS.png", 320, 240);
-        world.camera.CameraWidth = 320;
-        world.camera.CameraHeight = 240;
+        boxes[0].sprite.ul = { 2 * 2, 36 * 2 };
+        boxes[1].sprite.ul = { 106 * 2, 36 * 2 };
+        boxes[2].sprite.ul = { 212 * 2, 36 * 2 };
 
-        {
-            auto & s = world.Sprite[0];
-            s.x = 2 * 2;
-            s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (keys_pressed[0]) { s.visible = true; }
-            s.name = "Selecter";
-            s.frame = 1;
-            s.miscTime = world.clock + 2;
+        for (int i = 0; i < 2; ++ i) {
+            if (keys_pressed[i]) {
+                boxes[i].activate();
+            }
         }
-        {
-            auto & s = world.Sprite[1];
-            s.x = 106 * 2;
-            s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (keys_pressed[1] == 1) { s.visible = true; };
-            s.name = "Selecter";
-            s.frame = 2;
-            s.miscTime = world.clock + 2;
-        }
-        {
-            auto & s = world.Sprite[2];
-            s.x = 212 * 2; s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (keys_pressed[2]) { s.visible = true; };
-            s.name = "Selecter";
-            s.miscTime = world.clock + 2;
-            s.frame = 3;
-        }
-        this->loadAnimation(0, "Selector.ani");
-        this->loadAnimation(1, "Selector.ani");
-        this->loadAnimation(2, "Selector.ani");
 
+		sound.silence_sfx();
         sound.PlayBgm("Player SelectWAV.wav");
         sound.PlayWave("Select Your Characters of Justice.wav");
     }
@@ -99,195 +167,71 @@ public:
     void handle_input(const input::Event & event) override {
         switch(event.key) {
             case input::Key::up:
-                world.player_data[event.player].upKey = event.value != 0.0f;
-                break;
             case input::Key::down:
-                world.player_data[event.player].DownKEY = event.value != 0.0f;
-                break;
             case input::Key::left:
-                world.player_data[event.player].LeftKEY = event.value != 0.0f;
-                break;
             case input::Key::right:
-                world.player_data[event.player].RightKEY = event.value != 0.0f;
-                break;
             case input::Key::attack:
-                world.player_data[event.player].AttackKey = event.value != 0.0f;
-                break;
             case input::Key::jump:
-                world.player_data[event.player].JumpKey = event.value != 0.0f;
-                break;
-            case input::Key::skip_scene:
-                if (event.value) {
-                    world.exitS = "true"; sound.PlayWave("FDis.wav");
-                }
-                break;
-            case input::Key::power_up:
-                world.player_data[0].slicer = true;
-                world.player_data[0].GradeUp = 2;
-                world.Sprite[0].wide = 25;
-                world.Sprite[0].high = 25;
-                sound.PlayWave("SoupedUp.wav");
-                break;
-            case input::Key::lemon_time:
-                world.LemonTime = true;
+                boxes[event.player].handle_input(event.key, event.value);
                 break;
             default:
-                LP3_ASSERT(false);
+                break;
         }
     }
 
     gsl::owner<GameProcess *> update() override {
-		set_time_stuff(world);
+        for (auto & box : boxes) {
+            if (box.activated() && !box.finished) {
+                return nullptr;
+            }
+        }
+		return start_game();
+    }
 
-        world.lasttime = world.clock + 3.33333333333333E-02;
-        int j = 0;
-        int k = 0;
+    gsl::owner<GameProcess *> start_game() {
+        // Initialize world stuff.
+        World world;
 
-        for (j = 0; j < world.spritesInUse; ++j) {
-            auto & s = world.Sprite[j];
+        // Set numberPlayers, which I need to convert to an enum or change.
+        struct GoofyMapping {
+            bool active[3];
+            int numberPlayers;
+        };
 
-		    if (s.name == "Selecter") {
-                if (world.clock > s.miscTime) {
-                    s.miscTime = world.clock + 0.1;  //this way, the person won't scream through the selection box because it moves at 40 FPS!
-                    //For k = 0 To 2
-                    k = j;
+        const GoofyMapping mapping[] = {
+            {{  true, false, false }, 1},
+            {{  true,  true, false }, 2},
+            {{  true, false,  true }, 6},
+            {{ false,  true, false }, 4},
+            {{ false,  true,  true }, 7},
+            {{ false, false,  true }, 5},
+            {{ true,   true,  true }, 3},
+        };
 
-                    if (world.player_data[k].upKey == true) {
-                        s.frame = s.frame - 1;
-                        if (s.frame == 0) { s.frame = 5; }
-                    }
-                    if (world.player_data[k].DownKEY == true) {
-                        s.frame = s.frame + 1;
-                        if (s.frame == 6) { s.frame = 1; }
-                    }
-                    if (world.player_data[k].AttackKey == true
-                        || world.player_data[k].JumpKey == true) {
-                        s.mode = "done";
-                        s.name = "KukoFax";
-                        if (s.frame == 1) { sound.PlayWave("PickTom.wav"); }
-                        if (s.frame == 2) { sound.PlayWave("PickNick.wav"); }
-                        if (s.frame == 3) { sound.PlayWave("PickDrew.wav"); }
-                        if (s.frame == 5) { sound.PlayWave("PickNicky.wav"); }
-                    }
-                //Next k
-                }
+        for (const auto & entry : mapping) {
+            if (entry.active[0] == boxes[0].finished
+                && entry.active[1] == boxes[1].finished
+                && entry.active[2] == boxes[2].finished)
+            {
+                world.numberPlayers = entry.numberPlayers;
             }
         }
 
-		if (world.exitS == "true" && boost::starts_with(world.screen, "Level")) {
-			double sapple = boost::lexical_cast<double>(world.screen.substr(5));
-			sapple = sapple + 0.1; // WTF, right? It's in the original code though...
-			world.screen = str(boost::format("Level%s") % sapple);
-		} // End If
+        std::array<boost::optional<std::string>, 3> players;
 
-		if (world.screen == "SelectPlayerz") {
-			auto result = this->selectPlayerS();
-			if (result) {
-				return result;
-			}
-		}
-		create_billboards(world, view.billboards());
-		return nullptr;
-    }
+        for (auto & box : boxes) {
+            players[box.index] = box.get_player_name();
 
-private:
-
-    void loadAnimation(int who, const std::string & file) {
-        auto & s = world.Sprite[who];
-        view.load_animation_file(s.Aframe, file);
-    }
-
-
-
-    void NowLoading() {
-        view.LoadTexture(-1, "NowLoading.png", 320, 240);
-        world.camera.CameraWidth = 320;
-        world.camera.CameraHeight = 240;
-
-        world.camera.CameraWidth = 640;
-        world.camera.CameraHeight = 480;
-    }
-
-
-
-    gsl::owner<GameProcess *> selectPlayerS() {
-        // after you all select players, it gets up the results
-
-        if (world.Sprite[0].mode == "done" || world.Sprite[0].visible == false) {
-            if (world.Sprite[1].mode == "done" || world.Sprite[1].visible == false) {
-                if (world.Sprite[2].mode == "done" || world.Sprite[2].visible == false) {
-                    for (int i = 0; i <= 2; ++i) {
-                        if (world.Sprite[i].visible == false) {
-                            world.Sprite[i].mode = "";
-                        }
-                    }
-                    if (world.Sprite[0].mode == "done") {
-                        world.numberPlayers = 1; }
-                    if (world.Sprite[1].mode == "done") {
-                        world.numberPlayers = 4; }
-                    if (world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 5; }
-                    if (world.Sprite[0].mode == "done"
-                        && world.Sprite[1].mode == "done") {
-                        world.numberPlayers = 2;
-                    }
-                    if (world.Sprite[0].mode == "done"
-                        && world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 6;
-                    }
-                    if (world.Sprite[1].mode == "done"
-                        && world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 7;
-                    }
-                    if (world.Sprite[0].mode == "done"
-                        && world.Sprite[1].mode == "done"
-                        && world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 3;
-                    }
-
-					std::array<boost::optional<std::string>, 3> players;
-                    for (int penguin = 0; penguin <= 2; ++ penguin) {
-                        auto & s = world.Sprite[penguin];
-                        //Next penguin
-                        if (s.frame == 1) {
-                            world.player_data[penguin].playerName = "Thomas";
-							players[penguin] = "Thomas";
-						}
-                        if (s.frame == 2) {
-                            world.player_data[penguin].playerName = "Nick";
-							players[penguin] = "Nick";
-						}
-                        if (s.frame == 3) {
-                            world.player_data[penguin].playerName = "Andrew";
-							players[penguin] = "Andrew";
-						}
-                        if (s.frame == 4) {
-                            world.player_data[penguin].playerName = "Phil";
-							players[penguin] = "Phil";
-						}
-                        if (s.frame == 5) {
-                            world.player_data[penguin].playerName = "Nicky";
-							players[penguin] = "Nicky";
-						}
-                    }
-                    //1 Only player 1
-                    //2 Player 1 and 2
-                    //3 All three Players
-                    //4 Just player 2
-                    //5 Just player 3
-                    //6 Players 1 and 3
-                    //7 Players 2 and 3
-
-                    world.screen = "Level1.1";					
-					return create_legacy_screen(view, sound, vb, 
-						                        std::move(world), players);
-                }
-            }
+            world.player_data[box.index].lives = 3;
+            world.player_data[box.index].playerName
+                = box.get_player_name().get_value_or("");
         }
-		return nullptr;
+        world.continues = 2;
+
+        world.screen = "Level1.1";
+        return create_legacy_screen(view, sound, vb,
+                                    std::move(world), players);
     }
-
-
 };  // end of GameImpl class
 
 

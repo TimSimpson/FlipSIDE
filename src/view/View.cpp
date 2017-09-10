@@ -107,7 +107,7 @@ glm::vec4 qb_color(int index) {
     }
 }
 
-Billboard::Billboard() 
+Billboard::Billboard()
 :	ul{},
 	size{},
 	z(0),
@@ -119,6 +119,35 @@ Billboard::Billboard()
 	_flicker(false)
 {
 }
+
+void Billboard::set(float ul_x, float ul_y, float width, float height) {
+    this->ul.x = ul_x;
+    this->ul.y = ul_y;
+    this->size.x = width;
+    this->size.y = height;
+}
+
+void Billboard::set(float ul_x, float ul_y, float width, float height,
+	                float srcx1, float srcy1, float srcx2, float srcy2)
+{
+	this->ul.x = ul_x;
+	this->ul.y = ul_y;
+	this->size.x = width;
+	this->size.y = height;
+	this->tex_src_ul.x = srcx1;
+	this->tex_src_ul.y = srcy1;
+	this->tex_src_dr.x = srcx2;
+	this->tex_src_dr.y = srcy2;
+}
+
+void Billboard::set_src(float srcx1, float srcy1, float srcx2, float srcy2)
+{
+    this->tex_src_ul.x = srcx1;
+    this->tex_src_ul.y = srcy1;
+    this->tex_src_dr.x = srcx2;
+    this->tex_src_dr.y = srcy2;
+}
+
 
 void Billboard::set_visibility(Visibility value) {
 	switch (value) {
@@ -179,7 +208,7 @@ void View::operator()(const glm::mat4 & previous) {
 
 	for (auto & m_b : _billboards) {
 		const auto & b = m_b;
-		if (b._visible) {
+		if (b.visible()) {
 			gfx::Quad<gfx::TexCVert> quad
 				= game_elements[b.texture_index].add_quad();
 			gfx::upright_quad(quad, b.ul, (b.ul + b.size), b.z,
@@ -189,13 +218,11 @@ void View::operator()(const glm::mat4 & previous) {
 			quad.dr().set_rgb(m_b.color);
 			quad.ul().set_rgb(m_b.color);
 			quad.ur().set_rgb(m_b.color);
-		}		
-		if (b._flicker) {
-			m_b._visible = !b._visible;
 		}
+		m_b.run_effects();
 	}
 
-	// Now start calling OpenGL 
+	// Now start calling OpenGL
 	program.use();
 	auto _2d = gfx::create_2d_screen(previous, res2d);
 	program.set_mvp(_2d);
@@ -217,7 +244,7 @@ void View::LoadHistory(const TextureHistory & other_history)
     for (int i = 0; i < lp3::narrow<int>(other_history.size()); ++i) {
         const auto & call = other_history[i];
         if (call) {
-            LoadTexture(i - 1, call->fileName, call->howWide, call->howHigh);
+            load_texture(i, call->fileName, call->size);
         }
     }
 }
@@ -246,8 +273,7 @@ void View::enable() {
 	for (std::size_t i = 0; i < history.size(); ++ i) {
 		const auto & call = history[i];
 		if (call) {
-			LoadTexture(StupidIndex(lp3::narrow<int>(i) - 1),
-				        call->fileName, call->howWide, call->howHigh);
+			load_texture(i, call->fileName, call->size);
 		}
 		history[i] = boost::none;
 	}
@@ -270,28 +296,33 @@ void View::load_animation_file(std::array<view::AnimationFrame, 20> & frames,
     }
 }
 
-void View::LoadTexture(StupidIndex which, const std::string & fileName,
-                       int howWide,
-                       int howHigh) {
+void View::load_texture(int index, const std::string & fileName,
+	                    boost::optional<glm::ivec2> size)
+{
 	if (this->disable_view) {
-		history[which.value + 1] = LoadTextureCall{ fileName, howWide, howHigh };
+		history[index] = LoadTextureCall{ fileName, size };
 		return;
 	}
 
-	LP3_LOG_DEBUG("LoadTexture %i %s %i %i",
-                  which.value, fileName, howWide, howHigh);
+	LP3_LOG_DEBUG("LoadTexture %i %s", index, fileName);
 
-    textures[which.value + 1].reset(load_image(fileName));
-    if (boost::algorithm::ends_with(fileName, ".bmp")) {
-        texture_sizes[get_smart(which)] = textures[which.value + 1]->size();
-    } else {
-        texture_sizes[get_smart(which)] = find_texture_scale_factor(
-            glm::vec2{ howWide, howHigh },
-            textures[which.value + 1]->size());
-    }
-    LP3_LOG_DEBUG("   size = %i, %i",
-                  texture_sizes[get_smart(which)].x,
-                  texture_sizes[get_smart(which)].y);
+	textures[index].reset(load_image(fileName));
+	if (boost::algorithm::ends_with(fileName, ".bmp") || !size) {
+		texture_sizes[index] = textures[index]->size();
+	} else {
+		texture_sizes[index] = find_texture_scale_factor(
+			size.get(),
+			textures[index]->size());
+	}
+	LP3_LOG_DEBUG("   size = %i, %i",
+		          texture_sizes[index].x, texture_sizes[index].y);
+}
+
+
+void View::LoadTexture(StupidIndex which, const std::string & fileName,
+                       int howWide,
+                       int howHigh) {
+	load_texture(get_smart(which), fileName, glm::ivec2{ howWide, howHigh });
 }
 
 void View::report_fps(float _fps) {

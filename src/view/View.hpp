@@ -20,21 +20,39 @@ enum class Visibility {
 };
 
 struct Billboard {
+public:
+	Billboard();
+
 	glm::vec2 ul;
 	glm::vec2 size;
 	float z;
 	glm::vec2 tex_src_ul;
 	glm::vec2 tex_src_dr;
 	int texture_index;
-	
+
 	glm::vec4 color;
+
+    void set(float ul_x, float ul_y, float width, float height);
+
+	void set(float ul_x, float ul_y, float width, float height,
+	         float srcx1, float srcy1, float srcx2, float srcy2);
+
+    void set_src(float srcx1, float srcy1, float srcx2, float srcy2);
+
+	// Makes the billboard flicker, if flickering is turned on.
+	inline void run_effects() {
+		if (_flicker) { _visible = !_visible; }
+	};
 
 	void set_visibility(Visibility value);
 
+    inline bool visible() const {
+        return _visible;
+    }
+
+private:
 	bool _visible;
 	bool _flicker;
-
-	Billboard();
 };
 
 glm::vec4 qb_color(int index);
@@ -56,18 +74,23 @@ public:
     View(core::MediaManager & media, Vb & vb);
 
     void operator()(const glm::mat4 & previous);
-	
+
 	// These are manipulated directly by client code.
 	std::vector<Billboard> & billboards() {
 		return _billboards;
 	}
 
+    // Loads a texture
+	void load_texture(int index, const std::string & fileName,
+		              boost::optional<glm::ivec2> size=boost::none);
+
+    // Old method that maps to the goofy old interface
     void LoadTexture(StupidIndex which, const std::string & fileName,
                      int howWide, int howHigh);
 
     // Fills up the frames of a character sprite with stuff from a file.
     void load_animation_file(std::array<view::AnimationFrame, 20> & frames,
-                             const std::string & file);    
+                             const std::string & file);
 
 	// Turn off view
 	void disable();
@@ -76,12 +99,11 @@ public:
 
     // Tell the view what the FPS was
     void report_fps(float fps);
-	
+
 private:
 	struct LoadTextureCall {
 		std::string fileName;
-		int howWide;
-		int howHigh;
+        boost::optional<glm::ivec2> size;
 	};
 
 	typedef std::array<boost::optional<LoadTextureCall>, texture_count>

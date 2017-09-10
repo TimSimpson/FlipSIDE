@@ -5,7 +5,7 @@
 
 namespace nnd3d { namespace game {
 
-namespace {    
+namespace {
     glm::vec4 to_rgb(int r, int g, int b) {
         // Emulates old VB RGB function. Named 'to_rgb' due to probable windows.h
         // issues. >:(
@@ -70,7 +70,6 @@ public:
     }
 
     void fade_in_and_out_words() {
-        auto & bg = view.billboards()[0];
         auto & words = view.billboards()[1];
 
         LP3_COROUTINE_BEGIN(fade_in_and_out_words_state);
