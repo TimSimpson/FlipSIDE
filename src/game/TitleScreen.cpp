@@ -10,24 +10,20 @@ namespace nnd3d { namespace game {
 class TitleScreenImpl : public GameProcess
 {
 private:
-	Vb & vb;
-	view::View & view;
-	Sound & sound;
+	GameContext context;
 	std::array<bool, 3> keys_pressed;
 	lp3::sims::CoroutineState coro_state;
 	std::int64_t time;
 	
 public:
-	TitleScreenImpl(view::View & view_arg, Sound & sound_arg, Vb & vb_arg)
-    :   vb(vb_arg),
-        view(view_arg),
-        sound(sound_arg),
+	TitleScreenImpl(GameContext _context)
+    :   context(_context),
 		keys_pressed{},
 		coro_state(),		
 		time(0)
     {
-		view.billboards().resize(3);
-		for (auto & b : view.billboards()) {
+		context.view.billboards().resize(3);
+		for (auto & b : context.view.billboards()) {
 			b.set_visibility(view::Visibility::invisible);
 		}
     }
@@ -54,25 +50,25 @@ public:
 	gsl::owner<GameProcess *> update() override {
 		for (int i = 0; i <= 2; ++i) {
 			if (this->keys_pressed[i]) {
-				return create_select_screen(view, sound, vb, keys_pressed);
+				return create_select_screen(context, keys_pressed);
 			}
 		}
 
 		time += ms_per_update;
 
 		if (coro_state) {
-			view::Billboard & words = view.billboards()[0];
+			view::Billboard & words = context.view.billboards()[0];
 			words.z = 0.3f;
-			view::Billboard & title_bg_1 = view.billboards()[1];
+			view::Billboard & title_bg_1 = context.view.billboards()[1];
 			title_bg_1.z = 0.9f;
-			view::Billboard & subtitle = view.billboards()[2];
+			view::Billboard & subtitle = context.view.billboards()[2];
 			subtitle.z = 0.4f;
 
 			LP3_COROUTINE_BEGIN(coro_state);
 
-			view.LoadTexture(0, "title2ALT.png", 285, 427);
-			view.LoadTexture(1, "title1.png", 440, 427);
-			sound.PlayWave("OpeningWAV.wav");
+			context.view.LoadTexture(0, "title2ALT.png", 285, 427);
+			context.view.LoadTexture(1, "title1.png", 440, 427);
+			context.sound.PlayWave("OpeningWAV.wav");
 
 			words.set_visibility(view::Visibility::invisible);
 			WAIT(2 * 1000)
@@ -163,7 +159,7 @@ public:
 
 			WAIT(23072)
 				
-			return create_intro_story_screen(view, sound, vb);
+			return create_intro_story_screen(context);
 			LP3_COROUTINE_END()
         }
 		return nullptr;
@@ -171,8 +167,8 @@ public:
 };  // end of GameImpl class
 
 
-GameProcess * create_title_screen(view::View & view, Sound & sound, Vb & vb) {
-	return new TitleScreenImpl(view, sound, vb);
+GameProcess * create_title_screen(GameContext context) {
+	return new TitleScreenImpl(context);
 }
 
 }   }  // end namespace

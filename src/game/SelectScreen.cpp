@@ -1,6 +1,7 @@
 #include "SelectScreen.hpp"
 #include "CharacterProc.hpp"
 #include "LegacyGame.hpp"
+#include "NowLoading.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -116,9 +117,7 @@ namespace {
 class SelectScreen : public GameProcess
 {
 private:
-    Vb & vb;
-    view::View & view;
-    Sound & sound;
+	GameContext context;
 	struct ClearBillboards {
 		ClearBillboards(view::View & view) {
 			view.billboards().clear();
@@ -130,23 +129,20 @@ private:
 
 
 public:
-    SelectScreen(view::View & view_arg,
-               Sound & sound_arg, Vb & vb_arg,
-               std::array<bool, 3> keys_pressed)
-    :   vb(vb_arg),
-        view(view_arg),
-        sound(sound_arg),
-		clear_billboards(view),
-        bg(view.billboards()[0]),
+    SelectScreen(GameContext _context,
+                 std::array<bool, 3> keys_pressed)
+    :   context(_context),
+		clear_billboards(context.view),
+        bg(context.view.billboards()[0]),
         boxes()
     {
-        view.load_texture(0, "PlayerS.png", glm::ivec2{320, 240});
+        context.view.load_texture(0, "PlayerS.png", glm::ivec2{320, 240});
         bg.set(0, 0, 640, 480, 0, 0, 320, 240);
         bg.texture_index = 0;
 
-        view.load_texture(1, "PlayerS2.png", glm::ivec2{320, 400});
+		context.view.load_texture(1, "PlayerS2.png", glm::ivec2{320, 400});
         for (int i = 0; i < 3; ++ i) {
-            boxes.emplace_back(i, view.billboards()[i + 1], sound);
+            boxes.emplace_back(i, context.view.billboards()[i + 1], context.sound);
         }
 
         boxes[0].sprite.ul = { 2 * 2, 36 * 2 };
@@ -159,10 +155,14 @@ public:
             }
         }
 
-		sound.silence_sfx();
-        sound.PlayBgm("Player SelectWAV.wav");
-        sound.PlayWave("Select Your Characters of Justice.wav");
+		context.sound.silence_sfx();
+		context.sound.PlayBgm("Player SelectWAV.wav");
+		context.sound.PlayWave("Select Your Characters of Justice.wav");
     }
+
+	~SelectScreen() {
+		int f = 5;
+	}
 
     void handle_input(const input::Event & event) override {
         switch(event.key) {
@@ -229,17 +229,19 @@ public:
         world.continues = 2;
 
         world.screen = "Level1.1";
-        return create_legacy_screen(view, sound, vb,
-                                    std::move(world), players);
+        return create_legacy_screen(context, std::move(world), players);
     }
 };  // end of GameImpl class
 
 
 gsl::owner<GameProcess *> create_select_screen(
-    view::View & view, Sound & sound, Vb & vb,
-    std::array<bool, 3> keys_pressed)
+    GameContext context, std::array<bool, 3> keys_pressed)
 {
-    return new SelectScreen(view, sound, vb, keys_pressed);
+	return create_now_loading_screen(
+		context,
+		[keys_pressed](GameContext context_2) {
+		return new SelectScreen(context_2, keys_pressed);
+	});    
 }
 
 }   }  // end namespace

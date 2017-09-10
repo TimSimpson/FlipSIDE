@@ -39,11 +39,11 @@ void GameProcessSpace::exec(gsl::owner<GameProcess *> new_proc) {
     proc = new_proc;
 }
 
-Game::Game(view::View & _view, Sound & _sound, Vb & vb)
+Game::Game(GameContext context)
 :   process(),
 	_quit(false)
 {
-    process.exec(create_title_screen(_view, _sound, vb));
+    process.exec(create_title_screen(context));
 	//process.exec(create_gameover_screen(_view, _sound, vb));
 }
 

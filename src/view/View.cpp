@@ -270,7 +270,7 @@ void View::disable() {
 
 void View::enable() {
 	this->disable_view = false;
-	for (std::size_t i = 0; i < history.size(); ++ i) {
+	for (int i = 0; i < history.size(); ++ i) {
 		const auto & call = history[i];
 		if (call) {
 			load_texture(i, call->fileName, call->size);

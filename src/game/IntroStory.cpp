@@ -18,9 +18,7 @@ namespace {
 class IntroStoryScreen : public GameProcess
 {
 private:
-    Vb & vb;
-    view::View & view;
-    Sound & sound;
+	GameContext context;
     std::array<bool, 3> keys_pressed;
     lp3::sims::CoroutineState fade_in_and_out_words_state;
     lp3::sims::CoroutineState intro_story_state;
@@ -31,10 +29,8 @@ private:
     bool fade_in_only;
 
 public:
-    IntroStoryScreen(view::View & view_arg, Sound & sound_arg, Vb & vb_arg)
-    :   vb(vb_arg),
-        view(view_arg),
-        sound(sound_arg),
+    IntroStoryScreen(GameContext _context)
+    :   context(_context),
         keys_pressed{},
         fade_in_and_out_words_state{},
         intro_story_state{},
@@ -44,12 +40,12 @@ public:
         fade_speed(0),
         fade_in_only(false)
     {
-        view.billboards().resize(3);
-        for (auto & b : view.billboards()) {
+        context.view.billboards().resize(3);
+        for (auto & b : context.view.billboards()) {
             b.set_visibility(view::Visibility::invisible);
         }
-        view.billboards().clear();
-        view.billboards().resize(2);
+		context.view.billboards().clear();
+		context.view.billboards().resize(2);
     }
 
     void handle_input(const input::Event & event) override {
@@ -70,7 +66,7 @@ public:
     }
 
     void fade_in_and_out_words() {
-        auto & words = view.billboards()[1];
+        auto & words = context.view.billboards()[1];
 
         LP3_COROUTINE_BEGIN(fade_in_and_out_words_state);
         fade_value = 0;
@@ -127,15 +123,15 @@ public:
     gsl::owner<GameProcess *> update() override {
         for (int i = 0; i <= 2; ++i) {
             if (this->keys_pressed[i]) {
-                return create_select_screen(view, sound, vb, keys_pressed);
+                return create_select_screen(context, keys_pressed);
             }
         }
 
         time += ms_per_update;
 
         if (intro_story_state) {
-            auto & bg = view.billboards()[0];
-            auto & words = view.billboards()[1];
+            auto & bg = context.view.billboards()[0];
+            auto & words = context.view.billboards()[1];
 
             LP3_COROUTINE_BEGIN(intro_story_state);
 
@@ -150,17 +146,17 @@ public:
             words.z = 0.3f;
             bg.set_visibility(view::Visibility::invisible);
 
-            view.LoadTexture(1, "Open1.png", 313, 263);
-            view.LoadTexture(2, "Open6.png", 320, 258);
-            view.LoadTexture(3, "Open7.png", 320, 194);
-            view.LoadTexture(4, "TitleScreen.png", 320, 240);
-            sound.PlayBgm("");
+			context.view.LoadTexture(1, "Open1.png", 313, 263);
+			context.view.LoadTexture(2, "Open6.png", 320, 258);
+			context.view.LoadTexture(3, "Open7.png", 320, 194);
+			context.view.LoadTexture(4, "TitleScreen.png", 320, 240);
+			context.sound.PlayBgm("");
 
             words.texture_index = 2;
 
             words.ul = { 1, 175 };
 
-            sound.PlayWave("IntroStory.ogg"); // play it once then stop
+			context.sound.PlayWave("IntroStory.ogg"); // play it once then stop
 
             words.ul = { 1, 178 };
             words.size = { 164, 40 }; words.size *= 2;
@@ -193,7 +189,7 @@ public:
 
             // Show the characters:
             fade_length = 5000;
-            view.LoadTexture(-1, "Open2.png", 320, 240);
+			context.view.LoadTexture(-1, "Open2.png", 320, 240);
 
             bg.size = { 640, 480 };
             bg.ul = { 0, 0 };
@@ -231,7 +227,7 @@ public:
 
             FADE_IN_AND_OUT
 
-            view.LoadTexture(-1, "Open3.png", 320, 240);
+			context.view.LoadTexture(-1, "Open3.png", 320, 240);
 
             words.size = { 303, 65 }; words.size *= 2;
             words.tex_src_ul = { 2, 189 };
@@ -240,7 +236,7 @@ public:
 
             FADE_IN_AND_OUT
 
-            view.LoadTexture(-1, "Open4.png", 320, 240);
+			context.view.LoadTexture(-1, "Open4.png", 320, 240);
 
             fade_length = 6240;
             words.size = { 313, 65 }; words.size *= 2;
@@ -250,7 +246,7 @@ public:
 
             FADE_IN_AND_OUT
 
-            view.LoadTexture(-1, "Open5.png", 320, 240);
+			context.view.LoadTexture(-1, "Open5.png", 320, 240);
 
             words.ul = { 58, 188 }; words.ul *= 2;
             words.size = { 259, 43 }; words.size *= 2;
@@ -283,8 +279,8 @@ public:
 };  // end of GameImpl class
 
 
-GameProcess * create_intro_story_screen(view::View & view, Sound & sound, Vb & vb) {
-    return new IntroStoryScreen(view, sound, vb);
+GameProcess * create_intro_story_screen(GameContext context) {
+    return new IntroStoryScreen(context);
 }
 
 }   }  // end namespace

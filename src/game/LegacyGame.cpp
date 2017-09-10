@@ -5,6 +5,7 @@
 #include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
 #include "GameOverScreen.hpp"
+#include "NowLoading.hpp"
 #include "TitleScreen.hpp"
 
 #ifdef _MSC_VER
@@ -25,7 +26,8 @@ namespace {
 class LegacyGame : public GameProcess
 {
 private:
-	Vb & vb;
+	GameContext context;
+	Vb vb;
 	view::View & view;
 	Sound & sound;
 	World world;
@@ -33,11 +35,11 @@ private:
 	std::int64_t animation_timer;
 
 public:
-	LegacyGame(view::View & view_arg,
-		       Sound & sound_arg, Vb & vb_arg, World && world_arg)
-    :   vb(vb_arg),
-        view(view_arg),
-        sound(sound_arg),
+	LegacyGame(GameContext _context,  World && world_arg)
+    :   context(_context),
+		vb(context.media),
+        view(context.view),
+        sound(context.sound),
         world(world_arg),
         random(),
 		animation_timer(0)
@@ -1630,7 +1632,7 @@ private:
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
             world.screen = str(boost::format("Level%s") % sapple);
-			return new LegacyGame(view, sound, vb, std::move(world));
+			return new LegacyGame(context, std::move(world));
         } // End If
 
 
@@ -1642,7 +1644,7 @@ private:
         if (world.screen == "title") {
             //playWave "conTen.wav"
             world.screen = "title2";
-            return create_title_screen(view, sound, vb);
+            return create_title_screen(context);
         }
 
 		// MOVED THIS TO CONSTRUCTOR:
@@ -1672,7 +1674,7 @@ private:
         if (world.Sprite[0].name == "dead"
             && world.Sprite[10].name == "dead"
             && world.Sprite[20].name == "dead") {
-			return create_gameover_screen(view, sound, vb);
+			return create_gameover_screen(context);
         }
 
 		return nullptr;
@@ -2687,11 +2689,17 @@ private:
 
 
 gsl::owner<GameProcess *> create_legacy_screen(
-	view::View & view, Sound & sound, Vb & vb, World && world,
+	GameContext context, 
+	World && world,
 	std::array<boost::optional<std::string>, 3>)
 {
 	//TODO: Use players, somehow
-	return new LegacyGame(view, sound, vb, std::move(world));
+	return create_now_loading_screen(
+		context,
+		[world(std::move(world))](GameContext context_2) mutable {
+		return new LegacyGame(context_2, std::move(world));
+	});
+	
 }
 
 }   }  // end namespace

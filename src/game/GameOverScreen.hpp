@@ -7,7 +7,7 @@
 namespace nnd3d { namespace game {
 
 
-GameProcess * create_gameover_screen(view::View & view, Sound & sound, Vb & vb);
+gsl::owner<GameProcess *> create_gameover_screen(GameContext context);
 
 }   }  // end namespace
 

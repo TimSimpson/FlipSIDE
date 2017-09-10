@@ -25,10 +25,7 @@ namespace sims = lp3::sims;
 class GameOverScreen : public GameProcess
 {
 private:
-    Vb & vb;
-    view::View & view;
-    Sound & sound;
-    Random random;
+	GameContext context;
 	
 	struct AllocateBillboards {
 		AllocateBillboards(std::vector<view::Billboard> & billboards) {
@@ -42,20 +39,16 @@ private:
 	
 	sims::CoroutineState coro_state;
 public:
-    GameOverScreen(view::View & view_arg,
-               Sound & sound_arg, Vb & vb_arg)
-    :   vb(vb_arg),
-        view(view_arg),
-        sound(sound_arg),
-        random(),
-		allocate_billboards(view.billboards()),
-		game_over_cloud_bg(view.billboards()[0]),
-		game_over_title(view.billboards()[1]),
+    GameOverScreen(GameContext _context)
+    :   context(_context),
+		allocate_billboards(context.view.billboards()),
+		game_over_cloud_bg(context.view.billboards()[0]),
+		game_over_title(context.view.billboards()[1]),
 		wait_time(4000)
     {	
-		sound.silence_sfx();
-        sound.PlayBgm("");
-        view.LoadTexture(0, "GameOver.png", 320, 287);
+		context.sound.silence_sfx();
+		context.sound.PlayBgm("");
+		context.view.LoadTexture(0, "GameOver.png", 320, 287);
 		
 		game_over_cloud_bg.ul = { 0, 0 };
 		game_over_cloud_bg.size = { 640, 480 };
@@ -71,7 +64,7 @@ public:
 		game_over_title.texture_index = 1;
 		game_over_title.z = 0.5f;
 
-        sound.PlayWave("GameOver.wav");
+		context.sound.PlayWave("GameOver.wav");
     }
 
     void handle_input(const input::Event &) override {
@@ -97,7 +90,7 @@ public:
 			LP3_YIELD(nullptr);
 		}
 		LP3_COROUTINE_END();
-		return create_title_screen(view, sound, vb);
+		return create_title_screen(context);
     }
 
 
@@ -105,10 +98,9 @@ public:
 };  // end of GameImpl class
 
 
-gsl::owner<GameProcess *> create_gameover_screen(
-    view::View & view, Sound & sound, Vb & vb)
+gsl::owner<GameProcess *> create_gameover_screen(GameContext context)
 {
-    return new GameOverScreen(view, sound, vb);
+    return new GameOverScreen(context);
 }
 
 }   }  // end namespace

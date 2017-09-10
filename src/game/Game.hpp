@@ -55,6 +55,13 @@ public:
 };
 
 
+// Things the game processes need at a minimum.
+struct GameContext {	
+	lp3::core::MediaManager & media;
+	Sound & sound;
+	view::View & view;
+};
+
 // --------------------------------------------------------------------
 // Game
 // --------------------------------------------------------------------
@@ -65,7 +72,7 @@ public:
 class Game
 {
 public:
-    Game(view::View & view, Sound & sound, Vb & vb);
+    Game(GameContext game_context);
 
 	~Game();
 

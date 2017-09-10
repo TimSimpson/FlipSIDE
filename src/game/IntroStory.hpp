@@ -7,7 +7,7 @@
 namespace nnd3d { namespace game {
 
 
-GameProcess * create_intro_story_screen(view::View & view, Sound & sound, Vb & vb);
+GameProcess * create_intro_story_screen(GameContext context);
 
 }   }  // end namespace
 

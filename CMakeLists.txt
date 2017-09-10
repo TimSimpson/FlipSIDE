@@ -24,6 +24,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/IntroStory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/LegacyGame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/LegacyGame.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/NowLoading.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/NowLoading.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/PlayerData.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/PlayerData.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/SelectScreen.hpp

@@ -158,7 +158,8 @@ int _main(core::PlatformLoop & loop) {
 	nnd3d::MutableSound sound{ media };
 	(void)sound;
 
-	nnd3d::game::Game game(view, sound, vb);
+	nnd3d::game::GameContext context{ media, sound, view };
+	nnd3d::game::Game game(context);
 
 	sims::FrameTimer frame_timer;
 
