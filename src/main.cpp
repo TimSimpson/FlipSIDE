@@ -25,6 +25,7 @@ struct CommandLineArgs {
 	boost::optional<std::string> record_input;
 	boost::optional<std::string> playback_input;
 	bool legacy_input;
+	boost::optional<std::string> start;
 };
 
 boost::optional<CommandLineArgs> parse_args(
@@ -57,12 +58,27 @@ boost::optional<CommandLineArgs> parse_args(
 			args.skip_playback_to_end = true;
 		} else if (string_args[i] == "--legacy-input") {
 			args.legacy_input = true;
+		} else if (string_args[i] == "--start-proc") {
+			if (i + 1 >= string_args.size()) {
+				std::cerr << "Expected a process name to start at.\n";
+				return boost::none;
+			}
+			args.start = string_args[i + 1];
+			++i;
+		} else if (string_args[i] == "--list-procs") {
+			auto list = nnd3d::game::get_all_game_processes();
+			for (auto & p : list) {
+				std::cout << p.name << "\t-\t" << p.desc << "\n";
+			}
+			return boost::none;
 		} else {
 			std::cerr << "Unknown argument: " << string_args[i] << "\n"
 				"Options: \n"
 				"    --record-input <file-to-write>\n"
 				"    --playback-input <file-to-read>\n"
-				"    --skip-playback-to-end\n";
+				"    --skip-playback-to-end\n"
+				"    --list-procs\n"
+				"    --start-proc <name-of-proc>\n";
 			return boost::none;
 		}
 	}
@@ -159,7 +175,14 @@ int _main(core::PlatformLoop & loop) {
 	(void)sound;
 
 	nnd3d::game::GameContext context{ media, sound, view };
-	nnd3d::game::Game game(context);
+
+	auto start_process = nnd3d::game::get_game_process_by_name(
+		args.start ? args.start.get().c_str() : "title");
+	if (!start_process) {
+		std::cerr << "Could not find process.\n";
+		return 1;
+	}
+	nnd3d::game::Game game(context, start_process.get());
 
 	sims::FrameTimer frame_timer;
 

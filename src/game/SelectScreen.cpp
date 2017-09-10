@@ -240,8 +240,23 @@ gsl::owner<GameProcess *> create_select_screen(
 	return create_now_loading_screen(
 		context,
 		[keys_pressed](GameContext context_2) {
-		return new SelectScreen(context_2, keys_pressed);
+			return new SelectScreen(context_2, keys_pressed);
 	});    
+}
+
+namespace {
+	gsl::owner<GameProcess *> create_select_screen_2(GameContext context) {
+		return create_now_loading_screen(
+			context,
+			[](GameContext context_2) {
+			std::array<bool, 3> keys_pressed{};
+			keys_pressed[0] = true;
+				return new SelectScreen(context_2, keys_pressed);
+		});
+	}
+
+	RegisterGameProcess reg(
+		"select-char", "The character select screen", create_select_screen_2);
 }
 
 }   }  // end namespace

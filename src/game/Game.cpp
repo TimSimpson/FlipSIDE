@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include <map>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -18,7 +19,9 @@
 namespace nnd3d { namespace game {
 
 namespace {
-    const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
+	lp3::core::GlobalVar<std::map<std::string, GameProcessEntry>> procs;
+
+	bool has_shut_down = false;
 }
 
 GameProcessSpace::GameProcessSpace()
@@ -26,24 +29,51 @@ GameProcessSpace::GameProcessSpace()
 {}
 
 GameProcessSpace::~GameProcessSpace() {
-	if (proc) {
-		delete proc;
-	}
 }
 
 void GameProcessSpace::exec(gsl::owner<GameProcess *> new_proc) {
 	LP3_ASSERT(new_proc);
-    if (proc) {
-        delete proc;
-    }
-    proc = new_proc;
+	proc.reset(new_proc);
 }
 
-Game::Game(GameContext context)
+
+RegisterGameProcess::RegisterGameProcess(
+	const char * const name,
+	const char * const desc,
+	gsl::owner<GameProcess *>(*create)(GameContext context))
+{
+	GameProcessEntry entry{ name, desc, create };
+	procs.get()[std::string(name)] = entry;
+}
+
+std::vector<GameProcessEntry> get_all_game_processes() {
+	std::vector<GameProcessEntry> entries;
+	for (const auto & item : procs.get()) {
+		entries.push_back(item.second);
+	}
+	return entries;
+}
+
+boost::optional<GameProcessEntry> get_game_process_by_name(const char * name) {
+	auto itr = procs.get().find(name);
+	if (itr == procs.get().end()) {
+		return boost::none;
+	} else {
+		return itr->second;
+	}
+}
+
+Game::Game(GameContext context, GameProcessEntry start_proc)
 :   process(),
 	_quit(false)
 {
-    process.exec(create_title_screen(context));
+	process.exec(start_proc.create(context));
+	if (_quit) {
+		// If this isn't here, the game cuts out all of the static initializers
+		// from these units! Here I was thinking I'd solved reflection in C++.
+		// Time to go back to Macaroni. :p
+		create_gameover_screen(context);
+	}
 	//process.exec(create_gameover_screen(_view, _sound, vb));
 }
 
@@ -62,7 +92,7 @@ void Game::handle_input(const input::Event & event) {
 	default:
 		process.get_proc()->handle_input(event);
 	}
-    
+
 }
 
 bool Game::quit() const {

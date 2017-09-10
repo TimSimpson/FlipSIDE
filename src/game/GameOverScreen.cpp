@@ -103,4 +103,9 @@ gsl::owner<GameProcess *> create_gameover_screen(GameContext context)
     return new GameOverScreen(context);
 }
 
+namespace {
+	RegisterGameProcess reg{ 
+		"game-over",  "Game Over screen", create_gameover_screen };
+}
+
 }   }  // end namespace

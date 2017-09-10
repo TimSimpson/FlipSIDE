@@ -37,10 +37,10 @@ public:
     void exec(gsl::owner<GameProcess *> proc);
 
     inline GameProcess * get_proc() {
-        return proc;
+        return proc.get();
     }
 private:
-    gsl::owner<GameProcess *> proc;
+    std::unique_ptr<GameProcess> proc;
 };
 
 class GameProcess {
@@ -62,6 +62,23 @@ struct GameContext {
 	view::View & view;
 };
 
+class RegisterGameProcess {
+public:
+	RegisterGameProcess(const char * const name,
+		                const char * const desc,
+                        gsl::owner<GameProcess *>(*create)(GameContext context));
+};
+
+struct GameProcessEntry {
+	const char * name;
+	const char * desc;
+	gsl::owner<GameProcess *>(*create)(GameContext context);
+};
+
+std::vector<GameProcessEntry> get_all_game_processes();
+
+boost::optional<GameProcessEntry> get_game_process_by_name(const char * name);
+
 // --------------------------------------------------------------------
 // Game
 // --------------------------------------------------------------------
@@ -72,7 +89,7 @@ struct GameContext {
 class Game
 {
 public:
-    Game(GameContext game_context);
+    Game(GameContext game_context, GameProcessEntry start_proc);
 
 	~Game();
 

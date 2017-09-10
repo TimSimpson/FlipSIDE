@@ -171,4 +171,8 @@ GameProcess * create_title_screen(GameContext context) {
 	return new TitleScreenImpl(context);
 }
 
+namespace {
+	RegisterGameProcess _reg{ "title", "Opening titles", create_title_screen };
+}
+
 }   }  // end namespace

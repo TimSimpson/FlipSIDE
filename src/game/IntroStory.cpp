@@ -283,4 +283,9 @@ GameProcess * create_intro_story_screen(GameContext context) {
     return new IntroStoryScreen(context);
 }
 
+namespace {
+	RegisterGameProcess _reg{"intro", "The opening cinematic", 
+		                     create_intro_story_screen };
+}
+
 }   }  // end namespace
