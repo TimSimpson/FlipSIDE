@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CharacterSprite.hpp"
+#include "Game.hpp"
 #include "../Random.hpp"
 #include "../Sound.hpp"
 #include "../view.hpp"
@@ -11,13 +12,21 @@ namespace nnd3d { namespace game {
 
 struct CharacterSprite;
 
+struct CharacterProcEnv {
+	GameContext context;
+	Random & random;
+	const double & current_time;	
+};
+
 class CharacterProc {
 public:
      virtual ~CharacterProc() = default;
 
 	 virtual void animate(CharacterSprite & s, std::int64_t ms) = 0;
 
-     virtual void initialize(view::View & view, Sound & sound, const double current_time, Random & random, CharacterSprite & sprite) = 0;
+     virtual void initialize(CharacterProcEnv env, CharacterSprite & sprite) = 0;
+
+	 //virtual void update(Env &)
 };
 
 

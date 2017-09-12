@@ -83,7 +83,12 @@ public:
 	}
 
 
-	void initialize(view::View & view, Sound & sound, const double current_time, Random & random, CharacterSprite & spr) override {
+	void initialize(CharacterProcEnv env, CharacterSprite & spr) override {
+		view::View & view = env.context.view;
+		Sound & sound = env.context.sound;
+		const double current_time = env.current_time;
+		Random & random = env.random;
+
         //this makes all the sprites do their thing based on their name
         spr.mph = 1;
         if (spr.name == "Thomas") {

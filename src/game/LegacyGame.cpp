@@ -2094,7 +2094,8 @@ private:
         // TODO: Pass the name in rather than relying on the name variable.
         auto & spr = world.Sprite[which];
         spr.proc = load_process(spr.name);
-        spr.proc->initialize(view, sound, world.clock, random, spr);
+		CharacterProcEnv env{ context, random, world.clock };
+        spr.proc->initialize(env, spr);
     }
 
     void killLimit(int jex) {
