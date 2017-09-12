@@ -13,7 +13,77 @@ public:
      LegacyProc() = default;
 	 ~LegacyProc() override = default;
 
-    void initialize(view::View & view, Sound & sound, const double current_time, Random & random, CharacterSprite & spr) override {
+	 void animate(CharacterSprite & s, std::int64_t ms) override {
+		 //TODO: animation_timer was set to fire every 200ms- basically do
+		 //      something similar, move this to view, and call it outside of
+		 //      the logic loop.
+		 if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
+			 if (s.dir != "") { s.frame = s.frame + 1; }
+			 if (s.dir == "u") {
+				 if (s.frame > 8) { s.frame = 5; }
+			 }
+			 if (s.dir == "d") {
+				 if (s.frame > 12) { s.frame = 9; }
+			 }
+			 if (s.dir == "l") {
+				 if (s.frame > 16) { s.frame = 13; }
+			 }
+			 if (s.dir == "r") {
+				 if (s.frame > 4) { s.frame = 1; }
+			 }
+		 }
+
+		 if (s.name == "Nicky" && s.mode != "truck") {
+			 if (s.dir != "") { s.frame = s.frame + 1; }
+			 if (s.dir == "u") {
+				 if (s.frame > 6) { s.frame = 4; }
+			 }
+			 if (s.dir == "d") {
+				 if (s.frame > 9) { s.frame = 7; }
+			 }
+			 if (s.dir == "l") {
+				 if (s.frame > 12) { s.frame = 10; }
+			 }
+			 if (s.dir == "r") {
+				 if (s.frame > 3) { s.frame = 1; }
+			 }
+		 }
+
+		 if (s.name == "fireball") {
+			 s.frame = s.frame + 1;
+			 if (s.frame > 3 || s.frame < 1) { s.frame = 1; }
+		 }
+
+		 if (s.name == "goomba" || s.name == "Kerbose"
+			 || s.name == "paulrun" || s.name == "pigeonbomber") {
+			 s.frame = s.frame + 1;
+			 if (s.frame > 2) { s.frame = 1; }
+		 }
+
+		 if (s.name == "pigeon") {
+			 s.frame = s.frame + 1;
+			 if (s.frame > 2) { s.frame = 1; }
+		 }
+
+		 if (s.name == "tdigger") {
+			 s.frame = s.frame + 1;
+			 if (s.mode == "") {
+				 if (s.frame > 5) { s.frame = 4; }
+			 }
+			 if (s.mode == "runner") {
+				 if (s.frame > 2) { s.frame = 1; }
+			 }
+		 }
+
+
+		 if (s.name == "bluestick") {
+			 s.frame = s.frame + 1;
+			 if (s.frame > 2) { s.frame = 1; }
+		 }
+	}
+
+
+	void initialize(view::View & view, Sound & sound, const double current_time, Random & random, CharacterSprite & spr) override {
         //this makes all the sprites do their thing based on their name
         spr.mph = 1;
         if (spr.name == "Thomas") {

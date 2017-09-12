@@ -1240,69 +1240,8 @@ private:
 
 		for (int j = 0; j <= world.spritesInUse; ++j) {
 			auto & s = world.Sprite[j];
-
-			if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
-				if (s.dir != "") { s.frame = s.frame + 1; }
-				if (s.dir == "u") {
-					if (s.frame > 8) { s.frame = 5; }
-				}
-				if (s.dir == "d") {
-					if (s.frame > 12) { s.frame = 9; }
-				}
-				if (s.dir == "l") {
-					if (s.frame > 16) { s.frame = 13; }
-				}
-				if (s.dir == "r") {
-					if (s.frame > 4) { s.frame = 1; }
-				}
-			}
-
-			if (s.name == "Nicky" && s.mode != "truck") {
-				if (s.dir != "") { s.frame = s.frame + 1; }
-				if (s.dir == "u") {
-					if (s.frame > 6) { s.frame = 4; }
-				}
-				if (s.dir == "d") {
-					if (s.frame > 9) { s.frame = 7; }
-				}
-				if (s.dir == "l") {
-					if (s.frame > 12) { s.frame = 10; }
-				}
-				if (s.dir == "r") {
-					if (s.frame > 3) { s.frame = 1; }
-				}
-			}
-
-			if (s.name == "fireball") {
-				s.frame = s.frame + 1;
-				if (s.frame > 3 || s.frame < 1) { s.frame = 1; }
-			}
-
-			if (s.name == "goomba" || s.name == "Kerbose"
-				|| s.name == "paulrun" || s.name == "pigeonbomber") {
-				s.frame = s.frame + 1;
-				if (s.frame > 2) { s.frame = 1; }
-			}
-
-			if (s.name == "pigeon") {
-				s.frame = s.frame + 1;
-				if (s.frame > 2) { s.frame = 1; }
-			}
-
-			if (s.name == "tdigger") {
-				s.frame = s.frame + 1;
-				if (s.mode == "") {
-					if (s.frame > 5) { s.frame = 4; }
-				}
-				if (s.mode == "runner") {
-					if (s.frame > 2) { s.frame = 1; }
-				}
-			}
-
-
-			if (s.name == "bluestick") {
-				s.frame = s.frame + 1;
-				if (s.frame > 2) { s.frame = 1; }
+			if (s.proc) {
+				s.proc->animate(s, 200);
 			}
 		}
 	}

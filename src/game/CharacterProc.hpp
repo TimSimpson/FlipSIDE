@@ -15,6 +15,8 @@ class CharacterProc {
 public:
      virtual ~CharacterProc() = default;
 
+	 virtual void animate(CharacterSprite & s, std::int64_t ms) = 0;
+
      virtual void initialize(view::View & view, Sound & sound, const double current_time, Random & random, CharacterSprite & sprite) = 0;
 };
 
