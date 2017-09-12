@@ -386,7 +386,7 @@ public:
                             world.Sprite[k].visible = true;
                             world.Sprite[k].frame = 1;
                             world.Sprite[k].trueVisible = 1;
-                            world.Sprite[k].kind = 0;
+                            world.Sprite[k].kind = Kind::neutral;
                             world.Sprite[k].mode = "";
                             world.Sprite[k].miscTime = world.clock + 3;
                             world.Sprite[k].parent = j;
@@ -474,7 +474,7 @@ public:
                         world.Sprite[k].length = 15;
                         world.Sprite[k].texture = world.Sprite[j].texture;
                         world.Sprite[k].visible = true;
-                        world.Sprite[k].kind = 3;
+                        world.Sprite[k].kind = Kind::fireball;
                         //Sprite[k].soundFile = "fireball.wav"
                         world.Sprite[k].parent = j;
                         //LoadSound k, "fireball.wav"
@@ -613,7 +613,7 @@ if (s.mode == "truck") {
                             world.Sprite[trueorg].texture
                                 = world.Sprite[j].texture;
                             world.Sprite[trueorg].visible = true;
-                            world.Sprite[trueorg].kind = 3;
+                            world.Sprite[trueorg].kind = Kind::fireball;
                             world.Sprite[trueorg].frame = 1;
                             world.Sprite[trueorg].soundFile = "fireball.wav";
                             world.Sprite[trueorg].parent = j;
@@ -759,21 +759,21 @@ if (s.mode == "truck") {
                 if (s.mode == "explode") {
                     if (s.frame > 5) { s.frame = 4; }
                 }
-                if (s.kind == 3 && s.miscTime < world.clock) {
+                if (s.kind == Kind::fireball && s.miscTime < world.clock) {
                     s.visible = false;
                     s.flickerTime = 0;
                     s.name = "reserved";
                     s.trueVisible = 2;
-                    s.kind = 0;
+                    s.kind = Kind::neutral;
                     goto fuddle;
                 }
-                if (s.kind == 3) {
+                if (s.kind == Kind::fireball) {
                     goto fuddle;
                 }
-                if (s.kind == 0 && s.miscTime > world.clock) {
+                if (s.kind == Kind::neutral && s.miscTime > world.clock) {
                     goto fuddle;
                 }
-                s.kind = 3;
+                s.kind = Kind::fireball;
                 s.miscTime = world.clock + 1;
                 s.mode = "explode";
                 sound.PlaySound("bomb explode");
@@ -854,8 +854,8 @@ if (s.mode == "truck") {
                                 world.Sprite[j + 1].miscTime = world.clock + 2;
                                 this->loadAnimation(j + 1, "continue.ani");
 
-                                s.kind = 0;
-                                world.Sprite[j + 1].kind = 0;
+                                s.kind = Kind::neutral;
+                                world.Sprite[j + 1].kind = Kind::neutral;
                                 world.Sprite[j + 1].visible = true;
                                 world.Sprite[j + 1].wide = 20;
                                 world.Sprite[j + 1].high = 20;
@@ -868,7 +868,7 @@ if (s.mode == "truck") {
                         if (world.player_data[j / 10].lives > 0) {
                             this->createPlayer(j);
                             world.Sprite[j].name = world.player_data[j / 10].playerName;
-                            world.Sprite[j].kind = 1;
+                            world.Sprite[j].kind = Kind::player;
                             this->initSprites(j);
                             world.Sprite[j].flickerTime = world.clock + 5;
                             //Sprite[j].x = .seekx: .seekx = 0
@@ -886,7 +886,7 @@ if (s.mode == "truck") {
                     world.player_data[j / 10].lives = 2;
                     this->createPlayer(j);
                     world.Sprite[j].name = world.player_data[j / 10].playerName;
-                    world.Sprite[j].kind = 1;
+                    world.Sprite[j].kind = Kind::player;
                     world.Sprite[j].flickerTime = world.clock + 5;
                     this->initSprites(j);
                 }
@@ -1080,7 +1080,7 @@ if (s.mode == "truck") {
                             s.mode = "runner";
                             s.seekx = world.camera.cameraStopX;
                             //.mhp = 10
-                            s.kind = 2;
+                            s.kind = Kind::enemy;
                             s.deathType = "expand";
                             s.time = 1;
                             //.hp = 1
@@ -1131,7 +1131,7 @@ if (s.mode == "truck") {
 
 
             if (s.name == "expand") {
-                s.kind = 0;
+                s.kind = Kind::neutral;
                 //if (s.mode = "runner") then
                 s.frame = 3;
                 s.time += (0.01 * world.sFactor);
@@ -1189,9 +1189,9 @@ if (s.mode == "truck") {
         for (j = 0; j <= world.spritesInUse; ++ j) {
             //If Sprite(j).mover = True Then
             for (k = j + 1; k <= world.spritesInUse; ++k) {
-                if (world.Sprite[j].kind == 0) { goto fthis2; }
+                if (world.Sprite[j].kind == Kind::neutral) { goto fthis2; }
                 if (world.Sprite[k].kind == world.Sprite[j].kind
-                    || world.Sprite[k].kind == 0) {
+                    || world.Sprite[k].kind == Kind::neutral) {
                     goto fthis2;
                 }
                 //If Sprite(k).mover = False And Sprite(j).mover = False Then GoTo fthis2
@@ -1221,7 +1221,7 @@ if (s.mode == "truck") {
         }
 		animate();
 		create_billboards(world, view.billboards());
-		
+
 		return nullptr;
     }
     //     End Sub for playGame--------------------------------------------!!!
@@ -1294,8 +1294,8 @@ private:
         //8 is bullet by the enemy (can pass through 5//s)
 
         //Player hits an enemy
-        if (world.Sprite[j].kind == 1 && (world.Sprite[k].kind == 2
-            || world.Sprite[k].kind == 8)) {
+        if (world.Sprite[j].kind == Kind::player && (world.Sprite[k].kind == Kind::enemy
+            || world.Sprite[k].kind == Kind::enemy_bullet)) {
             if (world.Sprite[j].flickerTime < world.clock) {
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
                 sound.PlaySound(world.Sprite[j].soundFile);
@@ -1308,8 +1308,8 @@ private:
         }
 
         //Enemy hit by a fireball
-        if ((world.Sprite[j].kind == 2 || world.Sprite[j].kind == 7)
-            && world.Sprite[k].kind == 3) {
+        if ((world.Sprite[j].kind == Kind::enemy || world.Sprite[j].kind == Kind::enemy_weak_to_jumping)
+            && world.Sprite[k].kind == Kind::fireball) {
 
             if (world.Sprite[j].flickerTime < world.clock) {
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
@@ -1327,8 +1327,8 @@ private:
         }
 
         //Player steps on a goomba type thing
-        if (world.Sprite[j].kind == 1
-            && (world.Sprite[k].kind == 4 || world.Sprite[k].kind == 7)) {
+        if (world.Sprite[j].kind == Kind::player
+            && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].lastJump > world.Sprite[j].z) {
                 world.Sprite[j].jumpStart = world.Sprite[j].z;  //sends thing up into the air
@@ -1347,8 +1347,8 @@ private:
         }
 
         //Player illigetimately touches goomba.
-        if (world.Sprite[j].kind == 1
-            && (world.Sprite[k].kind == 4 || world.Sprite[k].kind == 7)) {
+        if (world.Sprite[j].kind == Kind::player
+            && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
             if (world.Sprite[j].flickerTime < world.clock) {
                 if (world.Sprite[j].z < world.Sprite[k].length
                     || world.Sprite[j].lastJump < world.Sprite[j].z) {
@@ -1364,9 +1364,9 @@ private:
 
 
         //Player jumps on bouncy object
-        if (world.Sprite[k].kind == 6) {
+        if (world.Sprite[k].kind == Kind::trampoline) {
 
-            if (world.Sprite[j].kind == 3 || world.Sprite[j].kind == 8) {
+            if (world.Sprite[j].kind == Kind::fireball || world.Sprite[j].kind == Kind::enemy_bullet) {
                 goto overalready;
             }
 
@@ -1383,8 +1383,8 @@ private:
             //OH CRAP! I NO BOUNCE
             if (world.Sprite[j].z < world.Sprite[k].length
                 || world.Sprite[j].lastJump < world.Sprite[j].z) {
-                if (world.Sprite[j].kind == 5 || world.Sprite[j].kind == 3
-                    || world.Sprite[j].kind == 6) {
+                if (world.Sprite[j].kind == Kind::unmoveable || world.Sprite[j].kind == Kind::fireball
+                    || world.Sprite[j].kind == Kind::trampoline) {
                     goto britneyDog2;
                 }
                 //if (world.Sprite[k].z > (world.Sprite[j].length - (world.Sprite[j].length * 0.75))) then GoTo britneyDog2
@@ -1414,9 +1414,9 @@ private:
         }
 
 
-        if (world.Sprite[j].kind == 5) {
-            if (world.Sprite[k].kind == 5 || world.Sprite[k].kind == 3
-                || world.Sprite[k].kind == 6 || world.Sprite[k].kind == 8) {
+        if (world.Sprite[j].kind == Kind::unmoveable) {
+            if (world.Sprite[k].kind == Kind::unmoveable || world.Sprite[k].kind == Kind::fireball
+                || world.Sprite[k].kind == Kind::trampoline || world.Sprite[k].kind == Kind::enemy_bullet) {
                 goto britneyDog;
             }
         // 2017: unreferenced label:
@@ -1915,7 +1915,7 @@ private:
 
         // 2017: unreferenced label:
         // screwthis2:
-        if (world.Sprite[num1].kind == 5 || world.Sprite[num2].kind == 5) {
+        if (world.Sprite[num1].kind == Kind::unmoveable || world.Sprite[num2].kind == Kind::unmoveable) {
             con3 = 1;
             goto screwthis3;
         }
@@ -2108,7 +2108,7 @@ private:
     void killS(int goatX) {
                 auto & s = world.Sprite[goatX];
         s.visible = false;
-        s.kind = 0;
+        s.kind = Kind::neutral;
         s.name = "";
         s.trueVisible = 2;
         s.flickerTime = 0;
@@ -2628,7 +2628,7 @@ private:
 
 
 gsl::owner<GameProcess *> create_legacy_screen(
-	GameContext context, 
+	GameContext context,
 	World && world,
 	std::array<boost::optional<std::string>, 3>)
 {
@@ -2638,7 +2638,7 @@ gsl::owner<GameProcess *> create_legacy_screen(
 		[world(std::move(world))](GameContext context_2) mutable {
 		return new LegacyGame(context_2, std::move(world));
 	});
-	
+
 }
 
 }   }  // end namespace

@@ -96,7 +96,7 @@ public:
             spr.length = 20;
             spr.z = 0;
             spr.jumpStrength = 75;
-            spr.kind = 1;
+            spr.kind = Kind::player;
             spr.frame = 5;
             spr.dir = "u";
             spr.invTime = 2;
@@ -118,7 +118,7 @@ public:
             spr.length = 20;
             spr.z = 0;
             spr.jumpStrength = 75;
-            spr.kind = 1;
+            spr.kind = Kind::player;
             spr.frame = 5;
             spr.dir = "u";
             spr.invTime = 2;
@@ -141,7 +141,7 @@ public:
             spr.length = 20;
             spr.z = 0;
             spr.jumpStrength = 50;
-            spr.kind = 1;
+            spr.kind = Kind::player;
             spr.frame = 5;
             spr.dir = "u";
             spr.invTime = 2;
@@ -161,7 +161,7 @@ public:
             sound.PlaySound("DavidDeath");
             spr.seekx = spr.wide * 10;
             spr.mph = 2;
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
             spr.frame = 17;
             sound.PlayWave("Death.wav");
         }
@@ -174,7 +174,7 @@ public:
             sound.PlaySound("NickyDeath");
             spr.seekx = spr.wide * 10;
             spr.mph = 2;
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
         }
         if (spr.name == "Death of Nick") {
             spr.srcx = 1;
@@ -185,7 +185,7 @@ public:
             sound.PlaySound("nickdeath");
             spr.seekx = spr.wide * 10;
             spr.mph = 2;
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
 
         }
 
@@ -205,7 +205,7 @@ public:
         if (spr.name == "paulrun") {
             view.load_animation_file(spr.Aframe, "paulrun.ani");
             spr.hp = 1;
-            spr.kind = 7;
+            spr.kind = Kind::enemy_weak_to_jumping;
             spr.deathType = "gotmilkbs";
             spr.invTime = 1;
             spr.hp = 2;
@@ -217,7 +217,7 @@ public:
         if (spr.name == "paulbullet") {
             view.load_animation_file(spr.Aframe, "paulbullet.ani");
             spr.hp = 999;
-            spr.kind = 2;
+            spr.kind = Kind::enemy;
             spr.deathType = "Kerbose";
             spr.invTime = 0;
             spr.wide = 10;
@@ -230,7 +230,7 @@ public:
         if (spr.name == "bs death") {
             spr.visible = true;
             spr.mover = false;
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
             spr.frame = 3;
             spr.miscTime = current_time + 3;
             sound.PlaySound("stick die");
@@ -263,7 +263,7 @@ public:
             spr.flickerTime = current_time + 10;
             spr.seekx = spr.wide * 3;
             spr.mph = 2;
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
             //sound.PlaySound(which);
             sound.PlaySound("dying explosion");
         }
@@ -275,7 +275,7 @@ public:
             spr.high = 19;
             spr.visible = true;
             spr.frame = 1;
-            spr.kind = 7;
+            spr.kind = Kind::enemy_weak_to_jumping;
             spr.length = 10;
             spr.deathType = "Kerbose Death";
             spr.invTime = 1;
@@ -303,7 +303,7 @@ public:
             spr.mode = "off";
             spr.hp = 1;
             spr.deathType = "greenspring";
-            spr.kind = 6;
+            spr.kind = Kind::trampoline;
             spr.jumpM = 1.5;
             spr.length = 10;
             spr.wide = spr.wide * 2;
@@ -313,7 +313,7 @@ public:
 
         if (spr.name == "bluestick") {
             spr.hp = 1;
-            spr.kind = 7;
+            spr.kind = Kind::enemy_weak_to_jumping;
             spr.wide = 10;
             spr.high = 17;
             spr.length = 10;
@@ -334,10 +334,10 @@ public:
             //spr.flickerTime = clock + 10
             //spr.seekx = spr.wide * 3
             //spr.mph = 2
-            //spr.kind = 0
+            //spr.kind = Kind::neutral
 
             spr.mover = false;
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
             spr.frame = 3;
             //srcx = 114: spr.srcy = 2
             //spr.srcx2 = 134: spr.srcy2 = 19
@@ -348,7 +348,7 @@ public:
         if (spr.name == "putuloDeath") {
             spr.visible = true;
             spr.mover = false;
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
             spr.frame = 3;
             spr.miscTime = current_time + 3;
             sound.PlaySound("putulodie");
@@ -374,13 +374,13 @@ public:
             spr.name = "Deadly Rat";
             spr.hp = 5;
             spr.visible = true;
-            spr.kind = 2;
+            spr.kind = Kind::enemy;
             spr.deathType = "Dying Explosion";
             spr.invTime = 1;
         }
 
         if (spr.name == "falling") {
-            spr.kind = 0;
+            spr.kind = Kind::neutral;
             //spr.high = -30 //-1 * spr.high
         }
 
@@ -395,7 +395,7 @@ public:
             spr.length = 30;
             spr.frame = 1;
             spr.deathType = "falling";
-            spr.kind = 7;
+            spr.kind = Kind::enemy_weak_to_jumping;
         }
 
         if (spr.name == "pigeonbomber") {
@@ -410,7 +410,7 @@ public:
             spr.length = 30;
             spr.frame = 1;
             spr.deathType = "falling";
-            spr.kind = 7;
+            spr.kind = Kind::enemy_weak_to_jumping;
         }
 
         if (spr.name == "goomba") {
@@ -425,7 +425,7 @@ public:
             spr.hp = 5;
             spr.speed = 0.25;
             spr.visible = true;
-            spr.kind = 4;
+            spr.kind = Kind::goomba_thing;
             spr.invTime = 1;
             spr.deathType = "Dying Explosion";
             spr.soundFile = "Goomba Ouch";
@@ -434,7 +434,7 @@ public:
         }
 
         if (spr.name == "bullet") {
-            spr.kind = 8;
+            spr.kind = Kind::enemy_bullet;
         }
     }
 };
