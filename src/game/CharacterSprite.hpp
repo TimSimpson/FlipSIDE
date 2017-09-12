@@ -6,6 +6,7 @@
 #include <string>
 #include <lp3/core.hpp>
 #include <lp3/gfx.hpp>
+#include "Camera.hpp"
 #include "../AnimationFrame.hpp"
 #include "../Vertex.hpp"
 
@@ -112,6 +113,12 @@ struct CharacterSprite
      // Behavior of this sprite.
      CharacterProc * proc;
 };
+
+void off_camera_kill(CharacterSprite & sprite, Camera & camera);
+
+void kill(CharacterSprite & sprite);
+
+void seek(CharacterSprite & s);
 
 void unstretch(CharacterSprite & s);
 

@@ -1,4 +1,5 @@
 #include "CharacterSprite.hpp"
+#include "Game.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -60,6 +61,36 @@ CharacterSprite::CharacterSprite()
     jumpM(0),
     proc()
 {
+}
+
+
+void off_camera_kill(CharacterSprite & sprite, Camera & camera) {
+	if (sprite.x > camera.x() + 640 || (sprite.x + sprite.wide) < camera.x()) {
+		kill(sprite);
+	}
+	if (sprite.y > camera.y() + 480 || (sprite.y + sprite.high) < camera.y()) {
+		kill(sprite);
+	}
+}
+
+// From an old function called `killS`, I'm not sure what it's supposed to do.
+// It doesn't seem as general as the name would imply and doesn't set enough
+// of the fields (unless these are all that's needed to effectively kill a sprite)
+void kill(CharacterSprite & sprite) {
+	sprite.visible = false;
+	sprite.kind = Kind::neutral;
+	sprite.name = "";
+	sprite.trueVisible = 2;
+	sprite.flickerTime = 0;
+	sprite.target = -1;
+}
+
+// Makes the sprite seek out it's "seek" vars
+void seek(CharacterSprite & s) {
+	if (s.x < s.seekx) { s.x = s.x + (s.mph * speed_factor); }
+	if (s.x > s.seekx) { s.x = s.x - (s.mph * speed_factor); }
+	if (s.y < s.seeky) { s.y = s.y + (s.mph * speed_factor); }
+	if (s.y > s.seeky) { s.y = s.y - (s.mph * speed_factor); }
 }
 
 // Makes the sprite's size match it's current Animation Frame

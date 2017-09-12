@@ -748,7 +748,7 @@ if (s.mode == "truck") {
                     s.trueVisible = 2;
                 }
 
-                this->offCameraKill(j);
+				off_camera_kill(s, Camera(world.camera));
             }
 
             if (s.name == "bomb") {
@@ -940,7 +940,7 @@ if (s.mode == "truck") {
                     if (s.frame == 12) {
                         world.Sprite[j - 1].name = "dead";
                         world.Sprite[j - 1].visible = false;
-                        this->killS(j); //": .visible = False
+						kill(s); //": .visible = False
                     }
                 }
             }
@@ -1051,7 +1051,7 @@ if (s.mode == "truck") {
 
             if (s.name == "frontdoor") {
                 if (this->findQ("Kerbose") < 1) {
-                    this->killS(j);
+					kill(s);
                     s.name = "exit";
                     this->cinemaM(2);
                 }
@@ -1147,7 +1147,7 @@ if (s.mode == "truck") {
 
             if (s.name == "harharhar") {
                 if (s.flickerTime < world.clock) {
-                    this->killS(j);
+					kill(s);
                 }
             }
 
@@ -1321,7 +1321,7 @@ private:
             }
             if (world.Sprite[k].name == "fireball") {
                 if (world.player_data[(world.Sprite[k].parent) / 10].slicer == false) {
-                    this->killS(k);
+                    kill(world.Sprite[k]);
                 }
             }
         }
@@ -2100,19 +2100,9 @@ private:
     void killLimit(int jex) {
         // Rem- Kills unruly sprites who are out of bounds
         auto & s = world.Sprite[jex];
-        if (s.x > world.camera.cameraStopX || s.x < -10) { killS(jex); }
+        if (s.x > world.camera.cameraStopX || s.x < -10) { kill(s); }
 
-        if (s.y > world.camera.cameraStopX || s.y < -10) { killS(jex); }
-    }
-
-    void killS(int goatX) {
-                auto & s = world.Sprite[goatX];
-        s.visible = false;
-        s.kind = Kind::neutral;
-        s.name = "";
-        s.trueVisible = 2;
-        s.flickerTime = 0;
-        s.target = -1;
+        if (s.y > world.camera.cameraStopX || s.y < -10) { kill(s); }
     }
 
     void loadAnimation(int who, const std::string & file) {
@@ -2128,7 +2118,7 @@ private:
     //TSNOW: This looks insane. It looks as if there was too much in PlayGame,
     //       so I made this function to get called for each level... which
     //       also over time would have grown to have been too much.
-    void levelR(int which, int who) {
+    void levelR(const int which, const int who) {
         int k = 0;
 
         auto & ws = world.Sprite[who]; // with sprite
@@ -2161,7 +2151,7 @@ private:
                 //if (ws.seekx <> -1) then
 
                 this->killLimit(who);
-                this->offCameraKill(who);
+				off_camera_kill(ws, Camera(world.camera));
 
 
                 //if (ws.mode = "") then
@@ -2371,14 +2361,6 @@ private:
 
         world.camera.CameraWidth = 640;
         world.camera.CameraHeight = 480;
-    }
-
-    void offCameraKill(int jex) {
-        auto & s = world.Sprite[jex];
-        if (s.x > world.camera.CameraX + 640 || (s.x + s.wide) < world.camera.CameraX) {
-            this->killS(jex); }
-        if (s.y > world.camera.CameraY + 480 || (s.y + s.high) < world.camera.CameraY) {
-            this->killS(jex); }
     }
 
     void selectPlayer() {
