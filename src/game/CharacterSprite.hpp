@@ -44,9 +44,7 @@ struct CharacterSprite
 
      bool visible;
      int parent; //whose their parent sprite (what is the reason for their existence?) are they a fireball cast by sprite 0, perhaps
-     std::array<Vertex, 4> SpriteVerts;
-
-     //Location As D3DVECTOR2
+     
      int frame;
      std::string name;
 
