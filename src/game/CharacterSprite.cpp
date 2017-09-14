@@ -64,6 +64,103 @@ CharacterSprite::CharacterSprite()
 }
 
 
+double getProx(CharacterSprite & who, CharacterSprite & who2) {
+	// Finds who is closet
+	return std::abs(who.getMiddleX() - who2.getMiddleX())
+		+ std::abs(who.getMiddleY() - who.getMiddleY());
+	// amount of pixels they are close
+}
+
+long hit_detection(CharacterSprite num1, CharacterSprite num2,
+	bool whatKind) {
+	//TSNOW: I deleted a lot of commented code here as it was already pretty
+	//       confusing.
+	long result = 0;
+
+	int con1 = 0;
+	int con2 = 0;
+	int con3 = 0;
+
+	int left = 0;
+	int right = 0;
+	int up = 0;
+	int down = 0;
+	//Rem-checks to see if they hit from left or right
+	con1 = 0; con2 = 0; con3 = 0;
+	con1 = 0;
+	if ((num1.x + num1.wide)
+		>= num2.x
+		&& num1.x < num2.x) {
+		con1 = 1; left = 1;
+	}
+	if ((num2.x + num2.wide) >= num1.x && num2.x < num1.x) {
+		con1 = 1; right = 1;
+	}
+
+
+	// 2017: unreferenced label:
+	// screwthis:
+
+
+	//Rem- Checks to see if they ever collide from the top to bottom (Y)
+	con2 = 0;
+
+	if ((num1.y + num1.high)
+		>= num2.y
+		&& num1.y < num2.y) {
+		con2 = 1; up = 1;
+	}
+	//Rem- Added as of 11/27/00
+	if ((num2.y + num2.high)
+		>= num1.y
+		&& num2.y < num1.y) {
+		con2 = 1; down = 1;
+	}
+
+	// 2017: unreferenced label:
+	// screwthis2:
+	if (num1.kind == Kind::unmoveable || num2.kind == Kind::unmoveable) {
+		con3 = 1;
+		goto screwthis3;
+	}
+
+
+	//Rem- The THIRD dimension, Z!
+
+	//if k = j) then GoTo screwthis3
+
+	if ((num1.z + (num1.length * 1.5))
+		>= num2.z
+		&& num1.z < num2.z) {
+		con3 = 1;
+	}
+	if (num1.z == num2.z) { con3 = 1; }
+	//Rem- Added as of 11/27/00
+	if ((num2.z + num2.length * 1.5)
+		>= num1.z
+		&& num2.z < num1.z) {
+		con3 = 1;
+	}
+
+	//TSNOW: This if statement just printed a line.
+	//if (con3 == 1) { Print ""; } //Rem-Beep: //Label2.Caption = "From Top of " + Str$(j)
+
+screwthis3:
+	if (con1 == 1 && con2 == 1 && con3 == 1) { result = 1; }
+	if (whatKind == true) {
+		if (left == 1) { result = 2; }
+		if (right == 1) { result = 3; }
+		if (up == 1) { result = 4; }
+		if (down == 1) { result = 5; }
+		if (left == 1 && up == 1) { result = 6; }
+		if (left == 1 && down == 1) { result = 7; }
+		if (right == 1 && up == 1) { result = 8; }
+		if (right == 1 && down == 1) { result = 9; }
+	}
+
+	return result;
+}
+
 void off_camera_kill(CharacterSprite & sprite, Camera & camera) {
 	if (sprite.x > camera.x() + 640 || (sprite.x + sprite.wide) < camera.x()) {
 		kill(sprite);

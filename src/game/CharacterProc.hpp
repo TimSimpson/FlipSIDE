@@ -15,8 +15,13 @@ struct CharacterSprite;
 struct CharacterProcEnv {
 	GameContext context;
 	Random & random;
-	const double & current_time;	
+	const double & current_time;
 };
+
+////void create_player(PlayerData & player_data, CharacterSprite & sprite,
+////	               gsl::span<std::reference_wrapper<CharacterSprite>> & children,
+////	               CharacterProcEnv env);
+
 
 class CharacterProc {
 public:
@@ -26,11 +31,21 @@ public:
 
      virtual void initialize(CharacterProcEnv env, CharacterSprite & sprite) = 0;
 
-	 //virtual void update(Env &)
+	 virtual void update(
+		 CharacterProcEnv env,
+		 CharacterSprite & sprite,
+		 int j,
+		 World & world) = 0;
 };
 
 
 CharacterProc * load_process(const std::string & name);
+
+void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &);
+
+void create_player(
+    CharacterProcEnv env, PlayerData & player_data, CharacterSprite & sprite,
+    gsl::span<CharacterSprite> & children);
 
 }    }
 

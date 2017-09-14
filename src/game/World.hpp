@@ -85,6 +85,8 @@ struct World {
     std::string currentScreen;
 };
 
+long anyKey(World & world, int zed);
+
 }   }
 
 #endif

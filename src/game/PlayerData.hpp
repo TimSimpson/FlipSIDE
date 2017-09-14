@@ -7,6 +7,8 @@
 namespace nnd3d { namespace game {
 
 struct PlayerData {
+	int index;
+
     //Keyboard key states
     bool upKey;
     bool DownKEY;

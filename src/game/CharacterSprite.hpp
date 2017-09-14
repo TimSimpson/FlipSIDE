@@ -112,11 +112,26 @@ struct CharacterSprite
 
      // Behavior of this sprite.
      CharacterProc * proc;
+
+	 inline double getMiddleX() {
+		 return x + (wide / 2);
+	 }
+
+	 inline double getMiddleY() {
+		 return y + (high / 2);
+	 }
 };
+
+int checkProx(const int who, int numberPlayers);
+
+double getProx(CharacterSprite & who, CharacterSprite & who2);
 
 void off_camera_kill(CharacterSprite & sprite, Camera & camera);
 
 void kill(CharacterSprite & sprite);
+
+long hit_detection(CharacterSprite num1, CharacterSprite num2,
+	               bool whatKind = false);
 
 void seek(CharacterSprite & s);
 

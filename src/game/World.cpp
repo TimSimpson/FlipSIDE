@@ -46,6 +46,9 @@ World::World()
     continues(0),
     currentScreen()
 {
+	for (int i = 0; i < player_data.size(); ++ i) {
+		player_data[i].index = i;
+	}
     std::fill(drawOrder.begin(), drawOrder.end(), 0);
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
 
@@ -96,6 +99,13 @@ World::World()
 	this->RealHeight = 480; //Form1.ScaleHeight;
 	this->SimulatedWidth = World::FULLSCREENWIDTH;
 	this->SimulatedHeight = World::FULLSCREENHEIGHT;
+}
+
+long anyKey(World & world, int zed) {
+	// Returns true if the player at the given index is pressing any key.
+	return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
+		|| world.player_data[zed].upKey || world.player_data[zed].DownKEY
+		|| world.player_data[zed].AttackKey) ? 1 : 0);
 }
 
 }	}   // end namespace

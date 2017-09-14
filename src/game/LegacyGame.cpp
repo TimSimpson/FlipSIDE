@@ -283,898 +283,20 @@ public:
 
         for (j = 0; j < world.spritesInUse; ++j) {
             auto & s = world.Sprite[j];
-            //Rem-If s.time > clock Then GoTo gotDog
-            //.time = clock + .speed
-            //Rem---------------------------------------------------------------
-            //'               THIS SECTION UPDATES THE DAVID SPRITE
-            //Rem---------------------------------------------------------------
-
-            if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
-                penguin = 0;
-                if (j == 0) { penguin = 0; }
-                if (j == 10) { penguin = 1; }
-                if (j == 20) { penguin = 2; }
-
-                if (world.player_data[penguin].upKey == true) {
-                    if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
-                    s.y = s.y - world.sFactor;
-                    //s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
-                    s.speed = 0; //0.00001
-                    if (s.y < world.camera.CameraY) { s.y = world.camera.CameraY; }
-                }
-                if (world.player_data[penguin].DownKEY == true) {
-                    if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
-                    s.y = s.y + world.sFactor;
-                    //s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
-                    s.speed = 0; //0.00001
-                    if (s.y > world.camera.CameraY + world.camera.CameraHeight - s.high) {
-                        s.y = world.camera.CameraY + world.camera.CameraHeight - s.high;
-                    }
-                }
-                if (world.player_data[penguin].LeftKEY == true) {
-                    if (s.dir != "l" && world.player_data[penguin].upKey == false
-                        && world.player_data[penguin].DownKEY == false) {
-                        s.dir = "l";
-                        s.frame = 14;
-                    }
-                    s.x = s.x - world.sFactor;
-                    //s.Frame = s.Frame + 1: if s.Frame > 12 Then s.Frame = 10
-                    s.speed = 0;  //0.00001
-                    if (s.x < world.camera.CameraX) { s.x = world.camera.CameraX; }
-                }
-                if (world.player_data[penguin].RightKEY == true) {
-                    if (s.dir != "r" && world.player_data[penguin].upKey == false
-                        && world.player_data[penguin].DownKEY == false) {
-                        s.dir = "r";
-                        s.frame = 2;
-                    }
-                    s.x = s.x + world.sFactor;
-                    //s.Frame = s.Frame + 1: if s.Frame > 3 Then s.Frame = 1
-                    s.speed = 0;  //0s.00001
-
-                    if (s.x > world.camera.CameraX + world.camera.CameraWidth - s.wide) {
-                        s.x = world.camera.CameraX + world.camera.CameraWidth - s.wide;
-                    }
-                }
-
-
-                if (s.z == 0) { s.multiJump = 0; }
-
-                if (s.name == "Nicky" && world.player_data[penguin].JumpKey == true
-                    && s.multiJump < 3) {
-                    world.player_data[penguin].JumpKey = false;
-                    //If .z = 0 Then .multiJump = 0
-                    s.multiJump = s.multiJump + 1;
-                    s.jumpStart = s.z;
-                    s.jumpTime = world.clock;
-                }
-
-
-                if (world.player_data[penguin].JumpKey == true && s.z == 0) {
-
-                    s.jumpStart = s.z;
-                    s.jumpTime = world.clock;
-                }
-
-                //Check for a lack of movement
-                if (world.player_data[j / 10].weapon == "bomb") {
-                    if (world.player_data[penguin].AttackKey == true
-                        && s.miscTime < world.clock) {
-                        for (k = j + 1; k < j + 10; ++k) {
-                            if (world.Sprite[k].name == "reserved"
-                                || world.Sprite[k].name == "") {
-                                break;
-                            }
-                            if (k == j + 9) {
-                                k = j + 10;
-                                break;
-                            }
-                        }
-                        if (k != j + 10) {
-                            world.Sprite[k].speed = 0; //0.00001
-                            world.Sprite[k].name = "bomb";
-                            world.Sprite[k].x = s.x;
-                            world.Sprite[k].y = s.y;
-                            world.Sprite[k].z = s.z; //- (Sprite(0).length);
-                            world.Sprite[k].wide = 30 * (world.player_data[j / 10].GradeUp + 1);
-                            world.Sprite[k].high = 30 * (world.player_data[j / 10].GradeUp + 1);
-                            world.Sprite[k].jumpStart = s.jumpStart;
-                            world.Sprite[k].jumpStrength = s.jumpStrength;
-                            world.Sprite[k].jumpTime = s.jumpTime;
-                            world.Sprite[k].length = 15;
-                            world.Sprite[k].texture = world.Sprite[j].texture;
-                            world.Sprite[k].visible = true;
-                            world.Sprite[k].frame = 1;
-                            world.Sprite[k].trueVisible = 1;
-                            world.Sprite[k].kind = Kind::neutral;
-                            world.Sprite[k].mode = "";
-                            world.Sprite[k].miscTime = world.clock + 3;
-                            world.Sprite[k].parent = j;
-                            //2017: This file doesn't work:
-                            // sound.PlaySound("set bomb");
-                            //LoadSound k, "fireball.wav"
-                            //PlaySound "fireball"
-                            s.miscTime = world.clock + 0.25;
-                        }
-                    }
-                } //Nicky Bomb
- //Thomas Fire
-                if (world.player_data[j / 10].weapon == "fireball"
-                    && world.player_data[j / 10].ThreeWay == false) {
-                    if (world.player_data[penguin].AttackKey == true
-                        && s.miscTime < world.clock) {
-                        for (k = j + 1; k <= j + 9; ++ k) {
-                            if (world.Sprite[k].name == "reserved"
-                                || world.Sprite[k].name == "") {
-                                break;
-                            }
-                            if (k == j + 9) {
-                                k = j + 10;
-                                break;
-                            }
-                        }
-                        if (k == j + 10) {
-                            goto outofammo;
-                        }
-                        if (s.dir == "u") {
-                            world.Sprite[k].seekx = s.x;
-                            world.Sprite[k].seeky =
-                                s.y - (world.camera.CameraHeight * 2);
-                            world.Sprite[k].dir = "u";
-                        }
-                        if (s.dir == "d") {
-                            world.Sprite[k].seekx = s.x;
-                            world.Sprite[k].seeky =
-                                s.y + (2 * world.camera.CameraHeight);
-                            world.Sprite[k].dir = "d";
-                        }
-                        if (s.dir == "l") {
-                            world.Sprite[k].seeky = s.y;
-                            world.Sprite[k].seekx
-                                = s.x - (world.camera.CameraWidth * 2);
-                            world.Sprite[k].dir = "l";
-                        }
-                        if (s.dir == "r") {
-                            world.Sprite[k].seeky = s.y;
-                            world.Sprite[k].seekx
-                                = s.x + (world.camera.CameraWidth * 2);
-                            world.Sprite[k].dir = "r";
-                        }
-                        if (world.player_data[penguin].RightKEY == true) {
-                            world.Sprite[k].seekx
-                                = s.x + (2 * world.camera.CameraWidth);
-                        }
-                        if (world.player_data[penguin].LeftKEY == true) {
-                            world.Sprite[k].seekx
-                                = s.x - (world.camera.CameraWidth * 2);
-                        }
-                        if (world.player_data[penguin].upKey == true) {
-                            world.Sprite[k].seeky
-                                = s.y - (world.camera.CameraHeight * 2);
-                        }
-                        if (world.player_data[penguin].DownKEY == true) {
-                            world.Sprite[k].seeky
-                                = s.y + (world.camera.CameraHeight * 2);
-                        }
-                        if (s.mode == "truck") {
-                            world.Sprite[k].seeky
-                                = world.camera.CameraY - world.camera.CameraHeight;
-                            world.Sprite[k].seekx = s.x;
-                            world.Sprite[k].dir = "u";
-                        }
-                        //Sprite(1).visible = true
-                        world.Sprite[k].speed = 0; //0.00001
-                        world.Sprite[k].name = "fireball";
-                        world.Sprite[k].mph = 3;
-                        world.Sprite[k].x = s.x;
-                        world.Sprite[k].y = s.y;
-                        world.Sprite[k].z = s.z; //- (Sprite(0).length)
-                        world.Sprite[k].wide = 30 * (world.player_data[j / 10].GradeUp + 1);
-                        world.Sprite[k].high = 30 * (world.player_data[j / 10].GradeUp + 1);
-                        world.Sprite[k].length = 15;
-                        world.Sprite[k].texture = world.Sprite[j].texture;
-                        world.Sprite[k].visible = true;
-                        world.Sprite[k].kind = Kind::fireball;
-                        //Sprite[k].soundFile = "fireball.wav"
-                        world.Sprite[k].parent = j;
-                        //LoadSound k, "fireball.wav"
-                        if (world.player_data[world.Sprite[k].parent / 10].playerName == "Thomas") {
-                            sound.PlaySound("fireball");
-                        }
-                        if (world.player_data[world.Sprite[k].parent / 10].playerName == "Nick") {
-                            sound.PlaySound("iceshot");
-                        }
-
-                        s.miscTime = world.clock + 0.25;
-                outofammo:
-                        EMPTY_LABEL_HACK
-                    }
-                } //if thomas if
-
-                if (world.player_data[j / 10].weapon == "fireball"
-                    && world.player_data[j / 10].ThreeWay == true) {
-                    if (world.player_data[penguin].AttackKey == true
-                        && s.miscTime < world.clock) {
-                        for (k = j + 1; k <= j + 6; ++k) {
-                            if (world.Sprite[k].name == "reserved"
-                                || world.Sprite[k].name == "") {
-                                break;
-                            }
-                            if (k == j + 9) {
-                                k = j + 10;
-                                break;
-                            }
-                        }
-                        if (k == j + 10) {
-                            goto outofammo3;
-                        }
-                        if (s.dir == "l") {
-                            world.Sprite[k].seeky = s.y;
-                            world.Sprite[k].seekx
-                                = s.x - (world.camera.CameraWidth * 2);
-                            world.Sprite[k].dir = "l";
-                            world.Sprite[k + 1].seekx
-                                = s.x - (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 1].seeky
-                                = s.y + (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 1].dir = "l";
-                            world.Sprite[k + 2].seekx
-                                = s.x - (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 2].seeky
-                                = s.y - (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 2].dir = "l";
-                        }
-                        if (s.dir == "r") {
-                            world.Sprite[k].seeky = s.y;
-                            world.Sprite[k].seekx
-                                = s.x + (world.camera.CameraWidth * 2);
-                            world.Sprite[k].dir = "r";
-                            world.Sprite[k + 1].seekx
-                                = s.x + (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 1].seeky
-                                = s.y + (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 1].dir = "r";
-                            world.Sprite[k + 2].seekx
-                                = s.x + (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 2].seeky
-                                = s.y - (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 2].dir = "r";
-                        }
-                        if (world.player_data[penguin].upKey == true || s.dir == "u") {
-                            world.Sprite[k].seekx = s.x;
-                            world.Sprite[k].seeky = s.y - (world.camera.CameraHeight * 2);
-                            world.Sprite[k].dir = "u";
-                            world.Sprite[k + 1].seekx
-                                = s.x - (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 1].seeky
-                                = s.y - (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 1].dir = "u";
-                            world.Sprite[k + 2].seekx
-                                = s.x + (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 2].seeky
-                                = s.y - (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 2].dir = "u";
-                            if (world.player_data[penguin].LeftKEY == true) {
-                                world.Sprite[k + 2].seeky = s.y;
-                                world.Sprite[k + 2].seekx
-                                    = s.x - (world.camera.CameraWidth * 2);
-                                world.Sprite[k + 2].dir = "l";
-                            }
-                            if (world.player_data[penguin].RightKEY == true) {
-                                world.Sprite[k + 1].seeky = s.y;
-                                world.Sprite[k + 1].seekx
-                                    = s.x + (world.camera.CameraWidth * 2);
-                                world.Sprite[k + 1].dir = "r";
-                            }
-                        }
-                        if (world.player_data[penguin].DownKEY == true
-                            || s.dir == "d") {
-                            world.Sprite[k].seekx = s.x;
-                            world.Sprite[k].seeky = s.y + (2 * world.camera.CameraHeight);
-                            world.Sprite[k].dir = "d";
-                            world.Sprite[k + 1].seekx = s.x - (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 1].seeky = s.y + (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 1].dir = "d";
-                            world.Sprite[k + 2].seekx = s.x + (world.camera.CameraWidth * 2);
-                            world.Sprite[k + 2].seeky = s.y + (world.camera.CameraHeight * 2);
-                            world.Sprite[k + 2].dir = "d";
-                            if (world.player_data[penguin].LeftKEY == true) {
-                                world.Sprite[k + 2].seeky = s.y;
-                                world.Sprite[k + 2].seekx
-                                    = s.x - (world.camera.CameraWidth * 2);
-                                world.Sprite[k + 2].dir = "l";
-                            }
-                            if (world.player_data[penguin].RightKEY == true) {
-                                world.Sprite[k + 1].seeky = s.y;
-                                world.Sprite[k + 1].seekx
-                                    = s.x + (world.camera.CameraWidth * 2);
-                                world.Sprite[k + 1].dir = "r";
-                            }
-                        }
-if (s.mode == "truck") {
-                            world.Sprite[k].seeky
-                                = world.camera.CameraY - world.camera.CameraHeight;
-                                world.Sprite[k].seekx = s.x;
-                                world.Sprite[k].dir = "u";
-                        }
-                        //Sprite(1).visible = True
-                        for (trueorg = k; trueorg <= k + 2; ++ trueorg) {
-                            world.Sprite[trueorg].speed = 0;  //0.00001
-                            world.Sprite[trueorg].name = "fireball";
-                            world.Sprite[trueorg].mph = 3;
-                            world.Sprite[trueorg].x = s.x;
-                            world.Sprite[trueorg].y = s.y;
-                            world.Sprite[trueorg].z = s.z; //- (world.Sprite[0).lengh)
-                            world.Sprite[trueorg].wide
-                                = 30 * (world.player_data[j / 10].GradeUp + 1);
-                            world.Sprite[trueorg].high
-                                = 30 * (world.player_data[j / 10].GradeUp + 1);
-                            world.Sprite[trueorg].length = 15;
-                            world.Sprite[trueorg].texture
-                                = world.Sprite[j].texture;
-                            world.Sprite[trueorg].visible = true;
-                            world.Sprite[trueorg].kind = Kind::fireball;
-                            world.Sprite[trueorg].frame = 1;
-                            world.Sprite[trueorg].soundFile = "fireball.wav";
-                            world.Sprite[trueorg].parent = j;
-                        }
-                        //LoadSound k, "fireball.wav"
-                        sound.PlaySound("fireball");
-                        s.miscTime = world.clock + 0.25;
-                outofammo3:
-                        EMPTY_LABEL_HACK
-                    }
-                } //if thomas if
-
-
-                if (world.player_data[penguin].upKey == false
-                    && world.player_data[penguin].DownKEY == false
-                    && world.player_data[penguin].LeftKEY == false
-                    && world.player_data[penguin].RightKEY == false) {
-                    if (s.dir == "r") { s.frame = 2; }
-                    if (s.dir == "l") { s.frame = 14; }
-                    if (s.dir == "u") { s.frame = 6; }
-                    if (s.dir == "d") { s.frame = 10; }
-                    s.speed = 0;
-                }
-
-            } //-End of David Sprite If
-
-            //- END OF DAVID SPRITE--------------------------------------------
-            //
-            //Rem--------------------------------------------------------------
-
-
-            if (s.name == "goomba") {
-                this->seeker(j);
-
-                if (s.x == s.seekx && s.y == s.seeky) {
-                    k = (int)(random.next() * 4) + 1;
-                    s.seekx = s.x;
-                    s.seeky = s.y;
-                    if (k == 1) { s.seekx = s.x + 25; }
-                    if (k == 2) { s.seekx = s.x - 25; }
-                    if (k == 3) { s.seeky = s.y + 25; }
-                    if (k == 4) { s.seeky = s.y - 25; }
-                    if ((s.seekx + s.wide) > 640) { s.seekx = 640 - s.wide; }
-                    if (s.seekx < 1) { s.seekx = 0; }
-                    if ((s.seeky + s.high) > 480) { s.seeky = 480 - s.high; }
-                    if (s.seeky < 1) { s.seeky = 0; }
-                }
-            }
-
-            if (s.name == "Kerbose Death") {
-                //.flickerTime = clock + 2
-                //if (.color = QBColor(1) Then .color = normColor Else .color = QBColor(1)
-                if (s.miscTime < world.clock) {
-                    s.name = "";
-                    s.visible = false;
-                    s.trueVisible = 2;
-                    s.flickerTime = world.clock + 1;
-                }
-            }
-
-            if (s.name == "Kerbose") {
-                k = (int) (random.next() * 2) + 1;
-                if (k == 1) { s.x = s.x + world.sFactor; }
-                if (k == 2) { s.x = s.x - world.sFactor; }
-                k = (int) (random.next() * 2) + 1;
-                if (k == 1) { s.y = s.y + world.sFactor; }
-                if (k == 2) { s.y = s.y - world.sFactor; }
-                k = (int) (random.next() * 20) + 1;
-                if (k == 1) {
-                    if (s.z == 0) {
-                        s.jumpStart = s.z;
-                        s.jumpTime = world.clock;
-                    }
-                }
-            }
-
-
-
-            if (s.name == "fireball") {
-
-                if (world.player_data[s.parent / 10].slicer == true) {
-                    if (s.color == view::qb_color(2)) {
-                        s.color = view::qb_color(15);
-                    }
-                    if (s.color == view::qb_color(7)) { s.color = view::qb_color(2); }
-                    if (s.color == view::qb_color(10)) { s.color = view::qb_color(7); }
-                    if (s.color == view::qb_color(14)) {s.color = view::qb_color(10); }
-                    if (s.color == view::qb_color(1)) {s.color = view::qb_color(14); }
-                    if (s.color == view::qb_color(4)) { s.color = view::qb_color(1); }
-                    if (s.color == view::qb_color(15)) { s.color = view::qb_color(4); }
-
-                    if ((int) (random.next() * 1) == 1) {
-                        s.jumpStrength = 75;
-                        s.maxJump = 2;
-                        this->makeJump(j);
-                    }
-
-                }
-
-
-                s.frame = s.frame + 1;
-                if (s.dir == "r") {
-                    if (s.frame > 3) { s.frame = 1; }
-                }
-                if (s.dir == "l") {
-                    if (s.frame > 6) { s.frame = 4; }
-                }
-                if (s.dir == "u") {
-                    if (s.frame > 9) { s.frame = 7; }
-                }
-                if (s.dir == "d") {
-                    if (s.frame > 12) { s.frame = 10; }
-                }
-                //Rem----------------------
-                s.flickerTime = world.clock + 1;
-                if (s.x < s.seekx) { s.x = s.x + (s.mph * world.sFactor); }
-                if (s.x > s.seekx) { s.x = s.x - (s.mph * world.sFactor); }
-                if (s.y < s.seeky) { s.y = s.y + (s.mph * world.sFactor); }
-                if (s.y > s.seeky) { s.y = s.y - (s.mph * world.sFactor); }
-                //.wide = .wide + 1
-                //.high = .high + 1
-                //if (.x = .seekx And .y = .seeky Or (.x + .wide) < 1 Or .x > 640 Or (.y + .high) < 1 Or .y > 480 Then .visible = False: .name = "reserved"
-                //if (.x >= .seekx And .x <= (.seekx + .mph) And .y >= .seeky And .y <= (.seeky + .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
-                //if (.x <= .seekx And .x >= (.seekx - .mph) And .y <= .seeky And .y >= (.seeky - .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
-                if (s.x > (world.camera.CameraX + world.camera.CameraWidth)
-                    || s.x < (world.camera.CameraX - world.camera.CameraWidth)
-                    || s.y > (world.camera.CameraY + world.camera.CameraHeight)
-                    || s.y < (world.camera.CameraY - world.camera.CameraHeight)) {
-                    s.visible = false;
-                    s.flickerTime = 0;
-                    s.name = "reserved";
-                    s.trueVisible = 2;
-                }
-
-				off_camera_kill(s, Camera(world.camera));
-            }
-
-            if (s.name == "bomb") {
-                s.frame = s.frame + 1;
-                if (s.mode != "explode") {
-                    if (s.frame > 3) { s.frame = 2; }
-                }
-                if (s.mode == "explode") {
-                    if (s.frame > 5) { s.frame = 4; }
-                }
-                if (s.kind == Kind::fireball && s.miscTime < world.clock) {
-                    s.visible = false;
-                    s.flickerTime = 0;
-                    s.name = "reserved";
-                    s.trueVisible = 2;
-                    s.kind = Kind::neutral;
-                    goto fuddle;
-                }
-                if (s.kind == Kind::fireball) {
-                    goto fuddle;
-                }
-                if (s.kind == Kind::neutral && s.miscTime > world.clock) {
-                    goto fuddle;
-                }
-                s.kind = Kind::fireball;
-                s.miscTime = world.clock + 1;
-                s.mode = "explode";
-                sound.PlaySound("bomb explode");
-                s.flickerTime = world.clock + 1;
-            fuddle:
-                EMPTY_LABEL_HACK
-            }
-
-
-            if (s.name == "falling") {
-                //.flickerTime = clock + 1
-                s.z = s.z - world.sFactor;
-                if (s.z < 1) {
-                    s.z = 1;
-                    s.name = "deceased";
-                    s.visible = false;
-                    s.trueVisible = 2;
-                    s.flickerTime = 0;
-                }
-                s.frame = s.frame + 1;
-                if (s.frame > 4) { s.frame = 3; }
-            }
-
-            if (s.name == "Dying Explosion") {
-                if (s.wide < s.seekx) {
-                    s.wide = s.wide + s.mph;
-                    s.x = s.x - (s.mph * 0.5 * world.sFactor);
-                    s.high = s.high + s.mph;
-                    s.y = s.y - (s.mph * 0.5 * world.sFactor);
-                }
-                if (s.wide >= s.seekx) {
-                    s.high = s.high - s.mph;
-                    s.y = s.y + (s.mph * 0.5 * world.sFactor);
-                    if (s.high < 1) {
-                        s.name = "deceased";
-                        s.visible = false;
-                    }
-                }
-            }
-
-            if (s.name == "Death of David") {
-                //if (.seekx = 0) then .seekx = .x: .seeky = .y
-                //if (.color = QBColor(4)) then .color = QBColor(1) Else .color = QBColor(4)
-                s.flickerTime = world.clock + 1;
-                if (s.wide < s.seekx) {
-                    s.wide = s.wide + s.mph * 3; //instead of * 3, it used to be * 0.5
-                    s.high = s.high + s.mph * 3;
-                }
-                if (s.wide >= s.seekx) {
-                    s.high = s.high - s.mph * 3;
-                    if (s.high < (-1 * s.high)) {
-                        //what to do if dead
-                        s.name = "deceased";
-                        s.visible = false;
-                        s.name = "dead";
-                        s.srcx = 2;
-                        s.srcy = 363;
-                        s.srcx2 = 96;
-                        s.srcy2 = 379;
-                        s.texture = 0;
-                        s.visible = true;
-                        world.player_data[j / 10].lives = world.player_data[j / 10].lives - 1;
-                        if (world.player_data[j / 10].lives < 1) {
-                            if (world.continues > 0) {
-                                s.name = "continue";
-                                s.texture = 0;
-                                s.srcx = 3;
-                                s.srcy = 345;
-                                s.srcx2 = 96;
-                                s.srcy2 = 361;
-                                s.wide = 93; //16;
-                                s.high = 16; //93;
-                                s.frame = 0;
-                                world.Sprite[j + 1].name = "continue number";
-                                world.Sprite[j + 1].color = normColor;
-                                world.Sprite[j + 1].frame = 11;
-                                world.Sprite[j + 1].texture = 0;
-                                world.Sprite[j + 1].miscTime = world.clock + 2;
-                                this->loadAnimation(j + 1, "continue.ani");
-
-                                s.kind = Kind::neutral;
-                                world.Sprite[j + 1].kind = Kind::neutral;
-                                world.Sprite[j + 1].visible = true;
-                                world.Sprite[j + 1].wide = 20;
-                                world.Sprite[j + 1].high = 20;
-                                s.y = 10;
-                                world.Sprite[j + 1].y = s.y;
-                                s.y = 10;
-                                world.Sprite[j + 1].x = s.x + 100;
-                            } //end continue if
-                        } //end lives if
-                        if (world.player_data[j / 10].lives > 0) {
-                            this->createPlayer(j);
-                            world.Sprite[j].name = world.player_data[j / 10].playerName;
-                            world.Sprite[j].kind = Kind::player;
-                            this->initSprites(j);
-                            world.Sprite[j].flickerTime = world.clock + 5;
-                            //Sprite[j].x = .seekx: .seekx = 0
-                            //Sprite[j].y = .seekx: .seekx = 0
-
-                        }
-
-                    }
-                }
-            }
-
-            if (s.name == "continue") {
-                if (this->anyKey(j / 10) == 1) {
-                    world.continues = world.continues - 1;
-                    world.player_data[j / 10].lives = 2;
-                    this->createPlayer(j);
-                    world.Sprite[j].name = world.player_data[j / 10].playerName;
-                    world.Sprite[j].kind = Kind::player;
-                    world.Sprite[j].flickerTime = world.clock + 5;
-                    this->initSprites(j);
-                }
-                s.visible = true;
-                if ((j / 10) == 0) {
-                    s.x = world.camera.CameraX + 10;
-                }
-                if ((j / 10) == 1) {
-                    s.x = world.camera.CameraX + 250;
-                    s.color = view::qb_color(10);
-                }
-                if ((j / 10) == 2) {
-                    s.x = world.camera.CameraX + 450;
-                    s.color = view::qb_color(14);
-                }
-                s.y = world.camera.CameraY + 10;
-            }
-
-            if (s.name == "continue number") {
-                s.trueVisible = 1;
-                if (((j - 1) / 10) == 0) {
-                    s.x = world.camera.CameraX + 10 + 93;
-                }
-                if (((j - 1) / 10) == 1) {
-                    s.x = world.camera.CameraX + 250 + 93;
-                }
-                if (((j - 1) / 10) == 2) {
-                    s.x = world.camera.CameraX + 450 + 93;
-                }
-                s.y = world.camera.CameraY + 10;
-
-                if (s.miscTime < world.clock) {
-                    s.miscTime = world.clock + 2;
-                    s.frame = s.frame - 1;
-                    if (s.frame == 0) { s.frame = 13; }
-                    s.visible = true;
-                    if (world.continues < 1) {
-                        s.frame = 12; //this is useful, say, if two people have the choice of the last continue and one gets it before someone else
-                    }
-                    if (s.frame == 10) { sound.PlayWave("ConTen.wav"); }
-                    if (s.frame == 9) { sound.PlayWave("ConNine.wav"); }
-                    if (s.frame == 8) { sound.PlayWave("ConEight.wav"); }
-                    if (s.frame == 7) { sound.PlayWave("ConSeven.wav"); }
-                    if (s.frame == 6) { sound.PlayWave("ConSix.wav"); }
-                    if (s.frame == 5) { sound.PlayWave("ConFive.wav"); }
-                    if (s.frame == 4) { sound.PlayWave("ConFour.wav"); }
-                    if (s.frame == 3) { sound.PlayWave("ConThree.wav"); }
-                    if (s.frame == 2) { sound.PlayWave("ConTwo.wav"); }
-                    if (s.frame == 1) { sound.PlayWave("ConOne.wav"); }
-                    if (s.frame == 13) { sound.PlayWave("ConZero.wav"); }
-                    if (s.frame == 12) {
-                        world.Sprite[j - 1].name = "dead";
-                        world.Sprite[j - 1].visible = false;
-						kill(s); //": .visible = False
-                    }
-                }
-            }
-
-            if (s.name == "Selecter") {
-                if (world.clock > s.miscTime) {
-                    s.miscTime = world.clock + 0.1;  //this way, the person won't scream through the selection box because it moves at 40 FPS!
-                    //For k = 0 To 2
-                    k = j;
-                    if (s.visible == false) {
-                        if (this->anyKey(k) == 1) {
-                            s.visible = true;
-                            s.frame = k + 1;
-                        }
-                    }
-
-                    if (world.player_data[k].upKey == true) {
-                        s.frame = s.frame - 1;
-                        if (s.frame == 0) { s.frame = 5; }
-                    }
-                    if (world.player_data[k].DownKEY == true) {
-                        s.frame = s.frame + 1;
-                        if (s.frame == 6) { s.frame = 1; }
-                    }
-                    if (world.player_data[k].AttackKey == true
-                        || world.player_data[k].JumpKey == true) {
-                        s.mode = "done";
-                        s.name = "KukoFax";
-                        if (s.frame == 1) { sound.PlayWave("PickTom.wav"); }
-                        if (s.frame == 2) { sound.PlayWave("PickNick.wav"); }
-                        if (s.frame == 3) { sound.PlayWave("PickDrew.wav"); }
-                        if (s.frame == 5) { sound.PlayWave("PickNicky.wav"); }
-                    }
-                //Next k
-                }
-
-            }
-
-            if (s.name == "StageWhat") {
-                //
-                if (s.mode == "") {
-                    //playWave "conten.wav"
-                    if (s.miscTime == 0) {
-                        s.miscTime = world.clock + 2;
-                        world.Sprite[31].zOrder = -100;
-                        findOrder(world);
-                    }
-
-                    {
-                        //TSNOW: No idea why this is hardcoded.
-                        auto & s2 = world.Sprite[31];
-                        if (world.Sprite[j].miscTime > world.clock) {
-                            s2.x = world.camera.CameraX;
-                            s2.y = world.camera.CameraY;
-                            s2.wide = 640;
-                            s2.high = 480;
-                            s2.frame = 9;
-                            s2.texture = 9;
-                            s2.visible = true;
-                        }
-
-                        if (world.Sprite[j].miscTime < world.clock) {
-                            s2.x = s2.x + 4 * world.sFactor;
-                            s2.y = s2.y + 4 * world.sFactor;
-                            s2.wide = s2.wide - 8 * world.sFactor;
-                            s2.high = s2.high - 8 * world.sFactor;
-                            s2.zOrder = -100;
-                            if (s2.wide < 0) {
-                                world.Sprite[j].mode = "?";
-                                world.Sprite[30].miscTime = world.clock + 3;
-                            }
-                        }
-                    }  // End With
-                }  //mode
-                if (s.mode == "?") {
-                    //playWave "conten.wav"
-                    {
-                        auto & s2 = world.Sprite[31];
-                        unstretch(s2);
-                        s2.wide = s2.wide * 2;
-                        s2.high = s2.high * 2;
-
-                        //.wide = (275 - 188) * 2
-                        //.high = (376 - 353) * 2
-
-                        s2.frame = 10;
-                        s2.texture = 9;
-                        s2.visible = true;
-                        s2.zOrder = -100;
-                        this->centerSprite(31);
-                    }
-                    if (s.miscTime < world.clock) {
-                        s.mode = "2";
-                        s.name = "script";
-                        findOrder(world);
-                    }
-                }
-
-
-            }
-
-            if (s.name == "script") {
-                this->script();
-            }
-
-
-            //playWave "conten.wav"
-
-            if (s.name == "frontdoor") {
-                if (this->findQ("Kerbose") < 1) {
+			// Handle all "level" stuff here, but call update on gameproc
+			// otherwise.
+			if (s.name == "script") {
+				this->script();
+			}  else	if (s.name == "frontdoor") {
+				if (this->findQ("Kerbose") < 1) {
 					kill(s);
-                    s.name = "exit";
-                    this->cinemaM(2);
-                }
-            }
-
-            if (s.name == "exit") {
-                //TSNOW: This looks to step up by 10 so should only iterate
-                //       the loop once, but that's what the old code did.
-                for (penguin = 0; penguin <= 2; penguin+= 10) {
-                    if (this->hitdetection(j, penguin) != 0
-                        && world.Sprite[penguin].name
-                        == world.player_data[(penguin / 10)].playerName) {
-                        world.exitS = "true";
-                    }
-                }
-            }
-
-            if (s.name == "tdigger") {
-                if (s.mode == "") {
-                    unstretch(world.Sprite[j]);
-                    //TSNOW: Another funky step 10 loop.
-                    for (penguin = 0; penguin <= 2; penguin += 10) {
-                        if (this->hitdetection(j, penguin, true) == 5
-                            && world.Sprite[penguin].name
-                            == world.player_data[(penguin / 10)].playerName) {
-                            s.mode = "runner";
-                            s.seekx = world.camera.cameraStopX;
-                            //.mhp = 10
-                            s.kind = Kind::enemy;
-                            s.deathType = "expand";
-                            s.time = 1;
-                            //.hp = 1
-                            s.reverse = true;
-                        }
-                    }
-                }
-
-                if (s.target != 0 || s.target == -1) {
-                    s.target = this->checkProx(j);
-                    s.seekx = this->getMiddleX(s.target);
-                    s.seeky = this->getMiddleY(s.target);
-                }
-
-                if (s.mode == "runner") {
-                    if (this->getProx(j, s.target) > 50) {
-                        s.seekx = this->getMiddleX(s.target);
-                    }
-                    if (this->getProx(j, s.target) < 50) {
-                        s.mph = s.mph - 1;
-                        if (s.mph < -90) {
-                            s.seekx = this->getMiddleX(s.target);
-                            s.mph = 10;
-                        }
-                    }
-                    s.seeky = this->getMiddleY(s.target);
-                    if (this->getProx(j, s.target) < 100) {
-                        s.mph = (this->getProx(j, s.target)) / 100;
-                    } else {
-                        s.mph = 10;
-                    }
-                    if (this->getProx(j, s.target) == 0) {
-                        s.seekx = world.Sprite[s.target].x;
-                        s.seeky = world.Sprite[s.target].y;
-                    }
-
-                    this->seeker(j);
-
-                    //Stop
-                    //if (sgetMiddleX(.target) > getMiddleX(j)) then .x = .x + (sFactor * 3)
-                    //if (sgetMiddleX(.target) < getMiddleX(j)) then .x = .x - (sFactor * 3)
-
-                    //if (sgetMiddleY(.target) > getMiddleY(j)) then .y = .y + (sFactor * 1)
-                    //if (sgetMiddleY(.target) < getMiddleY(j)) then .y = .y - (sFactor * 1)
-                }
-
-            }
-
-
-            if (s.name == "expand") {
-                s.kind = Kind::neutral;
-                //if (s.mode = "runner") then
-                s.frame = 3;
-                s.time += (0.01 * world.sFactor);
-                s.wide = s.wide + (world.sFactor);
-                s.x = s.x - (world.sFactor / 2);
-                s.high = s.high + (world.sFactor);
-                s.y = s.y - (world.sFactor / 2);
-                if (s.time > 2) {
-                    s.name = "harharhar";
-                    this->initSprites(j); //: killS j
-                }
-            }
-
-            if (s.name == "harharhar") {
-                if (s.flickerTime < world.clock) {
-					kill(s);
-                }
-            }
-
-
-            if (s.name == "dead") {
-                //Stop
-                if ((j / 10) == 0) {
-                    s.x = world.camera.CameraX + 10;
-                }
-                if ((j / 10) == 1) {
-                    s.x = world.camera.CameraX + 250;
-                    s.color = view::qb_color(10);
-                }
-                if ((j / 10) == 2) {
-                    s.x = world.camera.CameraX + 450;
-                    s.color = view::qb_color(14);
-                }
-                s.y = world.camera.CameraY + 10;
-                s.frame = 0;
-                s.visible = false;
-                s.srcx = 2;
-                s.srcy = 363;
-                s.srcx2 = 96;
-                s.srcy2 = 379;
-                s.texture = 0;
-                s.visible = true;
-            }
+					s.name = "exit";
+					this->cinemaM(2);
+				}
+			} else if (s.proc) {
+				CharacterProcEnv env{context, random, world.clock};
+				s.proc->update(env, s, j, world);
+			}
 
         }
         //TSNOW: end of the emulated with statement that creates variable "s",
@@ -1253,12 +375,7 @@ private:
                  || world.player_data[zed].AttackKey) ? 1 : 0);
     }
 
-    void centerSprite(int who) {
-        // Aims the camera on the given sprite.
-        auto & s = world.Sprite[who];
-        s.x = (world.camera.CameraX + (world.camera.CameraWidth / 2)) - (s.wide / 2);
-        s.y = (world.camera.CameraY + (world.camera.CameraHeight / 2)) - (s.high / 2);
-    }
+
 
     void checkHit(int j, int k) {
                 bool redo = false;
@@ -1450,55 +567,55 @@ private:
     }
 
     int checkProx(const int who) {
-        //numberPlayers integer legend
-        //1 Only player 1
-        //2 Player 1 and 2
-        //3 All three Players
-        //4 Just player 2
-        //5 Just player 3
-        //6 Players 1 and 3
-        //7 Players 2 and 3
+       //numberPlayers integer legend
+       //1 Only player 1
+       //2 Player 1 and 2
+       //3 All three Players
+       //4 Just player 2
+       //5 Just player 3
+       //6 Players 1 and 3
+       //7 Players 2 and 3
 
-        int theclosest = 0;
-        int min = 0;
+       int theclosest = 0;
+       int min = 0;
 
-        min = 9999;
-        theclosest = 0;
-        for (int penguin = 0; penguin <= 2; ++ penguin) {
-            if (penguin == 0 &&
-                (world.numberPlayers == 4 || world.numberPlayers == 5 || world.numberPlayers == 7)) {
-                continue;
-            }
-            if (penguin == 1 &&
-                (world.numberPlayers == 1 || world.numberPlayers == 5 || world.numberPlayers == 6)) {
-                continue;
-            }
-            if (penguin == 2 &&
-                (world.numberPlayers == 1 || world.numberPlayers == 2 || world.numberPlayers == 4)) {
-                continue;
-            }
+       min = 9999;
+       theclosest = 0;
+       for (int penguin = 0; penguin <= 2; ++ penguin) {
+           if (penguin == 0 &&
+               (world.numberPlayers == 4 || world.numberPlayers == 5 || world.numberPlayers == 7)) {
+               continue;
+           }
+           if (penguin == 1 &&
+               (world.numberPlayers == 1 || world.numberPlayers == 5 || world.numberPlayers == 6)) {
+               continue;
+           }
+           if (penguin == 2 &&
+               (world.numberPlayers == 1 || world.numberPlayers == 2 || world.numberPlayers == 4)) {
+               continue;
+           }
 
-            // abs(x2-x1)^2+abs(y2-y1)^2
-            const int buttcat = lp3::narrow<int>(
-                std::sqrt(
-                    std::pow(
-                        std::abs(world.Sprite[penguin * 10].x
-                                    - world.Sprite[who].x),
-                        2)
-                    +
-                    std::pow(
-                        std::abs(world.Sprite[penguin * 10].y
-                                    - world.Sprite[who].y),
-                        2)
-                ));
+           // abs(x2-x1)^2+abs(y2-y1)^2
+           const int buttcat = lp3::narrow<int>(
+               std::sqrt(
+                   std::pow(
+                       std::abs(world.Sprite[penguin * 10].x
+                                   - world.Sprite[who].x),
+                       2)
+                   +
+                   std::pow(
+                       std::abs(world.Sprite[penguin * 10].y
+                                   - world.Sprite[who].y),
+                       2)
+               ));
 
-            if (buttcat < min) {
-                theclosest = penguin;
-                min = buttcat;
-            }
-        }
+           if (buttcat < min) {
+               theclosest = penguin;
+               min = buttcat;
+           }
+       }
 
-        return theclosest * 10;
+       return theclosest * 10;
     }
 
     void cinemaM(int what) {
@@ -1667,19 +784,13 @@ private:
         return goatX;
     }
 
-    double getMiddleX(int who) {
-        return world.Sprite[who].x + (world.Sprite[who].wide / 2);
-    }
+    ////double getMiddleX(int who) {
+    ////    return world.Sprite[who].x + (world.Sprite[who].wide / 2);
+    ////}
 
-    double getMiddleY(int who) {
-        return world.Sprite[who].y + (world.Sprite[who].high / 2);
-    }
-
-    double getProx(int who, int who2) {
-        // Finds who is closet
-        return std::abs(getMiddleX(who) - getMiddleX(who2)) + std::abs(getMiddleY(who) - getMiddleY(who));
-        // amount of pixels they are close
-    }
+    ////double getMiddleY(int who) {
+    ////    return world.Sprite[who].y + (world.Sprite[who].high / 2);
+    ////}
 
     void GoSub_level1a() {
         world.Sprite[31].frame = world.cinema[world.cinemaCounter].frame1;
@@ -2002,7 +1113,11 @@ private:
         view.LoadTexture(0, "System.png", 336, 397);
         for (k = 0; k <= 20; k+=10) {
             //For penguin = 0 To 2
-            this->createPlayer(k);
+			CharacterProcEnv env{ context, random, world.clock };
+			create_player(
+				env, world.player_data[(k / 10)], world.Sprite[j],
+				gsl::make_span(&(world.Sprite[k + 1]), 9));
+            //this->createPlayer(k);
         }
 
 
@@ -2204,7 +1319,7 @@ private:
 
                 if (ws.seekx >= 50 && ws.dir != "done") {
                     this->shoot(who, "paulbullet",
-                                world.Sprite[this->checkProx(who)].x,
+                                world.Sprite[checkProx(who)].x,
                                 world.Sprite[checkProx(who)].y);
                     ws.dir = "done";
                 }
@@ -2265,19 +1380,7 @@ private:
                         s.kind, s.zOrder);
             }
         }
-        findOrder(world);
-    }
-
-    void makeJump(int which) {
-        if (world.Sprite[which].z == 0) {
-            world.Sprite[which].multiJump = 0;
-        }
-        if (world.Sprite[which].multiJump >= world.Sprite[which].maxJump) {
-            return ;
-        }
-        world.Sprite[which].multiJump = world.Sprite[which].multiJump + 1;
-        world.Sprite[which].jumpStart = world.Sprite[which].z;
-        world.Sprite[which].jumpTime = world.clock;
+        //findOrder(world);
     }
 
     void MakeLevel(const std::string & lvlBgMusic, const std::string & levelFile,
@@ -2326,7 +1429,7 @@ private:
             this->initSprites(j);
         }
 
-        findOrder(world);
+        //findOrder(world);
         world.Sprite[33].name = "cinema"; world.Sprite[33].zOrder = -149;
         world.Sprite[32].name = "cinema"; world.Sprite[32].zOrder = -149;
         world.Sprite[31].name = "cinema"; world.Sprite[31].zOrder = -149;
@@ -2604,7 +1707,7 @@ private:
         world.Sprite[opera].z = world.Sprite[who].z;
         world.Sprite[opera].seekx = wherex;
         world.Sprite[opera].seeky = wherey;
-        findOrder(world);
+        //findOrder(world);
     }
 
 };  // end of GameImpl class
