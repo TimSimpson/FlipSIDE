@@ -691,11 +691,6 @@ private:
 			return new LegacyGame(context, std::move(world));
         } // End If
 
-
-        if (world.screen == "SelectPlayerz") {
-            this->selectPlayerS();
-        }
-
         //playWave "conzero.wav"
         if (world.screen == "title") {
             //playWave "conTen.wav"
@@ -718,10 +713,6 @@ private:
         ////    this->goToLevel(boogeycrap);
         ////}
 
-        if (world.screen == "Select Player") {
-            world.screen = "SelectPlayerz";
-            this->selectPlayer();
-        }
 
         if (world.screen == "deadscreen") {
             world.screen = "title";
@@ -1465,119 +1456,6 @@ private:
 
         world.camera.CameraWidth = 640;
         world.camera.CameraHeight = 480;
-    }
-
-    void selectPlayer() {
-        // the select player screen
-
-		destroyEverything(world, view, sound);
-        this->NowLoading();
-        view.LoadTexture(0, "PlayerS2.png", 320, 400);
-        view.LoadTexture(-1, "PlayerS.png", 320, 240);
-        world.camera.CameraWidth = 320;
-        world.camera.CameraHeight = 240;
-
-        {
-            auto & s = world.Sprite[0];
-            s.x = 2 * 2;
-            s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (this->anyKey(0) == 1) { s.visible = true; }
-            s.name = "Selecter";
-            s.frame = 1;
-            s.miscTime = world.clock + 2;
-        }
-        {
-            auto & s = world.Sprite[1];
-            s.x = 106 * 2;
-            s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (this->anyKey(1) == 1) { s.visible = true; };
-            s.name = "Selecter";
-            s.frame = 2;
-            s.miscTime = world.clock + 2;
-        }
-        {
-            auto & s = world.Sprite[2];
-            s.x = 212 * 2; s.y = 36 * 2;
-            s.wide = 105 * 2;
-            s.high = (217 - 36) * 2;
-            if (this->anyKey(2) == 1) { s.visible = true; };
-            s.name = "Selecter";
-            s.miscTime = world.clock + 2;
-            s.frame = 3;
-        }
-        this->loadAnimation(0, "Selector.ani");
-        this->loadAnimation(1, "Selector.ani");
-        this->loadAnimation(2, "Selector.ani");
-
-        sound.PlayBgm("Player SelectWAV.wav");
-        sound.PlayWave("Select Your Characters of Justice.wav");
-    }
-
-    void selectPlayerS() {
-        // after you all select players, it gets up the results
-
-        if (world.Sprite[0].mode == "done" || world.Sprite[0].visible == false) {
-            if (world.Sprite[1].mode == "done" || world.Sprite[1].visible == false) {
-                if (world.Sprite[2].mode == "done" || world.Sprite[2].visible == false) {
-                    for (int i = 0; i <= 2; ++i) {
-                        if (world.Sprite[i].visible == false) {
-                            world.Sprite[i].mode = "";
-                        }
-                    }
-                    if (world.Sprite[0].mode == "done") {
-                        world.numberPlayers = 1; }
-                    if (world.Sprite[1].mode == "done") {
-                        world.numberPlayers = 4; }
-                    if (world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 5; }
-                    if (world.Sprite[0].mode == "done"
-                        && world.Sprite[1].mode == "done") {
-                        world.numberPlayers = 2;
-                    }
-                    if (world.Sprite[0].mode == "done"
-                        && world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 6;
-                    }
-                    if (world.Sprite[1].mode == "done"
-                        && world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 7;
-                    }
-                    if (world.Sprite[0].mode == "done"
-                        && world.Sprite[1].mode == "done"
-                        && world.Sprite[2].mode == "done") {
-                        world.numberPlayers = 3;
-                    }
-
-                    for (int penguin = 0; penguin <= 2; ++ penguin) {
-                        auto & s = world.Sprite[penguin];
-                        //Next penguin
-                        if (s.frame == 1) {
-                            world.player_data[penguin].playerName = "Thomas"; }
-                        if (s.frame == 2) {
-                            world.player_data[penguin].playerName = "Nick"; }
-                        if (s.frame == 3) {
-                            world.player_data[penguin].playerName = "Andrew"; }
-                        if (s.frame == 4) {
-                            world.player_data[penguin].playerName = "Phil"; }
-                        if (s.frame == 5) {
-                            world.player_data[penguin].playerName = "Nicky"; }
-                    }
-                    //1 Only player 1
-                    //2 Player 1 and 2
-                    //3 All three Players
-                    //4 Just player 2
-                    //5 Just player 3
-                    //6 Players 1 and 3
-                    //7 Players 2 and 3
-
-                    world.screen = "Level1.1";
-                }
-            }
-        }
     }
 
     void script() {
