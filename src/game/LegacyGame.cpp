@@ -4,6 +4,7 @@
 #include <boost/lexical_cast.hpp>
 #include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
+#include "EntityManager.hpp"
 #include "GameOverScreen.hpp"
 #include "NowLoading.hpp"
 #include "TitleScreen.hpp"
@@ -33,6 +34,9 @@ private:
 	World world;
 	Random random;
 	std::int64_t animation_timer;
+	EntityManager entity_manager;
+	CharacterProcManager proc_manager;
+	Camera camera;
 
 public:
 	LegacyGame(GameContext _context,  World && world_arg)
@@ -42,7 +46,10 @@ public:
         sound(context.sound),
         world(world_arg),
         random(),
-		animation_timer(0)
+		animation_timer(0),
+		entity_manager(world),
+		proc_manager(),
+		camera(world.camera)
     {
 		LP3_ASSERT(boost::starts_with(world.screen, "Level"));
 		LP3_ASSERT(world.currentScreen != world.screen);
@@ -294,11 +301,14 @@ public:
 					this->cinemaM(2);
 				}
 			} else if (s.proc) {
-				CharacterProcEnv env{context, random, world.clock};
-				s.proc->update(env, s, j, world);
+				//CharacterProcEnv env{context, random, world.clock};
+				//s.proc->update(env, s, j, world);
 			}
 
         }
+
+		CharacterProcEnv env{ context, random, world.clock, camera };
+		proc_manager.update();
         //TSNOW: end of the emulated with statement that creates variable "s",
         //       along with the for loop that used the "j" variable.
         //       Holy crap, after formatting that it's 1259 lines long.
@@ -363,7 +373,7 @@ private:
 		for (int j = 0; j <= world.spritesInUse; ++j) {
 			auto & s = world.Sprite[j];
 			if (s.proc) {
-				s.proc->animate(s, 200);
+				s.proc->animate(200);
 			}
 		}
 	}
@@ -413,13 +423,12 @@ private:
         //Player hits an enemy
         if (world.Sprite[j].kind == Kind::player && (world.Sprite[k].kind == Kind::enemy
             || world.Sprite[k].kind == Kind::enemy_bullet)) {
-            if (world.Sprite[j].flickerTime < world.clock) {
+			if (world.Sprite[j].flickerTime < world.clock) {
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
                 sound.PlaySound(world.Sprite[j].soundFile);
                 gosub_hurtj();
                 if (world.Sprite[j].hp <= 0) {
-                    world.Sprite[j].name = world.Sprite[j].deathType;
-                    this->initSprites(j);
+					world.Sprite[j].proc->death_animation();
                 }
             }
         }
@@ -432,8 +441,7 @@ private:
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
                 gosub_hurtj();
                 if (world.Sprite[j].hp <= 0) {
-                    world.Sprite[j].name = world.Sprite[j].deathType;
-                    this->initSprites(j);
+					world.Sprite[j].proc->death_animation();
                 }
             }
             if (world.Sprite[k].name == "fireball") {
@@ -456,8 +464,7 @@ private:
                     sound.PlaySound("spring");
                     world.Sprite[j].jumpM = world.Sprite[k].jumpM;
                     if (world.Sprite[k].hp <= 0) {
-                        world.Sprite[k].name = world.Sprite[k].deathType;
-                        this->initSprites(k);
+						world.Sprite[k].proc->death_animation();
                     }
                 }
             }
@@ -472,8 +479,7 @@ private:
                     world.Sprite[j].hp = world.Sprite[j].hp - 1;
                     gosub_hurtj();
                     if (world.Sprite[j].hp <= 0) {
-                        world.Sprite[j].name = world.Sprite[j].deathType;
-                        this->initSprites(j);
+						world.Sprite[j].proc->death_animation();
                     }
                 }
             }
@@ -670,9 +676,6 @@ private:
             world.Sprite[goatorg].name = "";
             world.Sprite[goatorg].zOrder = -90;
         }
-        //Sprite(who).name = what//playerName(who / 10)
-        //Sprite(who).frame = 1
-        //Call initSprites(who)
     }
 
     void debugLevel() {
@@ -1104,7 +1107,7 @@ private:
         view.LoadTexture(0, "System.png", 336, 397);
         for (k = 0; k <= 20; k+=10) {
             //For penguin = 0 To 2
-			CharacterProcEnv env{ context, random, world.clock };
+			CharacterProcEnv env{ context, random, world.clock, camera };
 			create_player(
 				env, world.player_data[(k / 10)], world.Sprite[j],
 				gsl::make_span(&(world.Sprite[k + 1]), 9));
@@ -1194,14 +1197,6 @@ private:
             }
         }
         sound.LoadSound(15, "Spring.wav", "spring");
-    }
-
-    void initSprites(int which) {
-        // TODO: Pass the name in rather than relying on the name variable.
-        auto & spr = world.Sprite[which];
-        spr.proc = load_process(spr.name);
-		CharacterProcEnv env{ context, random, world.clock };
-        spr.proc->initialize(env, spr);
     }
 
     void killLimit(int jex) {
@@ -1415,9 +1410,19 @@ private:
         //continues(j) = 3
         //Next j
 
+		// TODO: for j < 30; do player sprites, for j=30; do rest
+		// JUKIE
+		CharacterProcEnv env{ context, random, world.clock, camera };
+		for (int h = 0; h < 3; ++h) {
+			proc_manager.add_process(
+				legacy_add_process(env, world, entity_manager, h*10, 
+					               world.Sprite[h*10], world.Sprite[h*10].name));
+		}
+        for (j = 30; j <= world.spritesInUse; ++j) {
 
-        for (j = 0; j <= world.spritesInUse; ++j) {
-            this->initSprites(j);
+			proc_manager.add_process(
+				legacy_add_process(env, world, entity_manager, j, 
+					               world.Sprite[j], world.Sprite[j].name));
         }
 
         //findOrder(world);
@@ -1497,13 +1502,6 @@ private:
             world.Sprite[30].mode = "3";
         }
         if (world.Sprite[30].mode == "3") {
-
-            // Sprite(31).x = CameraX + 300
-            // Sprite(31).y = CameraY + 200
-            // Sprite(31).frame = 10
-            // Sprite(31).wide = 275 - 188
-            // Sprite(31).high = 376 - 353
-
             world.Sprite[31].x = world.camera.CameraX - world.Sprite[31].seekx;
             world.Sprite[31].y = world.camera.CameraY + 20;
             world.Sprite[32].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[32].seekx;
@@ -1578,14 +1576,13 @@ private:
         world.Sprite[opera].wide = world.Sprite[who].wide;
         world.Sprite[opera].high = world.Sprite[who].high;
 
-        initSprites(opera);
+		world.Sprite[who].proc->spawn(world.Sprite[opera], what);
         world.Sprite[opera].zOrder = -1;
         world.Sprite[opera].x = world.Sprite[who].x;
         world.Sprite[opera].y = world.Sprite[who].y;
         world.Sprite[opera].z = world.Sprite[who].z;
         world.Sprite[opera].seekx = wherex;
         world.Sprite[opera].seeky = wherey;
-        //findOrder(world);
     }
 
 };  // end of GameImpl class

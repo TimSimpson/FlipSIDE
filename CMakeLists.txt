@@ -16,8 +16,12 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CinemaType.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/EntityManager.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/EntityManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameState.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameState.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameOverScreen.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameOverScreen.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/IntroStory.hpp
@@ -34,6 +38,9 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/TitleScreen.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.cpp

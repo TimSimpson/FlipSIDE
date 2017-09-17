@@ -43,7 +43,7 @@ World::World()
     dojoMonkey(0),
     FilePath(),
     numberPlayers(0),
-    continues(0),
+    game_state(),
     currentScreen()
 {
 	for (int i = 0; i < player_data.size(); ++ i) {

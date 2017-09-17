@@ -34,6 +34,8 @@ struct PlayerData {
     std::string weapon;
 
     PlayerData();
+
+    bool any_key() const;
 };
 
 }   }

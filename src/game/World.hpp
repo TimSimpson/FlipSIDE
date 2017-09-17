@@ -6,6 +6,7 @@
 #include "Camera.hpp"
 #include "CharacterSprite.hpp"
 #include "CinemaType.hpp"
+#include "GameState.hpp"
 #include "PlayerData.hpp"
 
 namespace nnd3d { namespace game {
@@ -80,7 +81,7 @@ struct World {
 
     //GAME PLAY MULTIPLE PLAYERS DATA
     int numberPlayers;
-    int continues;
+    GameState game_state;
 
     std::string currentScreen;
 };

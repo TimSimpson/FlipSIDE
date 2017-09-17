@@ -225,9 +225,7 @@ public:
             world.player_data[box.index].lives = 3;
             world.player_data[box.index].playerName
                 = box.get_player_name().get_value_or("");
-        }
-        world.continues = 2;
-
+        }        
         world.screen = "Level1.1";
         return create_legacy_screen(context, std::move(world), players);
     }

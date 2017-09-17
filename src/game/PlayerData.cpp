@@ -29,4 +29,7 @@ PlayerData::PlayerData()
 {
 }
 
+bool PlayerData::any_key() const {
+    return RightKEY || LeftKEY || upKey || DownKEY || AttackKey;
+}
 }	}   // end namespace

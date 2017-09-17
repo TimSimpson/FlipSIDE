@@ -1,5 +1,7 @@
 #include "CharacterProc.hpp"
 
+#include "procs/PlayerProc.hpp"
+
 #ifdef _MSC_VER
 // Avoid the zillions implicit conversion warnings
 #pragma warning(disable: 4244)
@@ -180,50 +182,31 @@ int checkProx(World & world, const int who) {
 
 // For starters, all the old code is just shoved in here.
 class LegacyProc : public CharacterProc {
+private:
+    CharacterProcEnv env;
+    CharacterSprite & s;
+	int j;
+	World & world;
+
 public:
-     LegacyProc() = default;
+     LegacyProc(CharacterProcEnv & _env, CharacterSprite & _s, int _j,
+                World & world, const std::string & name)
+     :  env(_env),
+        s(_s),
+		j(_j),
+		world(world)
+     {
+        s.name = name;
+        s.proc = this;
+        initialize();
+     }
+
 	 ~LegacyProc() override = default;
 
-	 void animate(CharacterSprite & s, std::int64_t ms) override {
+	 void animate(std::int64_t ms) override {
 		 //TODO: animation_timer was set to fire every 200ms- basically do
 		 //      something similar, move this to view, and call it outside of
 		 //      the logic loop.
-		 if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
-			 if (s.dir != "") { s.frame = s.frame + 1; }
-			 if (s.dir == "u") {
-				 if (s.frame > 8) { s.frame = 5; }
-			 }
-			 if (s.dir == "d") {
-				 if (s.frame > 12) { s.frame = 9; }
-			 }
-			 if (s.dir == "l") {
-				 if (s.frame > 16) { s.frame = 13; }
-			 }
-			 if (s.dir == "r") {
-				 if (s.frame > 4) { s.frame = 1; }
-			 }
-		 }
-
-		 if (s.name == "Nicky" && s.mode != "truck") {
-			 if (s.dir != "") { s.frame = s.frame + 1; }
-			 if (s.dir == "u") {
-				 if (s.frame > 6) { s.frame = 4; }
-			 }
-			 if (s.dir == "d") {
-				 if (s.frame > 9) { s.frame = 7; }
-			 }
-			 if (s.dir == "l") {
-				 if (s.frame > 12) { s.frame = 10; }
-			 }
-			 if (s.dir == "r") {
-				 if (s.frame > 3) { s.frame = 1; }
-			 }
-		 }
-
-		 if (s.name == "fireball") {
-			 s.frame = s.frame + 1;
-			 if (s.frame > 3 || s.frame < 1) { s.frame = 1; }
-		 }
 
 		 if (s.name == "goomba" || s.name == "Kerbose"
 			 || s.name == "paulrun" || s.name == "pigeonbomber") {
@@ -254,118 +237,20 @@ public:
 	}
 
 
-	void initialize(CharacterProcEnv env, CharacterSprite & spr) override {
+    void death_animation() override {
+        s.name = s.deathType;
+        initialize();
+    }
+
+	void initialize() override {
 		view::View & view = env.context.view;
 		Sound & sound = env.context.sound;
 		const double current_time = env.current_time;
 		Random & random = env.random;
 
+		auto & spr = this->s;
+
         //this makes all the sprites do their thing based on their name
-        spr.mph = 1;
-        if (spr.name == "Thomas") {
-            spr.zOrder = -99;
-            spr.soundFile = "DavidHurt";
-            spr.wide = 40;
-            spr.high = 50;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 75;
-            spr.kind = Kind::player;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of David";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 1;
-        }
-
-        if (spr.name == "Nick") {
-            spr.zOrder = -99;
-            spr.soundFile = "nickhurt";
-            spr.wide = 40;
-            spr.high = 50;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 75;
-            spr.kind = Kind::player;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of Nick";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 1;
-        }
-
-
-        if (spr.name == "Nicky") {
-            spr.zOrder = -99;
-            spr.soundFile = "NickyHurt";
-            spr.wide = 26;
-            spr.high = 30;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 50;
-            spr.kind = Kind::player;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of Nicky";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 2;
-        }
-
-
-
-        if (spr.name == "Death of David") {
-            //StopSound which
-            //LoadSound which, "Deathspr.wav"
-            sound.PlaySound("DavidDeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = Kind::neutral;
-            spr.frame = 17;
-            sound.PlayWave("Death.wav");
-        }
-        if (spr.name == "Death of Nicky") {
-            spr.srcx = 1;
-            spr.srcy = 46;
-            spr.srcx2 = 14;
-            spr.srcy2 = 60;
-            spr.name = "Death of David";
-            sound.PlaySound("NickyDeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = Kind::neutral;
-        }
-        if (spr.name == "Death of Nick") {
-            spr.srcx = 1;
-            spr.srcy = 46;
-            spr.srcx2 = 14;
-            spr.srcy2 = 60;
-            spr.name = "Death of David";
-            sound.PlaySound("nickdeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = Kind::neutral;
-
-        }
-
-
 
 
         if (spr.name == "tdigger") {
@@ -614,11 +499,7 @@ public:
         }
     }
 
-	void update(
-		CharacterProcEnv env,
-		CharacterSprite & s,
-		int j,
-		World & world) override
+	bool update() override
 		//Camera & camera,
 		//PlayerData * player_data,
 		//gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
@@ -635,351 +516,7 @@ public:
 		//'               THIS SECTION UPDATES THE DAVID SPRITE
 		//Rem---------------------------------------------------------------
 
-		if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
-			int penguin = 0;
-			if (j == 0) { penguin = 0; }
-			if (j == 10) { penguin = 1; }
-			if (j == 20) { penguin = 2; }
 
-			if (world.player_data[penguin].upKey == true) {
-				if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
-				s.y = s.y - world.sFactor;
-				//s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
-				s.speed = 0; //0.00001
-				if (s.y < world.camera.CameraY) { s.y = world.camera.CameraY; }
-			}
-			if (world.player_data[penguin].DownKEY == true) {
-				if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
-				s.y = s.y + world.sFactor;
-				//s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
-				s.speed = 0; //0.00001
-				if (s.y > world.camera.CameraY + world.camera.CameraHeight - s.high) {
-					s.y = world.camera.CameraY + world.camera.CameraHeight - s.high;
-				}
-			}
-			if (world.player_data[penguin].LeftKEY == true) {
-				if (s.dir != "l" && world.player_data[penguin].upKey == false
-					&& world.player_data[penguin].DownKEY == false) {
-					s.dir = "l";
-					s.frame = 14;
-				}
-				s.x = s.x - world.sFactor;
-				//s.Frame = s.Frame + 1: if s.Frame > 12 Then s.Frame = 10
-				s.speed = 0;  //0.00001
-				if (s.x < world.camera.CameraX) { s.x = world.camera.CameraX; }
-			}
-			if (world.player_data[penguin].RightKEY == true) {
-				if (s.dir != "r" && world.player_data[penguin].upKey == false
-					&& world.player_data[penguin].DownKEY == false) {
-					s.dir = "r";
-					s.frame = 2;
-				}
-				s.x = s.x + world.sFactor;
-				//s.Frame = s.Frame + 1: if s.Frame > 3 Then s.Frame = 1
-				s.speed = 0;  //0s.00001
-
-				if (s.x > world.camera.CameraX + world.camera.CameraWidth - s.wide) {
-					s.x = world.camera.CameraX + world.camera.CameraWidth - s.wide;
-				}
-			}
-
-
-			if (s.z == 0) { s.multiJump = 0; }
-
-			if (s.name == "Nicky" && world.player_data[penguin].JumpKey == true
-				&& s.multiJump < 3) {
-				world.player_data[penguin].JumpKey = false;
-				//If .z = 0 Then .multiJump = 0
-				s.multiJump = s.multiJump + 1;
-				s.jumpStart = s.z;
-				s.jumpTime = world.clock;
-			}
-
-
-			if (world.player_data[penguin].JumpKey == true && s.z == 0) {
-
-				s.jumpStart = s.z;
-				s.jumpTime = world.clock;
-			}
-
-			//Check for a lack of movement
-			if (world.player_data[j / 10].weapon == "bomb") {
-				if (world.player_data[penguin].AttackKey == true
-					&& s.miscTime < world.clock) {
-					int k;
-					for (k = j + 1; k < j + 10; ++k) {
-						if (world.Sprite[k].name == "reserved"
-							|| world.Sprite[k].name == "") {
-							break;
-						}
-						if (k == j + 9) {
-							k = j + 10;
-							break;
-						}
-					}
-					if (k != j + 10) {
-						world.Sprite[k].speed = 0; //0.00001
-						world.Sprite[k].name = "bomb";
-						world.Sprite[k].x = s.x;
-						world.Sprite[k].y = s.y;
-						world.Sprite[k].z = s.z; //- (Sprite(0).length);
-						world.Sprite[k].wide = 30 * (world.player_data[j / 10].GradeUp + 1);
-						world.Sprite[k].high = 30 * (world.player_data[j / 10].GradeUp + 1);
-						world.Sprite[k].jumpStart = s.jumpStart;
-						world.Sprite[k].jumpStrength = s.jumpStrength;
-						world.Sprite[k].jumpTime = s.jumpTime;
-						world.Sprite[k].length = 15;
-						world.Sprite[k].texture = world.Sprite[j].texture;
-						world.Sprite[k].visible = true;
-						world.Sprite[k].frame = 1;
-						world.Sprite[k].trueVisible = 1;
-						world.Sprite[k].kind = Kind::neutral;
-						world.Sprite[k].mode = "";
-						world.Sprite[k].miscTime = world.clock + 3;
-						world.Sprite[k].parent = j;
-						//2017: This file doesn't work:
-						// sound.PlaySound("set bomb");
-						//LoadSound k, "fireball.wav"
-						//PlaySound "fireball"
-						s.miscTime = world.clock + 0.25;
-					}
-				}
-			} //Nicky Bomb
-			  //Thomas Fire
-			if (world.player_data[j / 10].weapon == "fireball"
-				&& world.player_data[j / 10].ThreeWay == false) {
-				if (world.player_data[penguin].AttackKey == true
-					&& s.miscTime < world.clock) {
-					for (k = j + 1; k <= j + 9; ++k) {
-						if (world.Sprite[k].name == "reserved"
-							|| world.Sprite[k].name == "") {
-							break;
-						}
-						if (k == j + 9) {
-							k = j + 10;
-							break;
-						}
-					}
-					if (k != j + 10) {
-						if (s.dir == "u") {
-							world.Sprite[k].seekx = s.x;
-							world.Sprite[k].seeky =
-								s.y - (world.camera.CameraHeight * 2);
-							world.Sprite[k].dir = "u";
-						}
-						if (s.dir == "d") {
-							world.Sprite[k].seekx = s.x;
-							world.Sprite[k].seeky =
-								s.y + (2 * world.camera.CameraHeight);
-							world.Sprite[k].dir = "d";
-						}
-						if (s.dir == "l") {
-							world.Sprite[k].seeky = s.y;
-							world.Sprite[k].seekx
-								= s.x - (world.camera.CameraWidth * 2);
-							world.Sprite[k].dir = "l";
-						}
-						if (s.dir == "r") {
-							world.Sprite[k].seeky = s.y;
-							world.Sprite[k].seekx
-								= s.x + (world.camera.CameraWidth * 2);
-							world.Sprite[k].dir = "r";
-						}
-						if (world.player_data[penguin].RightKEY == true) {
-							world.Sprite[k].seekx
-								= s.x + (2 * world.camera.CameraWidth);
-						}
-						if (world.player_data[penguin].LeftKEY == true) {
-							world.Sprite[k].seekx
-								= s.x - (world.camera.CameraWidth * 2);
-						}
-						if (world.player_data[penguin].upKey == true) {
-							world.Sprite[k].seeky
-								= s.y - (world.camera.CameraHeight * 2);
-						}
-						if (world.player_data[penguin].DownKEY == true) {
-							world.Sprite[k].seeky
-								= s.y + (world.camera.CameraHeight * 2);
-						}
-						if (s.mode == "truck") {
-							world.Sprite[k].seeky
-								= world.camera.CameraY - world.camera.CameraHeight;
-							world.Sprite[k].seekx = s.x;
-							world.Sprite[k].dir = "u";
-						}
-						//Sprite(1).visible = true
-						world.Sprite[k].speed = 0; //0.00001
-						world.Sprite[k].name = "fireball";
-						world.Sprite[k].mph = 3;
-						world.Sprite[k].x = s.x;
-						world.Sprite[k].y = s.y;
-						world.Sprite[k].z = s.z; //- (Sprite(0).length)
-						world.Sprite[k].wide = 30 * (world.player_data[j / 10].GradeUp + 1);
-						world.Sprite[k].high = 30 * (world.player_data[j / 10].GradeUp + 1);
-						world.Sprite[k].length = 15;
-						world.Sprite[k].texture = world.Sprite[j].texture;
-						world.Sprite[k].visible = true;
-						world.Sprite[k].kind = Kind::fireball;
-						//Sprite[k].soundFile = "fireball.wav"
-						world.Sprite[k].parent = j;
-						//LoadSound k, "fireball.wav"
-						if (world.player_data[world.Sprite[k].parent / 10].playerName == "Thomas") {
-							sound.PlaySound("fireball");
-						}
-						if (world.player_data[world.Sprite[k].parent / 10].playerName == "Nick") {
-							sound.PlaySound("iceshot");
-						}
-
-						s.miscTime = world.clock + 0.25;
-					}
-				}
-			} //if thomas if
-
-			if (world.player_data[j / 10].weapon == "fireball"
-				&& world.player_data[j / 10].ThreeWay == true) {
-				if (world.player_data[penguin].AttackKey == true
-					&& s.miscTime < world.clock) {
-					for (k = j + 1; k <= j + 6; ++k) {
-						if (world.Sprite[k].name == "reserved"
-							|| world.Sprite[k].name == "") {
-							break;
-						}
-						if (k == j + 9) {
-							k = j + 10;
-							break;
-						}
-					}
-					if (k != j + 10) {
-						if (s.dir == "l") {
-							world.Sprite[k].seeky = s.y;
-							world.Sprite[k].seekx
-								= s.x - (world.camera.CameraWidth * 2);
-							world.Sprite[k].dir = "l";
-							world.Sprite[k + 1].seekx
-								= s.x - (world.camera.CameraWidth * 2);
-							world.Sprite[k + 1].seeky
-								= s.y + (world.camera.CameraHeight * 2);
-							world.Sprite[k + 1].dir = "l";
-							world.Sprite[k + 2].seekx
-								= s.x - (world.camera.CameraWidth * 2);
-							world.Sprite[k + 2].seeky
-								= s.y - (world.camera.CameraHeight * 2);
-							world.Sprite[k + 2].dir = "l";
-						}
-						if (s.dir == "r") {
-							world.Sprite[k].seeky = s.y;
-							world.Sprite[k].seekx
-								= s.x + (world.camera.CameraWidth * 2);
-							world.Sprite[k].dir = "r";
-							world.Sprite[k + 1].seekx
-								= s.x + (world.camera.CameraWidth * 2);
-							world.Sprite[k + 1].seeky
-								= s.y + (world.camera.CameraHeight * 2);
-							world.Sprite[k + 1].dir = "r";
-							world.Sprite[k + 2].seekx
-								= s.x + (world.camera.CameraWidth * 2);
-							world.Sprite[k + 2].seeky
-								= s.y - (world.camera.CameraHeight * 2);
-							world.Sprite[k + 2].dir = "r";
-						}
-						if (world.player_data[penguin].upKey == true || s.dir == "u") {
-							world.Sprite[k].seekx = s.x;
-							world.Sprite[k].seeky = s.y - (world.camera.CameraHeight * 2);
-							world.Sprite[k].dir = "u";
-							world.Sprite[k + 1].seekx
-								= s.x - (world.camera.CameraWidth * 2);
-							world.Sprite[k + 1].seeky
-								= s.y - (world.camera.CameraHeight * 2);
-							world.Sprite[k + 1].dir = "u";
-							world.Sprite[k + 2].seekx
-								= s.x + (world.camera.CameraWidth * 2);
-							world.Sprite[k + 2].seeky
-								= s.y - (world.camera.CameraHeight * 2);
-							world.Sprite[k + 2].dir = "u";
-							if (world.player_data[penguin].LeftKEY == true) {
-								world.Sprite[k + 2].seeky = s.y;
-								world.Sprite[k + 2].seekx
-									= s.x - (world.camera.CameraWidth * 2);
-								world.Sprite[k + 2].dir = "l";
-							}
-							if (world.player_data[penguin].RightKEY == true) {
-								world.Sprite[k + 1].seeky = s.y;
-								world.Sprite[k + 1].seekx
-									= s.x + (world.camera.CameraWidth * 2);
-								world.Sprite[k + 1].dir = "r";
-							}
-						}
-						if (world.player_data[penguin].DownKEY == true
-							|| s.dir == "d") {
-							world.Sprite[k].seekx = s.x;
-							world.Sprite[k].seeky = s.y + (2 * world.camera.CameraHeight);
-							world.Sprite[k].dir = "d";
-							world.Sprite[k + 1].seekx = s.x - (world.camera.CameraWidth * 2);
-							world.Sprite[k + 1].seeky = s.y + (world.camera.CameraHeight * 2);
-							world.Sprite[k + 1].dir = "d";
-							world.Sprite[k + 2].seekx = s.x + (world.camera.CameraWidth * 2);
-							world.Sprite[k + 2].seeky = s.y + (world.camera.CameraHeight * 2);
-							world.Sprite[k + 2].dir = "d";
-							if (world.player_data[penguin].LeftKEY == true) {
-								world.Sprite[k + 2].seeky = s.y;
-								world.Sprite[k + 2].seekx
-									= s.x - (world.camera.CameraWidth * 2);
-								world.Sprite[k + 2].dir = "l";
-							}
-							if (world.player_data[penguin].RightKEY == true) {
-								world.Sprite[k + 1].seeky = s.y;
-								world.Sprite[k + 1].seekx
-									= s.x + (world.camera.CameraWidth * 2);
-								world.Sprite[k + 1].dir = "r";
-							}
-						}
-						if (s.mode == "truck") {
-							world.Sprite[k].seeky
-								= world.camera.CameraY - world.camera.CameraHeight;
-							world.Sprite[k].seekx = s.x;
-							world.Sprite[k].dir = "u";
-						}
-						//Sprite(1).visible = True
-						for (int trueorg = k; trueorg <= k + 2; ++trueorg) {
-							world.Sprite[trueorg].speed = 0;  //0.00001
-							world.Sprite[trueorg].name = "fireball";
-							world.Sprite[trueorg].mph = 3;
-							world.Sprite[trueorg].x = s.x;
-							world.Sprite[trueorg].y = s.y;
-							world.Sprite[trueorg].z = s.z; //- (world.Sprite[0).lengh)
-							world.Sprite[trueorg].wide
-								= 30 * (world.player_data[j / 10].GradeUp + 1);
-							world.Sprite[trueorg].high
-								= 30 * (world.player_data[j / 10].GradeUp + 1);
-							world.Sprite[trueorg].length = 15;
-							world.Sprite[trueorg].texture
-								= world.Sprite[j].texture;
-							world.Sprite[trueorg].visible = true;
-							world.Sprite[trueorg].kind = Kind::fireball;
-							world.Sprite[trueorg].frame = 1;
-							world.Sprite[trueorg].soundFile = "fireball.wav";
-							world.Sprite[trueorg].parent = j;
-						}
-						//LoadSound k, "fireball.wav"
-						sound.PlaySound("fireball");
-						s.miscTime = world.clock + 0.25;
-					}
-				}
-			} //if thomas if
-
-
-			if (world.player_data[penguin].upKey == false
-				&& world.player_data[penguin].DownKEY == false
-				&& world.player_data[penguin].LeftKEY == false
-				&& world.player_data[penguin].RightKEY == false) {
-				if (s.dir == "r") { s.frame = 2; }
-				if (s.dir == "l") { s.frame = 14; }
-				if (s.dir == "u") { s.frame = 6; }
-				if (s.dir == "d") { s.frame = 10; }
-				s.speed = 0;
-			}
-
-		} //-End of David Sprite If
 
 		  //- END OF DAVID SPRITE--------------------------------------------
 		  //
@@ -1155,141 +692,9 @@ public:
 			}
 		}
 
-		if (s.name == "Death of David") {
-			//if (.seekx = 0) then .seekx = .x: .seeky = .y
-			//if (.color = QBColor(4)) then .color = QBColor(1) Else .color = QBColor(4)
-			s.flickerTime = world.clock + 1;
-			if (s.wide < s.seekx) {
-				s.wide = s.wide + s.mph * 3; //instead of * 3, it used to be * 0.5
-				s.high = s.high + s.mph * 3;
-			}
-			if (s.wide >= s.seekx) {
-				s.high = s.high - s.mph * 3;
-				if (s.high < (-1 * s.high)) {
-					//what to do if dead
-					s.name = "deceased";
-					s.visible = false;
-					s.name = "dead";
-					s.srcx = 2;
-					s.srcy = 363;
-					s.srcx2 = 96;
-					s.srcy2 = 379;
-					s.texture = 0;
-					s.visible = true;
-					world.player_data[j / 10].lives = world.player_data[j / 10].lives - 1;
-					if (world.player_data[j / 10].lives < 1) {
-						if (world.continues > 0) {
-							s.name = "continue";
-							s.texture = 0;
-							s.srcx = 3;
-							s.srcy = 345;
-							s.srcx2 = 96;
-							s.srcy2 = 361;
-							s.wide = 93; //16;
-							s.high = 16; //93;
-							s.frame = 0;
-							world.Sprite[j + 1].name = "continue number";
-							world.Sprite[j + 1].color = normColor;
-							world.Sprite[j + 1].frame = 11;
-							world.Sprite[j + 1].texture = 0;
-							world.Sprite[j + 1].miscTime = world.clock + 2;
-							view.load_animation_file(world.Sprite[j + 1].Aframe, "continue.ani");
 
-							s.kind = Kind::neutral;
-							world.Sprite[j + 1].kind = Kind::neutral;
-							world.Sprite[j + 1].visible = true;
-							world.Sprite[j + 1].wide = 20;
-							world.Sprite[j + 1].high = 20;
-							s.y = 10;
-							world.Sprite[j + 1].y = s.y;
-							s.y = 10;
-							world.Sprite[j + 1].x = s.x + 100;
-						} //end continue if
-					} //end lives if
-					if (world.player_data[j / 10].lives > 0) {
-						create_player(
-							env, world.player_data[(j / 10)], world.Sprite[j],
-							gsl::make_span(&(world.Sprite[j + 1]), 9));
-						world.Sprite[j].name = world.player_data[j / 10].playerName;
-						world.Sprite[j].kind = Kind::player;
-						load_process(env, s, world.player_data[j / 10].playerName);
-						world.Sprite[j].flickerTime = world.clock + 5;
-						//Sprite[j].x = .seekx: .seekx = 0
-						//Sprite[j].y = .seekx: .seekx = 0
 
-					}
 
-				}
-			}
-		}
-
-		if (s.name == "continue") {
-			if (anyKey(world, j / 10) == 1) {
-				world.continues = world.continues - 1;
-				world.player_data[j / 10].lives = 2;
-				create_player(
-					env, world.player_data[(j / 10)], world.Sprite[j],
-					gsl::make_span(&(world.Sprite[j + 1]), 9));
-
-				world.Sprite[j].name = world.player_data[j / 10].playerName;
-				world.Sprite[j].kind = Kind::player;
-				world.Sprite[j].flickerTime = world.clock + 5;
-				load_process(env, s, world.player_data[j / 10].playerName);
-			}
-			s.visible = true;
-			if ((j / 10) == 0) {
-				s.x = world.camera.CameraX + 10;
-			}
-			if ((j / 10) == 1) {
-				s.x = world.camera.CameraX + 250;
-				s.color = view::qb_color(10);
-			}
-			if ((j / 10) == 2) {
-				s.x = world.camera.CameraX + 450;
-				s.color = view::qb_color(14);
-			}
-			s.y = world.camera.CameraY + 10;
-		}
-
-		if (s.name == "continue number") {
-			s.trueVisible = 1;
-			if (((j - 1) / 10) == 0) {
-				s.x = world.camera.CameraX + 10 + 93;
-			}
-			if (((j - 1) / 10) == 1) {
-				s.x = world.camera.CameraX + 250 + 93;
-			}
-			if (((j - 1) / 10) == 2) {
-				s.x = world.camera.CameraX + 450 + 93;
-			}
-			s.y = world.camera.CameraY + 10;
-
-			if (s.miscTime < world.clock) {
-				s.miscTime = world.clock + 2;
-				s.frame = s.frame - 1;
-				if (s.frame == 0) { s.frame = 13; }
-				s.visible = true;
-				if (world.continues < 1) {
-					s.frame = 12; //this is useful, say, if two people have the choice of the last continue and one gets it before someone else
-				}
-				if (s.frame == 10) { sound.PlayWave("ConTen.wav"); }
-				if (s.frame == 9) { sound.PlayWave("ConNine.wav"); }
-				if (s.frame == 8) { sound.PlayWave("ConEight.wav"); }
-				if (s.frame == 7) { sound.PlayWave("ConSeven.wav"); }
-				if (s.frame == 6) { sound.PlayWave("ConSix.wav"); }
-				if (s.frame == 5) { sound.PlayWave("ConFive.wav"); }
-				if (s.frame == 4) { sound.PlayWave("ConFour.wav"); }
-				if (s.frame == 3) { sound.PlayWave("ConThree.wav"); }
-				if (s.frame == 2) { sound.PlayWave("ConTwo.wav"); }
-				if (s.frame == 1) { sound.PlayWave("ConOne.wav"); }
-				if (s.frame == 13) { sound.PlayWave("ConZero.wav"); }
-				if (s.frame == 12) {
-					world.Sprite[j - 1].name = "dead";
-					world.Sprite[j - 1].visible = false;
-					kill(s); //": .visible = False
-				}
-			}
-		}
 
 		if (s.name == "Selecter") {
 			if (world.clock > s.miscTime) {
@@ -1477,7 +882,8 @@ public:
 			s.y = s.y - (world.sFactor / 2);
 			if (s.time > 2) {
 				s.name = "harharhar";
-				load_process(env, s, s.name); //: killS j
+				initialize();
+				// load_process(env, s, s.name); //: killS j
 			}
 		}
 
@@ -1511,20 +917,84 @@ public:
 			s.texture = 0;
 			s.visible = true;
 		}
+        return true;
 	}
+
+    // Create a child process (think bullets)
+    CharacterProc * spawn(CharacterSprite & sprite,
+                          const std::string & name) override {
+        // For now, just return the same class as it doesn't matter.
+        //child = this;
+		sprite.proc = this; // child;
+        sprite.name = name;
+        sprite.proc->initialize();
+        return this;
+    }
 };
 
-CharacterProc * load_process(const std::string &) {
-    static LegacyProc legacy_proc;
-    // TODO: Return other things
-    return &legacy_proc;
+//void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &) {
+//	// TODO: Pass the name in rather than relying on the name variable.
+//	s.proc = load_process(s.name);
+//	s.proc->initialize(env, s);
+//}
+
+
+CharacterProcManager::CharacterProcManager()
+:   procs()
+{
+}
+
+CharacterProcManager::~CharacterProcManager() {
+    clear();
+}
+
+CharacterProcManager::CharacterProcManager(CharacterProcManager && rhs)
+:   procs(std::move(rhs.procs)) {
 }
 
 
-void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &) {
-	// TODO: Pass the name in rather than relying on the name variable.
-	s.proc = load_process(s.name);
-	s.proc->initialize(env, s);
+
+void CharacterProcManager::add_process(gsl::owner<CharacterProc *> process) {
+    // TODO: in the future, use the names here, or something, but for
+    //       now, use the indexes to figure out if it's a player
+    procs.push_back(process);
+}
+
+void CharacterProcManager::animate(std::int64_t ms) {
+	for (auto & p : procs) {
+		p->animate(ms);
+	}
+}
+
+void CharacterProcManager::clear() {
+    for (gsl::owner<CharacterProc *> p : procs) {
+        delete p;
+    }
+    procs.clear();
+}
+
+void CharacterProcManager::update() {
+    for (int index = 0; index < procs.size(); ++ index) {
+        if (!procs[index]->update()) {
+			delete procs[index];
+            procs.erase(procs.begin() + index);
+			index -= 1;
+        }
+    }
+}
+
+
+gsl::owner<CharacterProc *> legacy_add_process(
+	CharacterProcEnv & env, World & world, EntityManager & em,
+	int j, CharacterSprite & s, const std::string & name)
+{
+	// TODO: in the future, use the names here, or something, but for
+	//       now, use the indexes to figure out if it's a player
+	if (j < 30) {
+		return proc::create_player_proc(env, world.game_state, world.player_data[j / 10], em, name);
+	} else {
+		return new LegacyProc(env, s, j, world, name);
+	}
 }
 
 }   }
