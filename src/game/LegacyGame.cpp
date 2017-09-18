@@ -690,6 +690,9 @@ private:
         if (world.exitS == "true" && boost::starts_with(world.screen, "Level")) {
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
+			if (sapple > 1.49) {
+				return create_title_screen(context);
+			}
             world.screen = str(boost::format("Level%s") % sapple);
 			return new LegacyGame(context, std::move(world));
         } // End If
@@ -1105,14 +1108,7 @@ private:
         //Rem*************************************8
 
         view.LoadTexture(0, "System.png", 336, 397);
-        for (k = 0; k <= 20; k+=10) {
-            //For penguin = 0 To 2
-			CharacterProcEnv env{ context, random, world.clock, camera };
-			create_player(
-				env, world.player_data[(k / 10)], world.Sprite[j],
-				gsl::make_span(&(world.Sprite[k + 1]), 9));
-            //this->createPlayer(k);
-        }
+
 
 
         //Rem******************************************************8

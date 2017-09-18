@@ -126,7 +126,8 @@ int checkProx(const int who, int numberPlayers);
 
 double getProx(CharacterSprite & who, CharacterSprite & who2);
 
-void off_camera_kill(CharacterSprite & sprite, Camera & camera);
+// Kills the sprite if it's off camera. Returns true if killed, false otherwise.
+bool off_camera_kill(CharacterSprite & sprite, Camera & camera);
 
 void kill(CharacterSprite & sprite);
 

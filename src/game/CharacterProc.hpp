@@ -44,9 +44,9 @@ public:
 
 // void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &);
 
-void create_player(
-    CharacterProcEnv env, PlayerData & player_data, CharacterSprite & sprite,
-    gsl::span<CharacterSprite> & children);
+// void create_player(
+//     CharacterProcEnv env, PlayerData & player_data, CharacterSprite & sprite,
+//     gsl::span<CharacterSprite> & children);
 
 
 class CharacterProcManager {

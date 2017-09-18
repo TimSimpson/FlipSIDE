@@ -37,53 +37,6 @@ void make_jump(CharacterSprite & sprite, double current_time) {
 
 
 
-void create_player(
-	CharacterProcEnv env, PlayerData & player_data, CharacterSprite & sprite,
-	gsl::span<CharacterSprite> & children)
-{
-
-	int goatorg = 0;
-
-	if (player_data.playerName == "Thomas") {
-		player_data.weapon = "fireball";
-		env.context.view.load_animation_file(sprite.Aframe, "Thomas.ani");
-		env.context.view.LoadTexture(player_data.index + 1, "Flip1.png", 254, 254);
-		sprite.texture = (player_data.index / 10) + 1;
-		for (CharacterSprite & child : children) {
-			env.context.view.load_animation_file(child.Aframe, "Fireball.ani");
-		}
-	}
-
-	if (player_data.playerName == "Nick") {
-		player_data.weapon = "fireball";
-		env.context.view.load_animation_file(sprite.Aframe, "nick.ani");
-		env.context.view.LoadTexture(player_data.index + 1, "joel.png", 254, 258);
-		sprite.texture = (player_data.index / 10) + 1;
-		for (CharacterSprite & child : children) {
-			env.context.view.load_animation_file(child.Aframe, "icespike.ani");
-		}
-	}
-
-	if (player_data.playerName == "Nicky") {
-		player_data.weapon = "bomb";
-		env.context.view.load_animation_file(sprite.Aframe, "nicky.ani");
-		env.context.view.LoadTexture(player_data.index + 1, "LilNicky.png", 84, 148);
-		sprite.texture = (player_data.index / 10) + 1;
-		for (CharacterSprite & child : children) {
-			env.context.view.load_animation_file(child.Aframe, "bomb.ani");
-		}
-	}
-
-	for (CharacterSprite & child : children) {
-		child.name = "";
-		child.zOrder = -90;
-	}
-	//Sprite(who).name = what//playerName(who / 10)
-	//Sprite(who).frame = 1
-	//Call initSprites(who)
-}
-
-
 
 int checkProx(World & world, const int who) {
 	//numberPlayers integer legend
@@ -570,97 +523,6 @@ public:
 
 
 
-		if (s.name == "fireball") {
-
-			if (world.player_data[s.parent / 10].slicer == true) {
-				if (s.color == view::qb_color(2)) {
-					s.color = view::qb_color(15);
-				}
-				if (s.color == view::qb_color(7)) { s.color = view::qb_color(2); }
-				if (s.color == view::qb_color(10)) { s.color = view::qb_color(7); }
-				if (s.color == view::qb_color(14)) { s.color = view::qb_color(10); }
-				if (s.color == view::qb_color(1)) { s.color = view::qb_color(14); }
-				if (s.color == view::qb_color(4)) { s.color = view::qb_color(1); }
-				if (s.color == view::qb_color(15)) { s.color = view::qb_color(4); }
-
-				if ((int)(random.next() * 1) == 1) {
-					s.jumpStrength = 75;
-					s.maxJump = 2;
-					make_jump(s, world.clock);
-				}
-
-			}
-
-
-			s.frame = s.frame + 1;
-			if (s.dir == "r") {
-				if (s.frame > 3) { s.frame = 1; }
-			}
-			if (s.dir == "l") {
-				if (s.frame > 6) { s.frame = 4; }
-			}
-			if (s.dir == "u") {
-				if (s.frame > 9) { s.frame = 7; }
-			}
-			if (s.dir == "d") {
-				if (s.frame > 12) { s.frame = 10; }
-			}
-			//Rem----------------------
-			s.flickerTime = world.clock + 1;
-			if (s.x < s.seekx) { s.x = s.x + (s.mph * world.sFactor); }
-			if (s.x > s.seekx) { s.x = s.x - (s.mph * world.sFactor); }
-			if (s.y < s.seeky) { s.y = s.y + (s.mph * world.sFactor); }
-			if (s.y > s.seeky) { s.y = s.y - (s.mph * world.sFactor); }
-			//.wide = .wide + 1
-			//.high = .high + 1
-			//if (.x = .seekx And .y = .seeky Or (.x + .wide) < 1 Or .x > 640 Or (.y + .high) < 1 Or .y > 480 Then .visible = False: .name = "reserved"
-			//if (.x >= .seekx And .x <= (.seekx + .mph) And .y >= .seeky And .y <= (.seeky + .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
-			//if (.x <= .seekx And .x >= (.seekx - .mph) And .y <= .seeky And .y >= (.seeky - .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
-			if (s.x > (world.camera.CameraX + world.camera.CameraWidth)
-				|| s.x < (world.camera.CameraX - world.camera.CameraWidth)
-				|| s.y >(world.camera.CameraY + world.camera.CameraHeight)
-				|| s.y < (world.camera.CameraY - world.camera.CameraHeight)) {
-				s.visible = false;
-				s.flickerTime = 0;
-				s.name = "reserved";
-				s.trueVisible = 2;
-			}
-
-			off_camera_kill(s, Camera(world.camera));
-		}
-
-		if (s.name == "bomb") {
-			s.frame = s.frame + 1;
-			if (s.mode != "explode") {
-				if (s.frame > 3) { s.frame = 2; }
-			}
-			if (s.mode == "explode") {
-				if (s.frame > 5) { s.frame = 4; }
-			}
-			if (s.kind == Kind::fireball && s.miscTime < world.clock) {
-				s.visible = false;
-				s.flickerTime = 0;
-				s.name = "reserved";
-				s.trueVisible = 2;
-				s.kind = Kind::neutral;
-				goto fuddle;
-			}
-			if (s.kind == Kind::fireball) {
-				goto fuddle;
-			}
-			if (s.kind == Kind::neutral && s.miscTime > world.clock) {
-				goto fuddle;
-			}
-			s.kind = Kind::fireball;
-			s.miscTime = world.clock + 1;
-			s.mode = "explode";
-			sound.PlaySound("bomb explode");
-			s.flickerTime = world.clock + 1;
-		fuddle:
-			EMPTY_LABEL_HACK
-		}
-
-
 		if (s.name == "falling") {
 			//.flickerTime = clock + 1
 			s.z = s.z - world.sFactor;
@@ -957,7 +819,9 @@ CharacterProcManager::CharacterProcManager(CharacterProcManager && rhs)
 void CharacterProcManager::add_process(gsl::owner<CharacterProc *> process) {
     // TODO: in the future, use the names here, or something, but for
     //       now, use the indexes to figure out if it's a player
-    procs.push_back(process);
+	if (process != nullptr) {
+		procs.push_back(process);
+	}
 }
 
 void CharacterProcManager::animate(std::int64_t ms) {

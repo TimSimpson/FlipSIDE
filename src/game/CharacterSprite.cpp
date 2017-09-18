@@ -161,13 +161,16 @@ screwthis3:
 	return result;
 }
 
-void off_camera_kill(CharacterSprite & sprite, Camera & camera) {
+bool off_camera_kill(CharacterSprite & sprite, Camera & camera) {
 	if (sprite.x > camera.x() + 640 || (sprite.x + sprite.wide) < camera.x()) {
 		kill(sprite);
+		return true;
 	}
 	if (sprite.y > camera.y() + 480 || (sprite.y + sprite.high) < camera.y()) {
 		kill(sprite);
+		return true;
 	}
+	return false;
 }
 
 // From an old function called `killS`, I'm not sure what it's supposed to do.

@@ -1,5 +1,6 @@
 #include "PlayerProc.hpp"
 #include <limits>
+#include <lp3/sims.hpp>
 
 #ifdef _MSC_VER
 // Avoid the zillions implicit conversion warnings
@@ -8,9 +9,58 @@
 
 namespace nnd3d { namespace game { namespace proc {
 
-namespace {
-	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+namespace {	// begin anonymous namespace
+
+const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+
+
+
+void create_player(
+	CharacterProcEnv env, PlayerData & player_data, CharacterSprite & sprite,
+	gsl::span<CharacterSprite> & children)
+{
+
+	int goatorg = 0;
+
+	if (player_data.playerName == "Thomas") {
+		player_data.weapon = "fireball";
+		env.context.view.load_animation_file(sprite.Aframe, "Thomas.ani");
+		env.context.view.LoadTexture(player_data.index + 1, "Flip1.png", 254, 254);
+		sprite.texture = (player_data.index / 10) + 1;
+		for (CharacterSprite & child : children) {
+			env.context.view.load_animation_file(child.Aframe, "Fireball.ani");
+		}
+	}
+
+	if (player_data.playerName == "Nick") {
+		player_data.weapon = "fireball";
+		env.context.view.load_animation_file(sprite.Aframe, "nick.ani");
+		env.context.view.LoadTexture(player_data.index + 1, "joel.png", 254, 258);
+		sprite.texture = (player_data.index / 10) + 1;
+		for (CharacterSprite & child : children) {
+			env.context.view.load_animation_file(child.Aframe, "icespike.ani");
+		}
+	}
+
+	if (player_data.playerName == "Nicky") {
+		player_data.weapon = "bomb";
+		env.context.view.load_animation_file(sprite.Aframe, "nicky.ani");
+		env.context.view.LoadTexture(player_data.index + 1, "LilNicky.png", 84, 148);
+		sprite.texture = (player_data.index / 10) + 1;
+		for (CharacterSprite & child : children) {
+			env.context.view.load_animation_file(child.Aframe, "bomb.ani");
+		}
+	}
+
+	for (CharacterSprite & child : children) {
+		child.name = "";
+		child.zOrder = -90;
+	}
+	//Sprite(who).name = what//playerName(who / 10)
+	//Sprite(who).frame = 1
+	//Call initSprites(who)
 }
+
 
 class FireballProc : public CharacterProc {
 private:
@@ -54,29 +104,11 @@ public:
 				= sprite.x + (env.camera.width() * 2);
 			sprite.dir = "r";
 		}
-        // TODO: This seemed like nonsense so I removed it, delete if it turns
-        // out I was right:
-		// if (player_data.RightKEY == true) {
-		// 	sprite.seekx
-		// 		= s.x + (2 * env.camera.width());
-		// }
-		// if (player_data.LeftKEY == true) {
-		// 	sprite.seekx
-		// 		= s.x - (env.camera.width() * 2);
-		// }
-		// if (player_data.upKey == true) {
-		// 	sprite.seeky
-		// 		= s.y - (env.camera.height() * 2);
-		// }
-		// if (player_data.DownKEY == true) {
-		// 	sprite.seeky
-		// 		= s.y + (env.camera.height() * 2);
-		// }
-		//Sprite(1).visible = true
+
 		sprite.speed = 0; //0.00001
 		sprite.name = "fireball";
 		sprite.mph = 3;
-		 //- (Sprite(0).length)		
+		 //- (Sprite(0).length)
 		sprite.texture = parent.texture;
 		sprite.visible = true;
 		sprite.kind = Kind::fireball;
@@ -172,17 +204,102 @@ public:
 			sprite.trueVisible = 2;
 		}
 
-		off_camera_kill(sprite, camera);
-        if (sprite.name == "") {    // if the function above just killed us
-            return false;
-        }
-        return true;
+		return !off_camera_kill(sprite, camera);
 	}
 
 };
 
-class PlayerProc : public CharacterProc {
+
+class BombProc : public CharacterProc {
 private:
+	CharacterSprite & sprite;
+	std::int64_t timer;
+	lp3::sims::CoroutineState coro_state;
+	Sound & sound;
+public:
+	BombProc(CharacterProcEnv env, PlayerData & player_data,
+			 CharacterSprite & parent, CharacterSprite & _s)
+	:	sprite(_s),
+		timer(0),
+		coro_state(),
+		sound(env.context.sound)
+	{
+		sprite.speed = 0; //0.00001
+		sprite.name = "bomb";
+		sprite.x = parent.x;
+		sprite.y = parent.y;
+		sprite.z = parent.z; //- (Sprite(0).length);
+		sprite.wide = 30 * (player_data.GradeUp + 1);
+		sprite.high = 30 * (player_data.GradeUp + 1);
+		sprite.jumpStart = parent.jumpStart;
+		sprite.jumpStrength = parent.jumpStrength;
+		sprite.jumpTime = parent.jumpTime;
+		sprite.length = 15;
+		sprite.texture = parent.texture;
+		sprite.visible = true;
+		sprite.frame = 2;
+		sprite.trueVisible = 1;
+		sprite.kind = Kind::neutral;
+		sprite.mode = "";
+		sprite.parent = player_data.index * 10;
+		//2017: This file doesn't work:
+		// sound.PlaySound("set bomb");
+		//LoadSound k, "fireball.wav"
+		//PlaySound "fireball"
+
+		// sprite.miscTime = env.current_time + 0.25;
+		timer = 3000;
+	}
+
+	void animate(std::int64_t ms) override {
+		sprite.frame = sprite.frame + 1;
+		if (sprite.mode != "explode") {
+			if (sprite.frame > 3) { sprite.frame = 2; }
+		}
+		if (sprite.mode == "explode") {
+			if (sprite.frame > 5) { sprite.frame = 4; }
+		}
+	}
+
+	void death_animation() override {
+	}
+
+	void initialize() override {
+	}
+
+	CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) override {
+		return nullptr;
+	}
+
+	bool update() override {
+		timer -= ms_per_update;
+		LP3_COROUTINE_BEGIN(coro_state);
+			// Wait for bomb to explode
+			while (timer > 0) {
+				LP3_YIELD(true);
+			}
+			sprite.kind = Kind::fireball;
+
+			// One second
+			sprite.mode = "explode";
+			sound.PlaySound("bomb explode");;
+			sprite.flickerTime = std::numeric_limits<double>::max();
+			timer = 1000;
+			while (timer > 0) {
+				LP3_YIELD(true);
+			}
+			sprite.visible = false;
+			sprite.flickerTime = 0;
+			sprite.name = "reserved";
+			sprite.trueVisible = 2;
+			sprite.kind = Kind::neutral;
+		LP3_COROUTINE_END()
+		return false;
+	}
+};
+
+class PlayerProc : public CharacterProc {
+protected:
 	CharacterProcEnv env;
     GameState & game_state;
     PlayerData & player_data;
@@ -190,7 +307,17 @@ private:
     CharacterSprite & sprite;
     gsl::span<CharacterSprite> children;
 	CharacterProcManager sub_processes;
+    lp3::sims::CoroutineState coro_number_state;
+	std::int64_t timer;
 
+	enum class State {
+		normal,
+		dying,
+		continue_counter,
+        inert
+	};
+
+	State state;
 public:
     PlayerProc(CharacterProcEnv _env,
                GameState & _game_state,
@@ -203,56 +330,45 @@ public:
         s(e_manager.grab_sprites(1)[0]),
         sprite(s),
         children(e_manager.grab_sprites(9)),
-		sub_processes()
+		sub_processes(),
+		coro_number_state(),
+		timer(),
+        state(State::normal)
     {
-        // See if doing `create_player` here would work or cause problems.
+		create_player(env, player_data, sprite, children);
+
+        // See if doing `create_player` here would work or cause problem.
         s.name = name;
         s.proc = this;
 		for (auto & c : children) { c.name = "reserved";  }
-        initialize();
     }
 
-	void animate(std::int64_t ms) {
-		if ((s.name == "Thomas" || s.name == "Nick") && s.mode != "truck") {
-			if (s.dir != "") { s.frame = s.frame + 1; }
-			if (s.dir == "u") {
-				if (s.frame > 8) { s.frame = 5; }
-			}
-			if (s.dir == "d") {
-				if (s.frame > 12) { s.frame = 9; }
-			}
-			if (s.dir == "l") {
-				if (s.frame > 16) { s.frame = 13; }
-			}
-			if (s.dir == "r") {
-				if (s.frame > 4) { s.frame = 1; }
-			}
-		}
+	virtual void animate_normally(std::int64_t ms) = 0;
 
-		if (s.name == "Nicky" && s.mode != "truck") {
-			if (s.dir != "") { s.frame = s.frame + 1; }
-			if (s.dir == "u") {
-				if (s.frame > 6) { s.frame = 4; }
-			}
-			if (s.dir == "d") {
-				if (s.frame > 9) { s.frame = 7; }
-			}
-			if (s.dir == "l") {
-				if (s.frame > 12) { s.frame = 10; }
-			}
-			if (s.dir == "r") {
-				if (s.frame > 3) { s.frame = 1; }
-			}
+	void animate(std::int64_t ms) override {
+		if (State::normal == state) {
+			animate_normally(ms);
 		}
 		sub_processes.animate(ms);
 	}
 
-	void death_animation() override {
-        s.name = s.deathType;
-        initialize();
-	}
+    void become_inert() {
+        sub_processes.clear();
+        for (auto & c: children) {
+            kill(c);
+        }
+        kill(sprite);
+        state = State::inert;
+		sprite.name = "dead";
+    }
+
+	void death_animation() override = 0;
+
+	virtual void _initialize() = 0;
 
 	void initialize() override {
+		state = State::normal;
+
         view::View & view = env.context.view;
         Sound & sound = env.context.sound;
         const double current_time = env.current_time;
@@ -261,108 +377,21 @@ public:
         auto & spr = this->s;
 
         spr.mph = 1;
-        if (spr.name == "Thomas") {
-            spr.zOrder = -99;
-            spr.soundFile = "DavidHurt";
-            spr.wide = 40;
-            spr.high = 50;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 75;
-            spr.kind = Kind::player;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of David";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 1;
-        }
 
-        if (spr.name == "Nick") {
-            spr.zOrder = -99;
-            spr.soundFile = "nickhurt";
-            spr.wide = 40;
-            spr.high = 50;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 75;
-            spr.kind = Kind::player;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of Nick";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 1;
-        }
+		for (CharacterSprite & child : children) {
+			child.name = "";
+			child.zOrder = -90;
+			child.trueVisible = 0;
+			child.visible = false;
+			child.flickerTime = 0;
+		}
+		_initialize();
 
-
-        if (spr.name == "Nicky") {
-            spr.zOrder = -99;
-            spr.soundFile = "NickyHurt";
-            spr.wide = 26;
-            spr.high = 30;
-            //spr.texture = 1;
-            spr.visible = true;
-            spr.length = 20;
-            spr.z = 0;
-            spr.jumpStrength = 50;
-            spr.kind = Kind::player;
-            spr.frame = 5;
-            spr.dir = "u";
-            spr.invTime = 2;
-            spr.speed = 0;
-            spr.deathType = "Death of Nicky";
-            spr.hp = 4;
-            //spr.mode = "truck";
-            spr.mover = true;
-            spr.maxJump = 2;
-        }
-
-
-
-        if (spr.name == "Death of David") {
-            //StopSound which
-            //LoadSound which, "Deathspr.wav"
-            sound.PlaySound("DavidDeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = Kind::neutral;
-            spr.frame = 17;
-            sound.PlayWave("Death.wav");
-        }
-        if (spr.name == "Death of Nicky") {
-            spr.srcx = 1;
-            spr.srcy = 46;
-            spr.srcx2 = 14;
-            spr.srcy2 = 60;
-            spr.name = "Death of David";
-            sound.PlaySound("NickyDeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = Kind::neutral;
-        }
-        if (spr.name == "Death of Nick") {
-            spr.srcx = 1;
-            spr.srcy = 46;
-            spr.srcx2 = 14;
-            spr.srcy2 = 60;
-            spr.name = "Death of David";
-            sound.PlaySound("nickdeath");
-            spr.seekx = spr.wide * 10;
-            spr.mph = 2;
-            spr.kind = Kind::neutral;
-
-        }
+		sprite.trueVisible = 0;
+		sprite.visible = true;
+		// TODO: REMOVE THIS!
+		spr.hp = 1;
+		player_data.lives = 1;
 	}
 
 	// Find a free child sprite.
@@ -378,7 +407,351 @@ public:
 		return nullptr;
 	}
 
-	bool spawn_fireball() {
+	// Create a child process (think bullets)
+	// TODO: take out of this base class once things settle down.
+	CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) override {
+		return nullptr;
+	}
+
+	virtual bool spawn_weapon() = 0;
+
+	void update_normal() {
+		int penguin = player_data.index;
+
+		if (player_data.upKey == true) {
+			if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
+			s.y = s.y - speed_factor;
+			//s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
+			s.speed = 0; //0.00001
+			if (s.y < env.camera.y()) { s.y = env.camera.y(); }
+		}
+		if (player_data.DownKEY == true) {
+			if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
+			s.y = s.y + speed_factor;
+			//s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
+			s.speed = 0; //0.00001
+			if (s.y > env.camera.y() + env.camera.height() - s.high) {
+				s.y = env.camera.y() + env.camera.height() - s.high;
+			}
+		}
+		if (player_data.LeftKEY == true) {
+			if (s.dir != "l" && player_data.upKey == false
+				&& player_data.DownKEY == false) {
+				s.dir = "l";
+				s.frame = 14;
+			}
+			s.x = s.x - speed_factor;
+			//s.Frame = s.Frame + 1: if s.Frame > 12 Then s.Frame = 10
+			s.speed = 0;  //0.00001
+			if (s.x < env.camera.x()) { s.x = env.camera.x(); }
+		}
+		if (player_data.RightKEY == true) {
+			if (s.dir != "r" && player_data.upKey == false
+				&& player_data.DownKEY == false) {
+				s.dir = "r";
+				s.frame = 2;
+			}
+			s.x = s.x + speed_factor;
+			//s.Frame = s.Frame + 1: if s.Frame > 3 Then s.Frame = 1
+			s.speed = 0;  //0s.00001
+
+			if (s.x > env.camera.x() + env.camera.width() - s.wide) {
+				s.x = env.camera.x() + env.camera.width() - s.wide;
+			}
+		}
+
+
+		if (s.z == 0) { s.multiJump = 0; }
+
+		if (s.name == "Nicky" && player_data.JumpKey == true
+			&& s.multiJump < 3) {
+			player_data.JumpKey = false;
+			//If .z = 0 Then .multiJump = 0
+			s.multiJump = s.multiJump + 1;
+			s.jumpStart = s.z;
+			s.jumpTime = env.current_time;
+		}
+
+
+		if (player_data.JumpKey == true && s.z == 0) {
+
+			s.jumpStart = s.z;
+			s.jumpTime = env.current_time;
+		}
+
+		if (player_data.AttackKey == true && s.miscTime < env.current_time) {
+			if (spawn_weapon()) {
+				s.miscTime = env.current_time + 0.25;
+			}
+		}
+
+
+		if (player_data.upKey == false
+			&& player_data.DownKEY == false
+			&& player_data.LeftKEY == false
+			&& player_data.RightKEY == false) {
+			if (s.dir == "r") { s.frame = 2; }
+			if (s.dir == "l") { s.frame = 14; }
+			if (s.dir == "u") { s.frame = 6; }
+			if (s.dir == "d") { s.frame = 10; }
+			s.speed = 0;
+		}
+	}
+
+	void start_continue_countdown() {
+		state = State::continue_counter;
+		if (!game_state.game_over()) {
+            sprite.visible = false;
+			sprite.trueVisible = 0;
+			sprite.kind = Kind::neutral;
+
+			// Delete all subprocesses
+			sub_processes.clear();
+			for (auto & c : children) { kill(c); }
+
+            auto & continue_text = children[1];
+			continue_text.trueVisible = 0;
+			continue_text.flickerTime = 0;
+			continue_text.zOrder = -149;
+			continue_text.name = "continue";
+			continue_text.texture = 0;
+			continue_text.srcx = 3;
+			continue_text.srcy = 345;
+			continue_text.srcx2 = 96;
+			continue_text.srcy2 = 361;
+			continue_text.wide = 93; //16;
+			continue_text.high = 16; //93;
+			continue_text.frame = 0;
+
+            continue_text.kind = Kind::neutral;
+            continue_text.y = 10;
+            continue_text.y = 10;
+
+            continue_text.visible = true;
+            if (player_data.index == 0) {
+                continue_text.x = env.camera.x() + 10;
+            }
+            if (player_data.index == 1) {
+                continue_text.x = env.camera.x() + 250;
+                continue_text.color = view::qb_color(10);
+            }
+            if (player_data.index == 2) {
+                continue_text.x = env.camera.x() + 450;
+                continue_text.color = view::qb_color(14);
+            }
+            continue_text.y = env.camera.y() + 10;			
+
+            auto & number = children[2];
+			number.trueVisible = 0;
+			number.flickerTime = 0;
+            number.name = "continue number";
+			number.zOrder = -149;
+            number.color = normColor;
+            number.frame = 11;
+            number.texture = 0;
+            number.miscTime = env.current_time + 2;
+            env.context.view.load_animation_file(number.Aframe, "continue.ani");
+
+            number.kind = Kind::neutral;
+            number.visible = true;
+            number.wide = 20;
+            number.high = 20;
+
+            number.y = continue_text.y;
+            number.x = continue_text.x + 100;
+		} else {
+            become_inert();
+        }
+	}
+
+	void update_dying() {
+		//if (.seekx = 0) then .seekx = .x: .seeky = .y
+		//if (.color = QBColor(4)) then .color = QBColor(1) Else .color = QBColor(4)
+		s.flickerTime = env.current_time + 1;
+		if (s.wide < s.seekx) {
+			s.wide = s.wide + s.mph * 3; //instead of * 3, it used to be * 0.5
+			s.high = s.high + s.mph * 3;
+		}
+		if (s.wide >= s.seekx) {
+			s.high = s.high - s.mph * 3;
+			if (s.high < (-1 * s.high)) {
+				//what to do if dead
+				s.name = "deceased";
+				s.visible = false;				
+				s.srcx = 2;
+				s.srcy = 363;
+				s.srcx2 = 96;
+				s.srcy2 = 379;
+				s.texture = 0;
+				s.visible = true;
+				player_data.lives = player_data.lives - 1;
+				if (player_data.lives <= 0) {
+					start_continue_countdown();
+				} else {
+					create_player(
+						env, player_data, s,
+						children);
+					s.name = player_data.playerName;
+					s.kind = Kind::player;
+
+					s.name = player_data.playerName;
+					initialize();
+					s.flickerTime = env.current_time + 5;
+					//Sprite[j].x = .seekx: .seekx = 0
+					//Sprite[j].y = .seekx: .seekx = 0
+				}
+			}
+		}
+	}
+
+	void update_continue_counter() {
+		if (player_data.any_key()) {
+			game_state.use_continue();
+			player_data.lives = 2;
+			create_player(env, player_data, s, children);
+
+			s.name = player_data.playerName;
+			s.kind = Kind::player;
+			s.flickerTime = env.current_time + 5;
+			s.name = player_data.playerName;
+            state = State::normal;
+			initialize();
+		} else {
+            timer += ms_per_update;
+			auto & sound = env.context.sound;
+			auto & number = children[2];
+            LP3_COROUTINE_BEGIN(coro_number_state);
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 10;
+			sound.PlayWave("ConTen.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 9;
+            sound.PlayWave("ConNine.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 8;
+            sound.PlayWave("ConEight.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 7;
+            sound.PlayWave("ConSeven.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 6;
+            sound.PlayWave("ConSix.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 5;
+            sound.PlayWave("ConFive.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 4;
+            sound.PlayWave("ConFour.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 3;
+            sound.PlayWave("ConThree.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 2;
+            sound.PlayWave("ConTwo.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 1;
+            sound.PlayWave("ConOne.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+			number.frame = 13;
+            sound.PlayWave("ConZero.wav"); timer = 0;
+            while (timer < 2000) { LP3_YIELD(); }
+            become_inert();
+            LP3_COROUTINE_END();
+        }
+	}
+
+	bool update() override {
+		sub_processes.update();
+
+		switch (state)
+		{
+		case State::normal:
+			update_normal();
+			break;
+		case State::dying:
+			update_dying();
+			break;
+		case State::continue_counter:
+			update_continue_counter();
+			break;
+        case State::inert:
+            break;
+		default:
+			LP3_ASSERT(false);
+		}
+        return true;
+	}
+};
+
+
+class ThomasProc : public PlayerProc {
+public:
+	ThomasProc(CharacterProcEnv _env,
+		GameState & _game_state,
+		PlayerData & _player_data,
+		EntityManager & e_manager,
+		const std::string & name)
+		: PlayerProc(_env, _game_state, _player_data, e_manager, name)
+	{
+        initialize();
+    }
+
+	void animate_normally(std::int64_t ms) override {
+		if (s.dir != "") { s.frame = s.frame + 1; }
+		if (s.dir == "u") {
+			if (s.frame > 8) { s.frame = 5; }
+		}
+		if (s.dir == "d") {
+			if (s.frame > 12) { s.frame = 9; }
+		}
+		if (s.dir == "l") {
+			if (s.frame > 16) { s.frame = 13; }
+		}
+		if (s.dir == "r") {
+			if (s.frame > 4) { s.frame = 1; }
+		}		
+	}
+
+    void death_animation() override {
+		state = State::dying;
+
+        env.context.sound.PlaySound("DavidDeath");
+        sprite.seekx = sprite.wide * 10;
+		sprite.mph = 2;
+		sprite.kind = Kind::neutral;
+		sprite.frame = 17;
+        env.context.sound.PlayWave("Death.wav");
+    }
+
+    void _initialize() override {
+		state = State::normal;
+        view::View & view = env.context.view;
+        Sound & sound = env.context.sound;
+        const double current_time = env.current_time;
+        Random & random = env.random;
+
+        sprite.zOrder = -99;
+        sprite.soundFile = "DavidHurt";
+        sprite.wide = 40;
+        sprite.high = 50;
+        //sprite.texture = 1;
+        sprite.visible = true;
+        sprite.length = 20;
+        sprite.z = 0;
+        sprite.jumpStrength = 75;
+        sprite.kind = Kind::player;
+        sprite.frame = 5;
+        sprite.dir = "u";
+        sprite.invTime = 2;
+        sprite.speed = 0;
+        sprite.deathType = "Death of David";
+        sprite.hp = 4;
+        //sprite.mode = "truck";
+        sprite.mover = true;
+        sprite.maxJump = 1;
+    }
+
+	bool spawn_weapon() override {
 		auto * sprite = find_free_sprite();
 		if (!sprite) {
 			return false;
@@ -386,437 +759,162 @@ public:
 		sub_processes.add_process(new FireballProc(env, player_data, s, *sprite));
 		return true;
 	}
-	// Create a child process (think bullets)
-	// TODO: take out of this base class once things settle down.
-	CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) override {
-		return nullptr;
+};
+
+
+class NickProc : public ThomasProc {
+public:
+    NickProc(CharacterProcEnv _env,
+        GameState & _game_state,
+        PlayerData & _player_data,
+        EntityManager & e_manager,
+        const std::string & name)
+        : ThomasProc(_env, _game_state, _player_data, e_manager, name)
+    {
+        initialize();
+    }
+
+    void death_animation() override {
+		state = State::dying;
+
+        sprite.srcx = 1;
+		sprite.srcy = 46;
+		sprite.srcx2 = 14;
+		sprite.srcy2 = 60;
+		sprite.name = "Death of David";
+        env.context.sound.PlaySound("nickdeath");
+		sprite.seekx = sprite.wide * 10;
+		sprite.mph = 2;
+		sprite.kind = Kind::neutral;
+    }
+
+    void _initialize() override {
+		state = State::normal;
+
+        view::View & view = env.context.view;
+        Sound & sound = env.context.sound;
+        const double current_time = env.current_time;
+        Random & random = env.random;
+
+        sprite.zOrder = -99;
+        sprite.soundFile = "nickhurt";
+        sprite.wide = 40;
+        sprite.high = 50;
+        //sprite.texture = 1;
+        sprite.visible = true;
+        sprite.length = 20;
+        sprite.z = 0;
+        sprite.jumpStrength = 75;
+        sprite.kind = Kind::player;
+        sprite.frame = 5;
+        sprite.dir = "u";
+        sprite.invTime = 2;
+        sprite.speed = 0;
+        sprite.deathType = "Death of Nick";
+        sprite.hp = 4;
+        //sprite.mode = "truck";
+        sprite.mover = true;
+        sprite.maxJump = 1;
+    }
+};
+
+class NickyProc : public PlayerProc {
+public:
+	NickyProc(CharacterProcEnv _env,
+		GameState & _game_state,
+		PlayerData & _player_data,
+		EntityManager & e_manager,
+		const std::string & name)
+		: PlayerProc(_env, _game_state, _player_data, e_manager, name)
+	{
+        initialize();
+    }
+
+	void animate_normally(std::int64_t ms) override {
+		if (s.dir != "") { s.frame = s.frame + 1; }
+		if (s.dir == "u") {
+			if (s.frame > 6) { s.frame = 4; }
+		}
+		if (s.dir == "d") {
+			if (s.frame > 9) { s.frame = 7; }
+		}
+		if (s.dir == "l") {
+			if (s.frame > 12) { s.frame = 10; }
+		}
+		if (s.dir == "r") {
+			if (s.frame > 3) { s.frame = 1; }
+		}
 	}
 
-	bool update() override {
-		sub_processes.update();
+    void death_animation() override {
+		state = State::dying;
 
-        auto & view = env.context.view;
-        auto & sound = env.context.sound;
-        auto & random = env.random;
+		sprite.srcx = 1;
+		sprite.srcy = 46;
+		sprite.srcx2 = 14;
+		sprite.srcy2 = 60;
+		sprite.name = "Death of David";
+        env.context.sound.PlaySound("NickyDeath");
+		sprite.seekx = sprite.wide * 10;
+		sprite.mph = 2;
+		sprite.kind = Kind::neutral;
+    }
 
-		if (s.name == "dead") {
-			int f = 5;
+    void _initialize() override {
+		state = State::normal;
+
+        view::View & view = env.context.view;
+        Sound & sound = env.context.sound;
+        const double current_time = env.current_time;
+        Random & random = env.random;
+
+
+        sprite.zOrder = -99;
+        sprite.soundFile = "NickyHurt";
+        sprite.wide = 26;
+        sprite.high = 30;
+        //sprite.texture = 1;
+        sprite.visible = true;
+        sprite.length = 20;
+        sprite.z = 0;
+        sprite.jumpStrength = 50;
+        sprite.kind = Kind::player;
+        sprite.frame = 5;
+        sprite.dir = "u";
+        sprite.invTime = 2;
+        sprite.speed = 0;
+        sprite.deathType = "Death of Nicky";
+        sprite.hp = 4;
+        //sprite.mode = "truck";
+        sprite.mover = true;
+        sprite.maxJump = 2;
+    }
+
+	bool spawn_weapon() override {
+		auto * sprite = find_free_sprite();
+		if (!sprite) {
+			return false;
 		}
-		else {
-			int g = 2;
-		}
-        if (s.name == "Thomas" || s.name == "Nicky" || s.name == "Nick") {
-			int penguin = player_data.index;
-
-            if (player_data.upKey == true) {
-                if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
-                s.y = s.y - speed_factor;
-                //s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
-                s.speed = 0; //0.00001
-                if (s.y < env.camera.y()) { s.y = env.camera.y(); }
-            }
-            if (player_data.DownKEY == true) {
-                if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
-                s.y = s.y + speed_factor;
-                //s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
-                s.speed = 0; //0.00001
-                if (s.y > env.camera.y() + env.camera.height() - s.high) {
-                    s.y = env.camera.y() + env.camera.height() - s.high;
-                }
-            }
-            if (player_data.LeftKEY == true) {
-                if (s.dir != "l" && player_data.upKey == false
-                    && player_data.DownKEY == false) {
-                    s.dir = "l";
-                    s.frame = 14;
-                }
-                s.x = s.x - speed_factor;
-                //s.Frame = s.Frame + 1: if s.Frame > 12 Then s.Frame = 10
-                s.speed = 0;  //0.00001
-                if (s.x < env.camera.x()) { s.x = env.camera.x(); }
-            }
-            if (player_data.RightKEY == true) {
-                if (s.dir != "r" && player_data.upKey == false
-                    && player_data.DownKEY == false) {
-                    s.dir = "r";
-                    s.frame = 2;
-                }
-                s.x = s.x + speed_factor;
-                //s.Frame = s.Frame + 1: if s.Frame > 3 Then s.Frame = 1
-                s.speed = 0;  //0s.00001
-
-                if (s.x > env.camera.x() + env.camera.width() - s.wide) {
-                    s.x = env.camera.x() + env.camera.width() - s.wide;
-                }
-            }
-
-
-            if (s.z == 0) { s.multiJump = 0; }
-
-            if (s.name == "Nicky" && player_data.JumpKey == true
-                && s.multiJump < 3) {
-                player_data.JumpKey = false;
-                //If .z = 0 Then .multiJump = 0
-                s.multiJump = s.multiJump + 1;
-                s.jumpStart = s.z;
-                s.jumpTime = env.current_time;
-            }
-
-
-            if (player_data.JumpKey == true && s.z == 0) {
-
-                s.jumpStart = s.z;
-                s.jumpTime = env.current_time;
-            }
-
-            //Check for a lack of movement
-            if (player_data.weapon == "bomb") {
-                if (player_data.AttackKey == true
-                    && s.miscTime < env.current_time) {
-                    for (auto & child : children) {
-                        if (child.name == "reserved"
-                            || child.name == "") {
-
-                            child.speed = 0; //0.00001
-                            child.name = "bomb";
-                            child.x = s.x;
-                            child.y = s.y;
-                            child.z = s.z; //- (Sprite(0).length);
-                            child.wide = 30 * (player_data.GradeUp + 1);
-                            child.high = 30 * (player_data.GradeUp + 1);
-                            child.jumpStart = s.jumpStart;
-                            child.jumpStrength = s.jumpStrength;
-                            child.jumpTime = s.jumpTime;
-                            child.length = 15;
-                            child.texture = sprite.texture;
-                            child.visible = true;
-                            child.frame = 1;
-                            child.trueVisible = 1;
-                            child.kind = Kind::neutral;
-                            child.mode = "";
-                            child.miscTime = env.current_time + 3;
-							child.parent = player_data.index * 10;
-                            //2017: This file doesn't work:
-                            // sound.PlaySound("set bomb");
-                            //LoadSound k, "fireball.wav"
-                            //PlaySound "fireball"
-                            s.miscTime = env.current_time + 0.25;
-
-                            break;
-                        }
-                    }
-                }
-            } //Nicky Bomb
-              //Thomas Fire
-            if (player_data.weapon == "fireball"
-                && player_data.ThreeWay == false) {
-                if (player_data.AttackKey == true
-					&& s.miscTime < env.current_time)
-				{					
-					if (spawn_fireball()) {
-						s.miscTime = env.current_time + 0.25;
-					}
-				}
-            } //if thomas if
-
-			// For now remove the neato three way fireball which come to think
-			// of it I never got working in the C++ port did I.
-      //      if (player_data.weapon == "fireball"
-      //          && player_data.ThreeWay == true) {
-      //          if (player_data.AttackKey == true
-      //              && s.miscTime < env.current_time) {
-      //              for (int k = 0; k < 6; ++ k) {
-      //                  auto & child = children[k];
-      //                  if (child.name == "reserved"
-      //                      || child.name == "")
-						//{
-      //                      auto & next_child = children[k + 1];
-						//	auto & next_child_2 = children[k + 2];
-						//	if (s.dir == "l") {
-						//		child.seeky = s.y;
-						//		child.seekx
-						//			= s.x - (env.camera.width() * 2);
-						//		child.dir = "l";
-						//		next_child.seekx
-						//			= s.x - (env.camera.width() * 2);
-						//		next_child.seeky
-						//			= s.y + (env.camera.height() * 2);
-						//		next_child.dir = "l";
-						//		next_child_2.seekx
-						//			= s.x - (env.camera.width() * 2);
-						//		next_child_2.seeky
-						//			= s.y - (env.camera.height() * 2);
-						//		next_child_2.dir = "l";
-						//	}
-						//	if (s.dir == "r") {
-						//		child.seeky = s.y;
-						//		child.seekx
-						//			= s.x + (env.camera.width() * 2);
-						//		child.dir = "r";
-						//		next_child.seekx
-						//			= s.x + (env.camera.width() * 2);
-						//		next_child.seeky
-						//			= s.y + (env.camera.height() * 2);
-						//		next_child.dir = "r";
-						//		next_child_2.seekx
-						//			= s.x + (env.camera.width() * 2);
-						//		next_child_2.seeky
-						//			= s.y - (env.camera.height() * 2);
-						//		next_child_2.dir = "r";
-						//	}
-						//	if (player_data.upKey == true || s.dir == "u") {
-						//		child.seekx = s.x;
-						//		child.seeky = s.y - (env.camera.height() * 2);
-						//		child.dir = "u";
-						//		next_child.seekx
-						//			= s.x - (env.camera.width() * 2);
-						//		next_child.seeky
-						//			= s.y - (env.camera.height() * 2);
-						//		next_child.dir = "u";
-						//		next_child_2.seekx
-						//			= s.x + (env.camera.width() * 2);
-						//		next_child_2.seeky
-						//			= s.y - (env.camera.height() * 2);
-						//		next_child_2.dir = "u";
-						//		if (player_data.LeftKEY == true) {
-						//			next_child_2.seeky = s.y;
-						//			next_child_2.seekx
-						//				= s.x - (env.camera.width() * 2);
-						//			next_child_2.dir = "l";
-						//		}
-						//		if (player_data.RightKEY == true) {
-						//			next_child.seeky = s.y;
-						//			next_child.seekx
-						//				= s.x + (env.camera.width() * 2);
-						//			next_child.dir = "r";
-						//		}
-						//	}
-						//	if (player_data.DownKEY == true
-						//		|| s.dir == "d") {
-						//		child.seekx = s.x;
-						//		child.seeky = s.y + (2 * env.camera.height());
-						//		child.dir = "d";
-						//		next_child.seekx = s.x - (env.camera.width() * 2);
-						//		next_child.seeky = s.y + (env.camera.height() * 2);
-						//		next_child.dir = "d";
-						//		next_child_2.seekx = s.x + (env.camera.width() * 2);
-						//		next_child_2.seeky = s.y + (env.camera.height() * 2);
-						//		next_child_2.dir = "d";
-						//		if (player_data.LeftKEY == true) {
-						//			next_child_2.seeky = s.y;
-						//			next_child_2.seekx
-						//				= s.x - (env.camera.width() * 2);
-						//			next_child_2.dir = "l";
-						//		}
-						//		if (player_data.RightKEY == true) {
-						//			next_child.seeky = s.y;
-						//			next_child.seekx
-						//				= s.x + (env.camera.width() * 2);
-						//			next_child.dir = "r";
-						//		}
-						//	}
-						//	if (s.mode == "truck") {
-						//		child.seeky
-						//			= env.camera.y() - env.camera.height();
-						//		child.seekx = s.x;
-						//		child.dir = "u";
-						//	}
-      //                      auto setup_fireball = [&](CharacterSprite & child_sprite) {
-      //                          child_sprite.speed = 0;  //0.00001
-      //                          child_sprite.name = "fireball";
-      //                          child_sprite.mph = 3;
-      //                          child_sprite.x = s.x;
-      //                          child_sprite.y = s.y;
-      //                          child_sprite.z = s.z; //- (world.Sprite[0).lengh)
-      //                          child_sprite.wide
-      //                              = 30 * (player_data.GradeUp + 1);
-      //                          child_sprite.high
-      //                              = 30 * (player_data.GradeUp + 1);
-      //                          child_sprite.length = 15;
-      //                          child_sprite.texture
-      //                              = s.texture;
-      //                          child_sprite.visible = true;
-      //                          child_sprite.kind = Kind::fireball;
-      //                          child_sprite.frame = 1;
-      //                          child_sprite.soundFile = "fireball.wav";
-      //                          child_sprite.parent = player_data.index / 10;
-						//	};
-						//	//Sprite(1).visible = True
-      //                      setup_fireball(child);
-      //                      setup_fireball(next_child);
-      //                      setup_fireball(next_child_2);
-						//	//LoadSound k, "fireball.wav"
-						//	sound.PlaySound("fireball");
-						//	s.miscTime = env.current_time + 0.25;
-      //                      break;
-      //                  }
-      //              }
-      //          }
-            //} //if thomas if
-
-
-            if (player_data.upKey == false
-                && player_data.DownKEY == false
-                && player_data.LeftKEY == false
-                && player_data.RightKEY == false) {
-                if (s.dir == "r") { s.frame = 2; }
-                if (s.dir == "l") { s.frame = 14; }
-                if (s.dir == "u") { s.frame = 6; }
-                if (s.dir == "d") { s.frame = 10; }
-                s.speed = 0;
-            }
-
-        } //-End of David Sprite If
-
-        if (s.name == "Death of David") {
-            //if (.seekx = 0) then .seekx = .x: .seeky = .y
-            //if (.color = QBColor(4)) then .color = QBColor(1) Else .color = QBColor(4)
-            s.flickerTime = env.current_time + 1;
-            if (s.wide < s.seekx) {
-                s.wide = s.wide + s.mph * 3; //instead of * 3, it used to be * 0.5
-                s.high = s.high + s.mph * 3;
-            }
-            if (s.wide >= s.seekx) {
-                s.high = s.high - s.mph * 3;
-                if (s.high < (-1 * s.high)) {
-                    //what to do if dead
-                    s.name = "deceased";
-                    s.visible = false;
-                    s.name = "dead";
-                    s.srcx = 2;
-                    s.srcy = 363;
-                    s.srcx2 = 96;
-                    s.srcy2 = 379;
-                    s.texture = 0;
-                    s.visible = true;
-                    player_data.lives = player_data.lives - 1;
-                    if (player_data.lives < 1) {
-                        if (!game_state.game_over()) {
-                            s.name = "continue";
-                            s.texture = 0;
-                            s.srcx = 3;
-                            s.srcy = 345;
-                            s.srcx2 = 96;
-                            s.srcy2 = 361;
-                            s.wide = 93; //16;
-                            s.high = 16; //93;
-                            s.frame = 0;
-                            auto & child = children[0];
-                            child.name = "continue number";
-                            child.color = normColor;
-                            child.frame = 11;
-                            child.texture = 0;
-                            child.miscTime = env.current_time + 2;
-                            view.load_animation_file(child.Aframe, "continue.ani");
-
-                            s.kind = Kind::neutral;
-                            child.kind = Kind::neutral;
-                            child.visible = true;
-                            child.wide = 20;
-                            child.high = 20;
-                            s.y = 10;
-                            child.y = s.y;
-                            s.y = 10;
-                            child.x = s.x + 100;
-                        } //end continue if
-                    } //end lives if
-                    if (player_data.lives > 0) {
-						create_player(
-							env, player_data, s,
-							children);
-                        s.name = player_data.playerName;
-                        s.kind = Kind::player;
-
-                        s.name = player_data.playerName;
-                        initialize();
-                        s.flickerTime = env.current_time + 5;
-                        //Sprite[j].x = .seekx: .seekx = 0
-                        //Sprite[j].y = .seekx: .seekx = 0
-
-                    }
-
-                }
-            }
-        }
-
-        if (s.name == "continue") {
-            if (player_data.any_key()) {
-                game_state.use_continue();
-                player_data.lives = 2;
-				create_player(env, player_data, s, children);
-
-                s.name = player_data.playerName;
-                s.kind = Kind::player;
-                s.flickerTime = env.current_time + 5;
-                s.name = player_data.playerName;
-                initialize();
-            }
-            s.visible = true;
-            if (player_data.index == 0) {
-                s.x = env.camera.x() + 10;
-            }
-            if (player_data.index == 1) {
-                s.x = env.camera.x() + 250;
-                s.color = view::qb_color(10);
-            }
-            if (player_data.index == 2) {
-                s.x = env.camera.x() + 450;
-                s.color = view::qb_color(14);
-            }
-            s.y = env.camera.y() + 10;
-        }
-
-        if (s.name == "continue number") {
-            s.trueVisible = 1;
-            if (player_data.index == 0) {
-                s.x = env.camera.x() + 10 + 93;
-            }
-            if (player_data.index == 1) {
-                s.x = env.camera.x() + 250 + 93;
-            }
-            if (player_data.index == 2) {
-                s.x = env.camera.x() + 450 + 93;
-            }
-            s.y = env.camera.y() + 10;
-
-            if (s.miscTime < env.current_time) {
-                s.miscTime = env.current_time + 2;
-                s.frame = s.frame - 1;
-                if (s.frame == 0) { s.frame = 13; }
-                s.visible = true;
-                if (game_state.game_over()) {
-                    s.frame = 12; //this is useful, say, if two people have the choice of the last continue and one gets it before someone else
-                }
-                if (s.frame == 10) { sound.PlayWave("ConTen.wav"); }
-                if (s.frame == 9) { sound.PlayWave("ConNine.wav"); }
-                if (s.frame == 8) { sound.PlayWave("ConEight.wav"); }
-                if (s.frame == 7) { sound.PlayWave("ConSeven.wav"); }
-                if (s.frame == 6) { sound.PlayWave("ConSix.wav"); }
-                if (s.frame == 5) { sound.PlayWave("ConFive.wav"); }
-                if (s.frame == 4) { sound.PlayWave("ConFour.wav"); }
-                if (s.frame == 3) { sound.PlayWave("ConThree.wav"); }
-                if (s.frame == 2) { sound.PlayWave("ConTwo.wav"); }
-                if (s.frame == 1) { sound.PlayWave("ConOne.wav"); }
-                if (s.frame == 13) { sound.PlayWave("ConZero.wav"); }
-                if (s.frame == 12) {
-					// TODO: RESTORE THIS! I thnik it killed the parent?
-                    //world.Sprite[j - 1].name = "dead";
-                    //world.Sprite[j - 1].visible = false;
-                    kill(s); //": .visible = False
-                }
-            }
-        }
-
-        return true;
+		sub_processes.add_process(new BombProc(env, player_data, s, *sprite));
+		return true;
 	}
 };
 
+
+}	// end anonymous namespace
+
 CharacterProc * create_player_proc(
-    CharacterProcEnv env, GameState & game_state,
-    PlayerData & player_data, EntityManager & e_manager,
+	CharacterProcEnv env, GameState & game_state,
+	PlayerData & player_data, EntityManager & e_manager,
 	const std::string & name)
 {
-	return new PlayerProc(env, game_state, player_data, e_manager, name);
+	if (name == "Thomas" || name == "Nick") {
+		return new ThomasProc(env, game_state, player_data, e_manager, name);
+	} else if (name == "Nicky") {
+		return new NickyProc(env, game_state, player_data, e_manager, name);
+	} else {
+		return nullptr;
+	}
 }
 
 }	}	}

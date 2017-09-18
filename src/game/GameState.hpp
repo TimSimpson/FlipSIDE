@@ -11,7 +11,7 @@ public:
 
     inline int continues() const { return continue_count; }
 
-    inline bool game_over() const { return continue_count <= 0; }
+    inline bool game_over() const { return continue_count < 0; }
 
     inline void use_continue() { --continue_count; }
 private:
