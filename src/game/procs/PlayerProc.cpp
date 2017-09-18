@@ -362,7 +362,15 @@ public:
 		sprite.name = "dead";
     }
 
-	void death_animation() override = 0;
+	virtual void _death_animation() = 0;
+
+    void death_animation() override {
+        state = State::dying;
+        // Have to set the name or the camera scroll code breaks... good lord.
+        sprite.name = "dying-animation";
+        _death_animation();
+    }
+
 
 	virtual void _initialize() = 0;
 
@@ -389,9 +397,7 @@ public:
 
 		sprite.trueVisible = 0;
 		sprite.visible = true;
-		// TODO: REMOVE THIS!
-		spr.hp = 1;
-		player_data.lives = 1;
+        sprite.name = player_data.playerName;		
 	}
 
 	// Find a free child sprite.
@@ -539,7 +545,7 @@ public:
                 continue_text.x = env.camera.x() + 450;
                 continue_text.color = view::qb_color(14);
             }
-            continue_text.y = env.camera.y() + 10;			
+            continue_text.y = env.camera.y() + 10;
 
             auto & number = children[2];
 			number.trueVisible = 0;
@@ -577,7 +583,7 @@ public:
 			if (s.high < (-1 * s.high)) {
 				//what to do if dead
 				s.name = "deceased";
-				s.visible = false;				
+				s.visible = false;
 				s.srcx = 2;
 				s.srcy = 363;
 				s.srcx2 = 96;
@@ -693,6 +699,9 @@ public:
 		const std::string & name)
 		: PlayerProc(_env, _game_state, _player_data, e_manager, name)
 	{
+        env.context.sound.LoadSound((player_data.index * 5), "fireball.wav", "fireball");
+        env.context.sound.LoadSound((player_data.index * 5) + 1, "Death.wav", "DavidDeath");
+        env.context.sound.LoadSound((player_data.index * 5) + 2, "hurt.wav", "DavidHurt");
         initialize();
     }
 
@@ -709,10 +718,10 @@ public:
 		}
 		if (s.dir == "r") {
 			if (s.frame > 4) { s.frame = 1; }
-		}		
+		}
 	}
 
-    void death_animation() override {
+    void _death_animation() override {
 		state = State::dying;
 
         env.context.sound.PlaySound("DavidDeath");
@@ -771,10 +780,14 @@ public:
         const std::string & name)
         : ThomasProc(_env, _game_state, _player_data, e_manager, name)
     {
+        env.context.sound.LoadSound((player_data.index * 5), "nickdeath.wav", "nickdeath");
+        env.context.sound.LoadSound((player_data.index * 5) + 1, "nickhurt.wav", "nickhurt");
+        env.context.sound.LoadSound((player_data.index * 5) + 2, "iceshot.wav", "iceshot");
+
         initialize();
     }
 
-    void death_animation() override {
+    void _death_animation() override {
 		state = State::dying;
 
         sprite.srcx = 1;
@@ -827,6 +840,12 @@ public:
 		const std::string & name)
 		: PlayerProc(_env, _game_state, _player_data, e_manager, name)
 	{
+        env.context.sound.LoadSound((player_data.index * 5), "NickyDeath.wav", "NickyDeath");
+        env.context.sound.LoadSound((player_data.index * 5) + 1, "NickyHurt.wav", "NickyHurt");
+        //2017: This file doesn't work, so don't play it
+        //env.context.sound.LoadSound((player_data.index * 5) + 2, "SetBomb.wav ", "set bomb");
+        env.context.sound.LoadSound((player_data.index * 5) + 3, "Bomb explode.wav", "bomb explode");
+
         initialize();
     }
 
@@ -846,7 +865,7 @@ public:
 		}
 	}
 
-    void death_animation() override {
+    void _death_animation() override {
 		state = State::dying;
 
 		sprite.srcx = 1;

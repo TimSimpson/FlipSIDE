@@ -1170,28 +1170,28 @@ private:
 
         //Rem- This loads sounds into holders 0 to 14, meaning each player gets 5 sounds
         //Rem- Spring.wav is then put into slot 15
-        for (j = 0; j <= 2; ++ j) {
+        //for (j = 0; j <= 2; ++ j) {
 
-            if (world.player_data[j].playerName == "Thomas") {
-                sound.LoadSound((j * 5), "fireball.wav", "fireball");
-                sound.LoadSound((j * 5) + 1, "Death.wav", "DavidDeath");
-                sound.LoadSound((j * 5) + 2, "hurt.wav", "DavidHurt");
-            }
+        //    if (world.player_data[j].playerName == "Thomas") {
+        //        sound.LoadSound((j * 5), "fireball.wav", "fireball");
+        //        sound.LoadSound((j * 5) + 1, "Death.wav", "DavidDeath");
+        //        sound.LoadSound((j * 5) + 2, "hurt.wav", "DavidHurt");
+        //    }
 
-            if (world.player_data[j].playerName == "Nicky") {
-                sound.LoadSound((j * 5), "NickyDeath.wav", "NickyDeath");
-                sound.LoadSound((j * 5) + 1, "NickyHurt.wav", "NickyHurt");
-                //2017: This file doesn't work, so don't play it
-                //sound.LoadSound((j * 5) + 2, "SetBomb.wav ", "set bomb");
-                sound.LoadSound((j * 5) + 3, "Bomb explode.wav", "bomb explode");
-            }
+        //    if (world.player_data[j].playerName == "Nicky") {
+        //        sound.LoadSound((j * 5), "NickyDeath.wav", "NickyDeath");
+        //        sound.LoadSound((j * 5) + 1, "NickyHurt.wav", "NickyHurt");
+        //        //2017: This file doesn't work, so don't play it
+        //        //sound.LoadSound((j * 5) + 2, "SetBomb.wav ", "set bomb");
+        //        sound.LoadSound((j * 5) + 3, "Bomb explode.wav", "bomb explode");
+        //    }
 
-            if (world.player_data[j].playerName == "Nick") {
-                sound.LoadSound((j * 5), "nickdeath.wav", "nickdeath");
-                sound.LoadSound((j * 5) + 1, "nickhurt.wav", "nickhurt");
-                sound.LoadSound((j * 5) + 2, "iceshot.wav", "iceshot");
-            }
-        }
+        //    if (world.player_data[j].playerName == "Nick") {
+        //        sound.LoadSound((j * 5), "nickdeath.wav", "nickdeath");
+        //        sound.LoadSound((j * 5) + 1, "nickhurt.wav", "nickhurt");
+        //        sound.LoadSound((j * 5) + 2, "iceshot.wav", "iceshot");
+        //    }
+        //}
         sound.LoadSound(15, "Spring.wav", "spring");
     }
 
