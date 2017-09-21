@@ -191,31 +191,12 @@ public:
     gsl::owner<GameProcess *> start_game() {
         // Initialize world stuff.
         World world;
-
-        // Set numberPlayers, which I need to convert to an enum or change.
-        struct GoofyMapping {
-            bool active[3];
-            int numberPlayers;
-        };
-
-        const GoofyMapping mapping[] = {
-            {{  true, false, false }, 1},
-            {{  true,  true, false }, 2},
-            {{  true, false,  true }, 6},
-            {{ false,  true, false }, 4},
-            {{ false,  true,  true }, 7},
-            {{ false, false,  true }, 5},
-            {{ true,   true,  true }, 3},
-        };
-
-        for (const auto & entry : mapping) {
-            if (entry.active[0] == boxes[0].finished
-                && entry.active[1] == boxes[1].finished
-                && entry.active[2] == boxes[2].finished)
-            {
-                world.numberPlayers = entry.numberPlayers;
-            }
-        }
+        
+		std::array<bool, 3> active;
+		for (int i = 0; i < 3; ++i) {
+			active[i] = boxes[i].finished;
+		}
+		world.numberPlayers = ActivePlayers::find_from_active_players(active);
 
         std::array<boost::optional<std::string>, 3> players;
 

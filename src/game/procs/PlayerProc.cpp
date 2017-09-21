@@ -189,11 +189,7 @@ public:
 		if (sprite.x > sprite.seekx) { sprite.x = sprite.x - (sprite.mph * speed_factor); }
 		if (sprite.y < sprite.seeky) { sprite.y = sprite.y + (sprite.mph * speed_factor); }
 		if (sprite.y > sprite.seeky) { sprite.y = sprite.y - (sprite.mph * speed_factor); }
-		//.wide = .wide + 1
-		//.high = .high + 1
-		//if (.x = .seekx And .y = .seeky Or (.x + .wide) < 1 Or .x > 640 Or (.y + .high) < 1 Or .y > 480 Then .visible = False: .name = "reserved"
-		//if (.x >= .seekx And .x <= (.seekx + .mph) And .y >= .seeky And .y <= (.seeky + .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
-		//if (.x <= .seekx And .x >= (.seekx - .mph) And .y <= .seeky And .y >= (.seeky - .mph) Then .visible = False: .name = "reserved": .trueVisible = 2
+		
 		if (sprite.x > (camera.x() + camera.width())
 			|| sprite.x < (camera.x() - camera.width())
 			|| sprite.y >(camera.y() + camera.height())

@@ -11,6 +11,42 @@
 
 namespace nnd3d { namespace game {
 
+
+// This is based on some complicated magical number in the old code called
+// "numberPlayers" which wasn't about the active player count but was a sort
+// or enum that represented all combinations of active and inactive players.
+class ActivePlayers {
+public:
+	bool player[3];     // Who is or isn't activated.
+	int numberPlayers;  // old magic number
+
+    // Represents more magical constants
+    struct FocusNonsense {
+        int gotFocus;       // Yet another old magical number I don't understand.
+        int j;
+        int k;
+    } focus;
+
+    ActivePlayers(const ActivePlayers & other) = default;
+
+    ActivePlayers(ActivePlayers && other) = default;
+
+    ActivePlayers & operator=(const ActivePlayers & other) = default;
+
+    static const ActivePlayers & ap0();
+	static const ActivePlayers & ap1();
+	static const ActivePlayers & ap2();
+	static const ActivePlayers & ap3();
+	static const ActivePlayers & ap4();
+	static const ActivePlayers & ap5();
+	static const ActivePlayers & ap6();
+	static const ActivePlayers & ap7();
+
+    static const ActivePlayers & find_from_active_players(
+        const std::array<bool, 3> & player);
+};
+
+
 // --------------------------------------------------------------------
 // World
 // --------------------------------------------------------------------
@@ -19,6 +55,8 @@ namespace nnd3d { namespace game {
 // --------------------------------------------------------------------
 struct World {
     World();
+
+    World(const World & other) = default;
 
     static const int FULLSCREENWIDTH;
 	static const int FULLSCREENHEIGHT;
@@ -80,7 +118,7 @@ struct World {
     std::string FilePath;
 
     //GAME PLAY MULTIPLE PLAYERS DATA
-    int numberPlayers;
+    ActivePlayers numberPlayers;
     GameState game_state;
 
     std::string currentScreen;

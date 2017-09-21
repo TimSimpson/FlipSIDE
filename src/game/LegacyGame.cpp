@@ -109,8 +109,6 @@ public:
 		set_time_stuff(world);
 
         world.lasttime = world.clock + 3.33333333333333E-02;
-        int j = 0;
-        int k = 0;
         int penguin = 0;
         int trueorg; //penguin and true org are buddies and also junk variables
 
@@ -118,14 +116,13 @@ public:
                      //----------------------------------------------------------------------
         this->findPlayers();
         //If Sprite(0).name <> playerName(0) And Sprite(10).name <> playerName(1) And Sprite(20).name <> playerName(2) Then gotFocus = -6
-        if (world.numberPlayers == 0) { world.gotFocus = -1; }
-        if (world.numberPlayers == 1) { world.gotFocus = 0; }
-        if (world.numberPlayers == 2) { world.gotFocus = -2; j = 0; k = 10; }
-        if (world.numberPlayers == 3) { world.gotFocus = -3; }
-        if (world.numberPlayers == 4) { world.gotFocus = 10; }
-        if (world.numberPlayers == 5) { world.gotFocus = 20; }
-        if (world.numberPlayers == 6) { world.gotFocus = -2; j = 0; k = 20; }
-        if (world.numberPlayers == 7) { world.gotFocus = -2; j = 10; k = 20; }
+
+		//2017: Have no idea what the hell any of this means but it's how
+		// these numbers used to map.
+		world.gotFocus = world.numberPlayers.focus.gotFocus;
+		int j = world.numberPlayers.focus.j;
+		int k = world.numberPlayers.focus.k;
+       
         //1 Only player 1
         //2 Player 1 and 2
         //3 All three Players
@@ -588,16 +585,7 @@ private:
        min = 9999;
        theclosest = 0;
        for (int penguin = 0; penguin <= 2; ++ penguin) {
-           if (penguin == 0 &&
-               (world.numberPlayers == 4 || world.numberPlayers == 5 || world.numberPlayers == 7)) {
-               continue;
-           }
-           if (penguin == 1 &&
-               (world.numberPlayers == 1 || world.numberPlayers == 5 || world.numberPlayers == 6)) {
-               continue;
-           }
-           if (penguin == 2 &&
-               (world.numberPlayers == 1 || world.numberPlayers == 2 || world.numberPlayers == 4)) {
+		   if (!world.numberPlayers.player[penguin]) {
                continue;
            }
 
@@ -734,38 +722,18 @@ private:
     }
 
     void findPlayers() {
-        world.numberPlayers = 0;
+        // TODO: is the madness of these next 3 lines really necessary?
         if (world.player_data[0].playerName == "") { world.player_data[0].playerName = "zgjkl"; }
         if (world.player_data[1].playerName == "") { world.player_data[1].playerName = "zgjkl"; }
         if (world.player_data[2].playerName == "") { world.player_data[2].playerName = "zgjkl"; }
 
-
-        if (world.Sprite[0].name == world.player_data[0].playerName) {
-            world.numberPlayers = 1;
-        }
-        if (world.Sprite[10].name == world.player_data[1].playerName) {
-            world.numberPlayers = 4;
-        }
-        if (world.Sprite[20].name == world.player_data[2].playerName) {
-            world.numberPlayers = 5;
-        }
-        if (world.Sprite[0].name == world.player_data[0].playerName
-            && world.Sprite[10].name == world.player_data[1].playerName) {
-            world.numberPlayers = 2;
-        }
-        if (world.Sprite[0].name == world.player_data[0].playerName
-            && world.Sprite[20].name == world.player_data[2].playerName) {
-            world.numberPlayers = 6;
-        }
-        if (world.Sprite[10].name == world.player_data[1].playerName
-            && world.Sprite[20].name == world.player_data[2].playerName) {
-            world.numberPlayers = 7;
-        }
-        if (world.Sprite[0].name == world.player_data[0].playerName
-            && world.Sprite[10].name == world.player_data[1].playerName
-            && world.Sprite[20].name == world.player_data[2].playerName) {
-            world.numberPlayers = 3;
-        }
+		std::array<bool, 3> active_players = { 
+			world.Sprite[0].name == world.player_data[0].playerName,
+			world.Sprite[10].name == world.player_data[1].playerName,
+			world.Sprite[20].name == world.player_data[2].playerName,
+		};		
+		world.numberPlayers 
+			= ActivePlayers::find_from_active_players(active_players);
     }
 
     int findQ(const std::string & who) {
@@ -1079,11 +1047,12 @@ private:
         world.Sprite[10].name = "dead";
         world.Sprite[20].name = "dead";
 
-        if (world.numberPlayers == 1) { world.gotFocus = 0; }
-        if (world.numberPlayers == 2) { world.gotFocus = -2; }
-        if (world.numberPlayers == 3) { world.gotFocus = -3; }
-        if (world.numberPlayers == 4) { world.gotFocus = 10; }
-        if (world.numberPlayers == 5) { world.gotFocus = 5; }
+		//2017: The old code set `gotFocus` to 5 if numberPlayers == 5. Every
+		// other value matched the same magical gotFocus value to the same
+		// numberPlayers value I'd seen elsewhere. I'm going to take a risk
+		// and assume that was a bug in the old code.
+		// if (world.numberPlayers == 5) { world.gotFocus = 5; }
+		world.gotFocus = world.numberPlayers.focus.gotFocus;
 
         //Dim j As Integer
         int k = 0;
@@ -1115,51 +1084,23 @@ private:
         //          THIS PART LOADS UP WEAPONS
         //Rem******************************************************8
 
-		//TODO: The next three loops are doing the same thing for different player
-		//      indices. Please merge them.
-
-        if (world.numberPlayers == 1 || world.numberPlayers == 2
-            || world.numberPlayers == 3 || world.numberPlayers == 6) {
-            world.Sprite[0].name = world.player_data[0].playerName;
-            for (k = 0 + 1; k <= 9; ++ k) {
-                world.Sprite[k].x = 60;
-                world.Sprite[k].y = 70;
-                if (world.player_data[0].playerName == "Thomas"
-                    || world.player_data[0].playerName == "Nick") {
-                    world.Sprite[k].name = "fireball";
-                }
-                if (world.player_data[0].playerName == "Nicky") {
-                    world.Sprite[k].name = "bomb";
-                }
-            }
-        }
-
-        if (world.numberPlayers == 2 || world.numberPlayers == 3
-            || world.numberPlayers == 4 || world.numberPlayers == 7) {
-            world.Sprite[10].name = world.player_data[1].playerName;
-            for (k = 11 + 1; k <= 19; ++ k) {
-                world.Sprite[k].x = 60;
-                world.Sprite[k].y = 70;
-                if (world.player_data[1].playerName == "Thomas"
-                    || world.player_data[1].playerName == "Nick") {
-                    world.Sprite[k].name = "fireball";
-                }
-                if (world.player_data[1].playerName == "Nicky") {
-                    world.Sprite[k].name = "bomb";
-                }
-
-            }
-        }
-
-        if (world.numberPlayers == 3 || world.numberPlayers == 5
-            || world.numberPlayers == 6 || world.numberPlayers == 7) {
-            world.Sprite[20].name = world.player_data[2].playerName;
-            for (k = 21 + 1; k <= 29; ++ k) {
-                world.Sprite[k].x = 60;
-                world.Sprite[k].y = 70;
-                world.Sprite[k].name = "fireball";
-            }
-        }
+		for (int index = 0; index < 3; ++index) {
+			if (world.numberPlayers.player[index]) {
+				world.Sprite[index * 10].name = world.player_data[0].playerName;
+				for (int k = index * 10 + 1; k <= (index * 10) + 9; ++k) {
+					world.Sprite[k].x = 60;
+					world.Sprite[k].y = 70;
+					world.Sprite[k].name = "fireball";
+					if (world.player_data[index].playerName == "Thomas"
+						|| world.player_data[index].playerName == "Nick") {
+						world.Sprite[k].name = "fireball";
+					}
+					if (world.player_data[index].playerName == "Nicky") {
+						world.Sprite[k].name = "bomb";
+					}
+				}
+			}
+		}
 
 
         //Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
@@ -1591,7 +1532,7 @@ gsl::owner<GameProcess *> create_legacy_screen(
 {
 	//TODO: Use players, somehow
 	return create_now_loading_screen(
-		context,
+		context, 
 		[world(std::move(world))](GameContext context_2) mutable {
 		return new LegacyGame(context_2, std::move(world));
 	});

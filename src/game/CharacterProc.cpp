@@ -54,16 +54,7 @@ int checkProx(World & world, const int who) {
 	min = 9999;
 	theclosest = 0;
 	for (int penguin = 0; penguin <= 2; ++penguin) {
-		if (penguin == 0 &&
-			(world.numberPlayers == 4 || world.numberPlayers == 5 || world.numberPlayers == 7)) {
-			continue;
-		}
-		if (penguin == 1 &&
-			(world.numberPlayers == 1 || world.numberPlayers == 5 || world.numberPlayers == 6)) {
-			continue;
-		}
-		if (penguin == 2 &&
-			(world.numberPlayers == 1 || world.numberPlayers == 2 || world.numberPlayers == 4)) {
+		if (!world.numberPlayers.player[penguin]) {
 			continue;
 		}
 
