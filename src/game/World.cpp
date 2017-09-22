@@ -80,26 +80,14 @@ World::World()
     debugOn(false),
     sFactor(0),
     camera{},
-    gotFocus(0),
     cinema({}),
     cinemaCounter(0),
     cinemaMax(0),
     exitS(),
     Sprite(),
-    bgWidth(0),
-    bgHeight(0),
     STOPGAME(false),
-    RealWidth(0),
-    RealHeight(0),
-    SimulatedWidth(0),
-    SimulatedHeight(0),
 	player_data(),
-    normColor(0),
-    maskColor(0),
     spritesInUse(0),
-    ponkoMonkey(0),
-    dojoMonkey(0),
-    FilePath(),
     numberPlayers(ActivePlayers::ap0()),
     game_state(),
     currentScreen()
@@ -112,8 +100,6 @@ World::World()
 
 	// Taken from "StartUp"
 	this->debugOn = false;
-	//this->FilePath = App.Path + "\"";
-	//this->levelPath = App.Path + "\"";
 
 	this->player_data[0].KeyUp = "W";
 	this->player_data[0].KeyDown = "S";
@@ -151,12 +137,6 @@ World::World()
 	{
 		this->Sprite[j].visible = false;
 	}
-
-	//Time to get this show going, bodanky
-	this->RealWidth = 640; //Form1.ScaleWidth;
-	this->RealHeight = 480; //Form1.ScaleHeight;
-	this->SimulatedWidth = World::FULLSCREENWIDTH;
-	this->SimulatedHeight = World::FULLSCREENHEIGHT;
 }
 
 long anyKey(World & world, int zed) {

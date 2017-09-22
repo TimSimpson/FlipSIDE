@@ -111,7 +111,7 @@ public:
         world.lasttime = world.clock + 3.33333333333333E-02;
 		int focus_x = 0;
 		int focus_y = 0;
-        
+
 
                      //                   CAMERA TIME
                      //----------------------------------------------------------------------
@@ -143,7 +143,7 @@ public:
 			LP3_ASSERT(itr_start < max_players);
 
 			double max_x, min_x;
-			max_x = min_x = world.Sprite[itr_start * 10].x 
+			max_x = min_x = world.Sprite[itr_start * 10].x
 				+ (world.Sprite[itr_start * 10].wide / 2);
 			double max_y, min_y;
 			max_y = min_y = world.Sprite[itr_start * 10].y
@@ -164,7 +164,7 @@ public:
 
 			world.camera.CameraX = focus_x - (world.camera.CameraWidth / 2);
 			world.camera.CameraY = focus_y - (world.camera.CameraHeight / 2);
-			
+
 			if (world.camera.CameraX < 1) { world.camera.CameraX = 1; }
 			if (world.camera.CameraX + world.camera.CameraWidth >= world.camera.cameraStopX) {
 				world.camera.CameraX = world.camera.cameraStopX - 1 - world.camera.CameraWidth;
@@ -172,9 +172,9 @@ public:
 			if (world.camera.CameraY < 1) { world.camera.CameraY = 1; }
 			if (world.camera.CameraY + world.camera.CameraHeight >= world.camera.cameraStopY) {
 				world.camera.CameraY = world.camera.cameraStopY - 1 - world.camera.CameraHeight;
-			}			
+			}
 		}
-        
+
 
         int penguin = 0;
         int trueorg = 0; //focus_x and true org are buddies and also junk variables
@@ -1010,7 +1010,7 @@ private:
 		// numberPlayers value I'd seen elsewhere. I'm going to take a risk
 		// and assume that was a bug in the old code.
 		// if (world.numberPlayers == 5) { world.gotFocus = 5; }
-		world.gotFocus = world.numberPlayers.focus.gotFocus;
+		// world.gotFocus = world.numberPlayers.focus.gotFocus;
 
         //Dim j As Integer
         int k = 0;

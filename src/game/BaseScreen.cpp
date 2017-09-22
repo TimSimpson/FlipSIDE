@@ -105,7 +105,6 @@ void destroyEverything(World & world, view::View & view, Sound & sound, int how)
 	}
 
 	view.LoadTexture(-1, "PlainBlack.png", 25, 25);
-	world.gotFocus = -1;
 	world.camera.CameraX = 0;
 	world.camera.CameraY = 0;
 	goatorg = 0;

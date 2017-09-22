@@ -87,7 +87,6 @@ struct World {
     // Note from 2017: decreased from 125
 
     CameraGuts camera;
-    int gotFocus;
 
 	std::array<CinemaType, 40> cinema; // Dialogue!
 	int cinemaCounter;
@@ -96,31 +95,12 @@ struct World {
 
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
 
-    int bgWidth;
-    int bgHeight;
-
     //Used to get the heck out of a never ending do loop
     bool STOPGAME;
 
-    //Used to figure out are width and heighth
-    int RealWidth;
-    int RealHeight;
-    //Simulated resolution (of course, the real resolution)
-    int SimulatedWidth;
-    int SimulatedHeight;
-
     std::array<PlayerData, max_players> player_data;
 
-
-    int normColor;
-    int maskColor;
     int spritesInUse;
-
-    int ponkoMonkey;
-    int dojoMonkey;
-
-
-    std::string FilePath;
 
     //GAME PLAY MULTIPLE PLAYERS DATA
     ActivePlayers numberPlayers;
