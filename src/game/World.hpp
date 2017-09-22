@@ -11,13 +11,14 @@
 
 namespace nnd3d { namespace game {
 
+constexpr int max_players = 3;
 
 // This is based on some complicated magical number in the old code called
 // "numberPlayers" which wasn't about the active player count but was a sort
 // or enum that represented all combinations of active and inactive players.
 class ActivePlayers {
 public:
-	bool player[3];     // Who is or isn't activated.
+	std::array<bool, max_players> player;     // Who is or isn't activated.
 	int numberPlayers;  // old magic number
 
     // Represents more magical constants
@@ -32,6 +33,10 @@ public:
     ActivePlayers(ActivePlayers && other) = default;
 
     ActivePlayers & operator=(const ActivePlayers & other) = default;
+
+    bool any_player_active() const {
+		return std::any_of(begin(player), end(player), [](bool b) { return b; });
+    }
 
     static const ActivePlayers & ap0();
 	static const ActivePlayers & ap1();
@@ -104,7 +109,7 @@ struct World {
     int SimulatedWidth;
     int SimulatedHeight;
 
-    std::array<PlayerData, 3> player_data;
+    std::array<PlayerData, max_players> player_data;
 
 
     int normColor;

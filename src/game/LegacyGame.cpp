@@ -109,8 +109,9 @@ public:
 		set_time_stuff(world);
 
         world.lasttime = world.clock + 3.33333333333333E-02;
-        int penguin = 0;
-        int trueorg; //penguin and true org are buddies and also junk variables
+		int focus_x = 0;
+		int focus_y = 0;
+        
 
                      //                   CAMERA TIME
                      //----------------------------------------------------------------------
@@ -119,10 +120,10 @@ public:
 
 		//2017: Have no idea what the hell any of this means but it's how
 		// these numbers used to map.
-		world.gotFocus = world.numberPlayers.focus.gotFocus;
-		int j = world.numberPlayers.focus.j;
-		int k = world.numberPlayers.focus.k;
-       
+		//world.gotFocus = world.numberPlayers.focus.gotFocus;
+		//int j = world.numberPlayers.focus.j;
+		//int k = world.numberPlayers.focus.k;
+
         //1 Only player 1
         //2 Player 1 and 2
         //3 All three Players
@@ -131,103 +132,60 @@ public:
         //6 Players 1 and 3
         //7 Players 2 and 3
 
-        //Three Player Scrolling is kind of tricky...
-        if (world.gotFocus == -3) {
-            if (world.Sprite[0].x < world.Sprite[10].x
-                && world.Sprite[0].x < world.Sprite[20].x) {
-                if (world.Sprite[10].x < world.Sprite[20].x) {
-                    trueorg = world.Sprite[0].x
-                        + ((world.Sprite[20].x - world.Sprite[0].x) / 2);
-                }
-                else {
-                    trueorg = world.Sprite[0].x
-                        + ((world.Sprite[10].x - world.Sprite[0].x) / 2);
-                }
-            }
+		if (world.numberPlayers.any_player_active()) {
+			int itr_start;
+			for (int i = 0; i < max_players; ++i) {
+				if (world.numberPlayers.player[i]) {
+					itr_start = i;
+					break;
+				}
+			}
+			LP3_ASSERT(itr_start < max_players);
 
-            if (world.Sprite[10].x < world.Sprite[20].x
-                && world.Sprite[10].x < world.Sprite[0].x) {
-                if (world.Sprite[0].x < world.Sprite[20].x) {
-                    trueorg = world.Sprite[10].x
-                        + ((world.Sprite[20].x - world.Sprite[10].x) / 2);
-                }
-                else {
-                    trueorg = world.Sprite[10].x
-                        + ((world.Sprite[0].x - world.Sprite[10].x) / 2);
-                }
-            }
+			double max_x, min_x;
+			max_x = min_x = world.Sprite[itr_start * 10].x 
+				+ (world.Sprite[itr_start * 10].wide / 2);
+			double max_y, min_y;
+			max_y = min_y = world.Sprite[itr_start * 10].y
+				+ (world.Sprite[itr_start * 10].high / 2);
 
-            if (world.Sprite[20].x < world.Sprite[10].x
-                && world.Sprite[20].x < world.Sprite[0].x) {
-                if (world.Sprite[10].x < world.Sprite[0].x) {
-                    trueorg = world.Sprite[20].x
-                        + ((world.Sprite[0].x - world.Sprite[20].x) / 2);
-                }
-                else {
-                    trueorg = world.Sprite[20].x
-                        + ((world.Sprite[10].x - world.Sprite[20].x) / 2);
-                }
-            }
+			for (int i = itr_start + 1; i < max_players; ++i) {
+				if (world.numberPlayers.player[i]) {
+					min_x = std::min(min_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
+					max_x = std::max(max_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
+					min_y = std::min(min_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
+					max_y = std::max(max_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
+				}
+			}
 
-        }
-
-        //rem End of 3 player scrolling
-
-        if (world.gotFocus == -2) {
-            if (world.Sprite[j].x < world.Sprite[k].x) {
-                trueorg = world.Sprite[k].x
-                    + ((world.Sprite[j].x - world.Sprite[k].x) / 2);
-            }
-            else {
-                trueorg = world.Sprite[j].x
-                    + ((world.Sprite[k].x - world.Sprite[j].x) / 2);
-            }
-            if (world.Sprite[j].y < world.Sprite[k].y) {
-                penguin = world.Sprite[k].y
-                    + ((world.Sprite[j].y - world.Sprite[k].y) / 2);
-            }
-            else {
-                penguin = world.Sprite[j].y
-                    + ((world.Sprite[k].y - world.Sprite[j].y) / 2);
-            }
-            k = 0;
-        }
-
-        if (world.gotFocus > -1) {
-            trueorg = world.Sprite[world.gotFocus].x;
-            penguin = world.Sprite[world.gotFocus].y;
-            k = world.gotFocus;
-        }
-
-        //if gotFocus <> -1 Then
-        //CameraX = (Sprite(gotFocus).x + (Sprite(gotFocus).wide * 0.5)) - 320
-        //if CameraX < 1 Then CameraX = 1
-        //if CameraX + CameraWidth >= cameraStopX Then CameraX = cameraStopX - 1 - CameraWidth
-        //CameraY = (Sprite(gotFocus).y + (Sprite(gotFocus).high * 0.5)) - 240
-        //if CameraY < 1 Then CameraY = 1
-        //if CameraY + CameraHeight >= cameraStopY Then CameraY = cameraStopY - 1 - CameraHeight
-        //End if
-
-        if (world.gotFocus != -1) {
-            world.camera.CameraX = (trueorg + (world.Sprite[k].wide * 0.5)) - 320;
-            if (world.camera.CameraX < 1) { world.camera.CameraX = 1; }
-            if (world.camera.CameraX + world.camera.CameraWidth >= world.camera.cameraStopX) {
-                world.camera.CameraX = world.camera.cameraStopX - 1 - world.camera.CameraWidth;
-            }
-            world.camera.CameraY = (penguin + (world.Sprite[k].high * 0.5)) - 240;
-            if (world.camera.CameraY < 1) { world.camera.CameraY = 1; }
-            if (world.camera.CameraY + world.camera.CameraHeight >= world.camera.cameraStopY) {
-                world.camera.CameraY = world.camera.cameraStopY - 1 - world.camera.CameraHeight;
-            }
-        }
+			focus_x = (min_x + max_x) / 2;
+			focus_y = (min_y + max_y) / 2;
 
 
+			world.camera.CameraX = focus_x - (world.camera.CameraWidth / 2);
+			world.camera.CameraY = focus_y - (world.camera.CameraHeight / 2);
+			
+			if (world.camera.CameraX < 1) { world.camera.CameraX = 1; }
+			if (world.camera.CameraX + world.camera.CameraWidth >= world.camera.cameraStopX) {
+				world.camera.CameraX = world.camera.cameraStopX - 1 - world.camera.CameraWidth;
+			}
+			if (world.camera.CameraY < 1) { world.camera.CameraY = 1; }
+			if (world.camera.CameraY + world.camera.CameraHeight >= world.camera.cameraStopY) {
+				world.camera.CameraY = world.camera.cameraStopY - 1 - world.camera.CameraHeight;
+			}			
+		}
+        
+
+        int penguin = 0;
+        int trueorg = 0; //focus_x and true org are buddies and also junk variables
 
         //-----------------------------------------------------------
         //START OF NORMAL ROUTINE
         //------------------------------------------------------------
 
-
+		// 2017: todo: try making these only appear in the loops that need them
+		int j;
+		int k;
 
 
 
@@ -727,12 +685,12 @@ private:
         if (world.player_data[1].playerName == "") { world.player_data[1].playerName = "zgjkl"; }
         if (world.player_data[2].playerName == "") { world.player_data[2].playerName = "zgjkl"; }
 
-		std::array<bool, 3> active_players = { 
+		std::array<bool, 3> active_players = {
 			world.Sprite[0].name == world.player_data[0].playerName,
 			world.Sprite[10].name == world.player_data[1].playerName,
 			world.Sprite[20].name == world.player_data[2].playerName,
-		};		
-		world.numberPlayers 
+		};
+		world.numberPlayers
 			= ActivePlayers::find_from_active_players(active_players);
     }
 
@@ -1352,13 +1310,13 @@ private:
 		CharacterProcEnv env{ context, random, world.clock, camera };
 		for (int h = 0; h < 3; ++h) {
 			proc_manager.add_process(
-				legacy_add_process(env, world, entity_manager, h*10, 
+				legacy_add_process(env, world, entity_manager, h*10,
 					               world.Sprite[h*10], world.Sprite[h*10].name));
 		}
         for (j = 30; j <= world.spritesInUse; ++j) {
 
 			proc_manager.add_process(
-				legacy_add_process(env, world, entity_manager, j, 
+				legacy_add_process(env, world, entity_manager, j,
 					               world.Sprite[j], world.Sprite[j].name));
         }
 
@@ -1532,7 +1490,7 @@ gsl::owner<GameProcess *> create_legacy_screen(
 {
 	//TODO: Use players, somehow
 	return create_now_loading_screen(
-		context, 
+		context,
 		[world(std::move(world))](GameContext context_2) mutable {
 		return new LegacyGame(context_2, std::move(world));
 	});
