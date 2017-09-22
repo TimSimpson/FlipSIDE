@@ -74,14 +74,6 @@ struct World {
     std::array<int, NUMSPRITES + 1> drawOrder;
 
     bool LemonTime; // a fun stupid cheat code that when set to true ups speed by 2.
-    double cranBerry; //Used to gage frame rate
-    double lasttime;
-    int frRate;
-    int frRate2;
-    int gpRate;
-    int gpRate2;
-    double cranBerry2;
-    bool debugOn;
     double sFactor; //makes objects move at speeds irrelevent to frame rate
 
     // Note from 2017: decreased from 125

@@ -70,14 +70,6 @@ World::World()
     screen(),
     drawOrder(),
     LemonTime(false),
-    cranBerry(0),
-    lasttime(0),
-    frRate(0),
-    frRate2(0),
-    gpRate(0),
-    gpRate2(0),
-    cranBerry2(0),
-    debugOn(false),
     sFactor(0),
     camera{},
     cinema({}),
@@ -99,8 +91,6 @@ World::World()
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
 
 	// Taken from "StartUp"
-	this->debugOn = false;
-
 	this->player_data[0].KeyUp = "W";
 	this->player_data[0].KeyDown = "S";
 	this->player_data[0].KeyLeft = "A";

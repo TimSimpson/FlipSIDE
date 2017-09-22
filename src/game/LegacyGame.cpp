@@ -108,8 +108,7 @@ public:
     gsl::owner<GameProcess *> update() override {
 		set_time_stuff(world);
 
-        world.lasttime = world.clock + 3.33333333333333E-02;
-		int focus_x = 0;
+        int focus_x = 0;
 		int focus_y = 0;
 
 
@@ -296,12 +295,7 @@ public:
         if (result) {
             return result;
         }
-        world.gpRate2 = world.gpRate2 + 1;
-        if (world.clock > world.cranBerry2) {
-            world.cranBerry2 = (world.clock + 1);
-            world.gpRate = world.gpRate2;
-            world.gpRate2 = 0;
-        }
+
         for (j = 0; j < world.spritesInUse; ++ j) {
             world.Sprite[j].lastX = world.Sprite[j].x;
             world.Sprite[j].lastY = world.Sprite[j].y;
