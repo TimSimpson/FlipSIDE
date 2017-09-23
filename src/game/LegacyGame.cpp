@@ -1255,7 +1255,6 @@ private:
                         s.kind, s.zOrder);
             }
         }
-        //findOrder(world);
     }
 
     void MakeLevel(const std::string & lvlBgMusic, const std::string & levelFile,
@@ -1314,7 +1313,6 @@ private:
 					               world.Sprite[j], world.Sprite[j].name));
         }
 
-        //findOrder(world);
         world.Sprite[33].name = "cinema"; world.Sprite[33].zOrder = -149;
         world.Sprite[32].name = "cinema"; world.Sprite[32].zOrder = -149;
         world.Sprite[31].name = "cinema"; world.Sprite[31].zOrder = -149;

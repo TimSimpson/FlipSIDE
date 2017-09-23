@@ -71,7 +71,6 @@ struct World {
     double Gravity;
     double clock;
     std::string screen;
-    std::array<int, NUMSPRITES + 1> drawOrder;
 
     bool LemonTime; // a fun stupid cheat code that when set to true ups speed by 2.
     double sFactor; //makes objects move at speeds irrelevent to frame rate

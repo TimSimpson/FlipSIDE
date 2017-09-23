@@ -590,7 +590,6 @@ public:
 				if (s.miscTime == 0) {
 					s.miscTime = world.clock + 2;
 					world.Sprite[31].zOrder = -100;
-					//findOrder(world);
 				}
 
 				{
@@ -639,7 +638,6 @@ public:
 				if (s.miscTime < world.clock) {
 					s.mode = "2";
 					s.name = "script";
-					//findOrder(world);
 				}
 			}
 

@@ -68,7 +68,6 @@ World::World()
 :   Gravity(0),
     clock(0),
     screen(),
-    drawOrder(),
     LemonTime(false),
     sFactor(0),
     camera{},
@@ -87,7 +86,6 @@ World::World()
 	for (int i = 0; i < player_data.size(); ++ i) {
 		player_data[i].index = i;
 	}
-    std::fill(drawOrder.begin(), drawOrder.end(), 0);
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
 
 	// Taken from "StartUp"
