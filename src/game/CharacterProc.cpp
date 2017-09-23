@@ -449,19 +449,6 @@ public:
 		auto & random = env.random;
 		int k;
 
-		//Rem-If s.time > clock Then GoTo gotDog
-		//.time = clock + .speed
-		//Rem---------------------------------------------------------------
-		//'               THIS SECTION UPDATES THE DAVID SPRITE
-		//Rem---------------------------------------------------------------
-
-
-
-		  //- END OF DAVID SPRITE--------------------------------------------
-		  //
-		  //Rem--------------------------------------------------------------
-
-
 		if (s.name == "goomba") {
 			seek(s);
 
@@ -507,8 +494,6 @@ public:
 			}
 		}
 
-
-
 		if (s.name == "falling") {
 			//.flickerTime = clock + 1
 			s.z = s.z - world.sFactor;
@@ -539,54 +524,6 @@ public:
 				}
 			}
 		}
-
-
-
-
-
-		if (s.name == "Selecter") {
-			if (world.clock > s.miscTime) {
-				s.miscTime = world.clock + 0.1;  //this way, the person won't scream through the selection box because it moves at 40 FPS!
-												 //For k = 0 To 2
-				k = j;
-				if (s.visible == false) {
-					if (anyKey(world, k) == 1) {
-						s.visible = true;
-						s.frame = k + 1;
-					}
-				}
-
-				if (world.player_data[k].upKey == true) {
-					s.frame = s.frame - 1;
-					if (s.frame == 0) { s.frame = 5; }
-				}
-				if (world.player_data[k].DownKEY == true) {
-					s.frame = s.frame + 1;
-					if (s.frame == 6) { s.frame = 1; }
-				}
-				if (world.player_data[k].AttackKey == true
-					|| world.player_data[k].JumpKey == true) {
-					s.mode = "done";
-					s.name = "KukoFax";
-					if (s.frame == 1) { sound.PlayWave("PickTom.wav"); }
-					if (s.frame == 2) { sound.PlayWave("PickNick.wav"); }
-					if (s.frame == 3) { sound.PlayWave("PickDrew.wav"); }
-					if (s.frame == 5) { sound.PlayWave("PickNicky.wav"); }
-				}
-				//Next k
-			}
-
-		}
-
-		if (s.name == "StageWhat") {
-			//
-
-
-		}
-
-		//playWave "conten.wav"
-
-
 
 		if (s.name == "exit") {
 			//TSNOW: This looks to step up by 10 so should only iterate
@@ -650,13 +587,6 @@ public:
 				}
 
 				seek(s);
-
-				//Stop
-				//if (sgetMiddleX(.target) > getMiddleX(j)) then .x = .x + (sFactor * 3)
-				//if (sgetMiddleX(.target) < getMiddleX(j)) then .x = .x - (sFactor * 3)
-
-				//if (sgetMiddleY(.target) > getMiddleY(j)) then .y = .y + (sFactor * 1)
-				//if (sgetMiddleY(.target) < getMiddleY(j)) then .y = .y - (sFactor * 1)
 			}
 
 		}
@@ -683,7 +613,6 @@ public:
 				kill(s);
 			}
 		}
-
 
 		if (s.name == "dead") {
 			//Stop
