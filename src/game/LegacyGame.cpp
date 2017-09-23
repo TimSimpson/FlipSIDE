@@ -498,11 +498,17 @@ private:
             world.screen = "title";
         }
 
-        if (world.Sprite[0].name == "dead"
-            && world.Sprite[10].name == "dead"
-            && world.Sprite[20].name == "dead") {
+		if (std::all_of(begin(world.player_data), end(world.player_data), 
+			            [](PlayerData & pd) { return !pd.active; })) 
+		{
 			return create_gameover_screen(context);
-        }
+		}
+
+        //if (world.Sprite[0].name == "dead"
+        //    && world.Sprite[10].name == "dead"
+        //    && world.Sprite[20].name == "dead") {
+		//	return create_gameover_screen(context);
+        //}
 
 		return nullptr;
     }
@@ -716,14 +722,11 @@ private:
 
     void initPlayers() {
         int j = 0;
-        world.Sprite[0].name = "dead";
-        world.Sprite[10].name = "dead";
-        world.Sprite[20].name = "dead";
-
+        
         int k = 0;
-        for (k = 0; k <= 2; ++ k) {
+        /*for (k = 0; k <= 2; ++ k) {
             if (world.player_data[k].playerName == "") { world.player_data[k].playerName = "redead"; }
-        }
+        }*/
 
 
         //Rem****************88

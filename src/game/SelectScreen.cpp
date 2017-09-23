@@ -204,6 +204,8 @@ public:
             players[box.index] = box.get_player_name();
 
             world.player_data[box.index].lives = 3;
+			world.player_data[box.index].active 
+				= box.get_player_name().is_initialized();
             world.player_data[box.index].playerName
                 = box.get_player_name().get_value_or("");
         }        

@@ -9,8 +9,7 @@ namespace nnd3d { namespace game { namespace proc {
 
 CharacterProc * create_player_proc(
     CharacterProcEnv env, GameState & game_state,
-    PlayerData & player_data, EntityManager & e_manager,
-	const std::string & name);
+    PlayerData & player_data, EntityManager & e_manager);
 
 }   }   }
 

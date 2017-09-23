@@ -784,7 +784,7 @@ gsl::owner<CharacterProc *> legacy_add_process(
 	// TODO: in the future, use the names here, or something, but for
 	//       now, use the indexes to figure out if it's a player
 	if (j < 30) {
-		return proc::create_player_proc(env, world.game_state, world.player_data[j / 10], em, name);
+		return proc::create_player_proc(env, world.game_state, world.player_data[j / 10], em);
 	} else {
 		return new LegacyProc(env, s, j, world, name);
 	}

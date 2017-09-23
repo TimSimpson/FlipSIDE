@@ -26,7 +26,7 @@ void create_player(
 		player_data.weapon = "fireball";
 		env.context.view.load_animation_file(sprite.Aframe, "Thomas.ani");
 		env.context.view.LoadTexture(player_data.index + 1, "Flip1.png", 254, 254);
-		sprite.texture = (player_data.index / 10) + 1;
+		sprite.texture = player_data.index + 1;
 		for (CharacterSprite & child : children) {
 			env.context.view.load_animation_file(child.Aframe, "Fireball.ani");
 		}
@@ -36,7 +36,7 @@ void create_player(
 		player_data.weapon = "fireball";
 		env.context.view.load_animation_file(sprite.Aframe, "nick.ani");
 		env.context.view.LoadTexture(player_data.index + 1, "joel.png", 254, 258);
-		sprite.texture = (player_data.index / 10) + 1;
+		sprite.texture = player_data.index + 1;
 		for (CharacterSprite & child : children) {
 			env.context.view.load_animation_file(child.Aframe, "icespike.ani");
 		}
@@ -46,7 +46,7 @@ void create_player(
 		player_data.weapon = "bomb";
 		env.context.view.load_animation_file(sprite.Aframe, "nicky.ani");
 		env.context.view.LoadTexture(player_data.index + 1, "LilNicky.png", 84, 148);
-		sprite.texture = (player_data.index / 10) + 1;
+		sprite.texture = player_data.index + 1;
 		for (CharacterSprite & child : children) {
 			env.context.view.load_animation_file(child.Aframe, "bomb.ani");
 		}
@@ -177,7 +177,7 @@ public:
 		if (sprite.x > sprite.seekx) { sprite.x = sprite.x - (sprite.mph * speed_factor); }
 		if (sprite.y < sprite.seeky) { sprite.y = sprite.y + (sprite.mph * speed_factor); }
 		if (sprite.y > sprite.seeky) { sprite.y = sprite.y - (sprite.mph * speed_factor); }
-		
+
 		if (sprite.x > (camera.x() + camera.width())
 			|| sprite.x < (camera.x() - camera.width())
 			|| sprite.y >(camera.y() + camera.height())
@@ -334,6 +334,7 @@ public:
         kill(sprite);
         state = State::inert;
 		sprite.name = "dead";
+        player_data.active = false;
     }
 
 	virtual void _death_animation() = 0;
@@ -371,7 +372,7 @@ public:
 
 		sprite.trueVisible = 0;
 		sprite.visible = true;
-        sprite.name = player_data.playerName;		
+        sprite.name = player_data.playerName;
 	}
 
 	// Find a free child sprite.
@@ -478,6 +479,25 @@ public:
 		}
 	}
 
+	void orient_continue_text() {
+		auto & continue_text = children[1];
+		if (player_data.index == 0) {
+			continue_text.x = env.camera.x() + 10;
+		}
+		if (player_data.index == 1) {
+			continue_text.x = env.camera.x() + 250;
+			continue_text.color = view::qb_color(10);
+		}
+		if (player_data.index == 2) {
+			continue_text.x = env.camera.x() + 450;
+			continue_text.color = view::qb_color(14);
+		}
+		continue_text.y = env.camera.y() + 10;
+
+		auto & number = children[2];
+		number.y = continue_text.y;
+		number.x = continue_text.x + 100;
+	}
 	void start_continue_countdown() {
 		state = State::continue_counter;
 		if (!game_state.game_over()) {
@@ -507,19 +527,7 @@ public:
             continue_text.y = 10;
             continue_text.y = 10;
 
-            continue_text.visible = true;
-            if (player_data.index == 0) {
-                continue_text.x = env.camera.x() + 10;
-            }
-            if (player_data.index == 1) {
-                continue_text.x = env.camera.x() + 250;
-                continue_text.color = view::qb_color(10);
-            }
-            if (player_data.index == 2) {
-                continue_text.x = env.camera.x() + 450;
-                continue_text.color = view::qb_color(14);
-            }
-            continue_text.y = env.camera.y() + 10;
+            continue_text.visible = true;			
 
             auto & number = children[2];
 			number.trueVisible = 0;
@@ -537,6 +545,7 @@ public:
             number.wide = 20;
             number.high = 20;
 
+			orient_continue_text();
             number.y = continue_text.y;
             number.x = continue_text.x + 100;
 		} else {
@@ -597,6 +606,7 @@ public:
             state = State::normal;
 			initialize();
 		} else {
+			orient_continue_text();
             timer += ms_per_update;
 			auto & sound = env.context.sound;
 			auto & number = children[2];
@@ -669,9 +679,8 @@ public:
 	ThomasProc(CharacterProcEnv _env,
 		GameState & _game_state,
 		PlayerData & _player_data,
-		EntityManager & e_manager,
-		const std::string & name)
-		: PlayerProc(_env, _game_state, _player_data, e_manager, name)
+		EntityManager & e_manager)
+		: PlayerProc(_env, _game_state, _player_data, e_manager, "Thomas")
 	{
         env.context.sound.LoadSound((player_data.index * 5), "fireball.wav", "fireball");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "Death.wav", "DavidDeath");
@@ -717,6 +726,7 @@ public:
         sprite.soundFile = "DavidHurt";
         sprite.wide = 40;
         sprite.high = 50;
+		sprite.texture = player_data.index + 1;
         //sprite.texture = 1;
         sprite.visible = true;
         sprite.length = 20;
@@ -750,9 +760,8 @@ public:
     NickProc(CharacterProcEnv _env,
         GameState & _game_state,
         PlayerData & _player_data,
-        EntityManager & e_manager,
-        const std::string & name)
-        : ThomasProc(_env, _game_state, _player_data, e_manager, name)
+        EntityManager & e_manager)
+        : ThomasProc(_env, _game_state, _player_data, e_manager)
     {
         env.context.sound.LoadSound((player_data.index * 5), "nickdeath.wav", "nickdeath");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "nickhurt.wav", "nickhurt");
@@ -810,9 +819,8 @@ public:
 	NickyProc(CharacterProcEnv _env,
 		GameState & _game_state,
 		PlayerData & _player_data,
-		EntityManager & e_manager,
-		const std::string & name)
-		: PlayerProc(_env, _game_state, _player_data, e_manager, name)
+		EntityManager & e_manager)
+		: PlayerProc(_env, _game_state, _player_data, e_manager, "Nicky")
 	{
         env.context.sound.LoadSound((player_data.index * 5), "NickyDeath.wav", "NickyDeath");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "NickyHurt.wav", "NickyHurt");
@@ -898,13 +906,14 @@ public:
 
 CharacterProc * create_player_proc(
 	CharacterProcEnv env, GameState & game_state,
-	PlayerData & player_data, EntityManager & e_manager,
-	const std::string & name)
+	PlayerData & player_data, EntityManager & e_manager)
 {
-	if (name == "Thomas" || name == "Nick") {
-		return new ThomasProc(env, game_state, player_data, e_manager, name);
-	} else if (name == "Nicky") {
-		return new NickyProc(env, game_state, player_data, e_manager, name);
+	if (player_data.playerName == "Thomas") {
+		return new ThomasProc(env, game_state, player_data, e_manager);
+	} else if (player_data.playerName == "Nick") {
+		return new NickProc(env, game_state, player_data, e_manager);
+	} else if (player_data.playerName == "Nicky") {
+		return new NickyProc(env, game_state, player_data, e_manager);
 	} else {
 		return nullptr;
 	}

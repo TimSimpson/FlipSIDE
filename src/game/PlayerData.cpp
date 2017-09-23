@@ -5,6 +5,7 @@ namespace nnd3d { namespace game {
 
 PlayerData::PlayerData()
 :   index(-1),
+	active(false),
 	upKey(false),
     DownKEY(false),
     LeftKEY(false),

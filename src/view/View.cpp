@@ -293,6 +293,8 @@ void View::load_animation_file(std::array<view::AnimationFrame, 20> & frames,
             //       vars, even if the first one was -1.
             break;
         }
+        frames[j].x --;
+        frames[j].y --;
     }
 }
 
