@@ -15,6 +15,8 @@ class EntityManager {
 public:
     EntityManager(World & world);
 
+	CharacterSprite & grab_sprite();
+
     // Returns some number of sprites.
     gsl::span<CharacterSprite> grab_sprites(int count);
 private:

@@ -29,15 +29,24 @@ class CharacterProc {
 public:
      virtual ~CharacterProc() = default;
 
-	 virtual void animate(std::int64_t ms) = 0;
+	 // TODO: The plethora of virtual methods with default impls below was to
+	 // support the legacy procs, which needed a gross, large interface.
+	 // In the future delete them.
+	 virtual void animate(std::int64_t ms) {
+	 }
 
-     virtual void death_animation() = 0;
+	 virtual void death_animation() {
+		 throw std::logic_error("The method or operation is not implemented.");
+	 }
 
-     virtual void initialize() = 0;
-
-     // Create a child process (think bullets)
-     // TODO: take out of this base class once things settle down.
-     virtual CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) = 0;
+	 virtual void initialize() {
+		 throw std::logic_error("The method or operation is not implemented.");
+	 }
+     
+	 // Create a child process (think bullets)
+	 virtual CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) {
+		 throw std::logic_error("The method or operation is not implemented.");
+	 }
 
 	 virtual bool update() = 0;
 };

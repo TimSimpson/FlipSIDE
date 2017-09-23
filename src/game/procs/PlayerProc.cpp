@@ -130,18 +130,6 @@ public:
 		if (sprite.frame > 3 || sprite.frame < 1) { sprite.frame = 1; }
 	}
 
-	void death_animation() override {
-		throw std::logic_error("The method or operation is not implemented.");
-	}
-
-	void initialize() override {
-		throw std::logic_error("The method or operation is not implemented.");
-	}
-
-	CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) override {
-		throw std::logic_error("The method or operation is not implemented.");
-	}
-
 	bool update() override {
 		// TODO: make the colors go crazy if the slicer mode is true.
 		///*if (world.player_data[s.parent / 10].slicer == true) {
@@ -255,16 +243,6 @@ public:
 		if (sprite.mode == "explode") {
 			if (sprite.frame > 5) { sprite.frame = 4; }
 		}
-	}
-
-	void death_animation() override {
-	}
-
-	void initialize() override {
-	}
-
-	CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) override {
-		return nullptr;
 	}
 
 	bool update() override {
