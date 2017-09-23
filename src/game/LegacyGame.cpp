@@ -5,6 +5,7 @@
 #include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
 #include "procs/CinemaProc.hpp"
+#include "procs/PlayerProc.hpp"
 #include "EntityManager.hpp"
 #include "GameOverScreen.hpp"
 #include "NowLoading.hpp"
@@ -38,7 +39,6 @@ private:
 	EntityManager entity_manager;
 	CharacterProcManager proc_manager;
 	Camera camera;
-
 public:
 	LegacyGame(GameContext _context,  World && world_arg)
     :   context(_context),
@@ -514,15 +514,10 @@ private:
     }
 
     void findPlayers() {
-        // TODO: is the madness of these next 3 lines really necessary?
-        if (world.player_data[0].playerName == "") { world.player_data[0].playerName = "zgjkl"; }
-        if (world.player_data[1].playerName == "") { world.player_data[1].playerName = "zgjkl"; }
-        if (world.player_data[2].playerName == "") { world.player_data[2].playerName = "zgjkl"; }
-
 		std::array<bool, 3> active_players = {
-			world.Sprite[0].name == world.player_data[0].playerName,
-			world.Sprite[10].name == world.player_data[1].playerName,
-			world.Sprite[20].name == world.player_data[2].playerName,
+			world.player_data[0].active,
+			world.player_data[1].active,
+			world.player_data[2].active
 		};
 		world.numberPlayers
 			= ActivePlayers::find_from_active_players(active_players);
@@ -555,13 +550,11 @@ private:
                             "Lv1bg.bmp",
 #endif
                             10, 10,
-                            true, true);
-            world.Sprite[0].x = 50;
-            world.Sprite[0].y = 220;
-            world.Sprite[10].x = 50;
-            world.Sprite[10].y = 220;
-            world.Sprite[20].x = 50;
-            world.Sprite[20].y = 220;
+                            true, true,
+							std::vector<glm::vec2>{
+								{ 50, 220}
+							});
+
             world.camera.cameraStopX = 1010;
             world.camera.cameraStopY = 905 + 480;
 
@@ -576,13 +569,10 @@ private:
         if (which == 1.2) {
             this->MakeLevel(1.2f, "Level1.ogg", "level1b.cap", "Lv1bg2.png",
                             100, 100,
-                            true, true);
-            world.Sprite[0].x = 1122;
-            world.Sprite[0].y = 1650;
-            world.Sprite[10].x = 1122;
-            world.Sprite[10].y = 1650;
-            world.Sprite[20].x = 1122;
-            world.Sprite[20].y = 1650;
+                            true, true,
+				std::vector<glm::vec2>{
+					{ 1122, 1650 }
+			});
             world.camera.cameraStopX = 1194;
             world.camera.cameraStopY = 1900;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
@@ -595,14 +585,15 @@ private:
         if (which == 1.3) {
             this->MakeLevel(1.3f, "Level1.ogg", "level1c.cap", "lv1bg3.png",
                             10, 10,
-                            false, false);
+                            false, false,
+				std::vector<glm::vec2>{
+					{ 242, 2000 },
+					{ 42, 300 },
+					{ 42, 300 }
+			}
+				);
 
-            world.Sprite[0].x = 242;
-            world.Sprite[0].y = 2000;
-            world.Sprite[10].x = 42;
-            world.Sprite[10].y = 300;
-            world.Sprite[20].x = 42;
-            world.Sprite[20].y = 300;
+          
             world.camera.cameraStopX = 1244;
             world.camera.cameraStopY = 2273;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
@@ -615,14 +606,10 @@ private:
         if (which == 1.4) {
             this->MakeLevel(1.4f, "Level1.ogg", "level1d.cap", "level1birdstreet.png",
                             98, 480,
-                            false, false);
+				false, false, std::vector<glm::vec2>{
+					{ 42, 300 }					
+			});
 
-            world.Sprite[0].x = 42;
-            world.Sprite[0].y = 300;
-            world.Sprite[10].x = 42;
-            world.Sprite[10].y = 300;
-            world.Sprite[20].x = 42;
-            world.Sprite[20].y = 300;
             world.camera.cameraStopX = 3000;
             world.camera.cameraStopY = 480;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
@@ -740,7 +727,7 @@ private:
         //          THIS PART LOADS UP WEAPONS
         //Rem******************************************************8
 
-		for (int index = 0; index < 3; ++index) {
+		/*for (int index = 0; index < 3; ++index) {
 			if (world.numberPlayers.player[index]) {
 				world.Sprite[index * 10].name = world.player_data[0].playerName;
 				for (int k = index * 10 + 1; k <= (index * 10) + 9; ++k) {
@@ -756,12 +743,12 @@ private:
 					}
 				}
 			}
-		}
+		}*/
 
         //Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
-        if (world.Sprite[0].name == world.Sprite[10].name) {
+        /*if (world.Sprite[0].name == world.Sprite[10].name) {
             world.Sprite[10].color = view::qb_color(10);
-        }
+        }*/
 
         sound.LoadSound(15, "Spring.wav", "spring");
     }
@@ -926,7 +913,8 @@ private:
         const std::string & levelBgFile, const int lvlBgWidth,
         const int lvlBgHeight,
         const bool stopMusic,
-        const bool loadScreen) {
+        const bool loadScreen,
+		std::vector<glm::vec2> player_spawn_locations) {
 
 		destroyEverything(world, view, sound, 2);
 
@@ -949,11 +937,21 @@ private:
    		CharacterProcEnv env{ context, random, world.clock, camera };
 
 		// First 30 sprites were for player stuff (10 each)
-		for (int h = 0; h < 3; ++h) {
-			proc_manager.add_process(
-				legacy_add_process(env, world, entity_manager, h*10,
-					               world.Sprite[h*10], world.Sprite[h*10].name));
+		for (auto & pd : world.player_data) {
+			const auto & loc = player_spawn_locations.size() > pd.index
+				? player_spawn_locations[pd.index]
+				: player_spawn_locations.back();
+			if (pd.active) {
+				proc_manager.add_process(
+					proc::create_player_proc(env, world.game_state, pd, 
+						                     entity_manager, loc));					
+			}
 		}
+		///*for (int h = 0; h < 3; ++h) {
+		//	proc_manager.add_process(
+		//		legacy_add_process(env, world, entity_manager, h*10,
+		//			               world.Sprite[h*10], world.Sprite[h*10].name));
+		//}*/
 
 		// old school sprites 30-40 reserved for cinematics:
 		proc_manager.add_process(

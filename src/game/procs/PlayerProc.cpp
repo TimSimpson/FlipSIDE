@@ -297,7 +297,8 @@ public:
                GameState & _game_state,
 		       PlayerData & _player_data,
                EntityManager & e_manager,
-               const std::string & name)
+               const std::string & name,
+		const glm::vec2 & loc)
     :   env(_env),
         game_state(_game_state),
 		player_data(_player_data),
@@ -315,6 +316,8 @@ public:
         s.name = name;
         s.proc = this;
 		for (auto & c : children) { c.name = "reserved";  }
+		s.x = loc.x;
+		s.y = loc.y;
     }
 
 	virtual void animate_normally(std::int64_t ms) = 0;
@@ -679,8 +682,9 @@ public:
 	ThomasProc(CharacterProcEnv _env,
 		GameState & _game_state,
 		PlayerData & _player_data,
-		EntityManager & e_manager)
-		: PlayerProc(_env, _game_state, _player_data, e_manager, "Thomas")
+		EntityManager & e_manager, 
+		const glm::vec2 & loc)
+		: PlayerProc(_env, _game_state, _player_data, e_manager, "Thomas", loc)
 	{
         env.context.sound.LoadSound((player_data.index * 5), "fireball.wav", "fireball");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "Death.wav", "DavidDeath");
@@ -760,8 +764,9 @@ public:
     NickProc(CharacterProcEnv _env,
         GameState & _game_state,
         PlayerData & _player_data,
-        EntityManager & e_manager)
-        : ThomasProc(_env, _game_state, _player_data, e_manager)
+        EntityManager & e_manager,
+		const glm::vec2 & loc)
+        : ThomasProc(_env, _game_state, _player_data, e_manager, loc)
     {
         env.context.sound.LoadSound((player_data.index * 5), "nickdeath.wav", "nickdeath");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "nickhurt.wav", "nickhurt");
@@ -819,8 +824,9 @@ public:
 	NickyProc(CharacterProcEnv _env,
 		GameState & _game_state,
 		PlayerData & _player_data,
-		EntityManager & e_manager)
-		: PlayerProc(_env, _game_state, _player_data, e_manager, "Nicky")
+		EntityManager & e_manager,
+		const glm::vec2 & loc)
+		: PlayerProc(_env, _game_state, _player_data, e_manager, "Nicky", loc)
 	{
         env.context.sound.LoadSound((player_data.index * 5), "NickyDeath.wav", "NickyDeath");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "NickyHurt.wav", "NickyHurt");
@@ -906,14 +912,14 @@ public:
 
 CharacterProc * create_player_proc(
 	CharacterProcEnv env, GameState & game_state,
-	PlayerData & player_data, EntityManager & e_manager)
+	PlayerData & player_data, EntityManager & e_manager, const glm::vec2 & loc)
 {
 	if (player_data.playerName == "Thomas") {
-		return new ThomasProc(env, game_state, player_data, e_manager);
+		return new ThomasProc(env, game_state, player_data, e_manager, loc);
 	} else if (player_data.playerName == "Nick") {
-		return new NickProc(env, game_state, player_data, e_manager);
+		return new NickProc(env, game_state, player_data, e_manager, loc);
 	} else if (player_data.playerName == "Nicky") {
-		return new NickyProc(env, game_state, player_data, e_manager);
+		return new NickyProc(env, game_state, player_data, e_manager, loc);
 	} else {
 		return nullptr;
 	}
