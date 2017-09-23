@@ -4,6 +4,7 @@
 #include <boost/lexical_cast.hpp>
 #include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
+#include "procs/CinemaProc.hpp"
 #include "EntityManager.hpp"
 #include "GameOverScreen.hpp"
 #include "NowLoading.hpp"
@@ -219,13 +220,13 @@ public:
             auto & s = world.Sprite[j];
 			// Handle all "level" stuff here, but call update on gameproc
 			// otherwise.
-			if (s.name == "script") {
-				this->script();
-			}  else	if (s.name == "frontdoor") {
+			if (s.name == "frontdoor") {
 				if (this->findQ("Kerbose") < 1) {
 					kill(s);
 					s.name = "exit";
-					this->cinemaM(2);
+					CharacterProcEnv env{ context, random, world.clock, camera };
+					proc_manager.add_process(
+						proc::create_cinema_proc(env, entity_manager, 1.1f));
 				}
 			} else if (s.proc) {
 				//CharacterProcEnv env{context, random, world.clock};
@@ -471,21 +472,6 @@ private:
        return theclosest * 10;
     }
 
-    void cinemaM(int what) {
-        //Everyone raise your hand who remembers cinemaM?
-        //Yes this classic far too long subroutine has made a triumphant return from Lady Pousha Quest.
-        if (what == 2) {
-            world.Sprite[30].name = "script";
-            world.Sprite[30].mode = "2";
-            world.cinemaMax = 4;
-            world.cinemaCounter = 0;
-            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1B1.wav", 2.24);
-            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1B2.wav", 2.74);
-            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1B3.wav", 4.24);
-            this->setCinema(3, 5, 3, 7, 16, 15, 15, 15, 8, "TalkLv1B4.wav", 0.95);
-        }
-    }
-
     gsl::owner<GameProcess *> flipGame() {
         // I think this handles switching to different rooms or levels.
         int penguin;
@@ -547,80 +533,12 @@ private:
         return goatX;
     }
 
-    void GoSub_level1a() {
-        world.Sprite[31].frame = world.cinema[world.cinemaCounter].frame1;
-        world.Sprite[32].frame = world.cinema[world.cinemaCounter].frame2;
-        world.Sprite[33].frame = world.cinema[world.cinemaCounter].frame3;
-        world.Sprite[34].frame = world.cinema[world.cinemaCounter].frame4;
-        world.Sprite[31].color = view::qb_color(world.cinema[world.cinemaCounter].color1);
-        world.Sprite[32].color = view::qb_color(world.cinema[world.cinemaCounter].color2);
-        world.Sprite[33].color = view::qb_color(world.cinema[world.cinemaCounter].color3);
-        world.Sprite[34].color = view::qb_color(world.cinema[world.cinemaCounter].color4);
-
-        sound.PlayIsoWave(world.cinema[world.cinemaCounter].wavefile);
-        world.Sprite[30].miscTime = world.clock + world.cinema[world.cinemaCounter].miscTime;
-        world.cinemaCounter = world.cinemaCounter + 1;
-    }
-
-    void GoSub_level1b() {
-        for (int i = 31; i <= 34; ++ i) {
-            if (i == 30) { continue; } //2017: WAT?
-            world.Sprite[i].visible = true;
-            world.Sprite[i].wide = (271 - 137) * 2;
-            world.Sprite[i].high = 81 * 2;
-            world.Sprite[i].seekx = 0;
-            world.Sprite[i].seeky = 1;
-            world.Sprite[i].texture = 9;
-        }
-    }
-
-    void GoSub_level1c() {
-        world.Sprite[31].x = world.camera.CameraX - world.Sprite[31].seekx;
-        world.Sprite[31].y = world.camera.CameraY + 20;
-        world.Sprite[32].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[32].seekx;
-        world.Sprite[32].y = world.camera.CameraY + 20;
-        world.Sprite[33].x = world.camera.CameraX - world.Sprite[33].seekx;
-        world.Sprite[33].y = world.camera.CameraY + world.camera.CameraHeight - 180;
-        world.Sprite[34].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[33].seekx;
-        world.Sprite[34].y = world.camera.CameraY + world.camera.CameraHeight - 180;
-
-        for (int i = 31; i <= 34; ++ i) {
-            // If i = 34 Then GoTo kiddy2
-            world.Sprite[i].seekx = world.Sprite[i].seekx + world.sFactor * 6;
-            world.Sprite[i].seeky = world.Sprite[i].seeky + 1;
-            if (world.Sprite[i].seeky == 3) {
-                world.Sprite[i].seeky = 1;
-            }
-            world.Sprite[i].frame = world.Sprite[i].seeky;
-        }
-
-        if (world.Sprite[32].seekx > 268) {
-            for (int i = 31; i <= 34; ++ i) {
-                world.Sprite[i].visible = false;
-            }
-
-            world.Sprite[30].mode = "9";
-        }
-    }
-
-    void GoSub_setUpLevel1() {
-        for (int i = 31; i <= 34; ++ i) {
-            if (i == 30) { continue; }
-            world.Sprite[i].visible = true;
-            world.Sprite[i].wide = (271 - 137) * 2;
-            world.Sprite[i].high = 81 * 2;
-            world.Sprite[i].seekx = 268;
-            world.Sprite[i].seeky = 1;
-            world.Sprite[i].texture = 9;
-        }
-    }
-
     void goToLevel(const double which) {
         world.Gravity = 0;
 
         if (which == 1.1 || which == 1) {
 			destroyEverything(world, view, sound);
-            this->MakeLevel("Level1Opening.ogg", "Level1.cap",
+            this->MakeLevel(1.0f, "Level1Opening.ogg", "Level1.cap",
 // TSNOW: This is such a hack, but honestly the graphic for the apartment
 //        carpet- which already looked terrible - makes the eyes bleed
 //        when the texture is manually repeated to make a 64x64 bitmap.
@@ -630,12 +548,8 @@ private:
 #else
                             "Lv1bg.bmp",
 #endif
-                            10, 10, "Level1Cinema.png", "Level1Cinema.ani",
+                            10, 10,
                             true, true);
-            world.cinemaMax = 2;
-            world.cinemaCounter = 0;
-            this->setCinema(0, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1A1.wav", 4.49);
-            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1A2.wav", 1.87);
             world.Sprite[0].x = 50;
             world.Sprite[0].y = 220;
             world.Sprite[10].x = 50;
@@ -654,14 +568,9 @@ private:
         }
 
         if (which == 1.2) {
-            this->MakeLevel("Level1.ogg", "level1b.cap", "Lv1bg2.png",
-                            100, 100, "Level1BCinema.png", "Level1bCinema.ani",
+            this->MakeLevel(1.2f, "Level1.ogg", "level1b.cap", "Lv1bg2.png",
+                            100, 100,
                             true, true);
-            world.cinemaMax = 3;
-            world.cinemaCounter = 0;
-            this->setCinema(0, 5, 3, 7, 16, 8, 8, 15, 8, "TalkLv1C1.wav", 3.31);
-            this->setCinema(1, 5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1C2.wav", 2.3);
-            this->setCinema(2, 5, 3, 7, 16, 15, 8, 8, 8, "TalkLv1C3.wav", 3.05);
             world.Sprite[0].x = 1122;
             world.Sprite[0].y = 1650;
             world.Sprite[10].x = 1122;
@@ -678,14 +587,10 @@ private:
         }
 
         if (which == 1.3) {
-            this->MakeLevel("Level1.ogg", "level1c.cap", "lv1bg3.png",
-                            10, 10, "Level1BCinema.png", "Level1bCinema.ani",
+            this->MakeLevel(1.3f, "Level1.ogg", "level1c.cap", "lv1bg3.png",
+                            10, 10,
                             false, false);
-            world.cinemaMax = 3;
-            world.cinemaCounter = 4;
-            this->setCinema(0, 7, 7, 7, 7, 8, 8, 15, 8, "TalkLv1c1.wav", 3.31);
-            this->setCinema(1, 7, 7, 7, 7, 8, 15, 8, 8, "TalkLv1c2.wav", 2.3);
-            this->setCinema(2, 7, 7, 7, 7, 15, 8, 8, 8, "TalkLv1c3.wav", 3.05);
+
             world.Sprite[0].x = 242;
             world.Sprite[0].y = 2000;
             world.Sprite[10].x = 42;
@@ -702,14 +607,10 @@ private:
         }
 
         if (which == 1.4) {
-            this->MakeLevel("Level1.ogg", "level1d.cap", "level1birdstreet.png",
-                            98, 480, "Level1DCinema.png", "Level1bCinema.ani",
+            this->MakeLevel(1.4f, "Level1.ogg", "level1d.cap", "level1birdstreet.png",
+                            98, 480,
                             false, false);
-            world.cinemaMax = 3;
-            world.cinemaCounter = 4;
-            this->setCinema(0, 7, 7, 7, 7, 8, 8, 15, 8, "TalkLv1c1.wav", 3.31);
-            this->setCinema(1, 7, 7, 7, 7, 8, 15, 8, 8, "TalkLv1c2.wav", 2.3);
-            this->setCinema(2, 7, 7, 7, 7, 15, 8, 8, 8, "TalkLv1c3.wav", 3.05);
+
             world.Sprite[0].x = 42;
             world.Sprite[0].y = 300;
             world.Sprite[10].x = 42;
@@ -1017,11 +918,10 @@ private:
         }
     }
 
-    void MakeLevel(const std::string & lvlBgMusic, const std::string & levelFile,
+    void MakeLevel(const float stage,
+		           const std::string & lvlBgMusic, const std::string & levelFile,
         const std::string & levelBgFile, const int lvlBgWidth,
         const int lvlBgHeight,
-        const std::string & CinemaBitMapFile,
-        const std::string & CinemaAnimationFile,
         const bool stopMusic,
         const bool loadScreen) {
 
@@ -1039,113 +939,37 @@ private:
         int j = 0;
 
         world.camera.CameraX = 0; world.camera.CameraY = 0;
-        view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight); //"lv1bg2.png", 10, 10)
-                                                                    //Call loadTexture(0, "smile.png", 255, 255)
-
-                                                                    //Call loadTexture(4, "Level1a.png", 490, 209)
-                                                                    //Call loadTexture(5, "lv1bgtw.png", 308, 341)
-                                                                    //Call loadTexture(6, "goomba.png", 240, 240)
-        view.LoadTexture(9, CinemaBitMapFile, 400, 400); //"lvl1bg.png",400,400
-
+        view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight);
 
         this->initPlayers();
 
    		CharacterProcEnv env{ context, random, world.clock, camera };
+
+		// First 30 sprites were for player stuff (10 each)
 		for (int h = 0; h < 3; ++h) {
 			proc_manager.add_process(
 				legacy_add_process(env, world, entity_manager, h*10,
 					               world.Sprite[h*10], world.Sprite[h*10].name));
 		}
-        for (j = 30; j < world.Sprite.size(); ++j) {
+
+		// old school sprites 30-40 reserved for cinematics:
+		proc_manager.add_process(
+			proc::create_cinema_proc(env, entity_manager, stage));
+
+		// old school sprites >=40 for things loaded out of the level
+		for (j = 40; j < world.Sprite.size(); ++j) {
 
 			proc_manager.add_process(
 				legacy_add_process(env, world, entity_manager, j,
 					               world.Sprite[j], world.Sprite[j].name));
         }
 
-        world.Sprite[33].name = "cinema"; world.Sprite[33].zOrder = -149;
-        world.Sprite[32].name = "cinema"; world.Sprite[32].zOrder = -149;
-        world.Sprite[31].name = "cinema"; world.Sprite[31].zOrder = -149;
-        world.Sprite[34].name = "cinema"; world.Sprite[34].zOrder = -149;
-        world.Sprite[30].zOrder = -149;
-        this->loadAnimation(33, CinemaAnimationFile);
-        this->loadAnimation(32, CinemaAnimationFile);
-        this->loadAnimation(31, CinemaAnimationFile);
-        this->loadAnimation(34, CinemaAnimationFile);
-        world.Sprite[30].name = "StageWhat"; world.Sprite[30].mode = "";
-
         if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }
 
         world.exitS = "";
     }
 
-    void script() {
-        if (world.Sprite[30].mode != "3" && world.Sprite[30].mode != "2") {
-            // move all the faces so that they line up
-            world.Sprite[31].x = world.camera.CameraX; //  - world.Sprite[31].seekx
-            world.Sprite[31].y = world.camera.CameraY + 20;
-            world.Sprite[32].x = world.camera.CameraX + world.camera.CameraWidth - 268; // + world.Sprite[32].seekx
-            world.Sprite[32].y = world.camera.CameraY + 20;
-            world.Sprite[33].x = world.camera.CameraX; //  - world.Sprite[33].seekx
-            world.Sprite[33].y = world.camera.CameraY + world.camera.CameraHeight - 180;
-            world.Sprite[34].x = world.camera.CameraX + world.camera.CameraWidth - 268; //  + world.Sprite[33].seekx
-            world.Sprite[34].y = world.camera.CameraY + world.camera.CameraHeight - 180;
-        }
 
-        if (world.Sprite[30].mode == "6") {
-            GoSub_level1c();
-        }
-
-        if (world.Sprite[30].mode == "5") {
-            GoSub_level1b();
-            world.Sprite[30].mode = "6";
-        }
-        if (world.Sprite[30].mode == "4" && world.Sprite[30].miscTime < world.clock) {
-            if (world.cinemaCounter >= world.cinemaMax) {
-                world.Sprite[30].mode = "5";
-            } else {
-                GoSub_level1a();
-            }
-        // world.Sprite[30].mode = "5"
-        }
-        if (world.Sprite[30].mode == "2") {
-            if (world.cinemaCounter > world.cinemaMax) {
-                world.Sprite[30].mode = "9";
-                world.Sprite[31].visible = false;
-                return;
-            }
-            GoSub_setUpLevel1();
-            world.Sprite[30].mode = "3";
-        }
-        if (world.Sprite[30].mode == "3") {
-            world.Sprite[31].x = world.camera.CameraX - world.Sprite[31].seekx;
-            world.Sprite[31].y = world.camera.CameraY + 20;
-            world.Sprite[32].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[32].seekx;
-            world.Sprite[32].y = world.camera.CameraY + 20;
-            world.Sprite[33].x = world.camera.CameraX - world.Sprite[33].seekx;
-            world.Sprite[33].y = world.camera.CameraY + world.camera.CameraHeight - 180;
-            world.Sprite[34].x = world.camera.CameraX + world.camera.CameraWidth - 268 + world.Sprite[33].seekx;
-            world.Sprite[34].y = world.camera.CameraY + world.camera.CameraHeight - 180;
-
-            if (world.Sprite[31].seekx < 0) {
-                world.Sprite[30].mode = "4";
-                world.Sprite[31].seekx = 0;
-                world.Sprite[32].seekx = 0;
-                world.Sprite[33].seekx = 0;
-                world.Sprite[34].seekx = 0;
-            }
-
-            for (int i = 31; i <= 34; ++ i) {
-                if (i == 96) { continue; }
-                world.Sprite[i].seekx = world.Sprite[i].seekx - world.sFactor * 6;
-                world.Sprite[i].frame = world.Sprite[i].frame + 1;
-                if (world.Sprite[i].frame > 2) {
-                    world.Sprite[i].frame = 1;
-                }
-                // Sprite(i).frame = Sprite(i).seeky
-            }
-        }
-    }
 
     void seeker(int who) {
         auto & s = world.Sprite[who];
@@ -1155,22 +979,6 @@ private:
         if (s.y > s.seeky) { s.y = s.y - (s.mph * world.sFactor); }
     }
 
-    void setCinema(const int who, const int frame1, const int frame2,
-                   const int frame3, const int frame4, const int color1,
-                   const int color2, const int color3, const int color4,
-                   const std::string & wavefile, const double miscTime) {
-        auto & c = world.cinema[who];
-        c.frame1 = frame1;
-        c.frame2 = frame2;
-        c.frame3 = frame3;
-        c.frame4 = frame4;
-        c.color1 = color1;
-        c.color2 = color2;
-        c.color3 = color3;
-        c.color4 = color4;
-        c.wavefile = wavefile;
-        c.miscTime = miscTime;
-    }
 
     void shoot(int who, const std::string & what, int wherex, int wherey) {
         int opera;

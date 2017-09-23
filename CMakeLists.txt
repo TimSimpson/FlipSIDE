@@ -39,6 +39,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.cpp
 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaProc.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaProc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.cpp
 

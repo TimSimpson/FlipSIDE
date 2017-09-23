@@ -16,11 +16,6 @@ namespace {
 	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
-void centerSprite(CharacterSprite & s, Camera & camera) {
-	// Aims the camera on the given sprite.
-	s.x = (camera.x() + (camera.width() / 2)) - (s.wide / 2);
-	s.y = (camera.y() + (camera.height() / 2)) - (s.high / 2);
-}
 
 void make_jump(CharacterSprite & sprite, double current_time) {
 	if (sprite.z == 0) {
@@ -585,61 +580,6 @@ public:
 
 		if (s.name == "StageWhat") {
 			//
-			if (s.mode == "") {
-				//playWave "conten.wav"
-				if (s.miscTime == 0) {
-					s.miscTime = world.clock + 2;
-					world.Sprite[31].zOrder = -100;
-				}
-
-				{
-					//TSNOW: No idea why this is hardcoded.
-					auto & s2 = world.Sprite[31];
-					if (world.Sprite[j].miscTime > world.clock) {
-						s2.x = world.camera.CameraX;
-						s2.y = world.camera.CameraY;
-						s2.wide = 640;
-						s2.high = 480;
-						s2.frame = 9;
-						s2.texture = 9;
-						s2.visible = true;
-					}
-
-					if (world.Sprite[j].miscTime < world.clock) {
-						s2.x = s2.x + 4 * world.sFactor;
-						s2.y = s2.y + 4 * world.sFactor;
-						s2.wide = s2.wide - 8 * world.sFactor;
-						s2.high = s2.high - 8 * world.sFactor;
-						s2.zOrder = -100;
-						if (s2.wide < 0) {
-							world.Sprite[j].mode = "?";
-							world.Sprite[30].miscTime = world.clock + 3;
-						}
-					}
-				}  // End With
-			}  //mode
-			if (s.mode == "?") {
-				//playWave "conten.wav"
-				{
-					auto & s2 = world.Sprite[31];
-					unstretch(s2);
-					s2.wide = s2.wide * 2;
-					s2.high = s2.high * 2;
-
-					//.wide = (275 - 188) * 2
-					//.high = (376 - 353) * 2
-
-					s2.frame = 10;
-					s2.texture = 9;
-					s2.visible = true;
-					s2.zOrder = -100;
-					centerSprite(world.Sprite[31], Camera(world.camera));
-				}
-				if (s.miscTime < world.clock) {
-					s.mode = "2";
-					s.name = "script";
-				}
-			}
 
 
 		}
