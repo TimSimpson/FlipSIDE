@@ -86,15 +86,11 @@ struct World {
 
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
 
-    //Used to get the heck out of a never ending do loop
-    bool STOPGAME;
-
     std::array<PlayerData, max_players> player_data;
-
-    int spritesInUse;
 
     //GAME PLAY MULTIPLE PLAYERS DATA
     ActivePlayers numberPlayers;
+
     GameState game_state;
 
     std::string currentScreen;

@@ -8,7 +8,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 	glm::vec2 res2d{ world.FULLSCREENWIDTH, world.FULLSCREENHEIGHT };
 
 	// Do goofy animation stuff - maybe this should be moved
-	for (int j = 0; j < world.spritesInUse; ++j) {
+	for (int j = 0; j < world.Sprite.size(); ++j) {
 		auto & s = world.Sprite[j];
 		if (s.frame > 0) {
 			s.srcx = s.Aframe[s.frame].x;
@@ -36,7 +36,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 		billboards.push_back(b);
 	}
 
-	for (int j = 0; j < world.spritesInUse; ++j) {
+	for (int j = 0; j < world.Sprite.size(); ++j) {
 		auto & sprite = world.Sprite[j];
 		if (!sprite.visible) {
 			continue;
@@ -80,7 +80,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 			// with custom z orders. Almost 100% of the time the rule is "put
 			// this behind everything" so I'll just do that.
 			LP3_ASSERT(sprite.zOrder <= 10);
-			b.z = 0.9998f - (0.0020f * ((10.0f / sprite.zOrder) + j / world.spritesInUse));
+			b.z = 0.9998f - (0.0020f * ((10.0f / sprite.zOrder) + j / world.Sprite.size()));
 			//	d//efault:
 			//	b.z = 1.0f - (100.0f / sprite.zOrder);
 			//break;
@@ -95,7 +95,6 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 
 }
 void destroyEverything(World & world, view::View & view, Sound & sound, int how) {
-	int penguin;
 	int goatorg;
 
 	//sound.PlayIsoWave("nothing.wav");
@@ -108,16 +107,15 @@ void destroyEverything(World & world, view::View & view, Sound & sound, int how)
 	world.camera.CameraX = 0;
 	world.camera.CameraY = 0;
 	goatorg = 0;
-	penguin = world.spritesInUse;
 	//If how = 2 Then goatorg = 30: penguin = 95
 
-	for (int j = goatorg; j <= penguin; ++j) {
-		world.Sprite[j] = CharacterSprite{};
+	for (auto & s : world.Sprite) {
+		s = CharacterSprite{};
 	}
 }
 
 void flicker(World & world) {
-	for (int j = 0; j < world.spritesInUse; ++j) {
+	for (int j = 0; j < world.Sprite.size(); ++j) {
 		auto & s = world.Sprite[j];
 
 		if (s.trueVisible != 0) {

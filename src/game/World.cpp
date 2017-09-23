@@ -76,9 +76,7 @@ World::World()
     cinemaMax(0),
     exitS(),
     Sprite(),
-    STOPGAME(false),
 	player_data(),
-    spritesInUse(0),
     numberPlayers(ActivePlayers::ap0()),
     game_state(),
     currentScreen()
@@ -119,7 +117,6 @@ World::World()
 	//KeyJump = "J"
 
 	this->camera.CameraWidth = 640;  this->camera.CameraHeight = 480;
-	this->spritesInUse = World::NUMSPRITES;
 
 	for (int j = 0; j < 100; ++j)
 	{

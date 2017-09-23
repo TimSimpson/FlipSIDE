@@ -191,7 +191,7 @@ public:
 
 
         //Rem-FLICKER-
-        for (j = 0; j < world.spritesInUse; ++j) {
+        for (j = 0; j < world.Sprite.size(); ++j) {
 
             if (boost::starts_with(world.screen, "Level")) {
                 int sopoer;
@@ -213,7 +213,7 @@ public:
         //z(j) = jumpstart(j) + (jumpstrength(j) * crapple) - (gravity * (crapple ^ 2))
         //If z(j) < 0 Then z(j) = 0: jumptime(j) = 0
 
-        for (j = 0; j < world.spritesInUse; ++j) {
+        for (j = 0; j < world.Sprite.size(); ++j) {
             auto & s = world.Sprite[j];
 
             if (s.jumpTime != 0) {
@@ -242,7 +242,7 @@ public:
 
 
 
-        for (j = 0; j < world.spritesInUse; ++j) {
+        for (j = 0; j < world.Sprite.size(); ++j) {
             auto & s = world.Sprite[j];
 			// Handle all "level" stuff here, but call update on gameproc
 			// otherwise.
@@ -272,9 +272,9 @@ public:
         //      END OF AN ERA
         //---------------------------------------------------------------------
 
-        for (j = 0; j <= world.spritesInUse; ++ j) {
+        for (j = 0; j < world.Sprite.size(); ++ j) {
             //If Sprite(j).mover = True Then
-            for (k = j + 1; k <= world.spritesInUse; ++k) {
+            for (k = j + 1; k < world.Sprite.size(); ++k) {
                 if (world.Sprite[j].kind == Kind::neutral) { goto fthis2; }
                 if (world.Sprite[k].kind == world.Sprite[j].kind
                     || world.Sprite[k].kind == Kind::neutral) {
@@ -296,7 +296,7 @@ public:
             return result;
         }
 
-        for (j = 0; j < world.spritesInUse; ++ j) {
+        for (j = 0; j < world.Sprite.size(); ++ j) {
             world.Sprite[j].lastX = world.Sprite[j].x;
             world.Sprite[j].lastY = world.Sprite[j].y;
         }
@@ -319,7 +319,7 @@ private:
 		}
 		animation_timer -= 200;
 
-		for (int j = 0; j <= world.spritesInUse; ++j) {
+		for (int j = 0; j < world.Sprite.size(); ++j) {
 			auto & s = world.Sprite[j];
 			if (s.proc) {
 				s.proc->animate(200);
@@ -694,7 +694,7 @@ private:
 
 
         goatX = 0;
-        for (opera = 0; opera <= world.spritesInUse; ++ opera) {
+        for (opera = 0; opera < world.Sprite.size(); ++ opera) {
             if (world.Sprite[opera].name == who) { goatX = goatX + 1; }
         }
 
@@ -1306,7 +1306,7 @@ private:
 				legacy_add_process(env, world, entity_manager, h*10,
 					               world.Sprite[h*10], world.Sprite[h*10].name));
 		}
-        for (j = 30; j <= world.spritesInUse; ++j) {
+        for (j = 30; j < world.Sprite.size(); ++j) {
 
 			proc_manager.add_process(
 				legacy_add_process(env, world, entity_manager, j,
@@ -1446,7 +1446,7 @@ private:
     void shoot(int who, const std::string & what, int wherex, int wherey) {
         int opera;
 
-        for (opera = (who + 1); opera <= world.spritesInUse; ++ opera) {
+        for (opera = (who + 1); opera < world.Sprite.size(); ++ opera) {
             if (world.Sprite[opera].name == "" || world.Sprite[opera].name == "empty" || world.Sprite[opera].name == "dead") {
                 // killS opera
                 world.Sprite[opera].name = what;
