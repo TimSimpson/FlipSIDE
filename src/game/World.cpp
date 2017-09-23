@@ -78,8 +78,7 @@ World::World()
     Sprite(),
 	player_data(),
     numberPlayers(ActivePlayers::ap0()),
-    game_state(),
-    currentScreen()
+    game_state()
 {
 	for (int i = 0; i < player_data.size(); ++ i) {
 		player_data[i].index = i;

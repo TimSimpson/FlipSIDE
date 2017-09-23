@@ -52,12 +52,8 @@ public:
 		camera(world.camera)
     {
 		LP3_ASSERT(boost::starts_with(world.screen, "Level"));
-		LP3_ASSERT(world.currentScreen != world.screen);
 
-		sound.silence_sfx();
-
-        //as long as this is set to this crazy value, it won't load it again.
-        world.currentScreen = world.screen;
+    	sound.silence_sfx();
 
         std::string crapple = world.screen.substr(5);
         double boogeycrap = boost::lexical_cast<double>(crapple);
@@ -91,11 +87,14 @@ public:
                 }
                 break;
             case input::Key::power_up:
-                world.player_data[0].slicer = true;
-                world.player_data[0].GradeUp = 2;
-                world.Sprite[0].wide = 25;
-                world.Sprite[0].high = 25;
-                sound.PlayWave("SoupedUp.wav");
+                // Forget this for now as I remove all references to specific
+                // sprite entries.
+
+                // world.player_data[0].slicer = true;
+                // world.player_data[0].GradeUp = 2;
+                // world.Sprite[0].wide = 25;
+                // world.Sprite[0].high = 25;
+                // sound.PlayWave("SoupedUp.wav");
                 break;
             case input::Key::lemon_time:
                 world.LemonTime = true;
@@ -111,25 +110,7 @@ public:
         int focus_x = 0;
 		int focus_y = 0;
 
-
-                     //                   CAMERA TIME
-                     //----------------------------------------------------------------------
         this->findPlayers();
-        //If Sprite(0).name <> playerName(0) And Sprite(10).name <> playerName(1) And Sprite(20).name <> playerName(2) Then gotFocus = -6
-
-		//2017: Have no idea what the hell any of this means but it's how
-		// these numbers used to map.
-		//world.gotFocus = world.numberPlayers.focus.gotFocus;
-		//int j = world.numberPlayers.focus.j;
-		//int k = world.numberPlayers.focus.k;
-
-        //1 Only player 1
-        //2 Player 1 and 2
-        //3 All three Players
-        //4 Just player 2
-        //5 Just player 3
-        //6 Players 1 and 3
-        //7 Players 2 and 3
 
 		if (world.numberPlayers.any_player_active()) {
 			int itr_start;
@@ -186,10 +167,6 @@ public:
 		int j;
 		int k;
 
-
-
-
-
         //Rem-FLICKER-
         for (j = 0; j < world.Sprite.size(); ++j) {
 
@@ -208,10 +185,6 @@ public:
         //Rem-------------------------------------------------------------------
         //               THIS SECTION DOES THE JUMPING
         //Rem-------------------------------------------------------------------
-        //The ancient key from the past?!!
-        //crapple = clock - jumptime(j)
-        //z(j) = jumpstart(j) + (jumpstrength(j) * crapple) - (gravity * (crapple ^ 2))
-        //If z(j) < 0 Then z(j) = 0: jumptime(j) = 0
 
         for (j = 0; j < world.Sprite.size(); ++j) {
             auto & s = world.Sprite[j];
@@ -305,10 +278,6 @@ public:
 
 		return nullptr;
     }
-    //     End Sub for playGame--------------------------------------------!!!
-    //     End Sub for playGame--------------------------------------------!!!
-    //     End Sub for playGame--------------------------------------------!!!
-    //     End Sub for playGame--------------------------------------------!!!
 
 private:
 	void animate() {
@@ -326,15 +295,6 @@ private:
 			}
 		}
 	}
-
-    long anyKey(int zed) {
-        // Returns true if the player at the given index is pressing any key.
-        return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
-                 || world.player_data[zed].upKey || world.player_data[zed].DownKEY
-                 || world.player_data[zed].AttackKey) ? 1 : 0);
-    }
-
-
 
     void checkHit(int j, int k) {
                 bool redo = false;
@@ -356,18 +316,6 @@ private:
 
     redo2:
         //If k = 1 And j = 31 Then Stop
-
-        //Rem-KIND DEFINITIONS
-        //1 is player
-        //2 is enemy
-        //3 is fireball
-        //4 is goomba thing
-        //5 is unmoveable
-        //6 is trampoline
-
-        //to do
-        //7 is a enemy killable by jumping on it
-        //8 is bullet by the enemy (can pass through 5//s)
 
         //Player hits an enemy
         if (world.Sprite[j].kind == Kind::player && (world.Sprite[k].kind == Kind::enemy
@@ -459,23 +407,6 @@ private:
                     || world.Sprite[j].kind == Kind::trampoline) {
                     goto britneyDog2;
                 }
-                //if (world.Sprite[k].z > (world.Sprite[j].length - (world.Sprite[j].length * 0.75))) then GoTo britneyDog2
-            //2017: this label was unreferneced:
-            // poddle2:
-                //HolderJ = hitdetection(j, k, True)
-                //if (HolderJ = 2 || HolderJ = 6 || HolderJ = 7) then
-                //world.Sprite[j].x = world.Sprite[j].x - world.Sprite[j].mph
-                //End If
-                //if (HolderJ = 3 || HolderJ = 8 || HolderJ = 9) then
-                //world.Sprite[j].x = world.Sprite[j].x + world.Sprite[j].mph
-                //End If
-                //if (HolderJ = 4 || HolderJ = 6 || HolderJ = 8) then
-                //world.Sprite[j].y = world.Sprite[j].y - world.Sprite[j].mph
-                //End If
-                //if (HolderJ = 5 || HolderJ = 7 || HolderJ = 9) then
-                //world.Sprite[j].y = world.Sprite[j].y + world.Sprite[j].mph
-                //End If
-                //if (hitdetection(k, j) = 1) then GoTo poddle2 //
                 world.Sprite[j].x = world.Sprite[j].lastX;
                 world.Sprite[j].y = world.Sprite[j].lastY;
         britneyDog2:
@@ -491,22 +422,7 @@ private:
                 || world.Sprite[k].kind == Kind::trampoline || world.Sprite[k].kind == Kind::enemy_bullet) {
                 goto britneyDog;
             }
-        // 2017: unreferenced label:
-        // poddle:
-            //HolderJ = hitdetection(k, j, True)
-            //if (HolderJ = 2 || HolderJ = 6 || HolderJ = 7) then
-            //world.Sprite(k).x = world.Sprite(k).x - world.Sprite(k).mph
-            //End If
-            //if (HolderJ = 3 || HolderJ = 8 || HolderJ = 9) then
-            //world.Sprite(k).x = world.Sprite(k).x + world.Sprite(k).mph
-            //End If
-            //if (HolderJ = 4 || HolderJ = 6 || HolderJ = 8) then
-            //world.Sprite(k).y = world.Sprite(k).y - world.Sprite(k).mph
-            //End If
-            //if (HolderJ = 5 || HolderJ = 7 || HolderJ = 9) then
-            //world.Sprite(k).y = world.Sprite(k).y + world.Sprite(k).mph
-            //End If
-            //if (hitdetection(k, j) = 1) then GoTo poddle
+
             world.Sprite[k].x = world.Sprite[k].lastX;
             world.Sprite[k].y = world.Sprite[k].lastY;
         britneyDog:
@@ -522,15 +438,6 @@ private:
     }
 
     int checkProx(const int who) {
-       //numberPlayers integer legend
-       //1 Only player 1
-       //2 Player 1 and 2
-       //3 All three Players
-       //4 Just player 2
-       //5 Just player 3
-       //6 Players 1 and 3
-       //7 Players 2 and 3
-
        int theclosest = 0;
        int min = 0;
 
@@ -579,49 +486,6 @@ private:
         }
     }
 
-    void createPlayer(int who) {
-            int goatorg = 0;
-
-        if (world.player_data[(who / 10)].playerName == "Thomas") {
-            world.player_data[who / 10].weapon = "fireball";
-            this->loadAnimation(who, "Thomas.ani");
-            view.LoadTexture((who / 10) + 1, "Flip1.png", 254, 254);
-            world.Sprite[who].texture = (who / 10) + 1;
-            for (goatorg = (who + 1); goatorg <= (who + 9); ++ goatorg) {
-                this->loadAnimation(goatorg, "Fireball.ani");
-            }
-        }
-
-        if (world.player_data[(who / 10)].playerName == "Nick") {
-            world.player_data[who / 10].weapon = "fireball";
-            this->loadAnimation(who, "nick.ani");
-            view.LoadTexture((who / 10) + 1, "joel.png", 254, 258);
-            world.Sprite[who].texture = (who / 10) + 1;
-            for (goatorg = (who + 1); goatorg <= (who + 9); ++goatorg) {
-                this->loadAnimation(goatorg, "icespike.ani");
-            }
-        }
-
-        if (world.player_data[(who / 10)].playerName == "Nicky") {
-            world.player_data[who / 10].weapon = "bomb";
-            this->loadAnimation(who, "nicky.ani");
-            view.LoadTexture((who / 10) + 1, "LilNicky.png", 84, 148);
-            world.Sprite[who].texture = (who / 10) + 1;
-            for (goatorg = (who + 1); goatorg <= (who + 9); ++goatorg) {
-                this->loadAnimation(goatorg, "bomb.ani");
-            }
-        }
-
-        for (goatorg = (who + 1); goatorg <= (who + 9); ++ goatorg) {
-            world.Sprite[goatorg].name = "";
-            world.Sprite[goatorg].zOrder = -90;
-        }
-    }
-
-    void debugLevel() {
-        LP3_ASSERT(false); // TODO
-    }
-
     gsl::owner<GameProcess *> flipGame() {
         // I think this handles switching to different rooms or levels.
         int penguin;
@@ -643,22 +507,6 @@ private:
             world.screen = "title2";
             return create_title_screen(context);
         }
-
-		// MOVED THIS TO CONSTRUCTOR:
-        //////************************************************************
-        ////// LOADS A NEW LEVEL!------------------------------------
-        //////************************************************************
-        ////if (boost::starts_with(world.screen, "Level")
-        ////    && world.currentScreen != world.screen) {
-        ////    //as long as this is set to this crazy value, it won't load it again.
-        ////    world.currentScreen = world.screen;
-
-        ////    std::string crapple = world.screen.substr(5);
-        ////    double boogeycrap = boost::lexical_cast<double>(crapple);
-
-        ////    this->goToLevel(boogeycrap);
-        ////}
-
 
         if (world.screen == "deadscreen") {
             world.screen = "title";
@@ -692,22 +540,12 @@ private:
         int opera = 0;
         int goatX = 0;
 
-
-        goatX = 0;
         for (opera = 0; opera < world.Sprite.size(); ++ opera) {
             if (world.Sprite[opera].name == who) { goatX = goatX + 1; }
         }
 
         return goatX;
     }
-
-    ////double getMiddleX(int who) {
-    ////    return world.Sprite[who].x + (world.Sprite[who].wide / 2);
-    ////}
-
-    ////double getMiddleY(int who) {
-    ////    return world.Sprite[who].y + (world.Sprite[who].high / 2);
-    ////}
 
     void GoSub_level1a() {
         world.Sprite[31].frame = world.cinema[world.cinemaCounter].frame1;
@@ -921,11 +759,6 @@ private:
             con1 = 1; right = 1;
         }
 
-
-        // 2017: unreferenced label:
-        // screwthis:
-
-
         //Rem- Checks to see if they ever collide from the top to bottom (Y)
         con2 = 0;
 
@@ -948,10 +781,7 @@ private:
             goto screwthis3;
         }
 
-
         //Rem- The THIRD dimension, Z!
-
-        //if k = j) then GoTo screwthis3
 
         if ((world.Sprite[num1].z + (world.Sprite[num1].length * 1.5))
                 >= world.Sprite[num2].z
@@ -965,9 +795,6 @@ private:
             && world.Sprite[num2].z < world.Sprite[num1].z) {
             con3 = 1;
         }
-
-        //TSNOW: This if statement just printed a line.
-        //if (con3 == 1) { Print ""; } //Rem-Beep: //Label2.Caption = "From Top of " + Str$(j)
 
         screwthis3:
         if (con1 == 1 && con2 == 1 && con3 == 1) { result = 1; }
@@ -987,41 +814,16 @@ private:
 
 
     void initPlayers() {
-               //1 Only player 1
-        //2 Player 1 and 2
-        //3 All three Players
-        //4 Just player 2
-        //5 Just player 3
-        //6 Players 1 and 3
-        //7 Players 2 and 3
         int j = 0;
         world.Sprite[0].name = "dead";
         world.Sprite[10].name = "dead";
         world.Sprite[20].name = "dead";
 
-		//2017: The old code set `gotFocus` to 5 if numberPlayers == 5. Every
-		// other value matched the same magical gotFocus value to the same
-		// numberPlayers value I'd seen elsewhere. I'm going to take a risk
-		// and assume that was a bug in the old code.
-		// if (world.numberPlayers == 5) { world.gotFocus = 5; }
-		// world.gotFocus = world.numberPlayers.focus.gotFocus;
-
-        //Dim j As Integer
         int k = 0;
         for (k = 0; k <= 2; ++ k) {
             if (world.player_data[k].playerName == "") { world.player_data[k].playerName = "redead"; }
         }
-        //For j = 0 To (numberPlayers - 1)//
-        //
-        ////Sprite(j * 10).x = 50
-        //Sprite(j * 10).y = 220
-        //Sprite(j * 10).name = playerName(j)
-        //For k = j * 10 + 1 To j * 10 + 9
-        //Sprite(k).x = 60
-        //Sprite(k).y = 70
-        //Sprite(k).name = "fireball"
-        //Next k
-        //Next j
+
 
         //Rem****************88
         //After killing the players above by setting the sprites (bodies) to "dead",
@@ -1029,8 +831,6 @@ private:
         //Rem*************************************8
 
         view.LoadTexture(0, "System.png", 336, 397);
-
-
 
         //Rem******************************************************8
         //          THIS PART LOADS UP WEAPONS
@@ -1054,37 +854,11 @@ private:
 			}
 		}
 
-
         //Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
         if (world.Sprite[0].name == world.Sprite[10].name) {
             world.Sprite[10].color = view::qb_color(10);
         }
 
-
-        //Rem- This loads sounds into holders 0 to 14, meaning each player gets 5 sounds
-        //Rem- Spring.wav is then put into slot 15
-        //for (j = 0; j <= 2; ++ j) {
-
-        //    if (world.player_data[j].playerName == "Thomas") {
-        //        sound.LoadSound((j * 5), "fireball.wav", "fireball");
-        //        sound.LoadSound((j * 5) + 1, "Death.wav", "DavidDeath");
-        //        sound.LoadSound((j * 5) + 2, "hurt.wav", "DavidHurt");
-        //    }
-
-        //    if (world.player_data[j].playerName == "Nicky") {
-        //        sound.LoadSound((j * 5), "NickyDeath.wav", "NickyDeath");
-        //        sound.LoadSound((j * 5) + 1, "NickyHurt.wav", "NickyHurt");
-        //        //2017: This file doesn't work, so don't play it
-        //        //sound.LoadSound((j * 5) + 2, "SetBomb.wav ", "set bomb");
-        //        sound.LoadSound((j * 5) + 3, "Bomb explode.wav", "bomb explode");
-        //    }
-
-        //    if (world.player_data[j].playerName == "Nick") {
-        //        sound.LoadSound((j * 5), "nickdeath.wav", "nickdeath");
-        //        sound.LoadSound((j * 5) + 1, "nickhurt.wav", "nickhurt");
-        //        sound.LoadSound((j * 5) + 2, "iceshot.wav", "iceshot");
-        //    }
-        //}
         sound.LoadSound(15, "Spring.wav", "spring");
     }
 
@@ -1099,11 +873,6 @@ private:
     void loadAnimation(int who, const std::string & file) {
         auto & s = world.Sprite[who];
         view.load_animation_file(s.Aframe, file);
-    }
-
-    void level1() {
-        //2017: Looks like this is never called
-        LP3_ASSERT(false); // TODO
     }
 
     //TSNOW: This looks insane. It looks as if there was too much in PlayGame,
@@ -1136,8 +905,6 @@ private:
                 ws.Aframe[1].x2 = ws.Aframe[1].x2 + 1;
             }
 
-
-
             if (ws.name == "bullet") {     ////This is a strange type of bullet that in retrospect feels more like a bubble
                 //if (ws.seekx <> -1) then
 
@@ -1167,12 +934,9 @@ private:
                     }
                 }
 
-
-
                 this->seeker(who);
                 ws.frame = ws.frame + 1; if (ws.frame > 1) { ws.frame = 0; }
             }
-
 
             if (ws.name == "paulrun") {
                 if (ws.mode == "") { ws.mode = "right"; }
@@ -1212,7 +976,6 @@ private:
                     ws.jumpStart = ws.z; ws.jumpTime = world.clock; } }
             }
 
-
             if (ws.name == "pigeonbomber") {
                 ws.z = ws.z + world.sFactor;
                 //ws.frame = ws.frame + 1
@@ -1227,9 +990,7 @@ private:
                                 world.Sprite[checkProx(who)].y);
                     ws.miscTime = world.clock + 2;
                 }
-
             }
-
             return;
         }
     }
@@ -1239,7 +1000,6 @@ private:
         std::array<std::string, 10> texFile;
         std::array<int, 10> texwide;
         std::array<int, 10> texhigh;
-        //TSNOW: Unnecessary: string file = world.levelPath + fileArg;
         {
             auto f = vb.OpenForInput(file);
             for (j = 0; j <= 9; ++ j) {
@@ -1267,8 +1027,6 @@ private:
 
 		destroyEverything(world, view, sound, 2);
 
-        if (loadScreen == true) { this->NowLoading(); }
-
         world.camera.CameraWidth = 640; world.camera.CameraHeight = 480;
 
         if (stopMusic == true) { sound.PlayBgm(""); }
@@ -1292,15 +1050,7 @@ private:
 
         this->initPlayers();
 
-        //Call initPlayers
-        //For j = 0 To 2
-        //lives(j) = 3
-        //continues(j) = 3
-        //Next j
-
-		// TODO: for j < 30; do player sprites, for j=30; do rest
-		// JUKIE
-		CharacterProcEnv env{ context, random, world.clock, camera };
+   		CharacterProcEnv env{ context, random, world.clock, camera };
 		for (int h = 0; h < 3; ++h) {
 			proc_manager.add_process(
 				legacy_add_process(env, world, entity_manager, h*10,
@@ -1324,30 +1074,9 @@ private:
         this->loadAnimation(34, CinemaAnimationFile);
         world.Sprite[30].name = "StageWhat"; world.Sprite[30].mode = "";
 
-
-
-
-
-
-
-
-
-
-
-
         if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }
 
-
         world.exitS = "";
-    }
-
-    void NowLoading() {
-        view.LoadTexture(-1, "NowLoading.png", 320, 240);
-        world.camera.CameraWidth = 320;
-        world.camera.CameraHeight = 240;
-
-        world.camera.CameraWidth = 640;
-        world.camera.CameraHeight = 480;
     }
 
     void script() {
