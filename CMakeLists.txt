@@ -41,6 +41,8 @@ add_library(Lp3_NND3d
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaProc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/Enemies.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/Enemies.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.cpp
 

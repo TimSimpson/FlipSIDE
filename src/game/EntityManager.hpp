@@ -19,6 +19,10 @@ public:
 
     // Returns some number of sprites.
     gsl::span<CharacterSprite> grab_sprites(int count);
+
+	// This only exists so I can make it compatable with legacy code.
+	// In other words, it's a hack that should be removed ASAP.
+	void skip_to(int new_index);
 private:
     int s_index;
 	World & world;

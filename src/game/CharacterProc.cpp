@@ -269,27 +269,7 @@ public:
         }
 
         if (spr.name == "Kirbose" || spr.name == "Kerbose") {
-            spr.mover = true;
-            spr.name = "Kerbose";
-            spr.wide = 21;
-            spr.high = 19;
-            spr.visible = true;
-            spr.frame = 1;
-            spr.kind = Kind::enemy_weak_to_jumping;
-            spr.length = 10;
-            spr.deathType = "Kerbose Death";
-            spr.invTime = 1;
-            spr.hp = 3;
-            spr.soundFile = "Kerbose Ouch";
-            spr.jumpStrength = 25;
-            const int trueorg = (int) (random.next() * 2.0 + 1);
-            if (trueorg == 1) {
-                view.load_animation_file(spr.Aframe, "Kerbose.ani");
-            } else {
-                view.load_animation_file(spr.Aframe, "Putulo.ani");
-                spr.soundFile = "putulohurt";
-                spr.deathType = "putuloDeath";
-            }
+
         }
 
         if (spr.name == "gotmilkbs") {
@@ -329,20 +309,7 @@ public:
         }
 
         if (spr.name == "Kerbose Death") {
-            spr.visible = true;
-            //spr.name = "Dying Explosion"
-            //spr.flickerTime = clock + 10
-            //spr.seekx = spr.wide * 3
-            //spr.mph = 2
-            //spr.kind = Kind::neutral
 
-            spr.mover = false;
-            spr.kind = Kind::neutral;
-            spr.frame = 3;
-            //srcx = 114: spr.srcy = 2
-            //spr.srcx2 = 134: spr.srcy2 = 19
-            spr.miscTime = current_time + 3;
-            sound.PlaySound("Kerbose Die");
         }
 
         if (spr.name == "putuloDeath") {
@@ -468,30 +435,11 @@ public:
 		}
 
 		if (s.name == "Kerbose Death") {
-			//.flickerTime = clock + 2
-			//if (.color = QBColor(1) Then .color = normColor Else .color = QBColor(1)
-			if (s.miscTime < world.clock) {
-				s.name = "";
-				s.visible = false;
-				s.trueVisible = 2;
-				s.flickerTime = world.clock + 1;
-			}
+
 		}
 
 		if (s.name == "Kerbose") {
-			k = (int)(random.next() * 2) + 1;
-			if (k == 1) { s.x = s.x + world.sFactor; }
-			if (k == 2) { s.x = s.x - world.sFactor; }
-			k = (int)(random.next() * 2) + 1;
-			if (k == 1) { s.y = s.y + world.sFactor; }
-			if (k == 2) { s.y = s.y - world.sFactor; }
-			k = (int)(random.next() * 20) + 1;
-			if (k == 1) {
-				if (s.z == 0) {
-					s.jumpStart = s.z;
-					s.jumpTime = world.clock;
-				}
-			}
+
 		}
 
 		if (s.name == "falling") {

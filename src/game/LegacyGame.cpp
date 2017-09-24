@@ -5,6 +5,7 @@
 #include "BaseScreen.hpp"
 #include "CharacterProc.hpp"
 #include "procs/CinemaProc.hpp"
+#include "procs/Enemies.hpp"
 #include "procs/PlayerProc.hpp"
 #include "EntityManager.hpp"
 #include "GameOverScreen.hpp"
@@ -957,12 +958,22 @@ private:
 		proc_manager.add_process(
 			proc::create_cinema_proc(env, entity_manager, stage));
 
-		// old school sprites >=40 for things loaded out of the level
-		for (j = 40; j < world.Sprite.size(); ++j) {
+		entity_manager.skip_to(40);
 
-			proc_manager.add_process(
-				legacy_add_process(env, world, entity_manager, j,
-					               world.Sprite[j], world.Sprite[j].name));
+		// old school sprites >=40 for things loaded out of the level
+		for (j = 40; j < world.Sprite.size(); ++j) {			
+			// First, try to create a new style proc:
+			auto * proc = 
+				proc::create_enemy_proc(env, entity_manager, world.Sprite[j].name);
+			// If that fails, use the old nasty proc stuff
+			if (!proc) {				
+				proc = legacy_add_process(
+					env, world, entity_manager, j,
+					world.Sprite[j], world.Sprite[j].name);
+				entity_manager.grab_sprite(); // make sure the manager doesn't
+											  // use this next sprite.
+			}
+			proc_manager.add_process(proc);
         }
 
         if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }

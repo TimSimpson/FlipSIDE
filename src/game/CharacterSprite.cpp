@@ -183,6 +183,7 @@ void kill(CharacterSprite & sprite) {
 	sprite.trueVisible = 2;
 	sprite.flickerTime = 0;
 	sprite.target = -1;
+	sprite.proc = nullptr;
 }
 
 // Makes the sprite seek out it's "seek" vars
