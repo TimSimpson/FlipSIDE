@@ -168,7 +168,6 @@ public:
 			 }
 		 }
 
-
 		 if (s.name == "bluestick") {
 			 s.frame = s.frame + 1;
 			 if (s.frame > 2) { s.frame = 1; }
@@ -255,8 +254,6 @@ public:
             spr.mode = "";
         }
 
-
-
         if (spr.name == "Dying Explosion") {
             //StopSound which
             //LoadSound which, "goombaspr.wav"
@@ -266,10 +263,6 @@ public:
             spr.kind = Kind::neutral;
             //sound.PlaySound(which);
             sound.PlaySound("dying explosion");
-        }
-
-        if (spr.name == "Kirbose" || spr.name == "Kerbose") {
-
         }
 
         if (spr.name == "gotmilkbs") {
@@ -306,20 +299,6 @@ public:
             sound.PlaySound("Stick Awaken");
             spr.frame = 1;
             unstretch(spr);
-        }
-
-        if (spr.name == "Kerbose Death") {
-
-        }
-
-        if (spr.name == "putuloDeath") {
-            spr.visible = true;
-            spr.mover = false;
-            spr.kind = Kind::neutral;
-            spr.frame = 3;
-            spr.miscTime = current_time + 3;
-            sound.PlaySound("putulodie");
-            spr.name = "Kerbose Death";
         }
 
         if (spr.name == "fireball") {
@@ -432,14 +411,6 @@ public:
 				if ((s.seeky + s.high) > 480) { s.seeky = 480 - s.high; }
 				if (s.seeky < 1) { s.seeky = 0; }
 			}
-		}
-
-		if (s.name == "Kerbose Death") {
-
-		}
-
-		if (s.name == "Kerbose") {
-
 		}
 
 		if (s.name == "falling") {
