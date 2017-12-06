@@ -4,6 +4,13 @@
 # *********************************************************************
 project(lp3_nnd3d CXX)
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+include(CMakePackageConfigHelpers)
+
+find_package(Lp3_Core)
+find_package(Lp3_Input)
+find_package(Lp3_Gfx)
+find_package(Lp3_Mix)
+find_package(Lp3_Sims)
 
 add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/BaseScreen.hpp
@@ -78,17 +85,7 @@ target_include_directories(Lp3_NND3d
     PRIVATE
         src)
 
-target_link_libraries(Lp3_NND3d Lp3_Core Lp3_Sims Lp3_Gfx Lp3_Mix Lp3_Input)
-
-install(TARGETS Lp3_NND3d EXPORT Lp3_NND3d_Config
-    ARCHIVE  DESTINATION lib
-    LIBRARY  DESTINATION lib
-    RUNTIME  DESTINATION bin)  # This is for Windows
-install(DIRECTORY include/ DESTINATION include)
-
-install(EXPORT Lp3_NND3d_Config DESTINATION share/Lp3_NND3d/cmake)
-
-export(TARGETS Lp3_NND3d FILE Lp3_NND3d_Config.cmake)
+target_link_libraries(Lp3_NND3d lp3::core lp3::sims lp3::gfx lp3::mix lp3::input)
 
 add_executable(FlipSIDE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 target_link_libraries(FlipSIDE Lp3_NND3d)
