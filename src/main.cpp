@@ -1,4 +1,5 @@
 #include <chrono>
+#include <iostream>
 
 #include <lp3/core.hpp>
 #include <lp3/gfx.hpp>
@@ -165,7 +166,7 @@ int _main(core::PlatformLoop & loop) {
 	#if defined(LP3_COMPILE_TARGET_EMSCRIPTEN) || defined(LP3_COMPILE_TARGET_POCKETCHIP)
 		// mix::Init mix_init();
 	#else
-		mix::Init mix_init(MIX_INIT_MP3);
+		//mix::Init mix_init(MIX_INIT_OGG);
 	#endif
 
 	nnd3d::Vb vb{ media };
