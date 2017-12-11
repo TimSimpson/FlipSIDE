@@ -163,7 +163,7 @@ public:
         //------------------------------------------------------------
 
 		// 2017: todo: try making these only appear in the loops that need them
-		std::size_t j;
+		int j;
 		int k;
 
         //Rem-FLICKER-
