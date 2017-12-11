@@ -20,8 +20,6 @@ namespace nnd3d { namespace game {
 
 namespace {
 	lp3::core::GlobalVar<std::map<std::string, GameProcessEntry>> procs;
-
-	bool has_shut_down = false;
 }
 
 GameProcessSpace::GameProcessSpace()

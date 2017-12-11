@@ -161,7 +161,6 @@ public:
     }
 
 	~SelectScreen() {
-		int f = 5;
 	}
 
     void handle_input(const input::Event & event) override {
@@ -191,7 +190,7 @@ public:
     gsl::owner<GameProcess *> start_game() {
         // Initialize world stuff.
         World world;
-        
+
 		std::array<bool, 3> active;
 		for (int i = 0; i < 3; ++i) {
 			active[i] = boxes[i].finished;
@@ -204,11 +203,11 @@ public:
             players[box.index] = box.get_player_name();
 
             world.player_data[box.index].lives = 3;
-			world.player_data[box.index].active 
+			world.player_data[box.index].active
 				= box.get_player_name().is_initialized();
             world.player_data[box.index].playerName
                 = box.get_player_name().get_value_or("");
-        }        
+        }
         world.screen = "Level1.1";
         return create_legacy_screen(context, std::move(world), players);
     }
@@ -222,7 +221,7 @@ gsl::owner<GameProcess *> create_select_screen(
 		context,
 		[keys_pressed](GameContext context_2) {
 			return new SelectScreen(context_2, keys_pressed);
-	});    
+	});
 }
 
 namespace {

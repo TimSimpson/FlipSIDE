@@ -80,7 +80,7 @@ World::World()
     numberPlayers(ActivePlayers::ap0()),
     game_state()
 {
-	for (int i = 0; i < player_data.size(); ++ i) {
+	for (std::size_t i = 0; i < player_data.size(); ++ i) {
 		player_data[i].index = i;
 	}
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});

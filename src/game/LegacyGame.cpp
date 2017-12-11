@@ -158,15 +158,12 @@ public:
 		}
 
 
-        int penguin = 0;
-        int trueorg = 0; //focus_x and true org are buddies and also junk variables
-
         //-----------------------------------------------------------
         //START OF NORMAL ROUTINE
         //------------------------------------------------------------
 
 		// 2017: todo: try making these only appear in the loops that need them
-		int j;
+		std::size_t j;
 		int k;
 
         //Rem-FLICKER-
@@ -236,7 +233,7 @@ public:
 
         }
 
-		CharacterProcEnv env{ context, random, world.clock, camera };
+		// CharacterProcEnv env{ context, random, world.clock, camera };
 		proc_manager.update();
         //TSNOW: end of the emulated with statement that creates variable "s",
         //       along with the for loop that used the "j" variable.
@@ -246,10 +243,9 @@ public:
         //---------------------------------------------------------------------
         //      END OF AN ERA
         //---------------------------------------------------------------------
-
         for (j = 0; j < world.Sprite.size(); ++ j) {
             //If Sprite(j).mover = True Then
-            for (k = j + 1; k < world.Sprite.size(); ++k) {
+            for (k = j + 1; k < lp3::narrow<int>(world.Sprite.size()); ++k) {
                 if (world.Sprite[j].kind == Kind::neutral) { goto fthis2; }
                 if (world.Sprite[k].kind == world.Sprite[j].kind
                     || world.Sprite[k].kind == Kind::neutral) {
@@ -290,7 +286,7 @@ private:
 		}
 		animation_timer -= 200;
 
-		for (int j = 0; j < world.Sprite.size(); ++j) {
+		for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
 			auto & s = world.Sprite[j];
 			if (s.proc) {
 				s.proc->animate(200);
@@ -499,8 +495,8 @@ private:
             world.screen = "title";
         }
 
-		if (std::all_of(begin(world.player_data), end(world.player_data), 
-			            [](PlayerData & pd) { return !pd.active; })) 
+		if (std::all_of(begin(world.player_data), end(world.player_data),
+			            [](PlayerData & pd) { return !pd.active; }))
 		{
 			return create_gameover_screen(context);
 		}
@@ -525,10 +521,9 @@ private:
     }
 
     int findQ(const std::string & who) {
-        int opera = 0;
         int goatX = 0;
 
-        for (opera = 0; opera < world.Sprite.size(); ++ opera) {
+        for (std::size_t opera = 0; opera < world.Sprite.size(); ++ opera) {
             if (world.Sprite[opera].name == who) { goatX = goatX + 1; }
         }
 
@@ -594,7 +589,7 @@ private:
 			}
 				);
 
-          
+
             world.camera.cameraStopX = 1244;
             world.camera.cameraStopY = 2273;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
@@ -608,7 +603,7 @@ private:
             this->MakeLevel(1.4f, "Level1.ogg", "level1d.cap", "level1birdstreet.png",
                             98, 480,
 				false, false, std::vector<glm::vec2>{
-					{ 42, 300 }					
+					{ 42, 300 }
 			});
 
             world.camera.cameraStopX = 3000;
@@ -709,9 +704,6 @@ private:
 
 
     void initPlayers() {
-        int j = 0;
-        
-        int k = 0;
         /*for (k = 0; k <= 2; ++ k) {
             if (world.player_data[k].playerName == "") { world.player_data[k].playerName = "redead"; }
         }*/
@@ -801,7 +793,10 @@ private:
                 //if (ws.seekx <> -1) then
 
                 this->killLimit(who);
-				off_camera_kill(ws, Camera(world.camera));
+                {
+                    Camera cam(world.camera);
+				    off_camera_kill(ws, cam);
+                }
 
 
                 //if (ws.mode = "") then
@@ -914,7 +909,7 @@ private:
         const std::string & levelBgFile, const int lvlBgWidth,
         const int lvlBgHeight,
         const bool stopMusic,
-        const bool loadScreen,
+        const bool,  // loadScreen
 		std::vector<glm::vec2> player_spawn_locations) {
 
 		destroyEverything(world, view, sound, 2);
@@ -939,13 +934,13 @@ private:
 
 		// First 30 sprites were for player stuff (10 each)
 		for (auto & pd : world.player_data) {
-			const auto & loc = player_spawn_locations.size() > pd.index
+			const auto & loc = lp3::narrow<int>(player_spawn_locations.size()) > pd.index
 				? player_spawn_locations[pd.index]
 				: player_spawn_locations.back();
 			if (pd.active) {
 				proc_manager.add_process(
-					proc::create_player_proc(env, world.game_state, pd, 
-						                     entity_manager, loc));					
+					proc::create_player_proc(env, world.game_state, pd,
+						                     entity_manager, loc));
 			}
 		}
 		///*for (int h = 0; h < 3; ++h) {
@@ -961,12 +956,12 @@ private:
 		entity_manager.skip_to(40);
 
 		// old school sprites >=40 for things loaded out of the level
-		for (j = 40; j < world.Sprite.size(); ++j) {			
+		for (j = 40; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
 			// First, try to create a new style proc:
-			auto * proc = 
+			auto * proc =
 				proc::create_enemy_proc(env, entity_manager, world.Sprite[j].name);
 			// If that fails, use the old nasty proc stuff
-			if (!proc) {				
+			if (!proc) {
 				proc = legacy_add_process(
 					env, world, entity_manager, j,
 					world.Sprite[j], world.Sprite[j].name);
@@ -995,7 +990,7 @@ private:
     void shoot(int who, const std::string & what, int wherex, int wherey) {
         int opera;
 
-        for (opera = (who + 1); opera < world.Sprite.size(); ++ opera) {
+        for (opera = (who + 1); opera < lp3::narrow<int>(world.Sprite.size()); ++ opera) {
             if (world.Sprite[opera].name == "" || world.Sprite[opera].name == "empty" || world.Sprite[opera].name == "dead") {
                 // killS opera
                 world.Sprite[opera].name = what;

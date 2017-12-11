@@ -32,7 +32,7 @@ public:
 	 // TODO: The plethora of virtual methods with default impls below was to
 	 // support the legacy procs, which needed a gross, large interface.
 	 // In the future delete them.
-	 virtual void animate(std::int64_t ms) {
+	 virtual void animate(std::int64_t) {
 	 }
 
 	 virtual void death_animation() {
@@ -42,9 +42,9 @@ public:
 	 virtual void initialize() {
 		 throw std::logic_error("The method or operation is not implemented.");
 	 }
-     
+
 	 // Create a child process (think bullets)
-	 virtual CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) {
+	 virtual CharacterProc * spawn(CharacterSprite &, const std::string &) {
 		 throw std::logic_error("The method or operation is not implemented.");
 	 }
 

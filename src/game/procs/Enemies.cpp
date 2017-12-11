@@ -48,7 +48,7 @@ public:
         }
     }
 
-    void animate(std::int64_t ms) override {
+    void animate(std::int64_t) override {
 		if (dying) {
 			return;
 		}
@@ -119,9 +119,9 @@ public:
 			while (sprite.miscTime + 1 >= env.current_time) {
 				LP3_YIELD(true);
 			}
-			kill(sprite);			
+			kill(sprite);
 		LP3_COROUTINE_END()
-		return false;        
+		return false;
     }
 };
 

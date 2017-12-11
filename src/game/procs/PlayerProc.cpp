@@ -20,8 +20,6 @@ void create_player(
 	gsl::span<CharacterSprite> & children)
 {
 
-	int goatorg = 0;
-
 	if (player_data.playerName == "Thomas") {
 		player_data.weapon = "fireball";
 		env.context.view.load_animation_file(sprite.Aframe, "Thomas.ani");
@@ -125,7 +123,7 @@ public:
 		sprite.miscTime = env.current_time + 0.25;
 	}
 
-	void animate(std::int64_t ms) override {
+	void animate(std::int64_t) override {
 		++ sprite.frame;
 		if (sprite.frame > 3 || sprite.frame < 1) { sprite.frame = 1; }
 	}
@@ -235,7 +233,7 @@ public:
 		timer = 3000;
 	}
 
-	void animate(std::int64_t ms) override {
+	void animate(std::int64_t) override {
 		sprite.frame = sprite.frame + 1;
 		if (sprite.mode != "explode") {
 			if (sprite.frame > 3) { sprite.frame = 2; }
@@ -355,10 +353,10 @@ public:
 	void initialize() override {
 		state = State::normal;
 
-        view::View & view = env.context.view;
-        Sound & sound = env.context.sound;
-        const double current_time = env.current_time;
-        Random & random = env.random;
+        //view::View & view = env.context.view;
+        //Sound & sound = env.context.sound;
+        //const double current_time = env.current_time;
+        //Random & random = env.random;
 
         auto & spr = this->s;
 
@@ -381,11 +379,9 @@ public:
 	// Find a free child sprite.
 	CharacterSprite * find_free_sprite() {
 		for (auto & child : children) {
-			for (auto & child : children) {
-				if (child.name == "reserved"
-					|| child.name == "") {
-					return &child;
-				}
+			if (child.name == "reserved"
+				|| child.name == "") {
+				return &child;
 			}
 		}
 		return nullptr;
@@ -393,15 +389,13 @@ public:
 
 	// Create a child process (think bullets)
 	// TODO: take out of this base class once things settle down.
-	CharacterProc * spawn(CharacterSprite & sprite, const std::string & name) override {
+	CharacterProc * spawn(CharacterSprite &, const std::string &) override {
 		return nullptr;
 	}
 
 	virtual bool spawn_weapon() = 0;
 
 	void update_normal() {
-		int penguin = player_data.index;
-
 		if (player_data.upKey == true) {
 			if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
 			s.y = s.y - speed_factor;
@@ -530,7 +524,7 @@ public:
             continue_text.y = 10;
             continue_text.y = 10;
 
-            continue_text.visible = true;			
+            continue_text.visible = true;
 
             auto & number = children[2];
 			number.trueVisible = 0;
@@ -682,7 +676,7 @@ public:
 	ThomasProc(CharacterProcEnv _env,
 		GameState & _game_state,
 		PlayerData & _player_data,
-		EntityManager & e_manager, 
+		EntityManager & e_manager,
 		const glm::vec2 & loc)
 		: PlayerProc(_env, _game_state, _player_data, e_manager, "Thomas", loc)
 	{
@@ -692,7 +686,7 @@ public:
         initialize();
     }
 
-	void animate_normally(std::int64_t ms) override {
+	void animate_normally(std::int64_t) override {
 		if (s.dir != "") { s.frame = s.frame + 1; }
 		if (s.dir == "u") {
 			if (s.frame > 8) { s.frame = 5; }
@@ -721,10 +715,10 @@ public:
 
     void _initialize() override {
 		state = State::normal;
-        view::View & view = env.context.view;
-        Sound & sound = env.context.sound;
-        const double current_time = env.current_time;
-        Random & random = env.random;
+        //view::View & view = env.context.view;
+        //Sound & sound = env.context.sound;
+        //const double current_time = env.current_time;
+        //Random & random = env.random;
 
         sprite.zOrder = -99;
         sprite.soundFile = "DavidHurt";
@@ -749,11 +743,12 @@ public:
     }
 
 	bool spawn_weapon() override {
-		auto * sprite = find_free_sprite();
-		if (!sprite) {
+		auto * free_sprite = find_free_sprite();
+		if (!free_sprite) {
 			return false;
 		}
-		sub_processes.add_process(new FireballProc(env, player_data, s, *sprite));
+		sub_processes.add_process(
+			new FireballProc(env, player_data, s, *free_sprite));
 		return true;
 	}
 };
@@ -792,10 +787,10 @@ public:
     void _initialize() override {
 		state = State::normal;
 
-        view::View & view = env.context.view;
-        Sound & sound = env.context.sound;
-        const double current_time = env.current_time;
-        Random & random = env.random;
+        // view::View & view = env.context.view;
+        // Sound & sound = env.context.sound;
+        // const double current_time = env.current_time;
+        // Random & random = env.random;
 
         sprite.zOrder = -99;
         sprite.soundFile = "nickhurt";
@@ -837,7 +832,7 @@ public:
         initialize();
     }
 
-	void animate_normally(std::int64_t ms) override {
+	void animate_normally(std::int64_t) override {
 		if (s.dir != "") { s.frame = s.frame + 1; }
 		if (s.dir == "u") {
 			if (s.frame > 6) { s.frame = 4; }
@@ -870,10 +865,10 @@ public:
     void _initialize() override {
 		state = State::normal;
 
-        view::View & view = env.context.view;
-        Sound & sound = env.context.sound;
-        const double current_time = env.current_time;
-        Random & random = env.random;
+        // view::View & view = env.context.view;
+        // Sound & sound = env.context.sound;
+        // const double current_time = env.current_time;
+        // Random & random = env.random;
 
 
         sprite.zOrder = -99;
@@ -898,11 +893,11 @@ public:
     }
 
 	bool spawn_weapon() override {
-		auto * sprite = find_free_sprite();
-		if (!sprite) {
+		auto * free_sprite = find_free_sprite();
+		if (!free_sprite) {
 			return false;
 		}
-		sub_processes.add_process(new BombProc(env, player_data, s, *sprite));
+		sub_processes.add_process(new BombProc(env, player_data, s, *free_sprite));
 		return true;
 	}
 };

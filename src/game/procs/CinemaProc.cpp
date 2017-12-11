@@ -19,7 +19,7 @@ private:
 	std::int64_t time;
 	std::int64_t misc_time;
 public:
-	ClockAnimation(CharacterProcEnv _env, CharacterSprite & _s2, 
+	ClockAnimation(CharacterProcEnv _env, CharacterSprite & _s2,
 		           const std::string & animation_file)
 	:	camera(_env.camera),
 		state(),
@@ -168,7 +168,7 @@ public:
 			LP3_YIELD(true);
 		}
 
-		for (counter = 0; counter < cinema.size(); ++counter) {
+		for (counter = 0; counter < lp3::narrow<int>(cinema.size()); ++counter) {
 			sprites[0].frame = cinema[counter].frame1;
 			sprites[1].frame = cinema[counter].frame2;
 			sprites[2].frame = cinema[counter].frame3;
@@ -245,7 +245,7 @@ public:
 						  const std::string & texture_file,
 		                  const std::string & animation_file,
 		                  const std::vector<CinemaType> & _cinema)
-	:	clock(_env, e_manager.grab_sprite(), animation_file), 
+	:	clock(_env, e_manager.grab_sprite(), animation_file),
 		faces(_env, e_manager, texture_file, animation_file, _cinema),
 		state()
 	{}
@@ -263,7 +263,7 @@ public:
 
 CharacterProc * create_cinema_proc(
     CharacterProcEnv env, EntityManager & e_manager,
-    const float stage) 
+    const float stage)
 {
 	if (1.0 == stage || 1.1 == stage) {
 		std::vector<CinemaType> cinema = {
@@ -271,7 +271,7 @@ CharacterProc * create_cinema_proc(
 			CinemaType(5, 3, 7, 16, 8, 15, 8, 8, "TalkLv1A2.wav", 1.87)
 		};
 		return new ClockAndFaceCinematic(
-			env, e_manager, "Level1Cinema.png", "Level1Cinema.ani", cinema);		
+			env, e_manager, "Level1Cinema.png", "Level1Cinema.ani", cinema);
 	} else if (1.1 <= stage && 1.2 > stage) {
 		return new FaceRadio(
 			env, e_manager, "Level1Cinema.png", "Level1Cinema.ani",

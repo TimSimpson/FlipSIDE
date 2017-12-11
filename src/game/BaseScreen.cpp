@@ -8,7 +8,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 	glm::vec2 res2d{ world.FULLSCREENWIDTH, world.FULLSCREENHEIGHT };
 
 	// Do goofy animation stuff - maybe this should be moved
-	for (int j = 0; j < world.Sprite.size(); ++j) {
+	for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
 		auto & s = world.Sprite[j];
 		if (s.frame > 0) {
 			s.srcx = s.Aframe[s.frame].x;
@@ -36,7 +36,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 		billboards.push_back(b);
 	}
 
-	for (int j = 0; j < world.Sprite.size(); ++j) {
+	for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
 		auto & sprite = world.Sprite[j];
 		if (!sprite.visible) {
 			continue;
@@ -95,8 +95,6 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 
 }
 void destroyEverything(World & world, view::View & view, Sound & sound, int how) {
-	int goatorg;
-
 	//sound.PlayIsoWave("nothing.wav");
 
 	if (how != 2) {
@@ -106,7 +104,6 @@ void destroyEverything(World & world, view::View & view, Sound & sound, int how)
 	view.LoadTexture(-1, "PlainBlack.png", 25, 25);
 	world.camera.CameraX = 0;
 	world.camera.CameraY = 0;
-	goatorg = 0;
 	//If how = 2 Then goatorg = 30: penguin = 95
 
 	for (auto & s : world.Sprite) {
@@ -115,7 +112,7 @@ void destroyEverything(World & world, view::View & view, Sound & sound, int how)
 }
 
 void flicker(World & world) {
-	for (int j = 0; j < world.Sprite.size(); ++j) {
+	for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
 		auto & s = world.Sprite[j];
 
 		if (s.trueVisible != 0) {

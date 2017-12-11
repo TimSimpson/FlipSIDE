@@ -129,11 +129,11 @@ private:
 
 public:
      LegacyProc(CharacterProcEnv & _env, CharacterSprite & _s, int _j,
-                World & world, const std::string & name)
+                World & world_arg, const std::string & name)
      :  env(_env),
         s(_s),
 		j(_j),
-		world(world)
+		world(world_arg)
      {
         s.name = name;
         s.proc = this;
@@ -142,7 +142,7 @@ public:
 
 	 ~LegacyProc() override = default;
 
-	 void animate(std::int64_t ms) override {
+	 void animate(std::int64_t) override {
 		 //TODO: animation_timer was set to fire every 200ms- basically do
 		 //      something similar, move this to view, and call it outside of
 		 //      the logic loop.
@@ -184,7 +184,6 @@ public:
 		view::View & view = env.context.view;
 		Sound & sound = env.context.sound;
 		const double current_time = env.current_time;
-		Random & random = env.random;
 
 		auto & spr = this->s;
 
@@ -390,8 +389,8 @@ public:
 		//gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
 	//	gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
 	{
-		auto & view = env.context.view;
-		auto & sound = env.context.sound;
+		//auto & view = env.context.view;
+		//auto & sound = env.context.sound;
 		auto & random = env.random;
 		int k;
 
@@ -615,7 +614,8 @@ void CharacterProcManager::clear() {
 }
 
 void CharacterProcManager::update() {
-    for (int index = 0; index < procs.size(); ++ index) {
+    for (int index = 0; lp3::narrow<std::size_t>(index) < procs.size();
+            ++ index) {
         if (!procs[index]->update()) {
 			delete procs[index];
             procs.erase(procs.begin() + index);
@@ -626,7 +626,7 @@ void CharacterProcManager::update() {
 
 
 gsl::owner<CharacterProc *> legacy_add_process(
-	CharacterProcEnv & env, World & world, EntityManager & em,
+	CharacterProcEnv & env, World & world, EntityManager &,
 	int j, CharacterSprite & s, const std::string & name)
 {
 	// TODO: in the future, use the names here, or something, but for
