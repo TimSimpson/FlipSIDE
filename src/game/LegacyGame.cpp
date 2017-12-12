@@ -167,7 +167,7 @@ public:
 		int k;
 
         //Rem-FLICKER-
-        for (j = 0; j < world.Sprite.size(); ++j) {
+        for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
 
             if (boost::starts_with(world.screen, "Level")) {
                 int sopoer;
@@ -185,7 +185,7 @@ public:
         //               THIS SECTION DOES THE JUMPING
         //Rem-------------------------------------------------------------------
 
-        for (j = 0; j < world.Sprite.size(); ++j) {
+        for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             auto & s = world.Sprite[j];
 
             if (s.jumpTime != 0) {
@@ -214,7 +214,7 @@ public:
 
 
 
-        for (j = 0; j < world.Sprite.size(); ++j) {
+        for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             auto & s = world.Sprite[j];
 			// Handle all "level" stuff here, but call update on gameproc
 			// otherwise.
@@ -243,7 +243,7 @@ public:
         //---------------------------------------------------------------------
         //      END OF AN ERA
         //---------------------------------------------------------------------
-        for (j = 0; j < world.Sprite.size(); ++ j) {
+        for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++ j) {
             //If Sprite(j).mover = True Then
             for (k = j + 1; k < lp3::narrow<int>(world.Sprite.size()); ++k) {
                 if (world.Sprite[j].kind == Kind::neutral) { goto fthis2; }
@@ -267,7 +267,7 @@ public:
             return result;
         }
 
-        for (j = 0; j < world.Sprite.size(); ++ j) {
+        for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++ j) {
             world.Sprite[j].lastX = world.Sprite[j].x;
             world.Sprite[j].lastY = world.Sprite[j].y;
         }
