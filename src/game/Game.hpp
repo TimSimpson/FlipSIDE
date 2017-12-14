@@ -43,25 +43,33 @@ private:
     std::unique_ptr<GameProcess> proc;
 };
 
+
+// Represents a unique screen or subroutine of the game, like the title
+// screen, game over screen, etc.
 class GameProcess {
-public:    
+public:
     virtual ~GameProcess() = default;
 
-    // Drives the game
+    // Drives the game. Think of this as the `input` to the game process.
     virtual void handle_input(const input::Event &) = 0;
 
     // As a rule, this is called every 16ms.
+    // If this returns nullptr, the process continues.
+    // If a new process is returned, this process is deleted and the new
+    // process is used.
 	virtual gsl::owner<GameProcess *> update() = 0;
 };
 
 
-// Things the game processes need at a minimum.
-struct GameContext {	
+// Subsystems the game processes typically need.
+// This is the `output` of the game process.
+struct GameContext {
 	lp3::core::MediaManager & media;
 	Sound & sound;
 	view::View & view;
 };
 
+// Registers a game process by name, allowing it to be loaded via reflection.
 class RegisterGameProcess {
 public:
 	RegisterGameProcess(const char * const name,
@@ -77,6 +85,8 @@ struct GameProcessEntry {
 
 std::vector<GameProcessEntry> get_all_game_processes();
 
+// Returns a game process. This makes the starting process changable from
+// the command line.
 boost::optional<GameProcessEntry> get_game_process_by_name(const char * name);
 
 // --------------------------------------------------------------------

@@ -6,19 +6,7 @@
 #include "BaseScreen.hpp"
 #include "TitleScreen.hpp"
 
-#ifdef _MSC_VER
-    // Avoid the zillions implicit conversion warnings
-    #pragma warning(disable: 4244)
-#endif
-
-// TODO: Remove gotos!
-#define EMPTY_LABEL_HACK  { constexpr int dumb = 1; LP3_LOG_VAR(dumb) }
-
 namespace nnd3d { namespace game {
-
-namespace {
-    const glm::vec4 normColor{1.0f, 1.0f, 1.0f, 1.0f};
-}
 
 namespace sims = lp3::sims;
 
@@ -26,7 +14,7 @@ class GameOverScreen : public GameProcess
 {
 private:
 	GameContext context;
-	
+
 	struct AllocateBillboards {
 		AllocateBillboards(std::vector<view::Billboard> & billboards) {
 			billboards.resize(2);
@@ -36,7 +24,7 @@ private:
 	view::Billboard & game_over_cloud_bg;
 	view::Billboard & game_over_title;
 	std::int64_t wait_time;
-	
+
 	sims::CoroutineState coro_state;
 public:
     GameOverScreen(GameContext _context)
@@ -45,11 +33,11 @@ public:
 		game_over_cloud_bg(context.view.billboards()[0]),
 		game_over_title(context.view.billboards()[1]),
 		wait_time(4000)
-    {	
+    {
 		context.sound.silence_sfx();
 		context.sound.PlayBgm("");
 		context.view.LoadTexture(0, "GameOver.png", 320, 287);
-		
+
 		game_over_cloud_bg.ul = { 0, 0 };
 		game_over_cloud_bg.size = { 640, 480 };
 		game_over_cloud_bg.tex_src_ul = { 1, 1 };
@@ -93,8 +81,6 @@ public:
 		return create_title_screen(context);
     }
 
-
-
 };  // end of GameImpl class
 
 
@@ -104,7 +90,7 @@ gsl::owner<GameProcess *> create_gameover_screen(GameContext context)
 }
 
 namespace {
-	RegisterGameProcess reg{ 
+	RegisterGameProcess reg{
 		"game-over",  "Game Over screen", create_gameover_screen };
 }
 
