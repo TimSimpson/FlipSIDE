@@ -194,7 +194,7 @@ int _main(core::PlatformLoop & loop) {
 	const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 
 	sims::GameClock clock(ms_per_update);
-    
+
 	auto run_game = [&game, &input, &sound, &ms_per_update](std::int64_t) {
 		// Garbage collect sound to avoid out of channel problems.
 		sound.garbage_collect();
@@ -204,7 +204,7 @@ int _main(core::PlatformLoop & loop) {
 			for (const auto & event : input->retrieve_events(ms_per_update)) {
 				game.handle_input(event);
 			}
-		}		
+		}
 
 		game.update();
 	};
@@ -256,6 +256,18 @@ int _main(core::PlatformLoop & loop) {
 			case SDL_WINDOWEVENT:
 				window.handle_events(e.window);
 				break;
+			case SDL_KEYDOWN:
+				if (e.key.keysym.sym == SDLK_F11 ||
+						(e.key.keysym.sym == SDLK_RETURN 
+							&& e.key.keysym.mod & KMOD_ALT)) 
+				{
+					const bool full_screen 
+						= SDL_GetWindowFlags(window.sdl_window()) 
+						  & SDL_WINDOW_FULLSCREEN_DESKTOP;
+					SDL_SetWindowFullscreen(
+						window.sdl_window(), 
+						!full_screen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+				}
 			default:
 				break;
 			}
