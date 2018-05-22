@@ -223,6 +223,10 @@ public:
 					kill(s);
 					s.name = "exit";
 					CharacterProcEnv env{ context, random, world.clock, camera };
+
+                    // This will break if anything else happens, but is needed
+                    // to preserve the old way things were.
+                    entity_manager.go_back(30);
 					proc_manager.add_process(
 						proc::create_cinema_proc(env, entity_manager, 1.1f));
 				}

@@ -27,4 +27,8 @@ void EntityManager::skip_to(int new_index) {
 	s_index = new_index;
 }
 
+void EntityManager::go_back(int new_index) {
+    s_index = new_index;
+}
+
 }   }

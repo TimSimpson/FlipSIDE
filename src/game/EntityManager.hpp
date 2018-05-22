@@ -23,6 +23,10 @@ public:
 	// This only exists so I can make it compatable with legacy code.
 	// In other words, it's a hack that should be removed ASAP.
 	void skip_to(int new_index);
+
+    // This is an even crappier hack! If I don't have it the cinematic at the
+    // end of room one can't work.
+    void go_back(int old_index);
 private:
     int s_index;
 	World & world;

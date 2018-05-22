@@ -90,6 +90,8 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
 		// Now subtract sprite's z value, which is how high off the ground
 		// they are.
 		b.ul.y -= lp3::narrow<float>(sprite.z);
+
+		b.color = sprite.color;
 		billboards.push_back(b);
 	}
 
