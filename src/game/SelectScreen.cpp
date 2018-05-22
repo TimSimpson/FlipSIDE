@@ -1,5 +1,4 @@
 #include "SelectScreen.hpp"
-#include "CharacterProc.hpp"
 #include "LegacyGame.hpp"
 #include "NowLoading.hpp"
 

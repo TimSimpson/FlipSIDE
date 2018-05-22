@@ -1,5 +1,6 @@
 #include "CinemaProc.hpp"
 #include <lp3/sims.hpp>
+#include "CinemaType.hpp"
 
 namespace nnd3d { namespace game { namespace proc {
 

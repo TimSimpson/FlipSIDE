@@ -5,7 +5,6 @@
 #include <array>
 #include "Camera.hpp"
 #include "CharacterSprite.hpp"
-#include "CinemaType.hpp"
 #include "GameState.hpp"
 #include "PlayerData.hpp"
 
@@ -79,7 +78,6 @@ struct World {
 
     CameraGuts camera;
 
-	std::array<CinemaType, 40> cinema; // Dialogue!
 	int cinemaCounter;
 	int cinemaMax; //how many lines of dialogue per cinema
 	std::string exitS;

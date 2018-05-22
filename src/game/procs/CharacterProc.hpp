@@ -1,18 +1,29 @@
+// ---------------------------------------------------------------------------
+// Procs
+// =====
+//		A model of a process where many may run in each room.
+// ---------------------------------------------------------------------------
 #ifndef NND3D_CHARACTERPROC_HPP
 #define NND3D_CHARACTERPROC_HPP
 #pragma once
 
-#include "CharacterSprite.hpp"
-#include "EntityManager.hpp"
-#include "Game.hpp"
-#include "../Random.hpp"
-#include "../Sound.hpp"
-#include "../view.hpp"
+#include "../CharacterSprite.hpp"
+#include "../EntityManager.hpp"
+#include "../Game.hpp"
+#include "../../Random.hpp"
+#include "../../Sound.hpp"
+#include "../../view.hpp"
 
 namespace nnd3d { namespace game {
 
 struct CharacterSprite;
 
+
+// ---------------------------------------------------------------------------
+// class CharacterProcEnv
+// ---------------------------------------------------------------------------
+//      Stuff that every proc might need (holy cow that's a lot).
+// ---------------------------------------------------------------------------
 struct CharacterProcEnv {
 	GameContext context;
 	Random & random;
@@ -25,6 +36,13 @@ struct CharacterProcEnv {
 ////	               CharacterProcEnv env);
 
 
+// ---------------------------------------------------------------------------
+// class CharacterProc
+// ---------------------------------------------------------------------------
+//      This attempts to decouple the logic associated with sprites.
+//      The ideas is multiple procs can run for each room.
+//      Currently it's a bit of a mess.
+// ---------------------------------------------------------------------------
 class CharacterProc {
 public:
      virtual ~CharacterProc() = default;
@@ -58,6 +76,11 @@ public:
 //     gsl::span<CharacterSprite> & children);
 
 
+// ---------------------------------------------------------------------------
+// class CharacterProcManager
+// ---------------------------------------------------------------------------
+//     Manages the processes.
+// ---------------------------------------------------------------------------
 class CharacterProcManager {
 public:
     CharacterProcManager();
@@ -78,7 +101,9 @@ private:
 };
 
 
-// Uses a bunch of hacks resembling the old code to figure out how
+// ---------------------------------------------------------------------------
+// A factory function that makes processes.
+// ---------------------------------------------------------------------------
 gsl::owner<CharacterProc *> legacy_add_process(
 	CharacterProcEnv & env, World & world, EntityManager & em,
 	int j, CharacterSprite & s, const std::string & name);

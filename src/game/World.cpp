@@ -71,7 +71,6 @@ World::World()
     LemonTime(false),
     sFactor(0),
     camera{},
-    cinema({}),
     cinemaCounter(0),
     cinemaMax(0),
     exitS(),

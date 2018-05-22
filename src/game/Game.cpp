@@ -3,7 +3,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
-#include "CharacterProc.hpp"
 
 #include "TitleScreen.hpp"
 #include "GameOverScreen.hpp"

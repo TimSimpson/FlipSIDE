@@ -1,6 +1,6 @@
 #include "CharacterProc.hpp"
 
-#include "procs/PlayerProc.hpp"
+#include "PlayerProc.hpp"
 
 #ifdef _MSC_VER
 // Avoid the zillions implicit conversion warnings

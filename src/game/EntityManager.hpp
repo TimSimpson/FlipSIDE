@@ -6,11 +6,12 @@
 
 namespace nnd3d { namespace game {
 
-/// EntityManager
-/// ------
-///     Holds all the Sprites and offers semi-opaqure access to them.
-///     (This replaces World1).
-/// <
+// ----------------------------------------------------------------------------
+// class EntityManager
+// ----------------------------------------------------------------------------
+//     Holds all the Sprites and offers semi-opaqure access to them.
+//     (This replaces World1).
+// ----------------------------------------------------------------------------
 class EntityManager {
 public:
     EntityManager(World & world);
