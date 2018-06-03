@@ -7,6 +7,7 @@ namespace nnd3d { namespace game { namespace proc {
 class Kerbose : public CharacterProc {
 private:
     CharacterProcEnv env;
+    bool mover;
     CharacterSprite & sprite;
     bool dying;
 	enum class Skin {
@@ -18,11 +19,11 @@ private:
 public:
     Kerbose(CharacterProcEnv _env, EntityManager & e_manager)
     :   env(_env),
+        mover(true),
         sprite(e_manager.grab_sprite()),
         dying(false),
 		state()
     {
-        sprite.mover = true;
         sprite.name = "Kerbose";
         sprite.wide = 21;
         sprite.high = 19;
@@ -59,7 +60,7 @@ public:
     void death_animation() override {
         sprite.visible = true;
 
-        sprite.mover = false;
+        this->mover = false;
         sprite.kind = Kind::neutral;
         sprite.frame = 3;
 
@@ -98,7 +99,7 @@ public:
 
 			sprite.visible = true;
 
-			sprite.mover = false;
+			this->mover = false;
 			sprite.kind = Kind::neutral;
 			sprite.frame = 3;
 

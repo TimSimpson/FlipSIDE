@@ -42,6 +42,17 @@ enum class Kind {
 
 std::istream & operator >>(std::istream & in, Kind & kind);
 
+// ----------------------------------------------------------------------------
+// struct CharacterSprite
+// ----------------------------------------------------------------------------
+//     This entity drives the whole game. In the old code, all logic was
+//     determined using if statements based on the settings of these; the
+//     coordinates here are used for collision detection as well as drawing
+//     the graphics.
+//     Currently (2018-05) there is a "process" class that much of the logic
+//     is being moved to. The CharacterSprite struct has a pointer to this
+//     class, but hopefully this relationship will be inverted eventually.
+// ----------------------------------------------------------------------------
 struct CharacterSprite
 {
      // This initializer just zeroes everything out the way it would have been
@@ -73,7 +84,7 @@ struct CharacterSprite
 
      bool visible;
      int parent; //whose their parent sprite (what is the reason for their existence?) are they a fireball cast by sprite 0, perhaps
-     
+
      int frame;
      std::string name;
 
@@ -103,8 +114,6 @@ struct CharacterSprite
      int zOrder; //higher numbers are drawn last.
      bool drawTrue; //used in the draw ordering subprogram
 
-     bool mover;
-
      bool reverse; //to flip bitmap or not TRUE for transposing from left to right
      int target; // it is who they are attacking
 
@@ -113,13 +122,13 @@ struct CharacterSprite
      // Behavior of this sprite.
      CharacterProc * proc;
 
-	 inline double getMiddleX() {
-		 return x + (wide / 2);
-	 }
+	inline double getMiddleX() const {
+		return x + (wide / 2);
+	}
 
-	 inline double getMiddleY() {
-		 return y + (high / 2);
-	 }
+	inline double getMiddleY() const {
+		return y + (high / 2);
+	}
 };
 
 int checkProx(const int who, int numberPlayers);

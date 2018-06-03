@@ -125,6 +125,7 @@ private:
     CharacterProcEnv env;
     CharacterSprite & s;
 	int j;
+    bool mover;
 	World & world;
 
 public:
@@ -133,6 +134,7 @@ public:
      :  env(_env),
         s(_s),
 		j(_j),
+        mover(false),
 		world(world_arg)
      {
         s.name = name;
@@ -227,7 +229,7 @@ public:
 
         if (spr.name == "bs death") {
             spr.visible = true;
-            spr.mover = false;
+            this->mover = false;
             spr.kind = Kind::neutral;
             spr.frame = 3;
             spr.miscTime = current_time + 3;
@@ -375,7 +377,7 @@ public:
             spr.deathType = "Dying Explosion";
             spr.soundFile = "Goomba Ouch";
             //LoadSound which, spr.soundFile
-            spr.mover = true;
+            this->mover = true;
         }
 
         if (spr.name == "bullet") {

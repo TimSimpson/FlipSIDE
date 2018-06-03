@@ -672,13 +672,17 @@ public:
 
 
 class ThomasProc : public PlayerProc {
+private:
+	bool mover;
+
 public:
 	ThomasProc(CharacterProcEnv _env,
 		GameState & _game_state,
 		PlayerData & _player_data,
 		EntityManager & e_manager,
 		const glm::vec2 & loc)
-		: PlayerProc(_env, _game_state, _player_data, e_manager, "Thomas", loc)
+	:	PlayerProc(_env, _game_state, _player_data, e_manager, "Thomas", loc),
+        mover(false)
 	{
         env.context.sound.LoadSound((player_data.index * 5), "fireball.wav", "fireball");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "Death.wav", "DavidDeath");
@@ -738,7 +742,7 @@ public:
         sprite.deathType = "Death of David";
         sprite.hp = 4;
         //sprite.mode = "truck";
-        sprite.mover = true;
+        this->mover = true;
         sprite.maxJump = 1;
     }
 
@@ -755,13 +759,16 @@ public:
 
 
 class NickProc : public ThomasProc {
+private:
+	bool mover;
 public:
     NickProc(CharacterProcEnv _env,
         GameState & _game_state,
         PlayerData & _player_data,
         EntityManager & e_manager,
 		const glm::vec2 & loc)
-        : ThomasProc(_env, _game_state, _player_data, e_manager, loc)
+    :   ThomasProc(_env, _game_state, _player_data, e_manager, loc),
+        mover(false)
     {
         env.context.sound.LoadSound((player_data.index * 5), "nickdeath.wav", "nickdeath");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "nickhurt.wav", "nickhurt");
@@ -809,19 +816,22 @@ public:
         sprite.deathType = "Death of Nick";
         sprite.hp = 4;
         //sprite.mode = "truck";
-        sprite.mover = true;
+        this->mover = true;
         sprite.maxJump = 1;
     }
 };
 
 class NickyProc : public PlayerProc {
+private:
+	bool mover;
 public:
 	NickyProc(CharacterProcEnv _env,
 		GameState & _game_state,
 		PlayerData & _player_data,
 		EntityManager & e_manager,
 		const glm::vec2 & loc)
-		: PlayerProc(_env, _game_state, _player_data, e_manager, "Nicky", loc)
+	:   PlayerProc(_env, _game_state, _player_data, e_manager, "Nicky", loc),
+        mover(false)
 	{
         env.context.sound.LoadSound((player_data.index * 5), "NickyDeath.wav", "NickyDeath");
         env.context.sound.LoadSound((player_data.index * 5) + 1, "NickyHurt.wav", "NickyHurt");
@@ -888,7 +898,7 @@ public:
         sprite.deathType = "Death of Nicky";
         sprite.hp = 4;
         //sprite.mode = "truck";
-        sprite.mover = true;
+        this->mover = true;
         sprite.maxJump = 2;
     }
 

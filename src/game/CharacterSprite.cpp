@@ -55,7 +55,6 @@ CharacterSprite::CharacterSprite()
     soundFile(""),
     zOrder(0),
     drawTrue(false),
-    mover(false),
     reverse(false),
     target(0),
     jumpM(0),
