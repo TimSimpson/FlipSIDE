@@ -33,9 +33,9 @@ public:
         return guts.CameraY;
     }
 
-	inline glm::vec2 ul() const {
-		return glm::vec2{ x(), y() };
-	}
+    inline glm::vec2 ul() const {
+        return glm::vec2{ x(), y() };
+    }
 
     inline int width() const {
         return guts.CameraWidth;
@@ -45,9 +45,9 @@ public:
         return guts.CameraHeight;
     }
 
-	inline glm::vec2 size() const {
-		return glm::vec2{ width(), height() };
-	}
+    inline glm::vec2 size() const {
+        return glm::vec2{ width(), height() };
+    }
 
     inline int x2() const {
         return guts.CameraX + guts.CameraWidth;

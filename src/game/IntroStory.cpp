@@ -18,7 +18,7 @@ namespace {
 class IntroStoryScreen : public GameProcess
 {
 private:
-	GameContext context;
+    GameContext context;
     std::array<bool, 3> keys_pressed;
     lp3::sims::CoroutineState fade_in_and_out_words_state;
     lp3::sims::CoroutineState intro_story_state;
@@ -44,8 +44,8 @@ public:
         for (auto & b : context.view.billboards()) {
             b.set_visibility(view::Visibility::invisible);
         }
-		context.view.billboards().clear();
-		context.view.billboards().resize(2);
+        context.view.billboards().clear();
+        context.view.billboards().resize(2);
     }
 
     void handle_input(const input::Event & event) override {
@@ -146,17 +146,17 @@ public:
             words.z = 0.3f;
             bg.set_visibility(view::Visibility::invisible);
 
-			context.view.LoadTexture(1, "Open1.png", 313, 263);
-			context.view.LoadTexture(2, "Open6.png", 320, 258);
-			context.view.LoadTexture(3, "Open7.png", 320, 194);
-			context.view.LoadTexture(4, "TitleScreen.png", 320, 240);
-			context.sound.PlayBgm("");
+            context.view.LoadTexture(1, "Open1.png", 313, 263);
+            context.view.LoadTexture(2, "Open6.png", 320, 258);
+            context.view.LoadTexture(3, "Open7.png", 320, 194);
+            context.view.LoadTexture(4, "TitleScreen.png", 320, 240);
+            context.sound.PlayBgm("");
 
             words.texture_index = 2;
 
             words.ul = { 1, 175 };
 
-			context.sound.PlayWave("IntroStory.ogg"); // play it once then stop
+            context.sound.PlayWave("IntroStory.ogg"); // play it once then stop
 
             words.ul = { 1, 178 };
             words.size = { 164, 40 }; words.size *= 2;
@@ -189,7 +189,7 @@ public:
 
             // Show the characters:
             fade_length = 5000;
-			context.view.LoadTexture(-1, "Open2.png", 320, 240);
+            context.view.LoadTexture(-1, "Open2.png", 320, 240);
 
             bg.size = { 640, 480 };
             bg.ul = { 0, 0 };
@@ -227,7 +227,7 @@ public:
 
             FADE_IN_AND_OUT
 
-			context.view.LoadTexture(-1, "Open3.png", 320, 240);
+            context.view.LoadTexture(-1, "Open3.png", 320, 240);
 
             words.size = { 303, 65 }; words.size *= 2;
             words.tex_src_ul = { 2, 189 };
@@ -236,7 +236,7 @@ public:
 
             FADE_IN_AND_OUT
 
-			context.view.LoadTexture(-1, "Open4.png", 320, 240);
+            context.view.LoadTexture(-1, "Open4.png", 320, 240);
 
             fade_length = 6240;
             words.size = { 313, 65 }; words.size *= 2;
@@ -246,7 +246,7 @@ public:
 
             FADE_IN_AND_OUT
 
-			context.view.LoadTexture(-1, "Open5.png", 320, 240);
+            context.view.LoadTexture(-1, "Open5.png", 320, 240);
 
             words.ul = { 58, 188 }; words.ul *= 2;
             words.size = { 259, 43 }; words.size *= 2;
@@ -284,8 +284,8 @@ GameProcess * create_intro_story_screen(GameContext context) {
 }
 
 namespace {
-	RegisterGameProcess _reg{"intro", "The opening cinematic", 
-		                     create_intro_story_screen };
+    RegisterGameProcess _reg{"intro", "The opening cinematic", 
+                             create_intro_story_screen };
 }
 
 }   }  // end namespace

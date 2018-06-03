@@ -32,7 +32,7 @@ class GameProcessSpace {
 public:
     GameProcessSpace();
 
-	~GameProcessSpace();
+    ~GameProcessSpace();
 
     void exec(gsl::owner<GameProcess *> proc);
 
@@ -57,30 +57,30 @@ public:
     // If this returns nullptr, the process continues.
     // If a new process is returned, this process is deleted and the new
     // process is used.
-	virtual gsl::owner<GameProcess *> update() = 0;
+    virtual gsl::owner<GameProcess *> update() = 0;
 };
 
 
 // Subsystems the game processes typically need.
 // This is the `output` of the game process.
 struct GameContext {
-	lp3::core::MediaManager & media;
-	Sound & sound;
-	view::View & view;
+    lp3::core::MediaManager & media;
+    Sound & sound;
+    view::View & view;
 };
 
 // Registers a game process by name, allowing it to be loaded via reflection.
 class RegisterGameProcess {
 public:
-	RegisterGameProcess(const char * const name,
-		                const char * const desc,
+    RegisterGameProcess(const char * const name,
+                        const char * const desc,
                         gsl::owner<GameProcess *>(*create)(GameContext context));
 };
 
 struct GameProcessEntry {
-	const char * name;
-	const char * desc;
-	gsl::owner<GameProcess *>(*create)(GameContext context);
+    const char * name;
+    const char * desc;
+    gsl::owner<GameProcess *>(*create)(GameContext context);
 };
 
 std::vector<GameProcessEntry> get_all_game_processes();
@@ -101,17 +101,17 @@ class Game
 public:
     Game(GameContext game_context, GameProcessEntry start_proc);
 
-	~Game();
+    ~Game();
 
     void handle_input(const input::Event & even);
 
-	bool quit() const;
+    bool quit() const;
 
     void update();
 
 private:
     GameProcessSpace process;
-	bool _quit;
+    bool _quit;
 };
 
 }   }  // end namespace

@@ -60,14 +60,14 @@ public:
 // --------------------------------------------------------------------
 class InputMultiplexer : public InputProvider {
 public:
-	InputMultiplexer();
-	~InputMultiplexer() override = default;
+    InputMultiplexer();
+    ~InputMultiplexer() override = default;
 
-	void add_input(InputProvider * provider);
+    void add_input(InputProvider * provider);
 
-	std::vector<Event> retrieve_events(std::int64_t ms) override;
+    std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
-	std::vector<InputProvider *> providers;
+    std::vector<InputProvider *> providers;
 };
 
 // --------------------------------------------------------------------
@@ -79,14 +79,14 @@ private:
 // --------------------------------------------------------------------
 class LegacyInputProvider : public InputProvider {
 public:
-	LegacyInputProvider();
+    LegacyInputProvider();
     ~LegacyInputProvider() override = default;
 
     void handle_events(const SDL_Event & event);
 
     std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
-	std::vector<Event> changes;
+    std::vector<Event> changes;
 };
 
 // --------------------------------------------------------------------
@@ -120,9 +120,9 @@ public:
 
     std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
-	lp3::sdl::RWops file;
-	InputProvider & provider;
-	std::int64_t time;
+    lp3::sdl::RWops file;
+    InputProvider & provider;
+    std::int64_t time;
 };
 
 
@@ -137,15 +137,15 @@ public:
 
     InputPlayback(lp3::sdl::RWops && read_file);
 
-	bool playback_finished() const;
+    bool playback_finished() const;
 
     std::vector<Event> retrieve_events(std::int64_t ms) override;
 private:
     lp3::sdl::RWops file;
-	boost::optional<std::int64_t> next_time;
-	std::int64_t time;
+    boost::optional<std::int64_t> next_time;
+    std::int64_t time;
 
-	boost::optional<Event> read_event();
+    boost::optional<Event> read_event();
 };
 
 

@@ -21,10 +21,10 @@ struct CinemaType
 
     CinemaType();
 
-	CinemaType(const int frame1, const int frame2,
-		const int frame3, const int frame4, const int color1,
-		const int color2, const int color3, const int color4,
-		const std::string & wavefile, const double miscTime);
+    CinemaType(const int frame1, const int frame2,
+        const int frame3, const int frame4, const int color1,
+        const int color2, const int color3, const int color4,
+        const std::string & wavefile, const double miscTime);
 };
 
 }   }

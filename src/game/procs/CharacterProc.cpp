@@ -13,20 +13,20 @@
 namespace nnd3d { namespace game {
 
 namespace {
-	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+    const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
 }
 
 
 void make_jump(CharacterSprite & sprite, double current_time) {
-	if (sprite.z == 0) {
-		sprite.multiJump = 0;
-	}
-	if (sprite.multiJump >= sprite.maxJump) {
-		return;
-	}
-	sprite.multiJump = sprite.multiJump + 1;
-	sprite.jumpStart = sprite.z;
-	sprite.jumpTime = current_time;
+    if (sprite.z == 0) {
+        sprite.multiJump = 0;
+    }
+    if (sprite.multiJump >= sprite.maxJump) {
+        return;
+    }
+    sprite.multiJump = sprite.multiJump + 1;
+    sprite.jumpStart = sprite.z;
+    sprite.jumpTime = current_time;
 }
 
 
@@ -34,89 +34,89 @@ void make_jump(CharacterSprite & sprite, double current_time) {
 
 
 int checkProx(World & world, const int who) {
-	//numberPlayers integer legend
-	//1 Only player 1
-	//2 Player 1 and 2
-	//3 All three Players
-	//4 Just player 2
-	//5 Just player 3
-	//6 Players 1 and 3
-	//7 Players 2 and 3
+    //numberPlayers integer legend
+    //1 Only player 1
+    //2 Player 1 and 2
+    //3 All three Players
+    //4 Just player 2
+    //5 Just player 3
+    //6 Players 1 and 3
+    //7 Players 2 and 3
 
-	int theclosest = 0;
-	int min = 0;
+    int theclosest = 0;
+    int min = 0;
 
-	min = 9999;
-	theclosest = 0;
-	for (int penguin = 0; penguin <= 2; ++penguin) {
-		if (!world.numberPlayers.player[penguin]) {
-			continue;
-		}
+    min = 9999;
+    theclosest = 0;
+    for (int penguin = 0; penguin <= 2; ++penguin) {
+        if (!world.numberPlayers.player[penguin]) {
+            continue;
+        }
 
-		// abs(x2-x1)^2+abs(y2-y1)^2
-		const int buttcat = lp3::narrow<int>(
-			std::sqrt(
-				std::pow(
-					std::abs(world.Sprite[penguin * 10].x
-						- world.Sprite[who].x),
-					2)
-				+
-				std::pow(
-					std::abs(world.Sprite[penguin * 10].y
-						- world.Sprite[who].y),
-					2)
-			));
+        // abs(x2-x1)^2+abs(y2-y1)^2
+        const int buttcat = lp3::narrow<int>(
+            std::sqrt(
+                std::pow(
+                    std::abs(world.Sprite[penguin * 10].x
+                        - world.Sprite[who].x),
+                    2)
+                +
+                std::pow(
+                    std::abs(world.Sprite[penguin * 10].y
+                        - world.Sprite[who].y),
+                    2)
+            ));
 
-		if (buttcat < min) {
-			theclosest = penguin;
-			min = buttcat;
-		}
-	}
+        if (buttcat < min) {
+            theclosest = penguin;
+            min = buttcat;
+        }
+    }
 
-	return theclosest * 10;
+    return theclosest * 10;
 }
 
 ////void create_player(
-////	PlayerData & player_data, CharacterSprite & sprite,
-////	gsl::span<std::reference_wrapper<CharacterSprite>> & children,
-////	CharacterProcEnv & env)
+////    PlayerData & player_data, CharacterSprite & sprite,
+////    gsl::span<std::reference_wrapper<CharacterSprite>> & children,
+////    CharacterProcEnv & env)
 ////{
-////	LP3_ASSERT(children.size() == 9);
+////    LP3_ASSERT(children.size() == 9);
 ////
-////	if (player_data.playerName == "Thomas") {
-////		player_data.weapon = "fireball";
-////		env.context.view.load_animation_file(sprite.Aframe, "Thomas.ani");
-////		env.context.view.LoadTexture(player_data.sprite_index + 1, "Flip1.png", 254, 254);
-////		sprite.texture = player_data.sprite_index + 1;
-////		for (CharacterSprite & child : children) {
-////			env.view.load_animation_file(child.Aframe, "Fireball.ani");
-////		}
-////	}
+////    if (player_data.playerName == "Thomas") {
+////        player_data.weapon = "fireball";
+////        env.context.view.load_animation_file(sprite.Aframe, "Thomas.ani");
+////        env.context.view.LoadTexture(player_data.sprite_index + 1, "Flip1.png", 254, 254);
+////        sprite.texture = player_data.sprite_index + 1;
+////        for (CharacterSprite & child : children) {
+////            env.view.load_animation_file(child.Aframe, "Fireball.ani");
+////        }
+////    }
 ////
-////	if (player_data.playerName == "Nick") {
-////		player_data.weapon = "fireball";
-////		env.view.load_animation_file(sprite.Aframe, "nick.ani");
-////		env.view.LoadTexture(player_data.sprite_index + 1, "joel.png", 254, 258);
-////		sprite.texture = player_data.sprite_index + 1;
-////		for (CharacterSprite & child : children) {
-////			env.view.load_animation_file(child.Aframe, "icespike.ani");
-////		}
-////	}
+////    if (player_data.playerName == "Nick") {
+////        player_data.weapon = "fireball";
+////        env.view.load_animation_file(sprite.Aframe, "nick.ani");
+////        env.view.LoadTexture(player_data.sprite_index + 1, "joel.png", 254, 258);
+////        sprite.texture = player_data.sprite_index + 1;
+////        for (CharacterSprite & child : children) {
+////            env.view.load_animation_file(child.Aframe, "icespike.ani");
+////        }
+////    }
 ////
-////	if (player_data.playerName == "Nicky") {
-////		player_data.weapon = "bomb";
-////		env.view.load_animation_file(sprite.Aframe, "nicky.ani");
-////		env.view.LoadTexture(player_data.sprite_index + 1, "LilNicky.png", 84, 148);
-////		sprite.texture = player_data.sprite_index + 1;
-////		for (CharacterSprite & child : children) {
-////			env.view.load_animation_file(child.Aframe, "bomb.ani");
-////		}
-////	}
+////    if (player_data.playerName == "Nicky") {
+////        player_data.weapon = "bomb";
+////        env.view.load_animation_file(sprite.Aframe, "nicky.ani");
+////        env.view.LoadTexture(player_data.sprite_index + 1, "LilNicky.png", 84, 148);
+////        sprite.texture = player_data.sprite_index + 1;
+////        for (CharacterSprite & child : children) {
+////            env.view.load_animation_file(child.Aframe, "bomb.ani");
+////        }
+////    }
 ////
-////	for (CharacterSprite & child : children) {
-////		child.name = "";
-////		child.zOrder = -90;
-////	}
+////    for (CharacterSprite & child : children) {
+////        child.name = "";
+////        child.zOrder = -90;
+////    }
 ////}
 
 // For starters, all the old code is just shoved in here.
@@ -124,57 +124,57 @@ class LegacyProc : public CharacterProc {
 private:
     CharacterProcEnv env;
     CharacterSprite & s;
-	int j;
+    int j;
     bool mover;
-	World & world;
+    World & world;
 
 public:
      LegacyProc(CharacterProcEnv & _env, CharacterSprite & _s, int _j,
                 World & world_arg, const std::string & name)
      :  env(_env),
         s(_s),
-		j(_j),
+        j(_j),
         mover(false),
-		world(world_arg)
+        world(world_arg)
      {
         s.name = name;
         s.proc = this;
         initialize();
      }
 
-	 ~LegacyProc() override = default;
+     ~LegacyProc() override = default;
 
-	 void animate(std::int64_t) override {
-		 //TODO: animation_timer was set to fire every 200ms- basically do
-		 //      something similar, move this to view, and call it outside of
-		 //      the logic loop.
+     void animate(std::int64_t) override {
+         //TODO: animation_timer was set to fire every 200ms- basically do
+         //      something similar, move this to view, and call it outside of
+         //      the logic loop.
 
-		 if (s.name == "goomba" || s.name == "Kerbose"
-			 || s.name == "paulrun" || s.name == "pigeonbomber") {
-			 s.frame = s.frame + 1;
-			 if (s.frame > 2) { s.frame = 1; }
-		 }
+         if (s.name == "goomba" || s.name == "Kerbose"
+             || s.name == "paulrun" || s.name == "pigeonbomber") {
+             s.frame = s.frame + 1;
+             if (s.frame > 2) { s.frame = 1; }
+         }
 
-		 if (s.name == "pigeon") {
-			 s.frame = s.frame + 1;
-			 if (s.frame > 2) { s.frame = 1; }
-		 }
+         if (s.name == "pigeon") {
+             s.frame = s.frame + 1;
+             if (s.frame > 2) { s.frame = 1; }
+         }
 
-		 if (s.name == "tdigger") {
-			 s.frame = s.frame + 1;
-			 if (s.mode == "") {
-				 if (s.frame > 5) { s.frame = 4; }
-			 }
-			 if (s.mode == "runner") {
-				 if (s.frame > 2) { s.frame = 1; }
-			 }
-		 }
+         if (s.name == "tdigger") {
+             s.frame = s.frame + 1;
+             if (s.mode == "") {
+                 if (s.frame > 5) { s.frame = 4; }
+             }
+             if (s.mode == "runner") {
+                 if (s.frame > 2) { s.frame = 1; }
+             }
+         }
 
-		 if (s.name == "bluestick") {
-			 s.frame = s.frame + 1;
-			 if (s.frame > 2) { s.frame = 1; }
-		 }
-	}
+         if (s.name == "bluestick") {
+             s.frame = s.frame + 1;
+             if (s.frame > 2) { s.frame = 1; }
+         }
+    }
 
 
     void death_animation() override {
@@ -182,12 +182,12 @@ public:
         initialize();
     }
 
-	void initialize() override {
-		view::View & view = env.context.view;
-		Sound & sound = env.context.sound;
-		const double current_time = env.current_time;
+    void initialize() override {
+        view::View & view = env.context.view;
+        Sound & sound = env.context.sound;
+        const double current_time = env.current_time;
 
-		auto & spr = this->s;
+        auto & spr = this->s;
 
         //this makes all the sprites do their thing based on their name
 
@@ -385,187 +385,187 @@ public:
         }
     }
 
-	bool update() override
-		//Camera & camera,
-		//PlayerData * player_data,
-		//gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
-	//	gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
-	{
-		//auto & view = env.context.view;
-		//auto & sound = env.context.sound;
-		auto & random = env.random;
-		int k;
+    bool update() override
+        //Camera & camera,
+        //PlayerData * player_data,
+        //gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
+    //  gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
+    {
+        //auto & view = env.context.view;
+        //auto & sound = env.context.sound;
+        auto & random = env.random;
+        int k;
 
-		if (s.name == "goomba") {
-			seek(s);
+        if (s.name == "goomba") {
+            seek(s);
 
-			if (s.x == s.seekx && s.y == s.seeky) {
-				k = (int)(random.next() * 4) + 1;
-				s.seekx = s.x;
-				s.seeky = s.y;
-				if (k == 1) { s.seekx = s.x + 25; }
-				if (k == 2) { s.seekx = s.x - 25; }
-				if (k == 3) { s.seeky = s.y + 25; }
-				if (k == 4) { s.seeky = s.y - 25; }
-				if ((s.seekx + s.wide) > 640) { s.seekx = 640 - s.wide; }
-				if (s.seekx < 1) { s.seekx = 0; }
-				if ((s.seeky + s.high) > 480) { s.seeky = 480 - s.high; }
-				if (s.seeky < 1) { s.seeky = 0; }
-			}
-		}
+            if (s.x == s.seekx && s.y == s.seeky) {
+                k = (int)(random.next() * 4) + 1;
+                s.seekx = s.x;
+                s.seeky = s.y;
+                if (k == 1) { s.seekx = s.x + 25; }
+                if (k == 2) { s.seekx = s.x - 25; }
+                if (k == 3) { s.seeky = s.y + 25; }
+                if (k == 4) { s.seeky = s.y - 25; }
+                if ((s.seekx + s.wide) > 640) { s.seekx = 640 - s.wide; }
+                if (s.seekx < 1) { s.seekx = 0; }
+                if ((s.seeky + s.high) > 480) { s.seeky = 480 - s.high; }
+                if (s.seeky < 1) { s.seeky = 0; }
+            }
+        }
 
-		if (s.name == "falling") {
-			//.flickerTime = clock + 1
-			s.z = s.z - world.sFactor;
-			if (s.z < 1) {
-				s.z = 1;
-				s.name = "deceased";
-				s.visible = false;
-				s.trueVisible = 2;
-				s.flickerTime = 0;
-			}
-			s.frame = s.frame + 1;
-			if (s.frame > 4) { s.frame = 3; }
-		}
+        if (s.name == "falling") {
+            //.flickerTime = clock + 1
+            s.z = s.z - world.sFactor;
+            if (s.z < 1) {
+                s.z = 1;
+                s.name = "deceased";
+                s.visible = false;
+                s.trueVisible = 2;
+                s.flickerTime = 0;
+            }
+            s.frame = s.frame + 1;
+            if (s.frame > 4) { s.frame = 3; }
+        }
 
-		if (s.name == "Dying Explosion") {
-			if (s.wide < s.seekx) {
-				s.wide = s.wide + s.mph;
-				s.x = s.x - (s.mph * 0.5 * world.sFactor);
-				s.high = s.high + s.mph;
-				s.y = s.y - (s.mph * 0.5 * world.sFactor);
-			}
-			if (s.wide >= s.seekx) {
-				s.high = s.high - s.mph;
-				s.y = s.y + (s.mph * 0.5 * world.sFactor);
-				if (s.high < 1) {
-					s.name = "deceased";
-					s.visible = false;
-				}
-			}
-		}
+        if (s.name == "Dying Explosion") {
+            if (s.wide < s.seekx) {
+                s.wide = s.wide + s.mph;
+                s.x = s.x - (s.mph * 0.5 * world.sFactor);
+                s.high = s.high + s.mph;
+                s.y = s.y - (s.mph * 0.5 * world.sFactor);
+            }
+            if (s.wide >= s.seekx) {
+                s.high = s.high - s.mph;
+                s.y = s.y + (s.mph * 0.5 * world.sFactor);
+                if (s.high < 1) {
+                    s.name = "deceased";
+                    s.visible = false;
+                }
+            }
+        }
 
-		if (s.name == "exit") {
-			//TSNOW: This looks to step up by 10 so should only iterate
-			//       the loop once, but that's what the old code did.
-			for (int penguin = 0; penguin <= 2; penguin += 10) {
-				if (hit_detection(s, world.Sprite[penguin]) != 0
-					&& world.Sprite[penguin].name
-					== world.player_data[(penguin / 10)].playerName) {
-					world.exitS = "true";
-				}
-			}
-		}
+        if (s.name == "exit") {
+            //TSNOW: This looks to step up by 10 so should only iterate
+            //       the loop once, but that's what the old code did.
+            for (int penguin = 0; penguin <= 2; penguin += 10) {
+                if (hit_detection(s, world.Sprite[penguin]) != 0
+                    && world.Sprite[penguin].name
+                    == world.player_data[(penguin / 10)].playerName) {
+                    world.exitS = "true";
+                }
+            }
+        }
 
-		if (s.name == "tdigger") {
-			if (s.mode == "") {
-				unstretch(world.Sprite[j]);
-				//TSNOW: Another funky step 10 loop.
-				for (int penguin = 0; penguin <= 2; penguin += 10) {
-					if (hit_detection(s, world.Sprite[penguin], true) == 5
-						&& world.Sprite[penguin].name
-						== world.player_data[(penguin / 10)].playerName) {
-						s.mode = "runner";
-						s.seekx = world.camera.cameraStopX;
-						//.mhp = 10
-						s.kind = Kind::enemy;
-						s.deathType = "expand";
-						s.time = 1;
-						//.hp = 1
-						s.reverse = true;
-					}
-				}
-			}
+        if (s.name == "tdigger") {
+            if (s.mode == "") {
+                unstretch(world.Sprite[j]);
+                //TSNOW: Another funky step 10 loop.
+                for (int penguin = 0; penguin <= 2; penguin += 10) {
+                    if (hit_detection(s, world.Sprite[penguin], true) == 5
+                        && world.Sprite[penguin].name
+                        == world.player_data[(penguin / 10)].playerName) {
+                        s.mode = "runner";
+                        s.seekx = world.camera.cameraStopX;
+                        //.mhp = 10
+                        s.kind = Kind::enemy;
+                        s.deathType = "expand";
+                        s.time = 1;
+                        //.hp = 1
+                        s.reverse = true;
+                    }
+                }
+            }
 
-			if (s.target != 0 || s.target == -1) {
-				s.target = checkProx(world, j);
-				s.seekx = s.getMiddleX();
-				s.seeky = s.getMiddleY();
-			}
+            if (s.target != 0 || s.target == -1) {
+                s.target = checkProx(world, j);
+                s.seekx = s.getMiddleX();
+                s.seeky = s.getMiddleY();
+            }
 
-			if (s.mode == "runner") {
-				if (getProx(s, world.Sprite[s.target]) > 50) {
-					s.seekx = world.Sprite[s.target].getMiddleX();
-				}
-				if (getProx(s, world.Sprite[s.target]) < 50) {
-					s.mph = s.mph - 1;
-					if (s.mph < -90) {
-						s.seekx = world.Sprite[s.target].getMiddleX();
-						s.mph = 10;
-					}
-				}
-				s.seeky = world.Sprite[s.target].getMiddleY();
-				if (getProx(s, world.Sprite[s.target]) < 100) {
-					s.mph = (getProx(s, world.Sprite[s.target]) / 100);
-				}
-				else {
-					s.mph = 10;
-				}
-				if (getProx(s, world.Sprite[s.target]) == 0) {
-					s.seekx = world.Sprite[s.target].x;
-					s.seeky = world.Sprite[s.target].y;
-				}
+            if (s.mode == "runner") {
+                if (getProx(s, world.Sprite[s.target]) > 50) {
+                    s.seekx = world.Sprite[s.target].getMiddleX();
+                }
+                if (getProx(s, world.Sprite[s.target]) < 50) {
+                    s.mph = s.mph - 1;
+                    if (s.mph < -90) {
+                        s.seekx = world.Sprite[s.target].getMiddleX();
+                        s.mph = 10;
+                    }
+                }
+                s.seeky = world.Sprite[s.target].getMiddleY();
+                if (getProx(s, world.Sprite[s.target]) < 100) {
+                    s.mph = (getProx(s, world.Sprite[s.target]) / 100);
+                }
+                else {
+                    s.mph = 10;
+                }
+                if (getProx(s, world.Sprite[s.target]) == 0) {
+                    s.seekx = world.Sprite[s.target].x;
+                    s.seeky = world.Sprite[s.target].y;
+                }
 
-				seek(s);
-			}
+                seek(s);
+            }
 
-		}
+        }
 
 
-		if (s.name == "expand") {
-			s.kind = Kind::neutral;
-			//if (s.mode = "runner") then
-			s.frame = 3;
-			s.time += (0.01 * world.sFactor);
-			s.wide = s.wide + (world.sFactor);
-			s.x = s.x - (world.sFactor / 2);
-			s.high = s.high + (world.sFactor);
-			s.y = s.y - (world.sFactor / 2);
-			if (s.time > 2) {
-				s.name = "harharhar";
-				initialize();
-				// load_process(env, s, s.name); //: killS j
-			}
-		}
+        if (s.name == "expand") {
+            s.kind = Kind::neutral;
+            //if (s.mode = "runner") then
+            s.frame = 3;
+            s.time += (0.01 * world.sFactor);
+            s.wide = s.wide + (world.sFactor);
+            s.x = s.x - (world.sFactor / 2);
+            s.high = s.high + (world.sFactor);
+            s.y = s.y - (world.sFactor / 2);
+            if (s.time > 2) {
+                s.name = "harharhar";
+                initialize();
+                // load_process(env, s, s.name); //: killS j
+            }
+        }
 
-		if (s.name == "harharhar") {
-			if (s.flickerTime < world.clock) {
-				kill(s);
-			}
-		}
+        if (s.name == "harharhar") {
+            if (s.flickerTime < world.clock) {
+                kill(s);
+            }
+        }
 
-		if (s.name == "dead") {
-			//Stop
-			if ((j / 10) == 0) {
-				s.x = world.camera.CameraX + 10;
-			}
-			if ((j / 10) == 1) {
-				s.x = world.camera.CameraX + 250;
-				s.color = view::qb_color(10);
-			}
-			if ((j / 10) == 2) {
-				s.x = world.camera.CameraX + 450;
-				s.color = view::qb_color(14);
-			}
-			s.y = world.camera.CameraY + 10;
-			s.frame = 0;
-			s.visible = false;
-			s.srcx = 2;
-			s.srcy = 363;
-			s.srcx2 = 96;
-			s.srcy2 = 379;
-			s.texture = 0;
-			s.visible = true;
-		}
+        if (s.name == "dead") {
+            //Stop
+            if ((j / 10) == 0) {
+                s.x = world.camera.CameraX + 10;
+            }
+            if ((j / 10) == 1) {
+                s.x = world.camera.CameraX + 250;
+                s.color = view::qb_color(10);
+            }
+            if ((j / 10) == 2) {
+                s.x = world.camera.CameraX + 450;
+                s.color = view::qb_color(14);
+            }
+            s.y = world.camera.CameraY + 10;
+            s.frame = 0;
+            s.visible = false;
+            s.srcx = 2;
+            s.srcy = 363;
+            s.srcx2 = 96;
+            s.srcy2 = 379;
+            s.texture = 0;
+            s.visible = true;
+        }
         return true;
-	}
+    }
 
     // Create a child process (think bullets)
     CharacterProc * spawn(CharacterSprite & sprite,
                           const std::string & name) override {
         // For now, just return the same class as it doesn't matter.
         //child = this;
-		sprite.proc = this; // child;
+        sprite.proc = this; // child;
         sprite.name = name;
         sprite.proc->initialize();
         return this;
@@ -573,9 +573,9 @@ public:
 };
 
 //void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &) {
-//	// TODO: Pass the name in rather than relying on the name variable.
-//	s.proc = load_process(s.name);
-//	s.proc->initialize(env, s);
+//  // TODO: Pass the name in rather than relying on the name variable.
+//  s.proc = load_process(s.name);
+//  s.proc->initialize(env, s);
 //}
 
 
@@ -597,15 +597,15 @@ CharacterProcManager::CharacterProcManager(CharacterProcManager && rhs)
 void CharacterProcManager::add_process(gsl::owner<CharacterProc *> process) {
     // TODO: in the future, use the names here, or something, but for
     //       now, use the indexes to figure out if it's a player
-	if (process != nullptr) {
-		procs.push_back(process);
-	}
+    if (process != nullptr) {
+        procs.push_back(process);
+    }
 }
 
 void CharacterProcManager::animate(std::int64_t ms) {
-	for (auto & p : procs) {
-		p->animate(ms);
-	}
+    for (auto & p : procs) {
+        p->animate(ms);
+    }
 }
 
 void CharacterProcManager::clear() {
@@ -619,21 +619,21 @@ void CharacterProcManager::update() {
     for (int index = 0; lp3::narrow<std::size_t>(index) < procs.size();
             ++ index) {
         if (!procs[index]->update()) {
-			delete procs[index];
+            delete procs[index];
             procs.erase(procs.begin() + index);
-			index -= 1;
+            index -= 1;
         }
     }
 }
 
 
 gsl::owner<CharacterProc *> legacy_add_process(
-	CharacterProcEnv & env, World & world, EntityManager &,
-	int j, CharacterSprite & s, const std::string & name)
+    CharacterProcEnv & env, World & world, EntityManager &,
+    int j, CharacterSprite & s, const std::string & name)
 {
-	// TODO: in the future, use the names here, or something, but for
-	//       now, use the indexes to figure out if it's a player
-	return new LegacyProc(env, s, j, world, name);
+    // TODO: in the future, use the names here, or something, but for
+    //       now, use the indexes to figure out if it's a player
+    return new LegacyProc(env, s, j, world, name);
 }
 
 }   }

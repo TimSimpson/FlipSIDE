@@ -17,8 +17,8 @@ constexpr int max_players = 3;
 // or enum that represented all combinations of active and inactive players.
 class ActivePlayers {
 public:
-	std::array<bool, max_players> player;     // Who is or isn't activated.
-	int numberPlayers;  // old magic number
+    std::array<bool, max_players> player;     // Who is or isn't activated.
+    int numberPlayers;  // old magic number
 
     // Represents more magical constants
     struct FocusNonsense {
@@ -34,17 +34,17 @@ public:
     ActivePlayers & operator=(const ActivePlayers & other) = default;
 
     bool any_player_active() const {
-		return std::any_of(begin(player), end(player), [](bool b) { return b; });
+        return std::any_of(begin(player), end(player), [](bool b) { return b; });
     }
 
     static const ActivePlayers & ap0();
-	static const ActivePlayers & ap1();
-	static const ActivePlayers & ap2();
-	static const ActivePlayers & ap3();
-	static const ActivePlayers & ap4();
-	static const ActivePlayers & ap5();
-	static const ActivePlayers & ap6();
-	static const ActivePlayers & ap7();
+    static const ActivePlayers & ap1();
+    static const ActivePlayers & ap2();
+    static const ActivePlayers & ap3();
+    static const ActivePlayers & ap4();
+    static const ActivePlayers & ap5();
+    static const ActivePlayers & ap6();
+    static const ActivePlayers & ap7();
 
     static const ActivePlayers & find_from_active_players(
         const std::array<bool, 3> & player);
@@ -63,7 +63,7 @@ struct World {
     World(const World & other) = default;
 
     static const int FULLSCREENWIDTH;
-	static const int FULLSCREENHEIGHT;
+    static const int FULLSCREENHEIGHT;
 
     static constexpr int NUMSPRITES = 150;
 
@@ -78,9 +78,9 @@ struct World {
 
     CameraGuts camera;
 
-	int cinemaCounter;
-	int cinemaMax; //how many lines of dialogue per cinema
-	std::string exitS;
+    int cinemaCounter;
+    int cinemaMax; //how many lines of dialogue per cinema
+    std::string exitS;
 
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
 

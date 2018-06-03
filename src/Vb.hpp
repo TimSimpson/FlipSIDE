@@ -15,9 +15,9 @@ class Vb
 public:
     Vb(lp3::core::MediaManager & media);
 
-	VbFile OpenForInput(const std::string & filePath);
+    VbFile OpenForInput(const std::string & filePath);
 private:
-	lp3::core::MediaManager & media;
+    lp3::core::MediaManager & media;
 };
 
 }

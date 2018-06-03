@@ -14,10 +14,10 @@
 namespace nnd3d { namespace view {
 
 namespace {
-	constexpr int letters_max = 80 * 24;
-	const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-	const glm::ivec2 res2d(game::World::FULLSCREENWIDTH,
-		                   game::World::FULLSCREENHEIGHT);
+    constexpr int letters_max = 80 * 24;
+    const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
+    const glm::ivec2 res2d(game::World::FULLSCREENWIDTH,
+                           game::World::FULLSCREENHEIGHT);
 
     glm::vec2 find_texture_scale_factor(const glm::vec2 & original_size,
                                         const glm::vec2 current_size) {
@@ -108,15 +108,15 @@ glm::vec4 qb_color(int index) {
 }
 
 Billboard::Billboard()
-:	ul{},
-	size{},
-	z(0),
-	tex_src_ul{},
-	tex_src_dr{},
-	texture_index(0),
-	color{ 1, 1, 1, 1 },
-	_visible(true),
-	_flicker(false)
+:   ul{},
+    size{},
+    z(0),
+    tex_src_ul{},
+    tex_src_dr{},
+    texture_index(0),
+    color{ 1, 1, 1, 1 },
+    _visible(true),
+    _flicker(false)
 {
 }
 
@@ -128,16 +128,16 @@ void Billboard::set(float ul_x, float ul_y, float width, float height) {
 }
 
 void Billboard::set(float ul_x, float ul_y, float width, float height,
-	                float srcx1, float srcy1, float srcx2, float srcy2)
+                    float srcx1, float srcy1, float srcx2, float srcy2)
 {
-	this->ul.x = ul_x;
-	this->ul.y = ul_y;
-	this->size.x = width;
-	this->size.y = height;
-	this->tex_src_ul.x = srcx1;
-	this->tex_src_ul.y = srcy1;
-	this->tex_src_dr.x = srcx2;
-	this->tex_src_dr.y = srcy2;
+    this->ul.x = ul_x;
+    this->ul.y = ul_y;
+    this->size.x = width;
+    this->size.y = height;
+    this->tex_src_ul.x = srcx1;
+    this->tex_src_ul.y = srcy1;
+    this->tex_src_dr.x = srcx2;
+    this->tex_src_dr.y = srcy2;
 }
 
 void Billboard::set_src(float srcx1, float srcy1, float srcx2, float srcy2)
@@ -150,21 +150,21 @@ void Billboard::set_src(float srcx1, float srcy1, float srcx2, float srcy2)
 
 
 void Billboard::set_visibility(Visibility value) {
-	switch (value) {
-		case Visibility::normal:
-			this->_visible = true;
-			this->_flicker = false;
-			break;
-		case Visibility::flicker:
-			this->_flicker = true;
-			break;
-		case Visibility::invisible:
-			this->_visible = false;
-			this->_flicker = false;
-			break;
-		default:
-			LP3_ASSERT(false);
-	}
+    switch (value) {
+        case Visibility::normal:
+            this->_visible = true;
+            this->_flicker = false;
+            break;
+        case Visibility::flicker:
+            this->_flicker = true;
+            break;
+        case Visibility::invisible:
+            this->_visible = false;
+            this->_flicker = false;
+            break;
+        default:
+            LP3_ASSERT(false);
+    }
 }
 
 StupidIndex::StupidIndex(int _value)
@@ -174,69 +174,69 @@ StupidIndex::StupidIndex(int _value)
 }
 
 View::View(core::MediaManager & media_arg, Vb & vb_arg)
-:	disable_view(false),
+:   disable_view(false),
     fps(0),
-	history({}),
+    history({}),
     media(media_arg),
-	textures({}),
-	program(),
-	font{ media.load("apple_kid.fnt") },
-	font_elements{ (letters_max * 4) },
-	font_quads(font_elements.add_quads(letters_max)),
-	game_elements(),
-	vb(vb_arg),
-	texture_sizes(),
-	bgverts({})
+    textures({}),
+    program(),
+    font{ media.load("apple_kid.fnt") },
+    font_elements{ (letters_max * 4) },
+    font_quads(font_elements.add_quads(letters_max)),
+    game_elements(),
+    vb(vb_arg),
+    texture_sizes(),
+    bgverts({})
 {
-	// Create one vertex buffer for the bgtexture
-	game_elements.emplace_back(letters_max * 4);
-	// Then others for each other texture. Make each one the maximum size it
-	// might need to be to represent all sprites on the screen, even though
-	// this is wasteful.
-	for (std::size_t i = 0; i < textures.size(); ++i) {
-		game_elements.emplace_back(game::World::NUMSPRITES * 4);
-	}
+    // Create one vertex buffer for the bgtexture
+    game_elements.emplace_back(letters_max * 4);
+    // Then others for each other texture. Make each one the maximum size it
+    // might need to be to represent all sprites on the screen, even though
+    // this is wasteful.
+    for (std::size_t i = 0; i < textures.size(); ++i) {
+        game_elements.emplace_back(game::World::NUMSPRITES * 4);
+    }
 }
 
 void View::operator()(const glm::mat4 & previous) {
-	for (auto & ge : game_elements) {
-		ge.reset();
-	}
+    for (auto & ge : game_elements) {
+        ge.reset();
+    }
 
-	std::string s = str(boost::format("FPS: %d") % fps);
-	gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
+    std::string s = str(boost::format("FPS: %d") % fps);
+    gfx::write_string(font_quads, font, glm::vec2(520, 10), 0.0f, 40.0f, s);
 
-	for (auto & m_b : _billboards) {
-		const auto & b = m_b;
-		if (b.visible()) {
-			gfx::Quad<gfx::TexCVert> quad
-				= game_elements[b.texture_index].add_quad();
-			gfx::upright_quad(quad, b.ul, (b.ul + b.size), b.z,
-				b.tex_src_ul / texture_sizes[b.texture_index],
-				b.tex_src_dr / texture_sizes[b.texture_index]);
-			quad.dl().set_rgb(m_b.color);
-			quad.dr().set_rgb(m_b.color);
-			quad.ul().set_rgb(m_b.color);
-			quad.ur().set_rgb(m_b.color);
-		}
-		m_b.run_effects();
-	}
+    for (auto & m_b : _billboards) {
+        const auto & b = m_b;
+        if (b.visible()) {
+            gfx::Quad<gfx::TexCVert> quad
+                = game_elements[b.texture_index].add_quad();
+            gfx::upright_quad(quad, b.ul, (b.ul + b.size), b.z,
+                b.tex_src_ul / texture_sizes[b.texture_index],
+                b.tex_src_dr / texture_sizes[b.texture_index]);
+            quad.dl().set_rgb(m_b.color);
+            quad.dr().set_rgb(m_b.color);
+            quad.ul().set_rgb(m_b.color);
+            quad.ur().set_rgb(m_b.color);
+        }
+        m_b.run_effects();
+    }
 
-	// Now start calling OpenGL
-	program.use();
-	auto _2d = gfx::create_2d_screen(previous, res2d);
-	program.set_mvp(_2d);
+    // Now start calling OpenGL
+    program.use();
+    auto _2d = gfx::create_2d_screen(previous, res2d);
+    program.set_mvp(_2d);
 
-	for (int i = 0; i <= 10; ++i) {
-		lp3::gfx::Texture * tex = textures[i].get();
-		if (tex && 0 < game_elements[i].count()) {
-			program.set_texture(tex->gl_id());
-			program.draw(game_elements[i]);
-		}
-	}
+    for (int i = 0; i <= 10; ++i) {
+        lp3::gfx::Texture * tex = textures[i].get();
+        if (tex && 0 < game_elements[i].count()) {
+            program.set_texture(tex->gl_id());
+            program.draw(game_elements[i]);
+        }
+    }
 
-	program.set_texture(font.texture().gl_id());
-	program.draw(font_elements);
+    program.set_texture(font.texture().gl_id());
+    program.draw(font_elements);
 }
 
 void View::LoadHistory(const TextureHistory & other_history)
@@ -265,18 +265,18 @@ gsl::owner<gfx::Texture *> View::load_image(const std::string & fileName) {
 }
 
 void View::disable() {
-	this->disable_view = true;
+    this->disable_view = true;
 }
 
 void View::enable() {
-	this->disable_view = false;
-	for (int i = 0; i < lp3::narrow<int>(history.size()); ++ i) {
-		const auto & call = history[i];
-		if (call) {
-			load_texture(i, call->fileName, call->size);
-		}
-		history[i] = boost::none;
-	}
+    this->disable_view = false;
+    for (int i = 0; i < lp3::narrow<int>(history.size()); ++ i) {
+        const auto & call = history[i];
+        if (call) {
+            load_texture(i, call->fileName, call->size);
+        }
+        history[i] = boost::none;
+    }
 }
 
 void View::load_animation_file(std::array<view::AnimationFrame, 20> & frames,
@@ -299,32 +299,32 @@ void View::load_animation_file(std::array<view::AnimationFrame, 20> & frames,
 }
 
 void View::load_texture(int index, const std::string & fileName,
-	                    boost::optional<glm::ivec2> size)
+                        boost::optional<glm::ivec2> size)
 {
-	if (this->disable_view) {
-		history[index] = LoadTextureCall{ fileName, size };
-		return;
-	}
+    if (this->disable_view) {
+        history[index] = LoadTextureCall{ fileName, size };
+        return;
+    }
 
-	LP3_LOG_DEBUG("LoadTexture %i %s", index, fileName);
+    LP3_LOG_DEBUG("LoadTexture %i %s", index, fileName);
 
-	textures[index].reset(load_image(fileName));
-	if (boost::algorithm::ends_with(fileName, ".bmp") || !size) {
-		texture_sizes[index] = textures[index]->size();
-	} else {
-		texture_sizes[index] = find_texture_scale_factor(
-			size.get(),
-			textures[index]->size());
-	}
-	LP3_LOG_DEBUG("   size = %i, %i",
-		          texture_sizes[index].x, texture_sizes[index].y);
+    textures[index].reset(load_image(fileName));
+    if (boost::algorithm::ends_with(fileName, ".bmp") || !size) {
+        texture_sizes[index] = textures[index]->size();
+    } else {
+        texture_sizes[index] = find_texture_scale_factor(
+            size.get(),
+            textures[index]->size());
+    }
+    LP3_LOG_DEBUG("   size = %i, %i",
+                  texture_sizes[index].x, texture_sizes[index].y);
 }
 
 
 void View::LoadTexture(StupidIndex which, const std::string & fileName,
                        int howWide,
                        int howHigh) {
-	load_texture(get_smart(which), fileName, glm::ivec2{ howWide, howHigh });
+    load_texture(get_smart(which), fileName, glm::ivec2{ howWide, howHigh });
 }
 
 void View::report_fps(float _fps) {
@@ -333,4 +333,4 @@ void View::report_fps(float _fps) {
 
 
 
-}	}   // end namespace
+}   }   // end namespace

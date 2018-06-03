@@ -116,22 +116,22 @@ namespace {
 class SelectScreen : public GameProcess
 {
 private:
-	GameContext context;
-	struct ClearBillboards {
-		ClearBillboards(view::View & view) {
-			view.billboards().clear();
-			view.billboards().resize(4);
-		}
-	} clear_billboards;
-	view::Billboard & bg;
-	std::vector<SelectBox> boxes;
+    GameContext context;
+    struct ClearBillboards {
+        ClearBillboards(view::View & view) {
+            view.billboards().clear();
+            view.billboards().resize(4);
+        }
+    } clear_billboards;
+    view::Billboard & bg;
+    std::vector<SelectBox> boxes;
 
 
 public:
     SelectScreen(GameContext _context,
                  std::array<bool, 3> keys_pressed)
     :   context(_context),
-		clear_billboards(context.view),
+        clear_billboards(context.view),
         bg(context.view.billboards()[0]),
         boxes()
     {
@@ -139,7 +139,7 @@ public:
         bg.set(0, 0, 640, 480, 0, 0, 320, 240);
         bg.texture_index = 0;
 
-		context.view.load_texture(1, "PlayerS2.png", glm::ivec2{320, 400});
+        context.view.load_texture(1, "PlayerS2.png", glm::ivec2{320, 400});
         for (int i = 0; i < 3; ++ i) {
             boxes.emplace_back(i, context.view.billboards()[i + 1], context.sound);
         }
@@ -154,13 +154,13 @@ public:
             }
         }
 
-		context.sound.silence_sfx();
-		context.sound.PlayBgm("Player SelectWAV.wav");
-		context.sound.PlayWave("Select Your Characters of Justice.wav");
+        context.sound.silence_sfx();
+        context.sound.PlayBgm("Player SelectWAV.wav");
+        context.sound.PlayWave("Select Your Characters of Justice.wav");
     }
 
-	~SelectScreen() {
-	}
+    ~SelectScreen() {
+    }
 
     void handle_input(const input::Event & event) override {
         switch(event.key) {
@@ -183,18 +183,18 @@ public:
                 return nullptr;
             }
         }
-		return start_game();
+        return start_game();
     }
 
     gsl::owner<GameProcess *> start_game() {
         // Initialize world stuff.
         World world;
 
-		std::array<bool, 3> active;
-		for (int i = 0; i < 3; ++i) {
-			active[i] = boxes[i].finished;
-		}
-		world.numberPlayers = ActivePlayers::find_from_active_players(active);
+        std::array<bool, 3> active;
+        for (int i = 0; i < 3; ++i) {
+            active[i] = boxes[i].finished;
+        }
+        world.numberPlayers = ActivePlayers::find_from_active_players(active);
 
         std::array<boost::optional<std::string>, 3> players;
 
@@ -202,8 +202,8 @@ public:
             players[box.index] = box.get_player_name();
 
             world.player_data[box.index].lives = 3;
-			world.player_data[box.index].active
-				= box.get_player_name().is_initialized();
+            world.player_data[box.index].active
+                = box.get_player_name().is_initialized();
             world.player_data[box.index].playerName
                 = box.get_player_name().get_value_or("");
         }
@@ -216,26 +216,26 @@ public:
 gsl::owner<GameProcess *> create_select_screen(
     GameContext context, std::array<bool, 3> keys_pressed)
 {
-	return create_now_loading_screen(
-		context,
-		[keys_pressed](GameContext context_2) {
-			return new SelectScreen(context_2, keys_pressed);
-	});
+    return create_now_loading_screen(
+        context,
+        [keys_pressed](GameContext context_2) {
+            return new SelectScreen(context_2, keys_pressed);
+    });
 }
 
 namespace {
-	gsl::owner<GameProcess *> create_select_screen_2(GameContext context) {
-		return create_now_loading_screen(
-			context,
-			[](GameContext context_2) {
-			std::array<bool, 3> keys_pressed{};
-			keys_pressed[0] = true;
-				return new SelectScreen(context_2, keys_pressed);
-		});
-	}
+    gsl::owner<GameProcess *> create_select_screen_2(GameContext context) {
+        return create_now_loading_screen(
+            context,
+            [](GameContext context_2) {
+            std::array<bool, 3> keys_pressed{};
+            keys_pressed[0] = true;
+                return new SelectScreen(context_2, keys_pressed);
+        });
+    }
 
-	RegisterGameProcess reg(
-		"select-char", "The character select screen", create_select_screen_2);
+    RegisterGameProcess reg(
+        "select-char", "The character select screen", create_select_screen_2);
 }
 
 }   }  // end namespace

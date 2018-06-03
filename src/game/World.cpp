@@ -1,7 +1,7 @@
 #include "World.hpp"
 #include <algorithm>
 
-namespace nnd3d {	namespace game {
+namespace nnd3d {   namespace game {
 
 const int World::FULLSCREENWIDTH = 640;
 const int World::FULLSCREENHEIGHT = 480;
@@ -24,31 +24,31 @@ const ActivePlayers & ActivePlayers::ap0() {
 }
 
 const ActivePlayers & ActivePlayers::ap1() {
-	return active_players[1];
+    return active_players[1];
 }
 
 const ActivePlayers & ActivePlayers::ap2() {
-	return active_players[2];
+    return active_players[2];
 }
 
 const ActivePlayers & ActivePlayers::ap3() {
-	return active_players[3];
+    return active_players[3];
 }
 
 const ActivePlayers & ActivePlayers::ap4() {
-	return active_players[4];
+    return active_players[4];
 }
 
 const ActivePlayers & ActivePlayers::ap5() {
-	return active_players[5];
+    return active_players[5];
 }
 
 const ActivePlayers & ActivePlayers::ap6() {
-	return active_players[6];
+    return active_players[6];
 }
 
 const ActivePlayers & ActivePlayers::ap7() {
-	return active_players[7];
+    return active_players[7];
 }
 
 const ActivePlayers & ActivePlayers::find_from_active_players(
@@ -75,58 +75,58 @@ World::World()
     cinemaMax(0),
     exitS(),
     Sprite(),
-	player_data(),
+    player_data(),
     numberPlayers(ActivePlayers::ap0()),
     game_state()
 {
-	for (int i = 0; i < lp3::narrow<int>(player_data.size()); ++ i) {
-		player_data[i].index = i;
-	}
+    for (int i = 0; i < lp3::narrow<int>(player_data.size()); ++ i) {
+        player_data[i].index = i;
+    }
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
 
-	// Taken from "StartUp"
-	this->player_data[0].KeyUp = "W";
-	this->player_data[0].KeyDown = "S";
-	this->player_data[0].KeyLeft = "A";
-	this->player_data[0].KeyRight = "D";
-	this->player_data[0].KeyAttack = "F";
-	this->player_data[0].KeyJump = "G";
+    // Taken from "StartUp"
+    this->player_data[0].KeyUp = "W";
+    this->player_data[0].KeyDown = "S";
+    this->player_data[0].KeyLeft = "A";
+    this->player_data[0].KeyRight = "D";
+    this->player_data[0].KeyAttack = "F";
+    this->player_data[0].KeyJump = "G";
 
-	this->player_data[1].KeyUp = "up";
-	this->player_data[1].KeyDown = "down";
-	this->player_data[1].KeyLeft = "left";
-	this->player_data[1].KeyRight = "right";
-	this->player_data[1].KeyAttack = "O";
-	this->player_data[1].KeyJump = "P";
+    this->player_data[1].KeyUp = "up";
+    this->player_data[1].KeyDown = "down";
+    this->player_data[1].KeyLeft = "left";
+    this->player_data[1].KeyRight = "right";
+    this->player_data[1].KeyAttack = "O";
+    this->player_data[1].KeyJump = "P";
 
-	//KeyUp(2) = "I"
-	//KeyDown(2) = "K"
-	//KeyLeft(2) = "J"
-	//KeyRight(2) = "L"
-	//KeyAttack(2) = "Y"
-	//KeyJump(2) = "U"
+    //KeyUp(2) = "I"
+    //KeyDown(2) = "K"
+    //KeyLeft(2) = "J"
+    //KeyRight(2) = "L"
+    //KeyAttack(2) = "Y"
+    //KeyJump(2) = "U"
 
 
-	//KeyUp = "W"
-	//KeyDown = "S"
-	//KeyLeft = "A"
-	//KeyRight = "D"
-	//KeyAttack = " "
-	//KeyJump = "J"
+    //KeyUp = "W"
+    //KeyDown = "S"
+    //KeyLeft = "A"
+    //KeyRight = "D"
+    //KeyAttack = " "
+    //KeyJump = "J"
 
-	this->camera.CameraWidth = 640;  this->camera.CameraHeight = 480;
+    this->camera.CameraWidth = 640;  this->camera.CameraHeight = 480;
 
-	for (int j = 0; j < 100; ++j)
-	{
-		this->Sprite[j].visible = false;
-	}
+    for (int j = 0; j < 100; ++j)
+    {
+        this->Sprite[j].visible = false;
+    }
 }
 
 long anyKey(World & world, int zed) {
-	// Returns true if the player at the given index is pressing any key.
-	return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
-		|| world.player_data[zed].upKey || world.player_data[zed].DownKEY
-		|| world.player_data[zed].AttackKey) ? 1 : 0);
+    // Returns true if the player at the given index is pressing any key.
+    return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
+        || world.player_data[zed].upKey || world.player_data[zed].DownKEY
+        || world.player_data[zed].AttackKey) ? 1 : 0);
 }
 
-}	}   // end namespace
+}   }   // end namespace

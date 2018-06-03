@@ -5,8 +5,8 @@ namespace nnd3d { namespace game {
 
 PlayerData::PlayerData()
 :   index(-1),
-	active(false),
-	upKey(false),
+    active(false),
+    upKey(false),
     DownKEY(false),
     LeftKEY(false),
     RightKEY(false),
@@ -33,4 +33,4 @@ PlayerData::PlayerData()
 bool PlayerData::any_key() const {
     return RightKEY || LeftKEY || upKey || DownKEY || AttackKey;
 }
-}	}   // end namespace
+}   }   // end namespace

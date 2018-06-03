@@ -29,15 +29,15 @@ class CharacterProc;
 //7 is a enemy killable by jumping on it
 //8 is bullet by the enemy (can pass through 5//s)
 enum class Kind {
-	neutral = 0,
-	player = 1,
-	enemy = 2,
-	fireball = 3,
-	goomba_thing = 4,
-	unmoveable = 5,
-	trampoline = 6,
-	enemy_weak_to_jumping = 7,
-	enemy_bullet = 8
+    neutral = 0,
+    player = 1,
+    enemy = 2,
+    fireball = 3,
+    goomba_thing = 4,
+    unmoveable = 5,
+    trampoline = 6,
+    enemy_weak_to_jumping = 7,
+    enemy_bullet = 8
 };
 
 std::istream & operator >>(std::istream & in, Kind & kind);
@@ -122,13 +122,13 @@ struct CharacterSprite
      // Behavior of this sprite.
      CharacterProc * proc;
 
-	inline double getMiddleX() const {
-		return x + (wide / 2);
-	}
+    inline double getMiddleX() const {
+        return x + (wide / 2);
+    }
 
-	inline double getMiddleY() const {
-		return y + (high / 2);
-	}
+    inline double getMiddleY() const {
+        return y + (high / 2);
+    }
 };
 
 int checkProx(const int who, int numberPlayers);
@@ -141,7 +141,7 @@ bool off_camera_kill(CharacterSprite & sprite, Camera & camera);
 void kill(CharacterSprite & sprite);
 
 long hit_detection(CharacterSprite num1, CharacterSprite num2,
-	               bool whatKind = false);
+                   bool whatKind = false);
 
 void seek(CharacterSprite & s);
 

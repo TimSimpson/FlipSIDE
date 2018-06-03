@@ -10,11 +10,11 @@ private:
     bool mover;
     CharacterSprite & sprite;
     bool dying;
-	enum class Skin {
-		Kerbose,
-		Putulo
-	} skin;
-	lp3::sims::CoroutineState state;
+    enum class Skin {
+        Kerbose,
+        Putulo
+    } skin;
+    lp3::sims::CoroutineState state;
 
 public:
     Kerbose(CharacterProcEnv _env, EntityManager & e_manager)
@@ -22,7 +22,7 @@ public:
         mover(true),
         sprite(e_manager.grab_sprite()),
         dying(false),
-		state()
+        state()
     {
         sprite.name = "Kerbose";
         sprite.wide = 21;
@@ -38,11 +38,11 @@ public:
         sprite.jumpStrength = 25;
         sprite.proc = this;
         const int kerbose_skin = (int) (env.random.next() * 2.0 + 1);
-		if (kerbose_skin == 1) {
-			skin = Skin::Kerbose;
+        if (kerbose_skin == 1) {
+            skin = Skin::Kerbose;
             env.context.view.load_animation_file(sprite.Aframe, "Kerbose.ani");
         } else {
-			skin = Skin::Putulo;
+            skin = Skin::Putulo;
             env.context.view.load_animation_file(sprite.Aframe, "Putulo.ani");
             sprite.soundFile = "putulohurt";
             sprite.deathType = "putuloDeath";
@@ -50,10 +50,10 @@ public:
     }
 
     void animate(std::int64_t) override {
-		if (dying) {
-			return;
-		}
-		sprite.frame = sprite.frame + 1;
+        if (dying) {
+            return;
+        }
+        sprite.frame = sprite.frame + 1;
         if (sprite.frame > 2) { sprite.frame = 1; }
      }
 
@@ -65,13 +65,13 @@ public:
         sprite.frame = 3;
 
         sprite.miscTime = env.current_time + 3;
-		if (skin == Skin::Kerbose) {
-			env.context.sound.PlaySound("Kerbose Die");
-		} else if (skin == Skin::Putulo) {
-			env.context.sound.PlaySound("putulodie");
-		}
-		sprite.name = "";
-		dying = true;
+        if (skin == Skin::Kerbose) {
+            env.context.sound.PlaySound("Kerbose Die");
+        } else if (skin == Skin::Putulo) {
+            env.context.sound.PlaySound("putulodie");
+        }
+        sprite.name = "";
+        dying = true;
     }
 
     void wiggle() {
@@ -91,50 +91,50 @@ public:
     }
 
     bool update() override {
-		LP3_COROUTINE_BEGIN(state)
-			while (!dying) {
-				wiggle();
-				LP3_YIELD(true);
-			}
+        LP3_COROUTINE_BEGIN(state)
+            while (!dying) {
+                wiggle();
+                LP3_YIELD(true);
+            }
 
-			sprite.visible = true;
+            sprite.visible = true;
 
-			this->mover = false;
-			sprite.kind = Kind::neutral;
-			sprite.frame = 3;
+            this->mover = false;
+            sprite.kind = Kind::neutral;
+            sprite.frame = 3;
 
-			sprite.miscTime = env.current_time + 3;
-			if (skin == Skin::Kerbose) {
-				env.context.sound.PlaySound("Kerbose Die");
-			}
-			else if (skin == Skin::Putulo) {
-				env.context.sound.PlaySound("putulodie");
-			}
+            sprite.miscTime = env.current_time + 3;
+            if (skin == Skin::Kerbose) {
+                env.context.sound.PlaySound("Kerbose Die");
+            }
+            else if (skin == Skin::Putulo) {
+                env.context.sound.PlaySound("putulodie");
+            }
 
-			while (sprite.miscTime >= env.current_time) {
-				LP3_YIELD(true);
-			}
-			sprite.visible = false;
-			sprite.trueVisible = 2;
-			sprite.flickerTime = env.current_time + 1;
-			while (sprite.miscTime + 1 >= env.current_time) {
-				LP3_YIELD(true);
-			}
-			kill(sprite);
-		LP3_COROUTINE_END()
-		return false;
+            while (sprite.miscTime >= env.current_time) {
+                LP3_YIELD(true);
+            }
+            sprite.visible = false;
+            sprite.trueVisible = 2;
+            sprite.flickerTime = env.current_time + 1;
+            while (sprite.miscTime + 1 >= env.current_time) {
+                LP3_YIELD(true);
+            }
+            kill(sprite);
+        LP3_COROUTINE_END()
+        return false;
     }
 };
 
 CharacterProc * create_enemy_proc(
     CharacterProcEnv env,
-	EntityManager & e_manager,
+    EntityManager & e_manager,
     const std::string & name)
 {
     if (name == "Kerbose" || name == "Kirbose") {
         return new Kerbose(env, e_manager);
     }
-	return nullptr;
+    return nullptr;
 }
 
 }   }   }

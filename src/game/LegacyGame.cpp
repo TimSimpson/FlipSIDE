@@ -30,32 +30,32 @@ namespace {
 class LegacyGame : public GameProcess
 {
 private:
-	GameContext context;
-	Vb vb;
-	view::View & view;
-	Sound & sound;
-	World world;
-	Random random;
-	std::int64_t animation_timer;
-	EntityManager entity_manager;
-	CharacterProcManager proc_manager;
-	Camera camera;
+    GameContext context;
+    Vb vb;
+    view::View & view;
+    Sound & sound;
+    World world;
+    Random random;
+    std::int64_t animation_timer;
+    EntityManager entity_manager;
+    CharacterProcManager proc_manager;
+    Camera camera;
 public:
-	LegacyGame(GameContext _context,  World && world_arg)
+    LegacyGame(GameContext _context,  World && world_arg)
     :   context(_context),
-		vb(context.media),
+        vb(context.media),
         view(context.view),
         sound(context.sound),
         world(world_arg),
         random(),
-		animation_timer(0),
-		entity_manager(world),
-		proc_manager(),
-		camera(world.camera)
+        animation_timer(0),
+        entity_manager(world),
+        proc_manager(),
+        camera(world.camera)
     {
-		LP3_ASSERT(boost::starts_with(world.screen, "Level"));
+        LP3_ASSERT(boost::starts_with(world.screen, "Level"));
 
-    	sound.silence_sfx();
+        sound.silence_sfx();
 
         std::string crapple = world.screen.substr(5);
         double boogeycrap = boost::lexical_cast<double>(crapple);
@@ -107,64 +107,64 @@ public:
     }
 
     gsl::owner<GameProcess *> update() override {
-		set_time_stuff(world);
+        set_time_stuff(world);
 
         int focus_x = 0;
-		int focus_y = 0;
+        int focus_y = 0;
 
         this->findPlayers();
 
-		if (world.numberPlayers.any_player_active()) {
-			int itr_start;
-			for (int i = 0; i < max_players; ++i) {
-				if (world.numberPlayers.player[i]) {
-					itr_start = i;
-					break;
-				}
-			}
-			LP3_ASSERT(itr_start < max_players);
+        if (world.numberPlayers.any_player_active()) {
+            int itr_start;
+            for (int i = 0; i < max_players; ++i) {
+                if (world.numberPlayers.player[i]) {
+                    itr_start = i;
+                    break;
+                }
+            }
+            LP3_ASSERT(itr_start < max_players);
 
-			double max_x, min_x;
-			max_x = min_x = world.Sprite[itr_start * 10].x
-				+ (world.Sprite[itr_start * 10].wide / 2);
-			double max_y, min_y;
-			max_y = min_y = world.Sprite[itr_start * 10].y
-				+ (world.Sprite[itr_start * 10].high / 2);
+            double max_x, min_x;
+            max_x = min_x = world.Sprite[itr_start * 10].x
+                + (world.Sprite[itr_start * 10].wide / 2);
+            double max_y, min_y;
+            max_y = min_y = world.Sprite[itr_start * 10].y
+                + (world.Sprite[itr_start * 10].high / 2);
 
-			for (int i = itr_start + 1; i < max_players; ++i) {
-				if (world.numberPlayers.player[i]) {
-					min_x = std::min(min_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
-					max_x = std::max(max_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
-					min_y = std::min(min_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
-					max_y = std::max(max_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
-				}
-			}
+            for (int i = itr_start + 1; i < max_players; ++i) {
+                if (world.numberPlayers.player[i]) {
+                    min_x = std::min(min_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
+                    max_x = std::max(max_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
+                    min_y = std::min(min_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
+                    max_y = std::max(max_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
+                }
+            }
 
-			focus_x = (min_x + max_x) / 2;
-			focus_y = (min_y + max_y) / 2;
+            focus_x = (min_x + max_x) / 2;
+            focus_y = (min_y + max_y) / 2;
 
 
-			world.camera.CameraX = focus_x - (world.camera.CameraWidth / 2);
-			world.camera.CameraY = focus_y - (world.camera.CameraHeight / 2);
+            world.camera.CameraX = focus_x - (world.camera.CameraWidth / 2);
+            world.camera.CameraY = focus_y - (world.camera.CameraHeight / 2);
 
-			if (world.camera.CameraX < 1) { world.camera.CameraX = 1; }
-			if (world.camera.CameraX + world.camera.CameraWidth >= world.camera.cameraStopX) {
-				world.camera.CameraX = world.camera.cameraStopX - 1 - world.camera.CameraWidth;
-			}
-			if (world.camera.CameraY < 1) { world.camera.CameraY = 1; }
-			if (world.camera.CameraY + world.camera.CameraHeight >= world.camera.cameraStopY) {
-				world.camera.CameraY = world.camera.cameraStopY - 1 - world.camera.CameraHeight;
-			}
-		}
+            if (world.camera.CameraX < 1) { world.camera.CameraX = 1; }
+            if (world.camera.CameraX + world.camera.CameraWidth >= world.camera.cameraStopX) {
+                world.camera.CameraX = world.camera.cameraStopX - 1 - world.camera.CameraWidth;
+            }
+            if (world.camera.CameraY < 1) { world.camera.CameraY = 1; }
+            if (world.camera.CameraY + world.camera.CameraHeight >= world.camera.cameraStopY) {
+                world.camera.CameraY = world.camera.cameraStopY - 1 - world.camera.CameraHeight;
+            }
+        }
 
 
         //-----------------------------------------------------------
         //START OF NORMAL ROUTINE
         //------------------------------------------------------------
 
-		// 2017: todo: try making these only appear in the loops that need them
-		int j;
-		int k;
+        // 2017: todo: try making these only appear in the loops that need them
+        int j;
+        int k;
 
         //Rem-FLICKER-
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
@@ -216,29 +216,29 @@ public:
 
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             auto & s = world.Sprite[j];
-			// Handle all "level" stuff here, but call update on gameproc
-			// otherwise.
-			if (s.name == "frontdoor") {
-				if (this->findQ("Kerbose") < 1) {
-					kill(s);
-					s.name = "exit";
-					CharacterProcEnv env{ context, random, world.clock, camera };
+            // Handle all "level" stuff here, but call update on gameproc
+            // otherwise.
+            if (s.name == "frontdoor") {
+                if (this->findQ("Kerbose") < 1) {
+                    kill(s);
+                    s.name = "exit";
+                    CharacterProcEnv env{ context, random, world.clock, camera };
 
                     // This will break if anything else happens, but is needed
                     // to preserve the old way things were.
                     entity_manager.go_back(30);
-					proc_manager.add_process(
-						proc::create_cinema_proc(env, entity_manager, 1.1f));
-				}
-			} else if (s.proc) {
-				//CharacterProcEnv env{context, random, world.clock};
-				//s.proc->update(env, s, j, world);
-			}
+                    proc_manager.add_process(
+                        proc::create_cinema_proc(env, entity_manager, 1.1f));
+                }
+            } else if (s.proc) {
+                //CharacterProcEnv env{context, random, world.clock};
+                //s.proc->update(env, s, j, world);
+            }
 
         }
 
-		// CharacterProcEnv env{ context, random, world.clock, camera };
-		proc_manager.update();
+        // CharacterProcEnv env{ context, random, world.clock, camera };
+        proc_manager.update();
         //TSNOW: end of the emulated with statement that creates variable "s",
         //       along with the for loop that used the "j" variable.
         //       Holy crap, after formatting that it's 1259 lines long.
@@ -266,7 +266,7 @@ public:
 
         }
 
-		gsl::owner<GameProcess *> result = this->flipGame();
+        gsl::owner<GameProcess *> result = this->flipGame();
         if (result) {
             return result;
         }
@@ -275,28 +275,28 @@ public:
             world.Sprite[j].lastX = world.Sprite[j].x;
             world.Sprite[j].lastY = world.Sprite[j].y;
         }
-		animate();
-		create_billboards(world, view.billboards());
+        animate();
+        create_billboards(world, view.billboards());
 
-		return nullptr;
+        return nullptr;
     }
 
 private:
-	void animate() {
-		animation_timer += 16;
-		// emulates old timer that fired once every 200 ms
-		if (animation_timer < 200) {
-			return;
-		}
-		animation_timer -= 200;
+    void animate() {
+        animation_timer += 16;
+        // emulates old timer that fired once every 200 ms
+        if (animation_timer < 200) {
+            return;
+        }
+        animation_timer -= 200;
 
-		for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
-			auto & s = world.Sprite[j];
-			if (s.proc) {
-				s.proc->animate(200);
-			}
-		}
-	}
+        for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
+            auto & s = world.Sprite[j];
+            if (s.proc) {
+                s.proc->animate(200);
+            }
+        }
+    }
 
     void checkHit(int j, int k) {
                 bool redo = false;
@@ -322,12 +322,12 @@ private:
         //Player hits an enemy
         if (world.Sprite[j].kind == Kind::player && (world.Sprite[k].kind == Kind::enemy
             || world.Sprite[k].kind == Kind::enemy_bullet)) {
-			if (world.Sprite[j].flickerTime < world.clock) {
+            if (world.Sprite[j].flickerTime < world.clock) {
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
                 sound.PlaySound(world.Sprite[j].soundFile);
                 gosub_hurtj();
                 if (world.Sprite[j].hp <= 0) {
-					world.Sprite[j].proc->death_animation();
+                    world.Sprite[j].proc->death_animation();
                 }
             }
         }
@@ -340,7 +340,7 @@ private:
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
                 gosub_hurtj();
                 if (world.Sprite[j].hp <= 0) {
-					world.Sprite[j].proc->death_animation();
+                    world.Sprite[j].proc->death_animation();
                 }
             }
             if (world.Sprite[k].name == "fireball") {
@@ -363,7 +363,7 @@ private:
                     sound.PlaySound("spring");
                     world.Sprite[j].jumpM = world.Sprite[k].jumpM;
                     if (world.Sprite[k].hp <= 0) {
-						world.Sprite[k].proc->death_animation();
+                        world.Sprite[k].proc->death_animation();
                     }
                 }
             }
@@ -378,7 +378,7 @@ private:
                     world.Sprite[j].hp = world.Sprite[j].hp - 1;
                     gosub_hurtj();
                     if (world.Sprite[j].hp <= 0) {
-						world.Sprite[j].proc->death_animation();
+                        world.Sprite[j].proc->death_animation();
                     }
                 }
             }
@@ -446,7 +446,7 @@ private:
        min = 9999;
        theclosest = 0;
        for (int penguin = 0; penguin <= 2; ++ penguin) {
-		   if (!world.numberPlayers.player[penguin]) {
+           if (!world.numberPlayers.player[penguin]) {
                continue;
            }
 
@@ -481,11 +481,11 @@ private:
         if (world.exitS == "true" && boost::starts_with(world.screen, "Level")) {
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
-			if (sapple > 1.49) {
-				return create_title_screen(context);
-			}
+            if (sapple > 1.49) {
+                return create_title_screen(context);
+            }
             world.screen = str(boost::format("Level%s") % sapple);
-			return new LegacyGame(context, std::move(world));
+            return new LegacyGame(context, std::move(world));
         } // End If
 
         //playWave "conzero.wav"
@@ -499,29 +499,29 @@ private:
             world.screen = "title";
         }
 
-		if (std::all_of(begin(world.player_data), end(world.player_data),
-			            [](PlayerData & pd) { return !pd.active; }))
-		{
-			return create_gameover_screen(context);
-		}
+        if (std::all_of(begin(world.player_data), end(world.player_data),
+                        [](PlayerData & pd) { return !pd.active; }))
+        {
+            return create_gameover_screen(context);
+        }
 
         //if (world.Sprite[0].name == "dead"
         //    && world.Sprite[10].name == "dead"
         //    && world.Sprite[20].name == "dead") {
-		//	return create_gameover_screen(context);
+        //  return create_gameover_screen(context);
         //}
 
-		return nullptr;
+        return nullptr;
     }
 
     void findPlayers() {
-		std::array<bool, 3> active_players = {
-			world.player_data[0].active,
-			world.player_data[1].active,
-			world.player_data[2].active
-		};
-		world.numberPlayers
-			= ActivePlayers::find_from_active_players(active_players);
+        std::array<bool, 3> active_players = {
+            world.player_data[0].active,
+            world.player_data[1].active,
+            world.player_data[2].active
+        };
+        world.numberPlayers
+            = ActivePlayers::find_from_active_players(active_players);
     }
 
     int findQ(const std::string & who) {
@@ -538,7 +538,7 @@ private:
         world.Gravity = 0;
 
         if (which == 1.1 || which == 1) {
-			destroyEverything(world, view, sound);
+            destroyEverything(world, view, sound);
             this->MakeLevel(1.0f, "Level1Opening.ogg", "Level1.cap",
 // TSNOW: This is such a hack, but honestly the graphic for the apartment
 //        carpet- which already looked terrible - makes the eyes bleed
@@ -551,9 +551,9 @@ private:
 #endif
                             10, 10,
                             true, true,
-							std::vector<glm::vec2>{
-								{ 50, 220}
-							});
+                            std::vector<glm::vec2>{
+                                { 50, 220}
+                            });
 
             world.camera.cameraStopX = 1010;
             world.camera.cameraStopY = 905 + 480;
@@ -570,9 +570,9 @@ private:
             this->MakeLevel(1.2f, "Level1.ogg", "level1b.cap", "Lv1bg2.png",
                             100, 100,
                             true, true,
-				std::vector<glm::vec2>{
-					{ 1122, 1650 }
-			});
+                std::vector<glm::vec2>{
+                    { 1122, 1650 }
+            });
             world.camera.cameraStopX = 1194;
             world.camera.cameraStopY = 1900;
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
@@ -586,12 +586,12 @@ private:
             this->MakeLevel(1.3f, "Level1.ogg", "level1c.cap", "lv1bg3.png",
                             10, 10,
                             false, false,
-				std::vector<glm::vec2>{
-					{ 242, 2000 },
-					{ 42, 300 },
-					{ 42, 300 }
-			}
-				);
+                std::vector<glm::vec2>{
+                    { 242, 2000 },
+                    { 42, 300 },
+                    { 42, 300 }
+            }
+                );
 
 
             world.camera.cameraStopX = 1244;
@@ -606,9 +606,9 @@ private:
         if (which == 1.4) {
             this->MakeLevel(1.4f, "Level1.ogg", "level1d.cap", "level1birdstreet.png",
                             98, 480,
-				false, false, std::vector<glm::vec2>{
-					{ 42, 300 }
-			});
+                false, false, std::vector<glm::vec2>{
+                    { 42, 300 }
+            });
 
             world.camera.cameraStopX = 3000;
             world.camera.cameraStopY = 480;
@@ -724,23 +724,23 @@ private:
         //          THIS PART LOADS UP WEAPONS
         //Rem******************************************************8
 
-		/*for (int index = 0; index < 3; ++index) {
-			if (world.numberPlayers.player[index]) {
-				world.Sprite[index * 10].name = world.player_data[0].playerName;
-				for (int k = index * 10 + 1; k <= (index * 10) + 9; ++k) {
-					world.Sprite[k].x = 60;
-					world.Sprite[k].y = 70;
-					world.Sprite[k].name = "fireball";
-					if (world.player_data[index].playerName == "Thomas"
-						|| world.player_data[index].playerName == "Nick") {
-						world.Sprite[k].name = "fireball";
-					}
-					if (world.player_data[index].playerName == "Nicky") {
-						world.Sprite[k].name = "bomb";
-					}
-				}
-			}
-		}*/
+        /*for (int index = 0; index < 3; ++index) {
+            if (world.numberPlayers.player[index]) {
+                world.Sprite[index * 10].name = world.player_data[0].playerName;
+                for (int k = index * 10 + 1; k <= (index * 10) + 9; ++k) {
+                    world.Sprite[k].x = 60;
+                    world.Sprite[k].y = 70;
+                    world.Sprite[k].name = "fireball";
+                    if (world.player_data[index].playerName == "Thomas"
+                        || world.player_data[index].playerName == "Nick") {
+                        world.Sprite[k].name = "fireball";
+                    }
+                    if (world.player_data[index].playerName == "Nicky") {
+                        world.Sprite[k].name = "bomb";
+                    }
+                }
+            }
+        }*/
 
         //Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
         /*if (world.Sprite[0].name == world.Sprite[10].name) {
@@ -799,7 +799,7 @@ private:
                 this->killLimit(who);
                 {
                     Camera cam(world.camera);
-				    off_camera_kill(ws, cam);
+                    off_camera_kill(ws, cam);
                 }
 
 
@@ -909,14 +909,14 @@ private:
     }
 
     void MakeLevel(const float stage,
-		           const std::string & lvlBgMusic, const std::string & levelFile,
+                   const std::string & lvlBgMusic, const std::string & levelFile,
         const std::string & levelBgFile, const int lvlBgWidth,
         const int lvlBgHeight,
         const bool stopMusic,
         const bool,  // loadScreen
-		std::vector<glm::vec2> player_spawn_locations) {
+        std::vector<glm::vec2> player_spawn_locations) {
 
-		destroyEverything(world, view, sound, 2);
+        destroyEverything(world, view, sound, 2);
 
         world.camera.CameraWidth = 640; world.camera.CameraHeight = 480;
 
@@ -934,45 +934,45 @@ private:
 
         this->initPlayers();
 
-   		CharacterProcEnv env{ context, random, world.clock, camera };
+        CharacterProcEnv env{ context, random, world.clock, camera };
 
-		// First 30 sprites were for player stuff (10 each)
-		for (auto & pd : world.player_data) {
-			const auto & loc = lp3::narrow<int>(player_spawn_locations.size()) > pd.index
-				? player_spawn_locations[pd.index]
-				: player_spawn_locations.back();
-			if (pd.active) {
-				proc_manager.add_process(
-					proc::create_player_proc(env, world.game_state, pd,
-						                     entity_manager, loc));
-			}
-		}
-		///*for (int h = 0; h < 3; ++h) {
-		//	proc_manager.add_process(
-		//		legacy_add_process(env, world, entity_manager, h*10,
-		//			               world.Sprite[h*10], world.Sprite[h*10].name));
-		//}*/
+        // First 30 sprites were for player stuff (10 each)
+        for (auto & pd : world.player_data) {
+            const auto & loc = lp3::narrow<int>(player_spawn_locations.size()) > pd.index
+                ? player_spawn_locations[pd.index]
+                : player_spawn_locations.back();
+            if (pd.active) {
+                proc_manager.add_process(
+                    proc::create_player_proc(env, world.game_state, pd,
+                                             entity_manager, loc));
+            }
+        }
+        ///*for (int h = 0; h < 3; ++h) {
+        //  proc_manager.add_process(
+        //      legacy_add_process(env, world, entity_manager, h*10,
+        //                         world.Sprite[h*10], world.Sprite[h*10].name));
+        //}*/
 
-		// old school sprites 30-40 reserved for cinematics:
-		proc_manager.add_process(
-			proc::create_cinema_proc(env, entity_manager, stage));
+        // old school sprites 30-40 reserved for cinematics:
+        proc_manager.add_process(
+            proc::create_cinema_proc(env, entity_manager, stage));
 
-		entity_manager.skip_to(40);
+        entity_manager.skip_to(40);
 
-		// old school sprites >=40 for things loaded out of the level
-		for (j = 40; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
-			// First, try to create a new style proc:
-			auto * proc =
-				proc::create_enemy_proc(env, entity_manager, world.Sprite[j].name);
-			// If that fails, use the old nasty proc stuff
-			if (!proc) {
-				proc = legacy_add_process(
-					env, world, entity_manager, j,
-					world.Sprite[j], world.Sprite[j].name);
-				entity_manager.grab_sprite(); // make sure the manager doesn't
-											  // use this next sprite.
-			}
-			proc_manager.add_process(proc);
+        // old school sprites >=40 for things loaded out of the level
+        for (j = 40; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
+            // First, try to create a new style proc:
+            auto * proc =
+                proc::create_enemy_proc(env, entity_manager, world.Sprite[j].name);
+            // If that fails, use the old nasty proc stuff
+            if (!proc) {
+                proc = legacy_add_process(
+                    env, world, entity_manager, j,
+                    world.Sprite[j], world.Sprite[j].name);
+                entity_manager.grab_sprite(); // make sure the manager doesn't
+                                              // use this next sprite.
+            }
+            proc_manager.add_process(proc);
         }
 
         if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }
@@ -1011,7 +1011,7 @@ private:
         world.Sprite[opera].wide = world.Sprite[who].wide;
         world.Sprite[opera].high = world.Sprite[who].high;
 
-		world.Sprite[who].proc->spawn(world.Sprite[opera], what);
+        world.Sprite[who].proc->spawn(world.Sprite[opera], what);
         world.Sprite[opera].zOrder = -1;
         world.Sprite[opera].x = world.Sprite[who].x;
         world.Sprite[opera].y = world.Sprite[who].y;
@@ -1024,16 +1024,16 @@ private:
 
 
 gsl::owner<GameProcess *> create_legacy_screen(
-	GameContext context,
-	World && world,
-	std::array<boost::optional<std::string>, 3>)
+    GameContext context,
+    World && world,
+    std::array<boost::optional<std::string>, 3>)
 {
-	//TODO: Use players, somehow
-	return create_now_loading_screen(
-		context,
-		[world(std::move(world))](GameContext context_2) mutable {
-		return new LegacyGame(context_2, std::move(world));
-	});
+    //TODO: Use players, somehow
+    return create_now_loading_screen(
+        context,
+        [world(std::move(world))](GameContext context_2) mutable {
+        return new LegacyGame(context_2, std::move(world));
+    });
 
 }
 
