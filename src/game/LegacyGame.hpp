@@ -7,13 +7,16 @@
 namespace nnd3d { namespace game {
 
 
-// --------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // LegacyGame
-// --------------------------------------------------------------------
-//      For now this is where the bulk of the code from NND3d2.bas
-//      will live. The state from that mammoth module is represented
-//      by the World struct.
-// --------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+//      Binds together logic to play the game.
+//      Responsibilities include:
+//          * running the process manager class
+//          * having some bespoke logic to manage changing "scenes"
+//          * handling state transitions in and out of the game process,
+//            such as when there's a game over.
+// ----------------------------------------------------------------------------
 gsl::owner<GameProcess *> create_legacy_screen(
         GameContext context, World && world,
         std::array<boost::optional<std::string>, 3> players,

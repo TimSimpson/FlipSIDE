@@ -81,8 +81,6 @@ struct World {
     ActivePlayers numberPlayers;
 
     GameState game_state;
-
-    std::string currentScreen;
 };
 
 long anyKey(World & world, int zed);

@@ -122,8 +122,7 @@ World::World(const World & other)
     Sprite(other.Sprite),
     player_data(other.player_data),
     numberPlayers(other.numberPlayers),
-    game_state(other.game_state),
-    currentScreen(other.currentScreen)
+    game_state(other.game_state)
 {}
 
 long anyKey(World & world, int zed) {
