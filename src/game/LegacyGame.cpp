@@ -143,7 +143,7 @@ public:
             focus_x = (min_x + max_x) / 2;
             focus_y = (min_y + max_y) / 2;
 
-            world.camera2.focus({focus_x, focus_y});
+            world.camera.focus({focus_x, focus_y});
         }
 
 
@@ -544,7 +544,7 @@ private:
                                 { 50, 220}
                             });
 
-            world.camera2.set_boundary({1010, 905 + 480});
+            world.camera.set_boundary({1010, 905 + 480});
 
             sound.LoadSound(16, "goomba.wav", "dying explosion");
             sound.LoadSound(17, "GoombaOuch.wav", "Goomba Ouch");
@@ -561,7 +561,7 @@ private:
                 std::vector<glm::vec2>{
                     { 1122, 1650 }
             });
-            world.camera2.set_boundary({1194, 1900});
+            world.camera.set_boundary({1194, 1900});
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
             sound.LoadSound(17, "BS Death2.wav", "stick die");
             sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
@@ -581,7 +581,7 @@ private:
                 );
 
 
-            world.camera2.set_boundary({1244, 2273});
+            world.camera.set_boundary({1244, 2273});
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
             sound.LoadSound(17, "BS Death2.wav", "stick die");
             sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
@@ -596,7 +596,7 @@ private:
                     { 42, 300 }
             });
 
-            world.camera2.set_boundary({3000, 480});
+            world.camera.set_boundary({3000, 480});
             sound.LoadSound(16, "BShurt.wav", "Stick Ouch");
             sound.LoadSound(17, "BS Death2.wav", "stick die");
             sound.LoadSound(18, "PaulHurt.wav", "Paul Ouch");
@@ -738,9 +738,9 @@ private:
     void killLimit(int jex) {
         // Rem- Kills unruly sprites who are out of bounds
         auto & s = world.Sprite[jex];
-        if (s.x > world.camera2.boundary().x || s.x < -10) { kill(s); }
+        if (s.x > world.camera.boundary().x || s.x < -10) { kill(s); }
 
-        if (s.y > world.camera2.boundary().x || s.y < -10) { kill(s); }
+        if (s.y > world.camera.boundary().x || s.y < -10) { kill(s); }
     }
 
     void loadAnimation(int who, const std::string & file) {
@@ -792,8 +792,8 @@ private:
 
 
                 while(!(
-                    (ws.seekx > world.camera2.boundary().x || ws.seekx < 0)
-                        || (ws.seeky > world.camera2.boundary().y || ws.seeky < 0)
+                    (ws.seekx > world.camera.boundary().x || ws.seekx < 0)
+                        || (ws.seeky > world.camera.boundary().y || ws.seeky < 0)
                     )) {
                     if (ws.seekx > ws.x) {
                         ws.seekx = ws.seekx + ((ws.seekx - ws.x));
@@ -858,7 +858,7 @@ private:
                 //if (ws.frame > 2) then ws.frame = 1
 
                 this->seeker(who);
-                if (ws.x < 1) { ws.x = world.camera2.boundary().x; }
+                if (ws.x < 1) { ws.x = world.camera.boundary().x; }
 
                 if (ws.miscTime < world.clock) {
                     this->shoot(who, "bluestick",
@@ -903,7 +903,7 @@ private:
 
         destroyEverything(world, view, sound, 2);
 
-        world.camera2.set_size({640, 480});
+        world.camera.set_size({640, 480});
 
         if (stopMusic == true) { sound.PlayBgm(""); }
 
@@ -914,7 +914,7 @@ private:
 
         int j = 0;
 
-        world.camera2.focus({0, 0});
+        world.camera.focus({0, 0});
         view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight);
 
         this->initPlayers();

@@ -76,8 +76,8 @@ struct World {
 
     // Note from 2017: decreased from 125
 
-    CameraGuts camera;
-    Camera camera2;
+    CameraGuts camera_old;
+    Camera camera;
 
     int cinemaCounter;
     int cinemaMax; //how many lines of dialogue per cinema

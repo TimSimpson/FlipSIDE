@@ -466,7 +466,7 @@ public:
                         && world.Sprite[penguin].name
                         == world.player_data[(penguin / 10)].playerName) {
                         s.mode = "runner";
-                        s.seekx = world.camera2.boundary().x;
+                        s.seekx = world.camera.boundary().x;
                         //.mhp = 10
                         s.kind = Kind::enemy;
                         s.deathType = "expand";
@@ -537,17 +537,17 @@ public:
         if (s.name == "dead") {
             //Stop
             if ((j / 10) == 0) {
-                s.x = world.camera2.x() + 10;
+                s.x = world.camera.x() + 10;
             }
             if ((j / 10) == 1) {
-                s.x = world.camera2.x() + 250;
+                s.x = world.camera.x() + 250;
                 s.color = view::qb_color(10);
             }
             if ((j / 10) == 2) {
-                s.x = world.camera2.x() + 450;
+                s.x = world.camera.x() + 450;
                 s.color = view::qb_color(14);
             }
-            s.y = world.camera2.y() + 10;
+            s.y = world.camera.y() + 10;
             s.frame = 0;
             s.visible = false;
             s.srcx = 2;

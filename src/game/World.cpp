@@ -70,8 +70,8 @@ World::World()
     screen(),
     LemonTime(false),
     sFactor(0),
-    camera{},
-    camera2(camera),
+    camera_old{},
+    camera(camera_old),
     cinemaCounter(0),
     cinemaMax(0),
     exitS(),
@@ -115,7 +115,7 @@ World::World()
     //KeyAttack = " "
     //KeyJump = "J"
 
-    this->camera2.set_size({640, 480});
+    this->camera.set_size({640, 480});
 
     for (int j = 0; j < 100; ++j)
     {
@@ -129,8 +129,8 @@ World::World(const World & other)
     screen(other.screen),
     LemonTime(other.LemonTime),
     sFactor(other.sFactor),
-    camera(other.camera),
-    camera2(camera),  // <-- important!
+    camera_old(other.camera_old),
+    camera(camera_old),  // <-- important!
     cinemaCounter(other.cinemaCounter),
     cinemaMax(other.cinemaMax),
     exitS(other.exitS),
