@@ -65,16 +65,16 @@ public:
             LP3_YIELD(nullptr);
         }
         while (game_over_title.ul.y >= -300) {
-            game_over_title.size.y += lp3::narrow<float>(2.0f * speed_factor);
-            game_over_title.ul.y -= lp3::narrow<float>(speed_factor);
+            game_over_title.size.y += lp3::narrow<float>(2.0f * fs_speed_factor);
+            game_over_title.ul.y -= lp3::narrow<float>(fs_speed_factor);
             if (game_over_title.ul.y < 0) {
                 game_over_title.set_visibility(view::Visibility::flicker);
             }
             LP3_YIELD(nullptr);
         }
         while (game_over_title.size.x >= 0) {
-            game_over_title.size.x -= lp3::narrow<float>(10.0f * speed_factor);
-            game_over_title.ul.x += lp3::narrow<float>(5.0f * speed_factor);
+            game_over_title.size.x -= lp3::narrow<float>(10.0f * fs_speed_factor);
+            game_over_title.ul.x += lp3::narrow<float>(5.0f * fs_speed_factor);
             LP3_YIELD(nullptr);
         }
         LP3_COROUTINE_END();

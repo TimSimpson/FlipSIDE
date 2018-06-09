@@ -17,14 +17,15 @@ namespace gfx = lp3::gfx;
 // The old code figured out the percentage of a second each frame
 // took, and created a "speed factor" which it multiplied everything
 // in existence by. That's actually a bad approach for several
-// reasons, but the take away is here we introducing a constant
+// reasons, but the take away is here we are introducing a constant
 // speed mod which will always be 0.016
 constexpr std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 
 // So the game created a speed factor that tried to make it
 // target 120fps (kind of cool my old Pentium 2 machine could do
 // that). So we multiple the number we just had by 120.
-constexpr float speed_factor = (ms_per_update / 1000.0f) * 120;
+// (to reiterate, this is for janky old game logic, thus the prefix FS).
+constexpr float fs_speed_factor = 2.0f;  // (ms_per_update / 1000.0f) * 120;
 
 class GameProcess;
 

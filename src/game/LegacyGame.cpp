@@ -195,7 +195,7 @@ public:
 
                 //REM------------------------------------------------------
                 //  THis is the added gravity that pulls them down   if the're in the ares.
-                if (s.z > 0) { s.z = s.z - world.sFactor; }
+                if (s.z > 0) { s.z = s.z - fs_speed_factor; }
             }
         }
 
@@ -770,8 +770,8 @@ private:
 
 
             if (ws.name == "clouds") {
-                ws.srcx = ws.srcx + (world.sFactor * 0.5);
-                ws.srcx2 = ws.srcx2 + (world.sFactor * 0.5);
+                ws.srcx = ws.srcx + (fs_speed_factor * 0.5);
+                ws.srcx2 = ws.srcx2 + (fs_speed_factor * 0.5);
                 ws.Aframe[1].x = ws.Aframe[1].x + 1;
                 ws.Aframe[1].x2 = ws.Aframe[1].x2 + 1;
             }
@@ -816,15 +816,15 @@ private:
 
                 if (ws.mode == "right") {
                     ws.reverse = false;
-                    ws.x = ws.x + world.sFactor;
-                    ws.seekx = ws.seekx + world.sFactor;
+                    ws.x = ws.x + fs_speed_factor;
+                    ws.seekx = ws.seekx + fs_speed_factor;
                     if (ws.seekx > 100) {
                         ws.mode = "left"; ws.seekx = 0; ws.dir = ""; }
                 }
                 if (ws.mode == "left") {
                     ws.reverse = true;
-                    ws.x = ws.x - world.sFactor;
-                    ws.seekx = ws.seekx + world.sFactor;
+                    ws.x = ws.x - fs_speed_factor;
+                    ws.seekx = ws.seekx + fs_speed_factor;
                     if (ws.seekx > 100) {
                         ws.mode = "right"; ws.seekx = 0; ws.dir = ""; }
                 }
@@ -839,18 +839,18 @@ private:
 
             if (ws.name == "bluestick") {
                 k = random.next() * 2 + 1;
-                if (k == 1) { ws.x = ws.x + world.sFactor; }
-                if (k == 2) { ws.x = ws.x - world.sFactor; }
+                if (k == 1) { ws.x = ws.x + fs_speed_factor; }
+                if (k == 2) { ws.x = ws.x - fs_speed_factor; }
                 k = random.next() * 2 + 1;
-                if (k == 1) { ws.y = ws.y + world.sFactor; }
-                if (k == 2) { ws.y = ws.y - world.sFactor; }
+                if (k == 1) { ws.y = ws.y + fs_speed_factor; }
+                if (k == 2) { ws.y = ws.y - fs_speed_factor; }
                 k = random.next() * 20 + 1;
                 if (k == 1) { if (ws.z == 0) {
                     ws.jumpStart = ws.z; ws.jumpTime = world.clock; } }
             }
 
             if (ws.name == "pigeonbomber") {
-                ws.z = ws.z + world.sFactor;
+                ws.z = ws.z + fs_speed_factor;
                 //ws.frame = ws.frame + 1
                 //if (ws.frame > 2) then ws.frame = 1
 
@@ -966,10 +966,10 @@ private:
 
     void seeker(int who) {
         auto & s = world.Sprite[who];
-        if (s.x < s.seekx) { s.x = s.x + (s.mph * world.sFactor); }
-        if (s.x > s.seekx) { s.x = s.x - (s.mph * world.sFactor); }
-        if (s.y < s.seeky) { s.y = s.y + (s.mph * world.sFactor); }
-        if (s.y > s.seeky) { s.y = s.y - (s.mph * world.sFactor); }
+        if (s.x < s.seekx) { s.x = s.x + (s.mph * fs_speed_factor); }
+        if (s.x > s.seekx) { s.x = s.x - (s.mph * fs_speed_factor); }
+        if (s.y < s.seeky) { s.y = s.y + (s.mph * fs_speed_factor); }
+        if (s.y > s.seeky) { s.y = s.y - (s.mph * fs_speed_factor); }
     }
 
 

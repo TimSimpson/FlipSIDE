@@ -171,10 +171,10 @@ public:
         }
         //Rem----------------------
         sprite.flickerTime = std::numeric_limits<double>::max();
-        if (sprite.x < sprite.seekx) { sprite.x = sprite.x + (sprite.mph * speed_factor); }
-        if (sprite.x > sprite.seekx) { sprite.x = sprite.x - (sprite.mph * speed_factor); }
-        if (sprite.y < sprite.seeky) { sprite.y = sprite.y + (sprite.mph * speed_factor); }
-        if (sprite.y > sprite.seeky) { sprite.y = sprite.y - (sprite.mph * speed_factor); }
+        if (sprite.x < sprite.seekx) { sprite.x = sprite.x + (sprite.mph * fs_speed_factor); }
+        if (sprite.x > sprite.seekx) { sprite.x = sprite.x - (sprite.mph * fs_speed_factor); }
+        if (sprite.y < sprite.seeky) { sprite.y = sprite.y + (sprite.mph * fs_speed_factor); }
+        if (sprite.y > sprite.seeky) { sprite.y = sprite.y - (sprite.mph * fs_speed_factor); }
 
         if (sprite.x > (camera.x() + camera.width())
             || sprite.x < (camera.x() - camera.width())
@@ -398,14 +398,14 @@ public:
     void update_normal() {
         if (player_data.upKey == true) {
             if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
-            s.y = s.y - speed_factor;
+            s.y = s.y - fs_speed_factor;
             //s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
             s.speed = 0; //0.00001
             if (s.y < env.camera.y()) { s.y = env.camera.y(); }
         }
         if (player_data.DownKEY == true) {
             if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
-            s.y = s.y + speed_factor;
+            s.y = s.y + fs_speed_factor;
             //s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
             s.speed = 0; //0.00001
             if (s.y > env.camera.y() + env.camera.height() - s.high) {
@@ -418,7 +418,7 @@ public:
                 s.dir = "l";
                 s.frame = 14;
             }
-            s.x = s.x - speed_factor;
+            s.x = s.x - fs_speed_factor;
             //s.Frame = s.Frame + 1: if s.Frame > 12 Then s.Frame = 10
             s.speed = 0;  //0.00001
             if (s.x < env.camera.x()) { s.x = env.camera.x(); }
@@ -429,7 +429,7 @@ public:
                 s.dir = "r";
                 s.frame = 2;
             }
-            s.x = s.x + speed_factor;
+            s.x = s.x + fs_speed_factor;
             //s.Frame = s.Frame + 1: if s.Frame > 3 Then s.Frame = 1
             s.speed = 0;  //0s.00001
 

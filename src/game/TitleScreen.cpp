@@ -14,12 +14,12 @@ private:
     std::array<bool, 3> keys_pressed;
     lp3::sims::CoroutineState coro_state;
     std::int64_t time;
-    
+
 public:
     TitleScreenImpl(GameContext _context)
     :   context(_context),
         keys_pressed{},
-        coro_state(),       
+        coro_state(),
         time(0)
     {
         context.view.billboards().resize(3);
@@ -142,14 +142,14 @@ public:
 
             while (words.size.y >= 213) {
                 if (subtitle.size.x > 640) {
-                    subtitle.size.x -= (5 * speed_factor);
-                    subtitle.ul.x += (2.5 * speed_factor);
+                    subtitle.size.x -= (5 * fs_speed_factor);
+                    subtitle.ul.x += (2.5 * fs_speed_factor);
                 }
                 else {
                     subtitle.set_visibility(view::Visibility::normal);
                 }
-                words.size.y -= (5 * speed_factor);
-                words.ul.y += (2.5 * speed_factor);
+                words.size.y -= (5 * fs_speed_factor);
+                words.ul.y += (2.5 * fs_speed_factor);
                 LP3_YIELD(nullptr);
             }
             words.set_visibility(view::Visibility::normal);
@@ -158,7 +158,7 @@ public:
             subtitle.set_visibility(view::Visibility::normal);
 
             WAIT(23072)
-                
+
             return create_intro_story_screen(context);
             LP3_COROUTINE_END()
         }

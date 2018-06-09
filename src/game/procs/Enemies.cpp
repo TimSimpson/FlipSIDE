@@ -76,11 +76,11 @@ public:
 
     void wiggle() {
         const auto move_x = (int)(env.random.next() * 2) + 1;
-        if (move_x == 1) { sprite.x += speed_factor; }
-        if (move_x == 2) { sprite.x -= speed_factor; }
+        if (move_x == 1) { sprite.x += fs_speed_factor; }
+        if (move_x == 2) { sprite.x -= fs_speed_factor; }
         const auto move_y = (int)(env.random.next() * 2) + 1;
-        if (move_y == 1) { sprite.y = sprite.y + speed_factor; }
-        if (move_y == 2) { sprite.y = sprite.y - speed_factor; }
+        if (move_y == 1) { sprite.y = sprite.y + fs_speed_factor; }
+        if (move_y == 2) { sprite.y = sprite.y - fs_speed_factor; }
         const auto jump = (int)(env.random.next() * 20) + 1;
         if (jump == 1) {
             if (sprite.z == 0) {

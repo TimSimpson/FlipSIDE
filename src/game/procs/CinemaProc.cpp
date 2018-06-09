@@ -52,10 +52,10 @@ public:
             LP3_YIELD(true);
         }
         while (s2.wide >= 0) {
-            s2.x = s2.x + 4 * speed_factor;
-            s2.y = s2.y + 4 * speed_factor;
-            s2.wide = s2.wide - 8 * speed_factor;
-            s2.high = s2.high - 8 * speed_factor;
+            s2.x = s2.x + 4 * fs_speed_factor;
+            s2.y = s2.y + 4 * fs_speed_factor;
+            s2.wide = s2.wide - 8 * fs_speed_factor;
+            s2.high = s2.high - 8 * fs_speed_factor;
             s2.zOrder = -100;
             LP3_YIELD(true);
         }
@@ -159,7 +159,7 @@ public:
             }
 
             for (auto & sprite : sprites) {
-                sprite.seekx = lp3::narrow<int>(sprite.seekx - speed_factor * 6);
+                sprite.seekx = lp3::narrow<int>(sprite.seekx - fs_speed_factor * 6);
                 sprite.frame = sprite.frame + 1;
                 if (sprite.frame > 2) {
                     sprite.frame = 1;
@@ -216,7 +216,7 @@ public:
 
             for (auto & s : sprites) {
                 // If i = 34 Then GoTo kiddy2
-                s.seekx = lp3::narrow<int>(s.seekx + speed_factor * 6);
+                s.seekx = lp3::narrow<int>(s.seekx + fs_speed_factor * 6);
                 s.seeky = s.seeky + 1;
                 if (s.seeky == 3) {
                     s.seeky = 1;

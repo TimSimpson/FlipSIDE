@@ -187,10 +187,10 @@ void kill(CharacterSprite & sprite) {
 
 // Makes the sprite seek out it's "seek" vars
 void seek(CharacterSprite & s) {
-    if (s.x < s.seekx) { s.x = s.x + (s.mph * speed_factor); }
-    if (s.x > s.seekx) { s.x = s.x - (s.mph * speed_factor); }
-    if (s.y < s.seeky) { s.y = s.y + (s.mph * speed_factor); }
-    if (s.y > s.seeky) { s.y = s.y - (s.mph * speed_factor); }
+    if (s.x < s.seekx) { s.x = s.x + (s.mph * fs_speed_factor); }
+    if (s.x > s.seekx) { s.x = s.x - (s.mph * fs_speed_factor); }
+    if (s.y < s.seeky) { s.y = s.y + (s.mph * fs_speed_factor); }
+    if (s.y > s.seeky) { s.y = s.y - (s.mph * fs_speed_factor); }
 }
 
 // Makes the sprite's size match it's current Animation Frame

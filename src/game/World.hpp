@@ -72,7 +72,6 @@ struct World {
     std::string screen;
 
     bool LemonTime; // a fun stupid cheat code that when set to true ups speed by 2.
-    double sFactor; //makes objects move at speeds irrelevent to frame rate
 
     // Note from 2017: decreased from 125
 

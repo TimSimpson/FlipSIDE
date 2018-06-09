@@ -416,7 +416,7 @@ public:
 
         if (s.name == "falling") {
             //.flickerTime = clock + 1
-            s.z = s.z - world.sFactor;
+            s.z = s.z - fs_speed_factor;
             if (s.z < 1) {
                 s.z = 1;
                 s.name = "deceased";
@@ -431,13 +431,13 @@ public:
         if (s.name == "Dying Explosion") {
             if (s.wide < s.seekx) {
                 s.wide = s.wide + s.mph;
-                s.x = s.x - (s.mph * 0.5 * world.sFactor);
+                s.x = s.x - (s.mph * 0.5 * fs_speed_factor);
                 s.high = s.high + s.mph;
-                s.y = s.y - (s.mph * 0.5 * world.sFactor);
+                s.y = s.y - (s.mph * 0.5 * fs_speed_factor);
             }
             if (s.wide >= s.seekx) {
                 s.high = s.high - s.mph;
-                s.y = s.y + (s.mph * 0.5 * world.sFactor);
+                s.y = s.y + (s.mph * 0.5 * fs_speed_factor);
                 if (s.high < 1) {
                     s.name = "deceased";
                     s.visible = false;
@@ -516,11 +516,11 @@ public:
             s.kind = Kind::neutral;
             //if (s.mode = "runner") then
             s.frame = 3;
-            s.time += (0.01 * world.sFactor);
-            s.wide = s.wide + (world.sFactor);
-            s.x = s.x - (world.sFactor / 2);
-            s.high = s.high + (world.sFactor);
-            s.y = s.y - (world.sFactor / 2);
+            s.time += (0.01 * fs_speed_factor);
+            s.wide = s.wide + (fs_speed_factor);
+            s.x = s.x - (fs_speed_factor / 2);
+            s.high = s.high + (fs_speed_factor);
+            s.y = s.y - (fs_speed_factor / 2);
             if (s.time > 2) {
                 s.name = "harharhar";
                 initialize();
