@@ -64,7 +64,6 @@ const ActivePlayers & ActivePlayers::find_from_active_players(
 World::World()
 :   Gravity(0),
     clock(0),
-    screen(),
     LemonTime(false),
     camera(),
     Sprite(),
@@ -118,7 +117,6 @@ World::World()
 World::World(const World & other)
 :   Gravity(other.Gravity),
     clock(other.clock),
-    screen(other.screen),
     LemonTime(other.LemonTime),
     camera(other.camera),
     Sprite(other.Sprite),

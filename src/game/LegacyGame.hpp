@@ -16,7 +16,8 @@ namespace nnd3d { namespace game {
 // --------------------------------------------------------------------
 gsl::owner<GameProcess *> create_legacy_screen(
         GameContext context, World && world,
-        std::array<boost::optional<std::string>, 3> players);
+        std::array<boost::optional<std::string>, 3> players,
+        const std::string & screen_name);
 
 
 }   }  // end namespace

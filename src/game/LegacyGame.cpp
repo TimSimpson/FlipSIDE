@@ -41,8 +41,10 @@ private:
     CharacterProcManager proc_manager;
     // This handles exitting to the next screen.
     bool exitS;
+    std::string screen_name;
 public:
-    LegacyGame(GameContext _context,  World && world_arg)
+    LegacyGame(GameContext _context,  World && world_arg,
+               const std::string & _screen_name)
     :   context(_context),
         vb(context.media),
         view(context.view),
@@ -52,13 +54,14 @@ public:
         animation_timer(0),
         entity_manager(world),
         proc_manager(),
-        exitS(false)
+        exitS(false),
+        screen_name(_screen_name)
     {
-        LP3_ASSERT(boost::starts_with(world.screen, "Level"));
+        LP3_ASSERT(boost::starts_with(this->screen_name, "Level"));
 
         sound.silence_sfx();
 
-        std::string crapple = world.screen.substr(5);
+        std::string crapple = this->screen_name.substr(5);
         double boogeycrap = boost::lexical_cast<double>(crapple);
 
         this->goToLevel(boogeycrap);
@@ -159,11 +162,11 @@ public:
         //Rem-FLICKER-
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
 
-            if (boost::starts_with(world.screen, "Level")) {
+            if (boost::starts_with(this->screen_name, "Level")) {
                 int sopoer;
                 //TSNOW: This may be wrong- old code was:
                 //       sopoer = Val(right(left(screen, 6), 1))
-                sopoer = boost::lexical_cast<double>(world.screen.substr(5, 1));
+                sopoer = boost::lexical_cast<double>(this->screen_name.substr(5, 1));
                 this->levelR(sopoer, j);
             }
         }
@@ -483,25 +486,25 @@ private:
         int penguin;
         (void)penguin;  //2017- is this unused?
 
-        if (this->exitS && boost::starts_with(world.screen, "Level")) {
-            double sapple = boost::lexical_cast<double>(world.screen.substr(5));
+        if (this->exitS && boost::starts_with(this->screen_name, "Level")) {
+            double sapple = boost::lexical_cast<double>(this->screen_name.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
             if (sapple > 1.49) {
                 return create_title_screen(context);
             }
-            world.screen = str(boost::format("Level%s") % sapple);
-            return new LegacyGame(context, std::move(world));
+            this->screen_name = str(boost::format("Level%s") % sapple);
+            return new LegacyGame(context, std::move(world), this->screen_name);
         } // End If
 
         //playWave "conzero.wav"
-        if (world.screen == "title") {
+        if (this->screen_name == "title") {
             //playWave "conTen.wav"
-            world.screen = "title2";
+            this->screen_name = "title2";
             return create_title_screen(context);
         }
 
-        if (world.screen == "deadscreen") {
-            world.screen = "title";
+        if (this->screen_name == "deadscreen") {
+            this->screen_name = "title";
         }
 
         if (std::all_of(begin(world.player_data), end(world.player_data),
@@ -624,7 +627,7 @@ private:
             // because Gravity is set to 20 in make level, we know that there
             // has been no other levels selected
             // in other words, somebody screwed up
-            world.screen = "intro story"; // this will remind them that they failed
+            this->screen_name = "intro story"; // this will remind them that they failed
             // Note from present day: sure, just tell yourself that kid.
         }
     }
@@ -1026,13 +1029,14 @@ private:
 gsl::owner<GameProcess *> create_legacy_screen(
     GameContext context,
     World && world,
-    std::array<boost::optional<std::string>, 3>)
+    std::array<boost::optional<std::string>, 3>,
+    const std::string & screen_name)
 {
     //TODO: Use players, somehow
     return create_now_loading_screen(
         context,
-        [world(std::move(world))](GameContext context_2) mutable {
-        return new LegacyGame(context_2, std::move(world));
+        [world(std::move(world)), screen_name](GameContext context_2) mutable {
+        return new LegacyGame(context_2, std::move(world), screen_name);
     });
 
 }

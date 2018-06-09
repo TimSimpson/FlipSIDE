@@ -66,7 +66,6 @@ struct World {
 
     double Gravity;
     double clock;
-    std::string screen;
 
     bool LemonTime; // a fun stupid cheat code that when set to true ups speed by 2.
 

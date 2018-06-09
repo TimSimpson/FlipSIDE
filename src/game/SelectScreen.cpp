@@ -207,8 +207,8 @@ public:
             world.player_data[box.index].playerName
                 = box.get_player_name().get_value_or("");
         }
-        world.screen = "Level1.1";
-        return create_legacy_screen(context, std::move(world), players);
+        return create_legacy_screen(context, std::move(world), players,
+                                    "Level1.1");
     }
 };  // end of GameImpl class
 
