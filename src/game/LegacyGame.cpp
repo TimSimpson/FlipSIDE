@@ -1044,4 +1044,26 @@ gsl::owner<GameProcess *> create_legacy_screen(
 
 }
 
+namespace {
+    gsl::owner<GameProcess *> create_legacy_screen_2(GameContext context) {
+        World world;
+
+        // This duplicates code from the player select class.
+        // Put this somewhere else.
+        world.numberPlayers = ActivePlayers::ap0();
+        for (auto & pd : world.player_data) {
+            pd.lives = 3;
+        }
+        world.player_data[0].active = true;
+        world.player_data[0].playerName = "Thomas";
+
+        std::string screen("Level1.1");
+        std::array<boost::optional<std::string>, 3> _what_is_this;
+        return create_legacy_screen(
+            context, std::move(world), _what_is_this, screen);
+    }
+
+    RegisterGameProcess reg(
+        "legacy-screen", "The actual game", create_legacy_screen_2);
+}
 }   }  // end namespace
