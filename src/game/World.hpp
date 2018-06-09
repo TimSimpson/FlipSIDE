@@ -74,8 +74,6 @@ struct World {
 
     Camera camera;
 
-    std::string exitS;
-
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
 
     std::array<PlayerData, max_players> player_data;

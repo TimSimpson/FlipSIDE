@@ -445,18 +445,6 @@ public:
             }
         }
 
-        if (s.name == "exit") {
-            //TSNOW: This looks to step up by 10 so should only iterate
-            //       the loop once, but that's what the old code did.
-            for (int penguin = 0; penguin <= 2; penguin += 10) {
-                if (hit_detection(s, world.Sprite[penguin]) != 0
-                    && world.Sprite[penguin].name
-                    == world.player_data[(penguin / 10)].playerName) {
-                    world.exitS = "true";
-                }
-            }
-        }
-
         if (s.name == "tdigger") {
             if (s.mode == "") {
                 unstretch(world.Sprite[j]);

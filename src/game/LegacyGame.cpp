@@ -39,6 +39,8 @@ private:
     std::int64_t animation_timer;
     EntityManager entity_manager;
     CharacterProcManager proc_manager;
+    // This handles exitting to the next screen.
+    bool exitS;
 public:
     LegacyGame(GameContext _context,  World && world_arg)
     :   context(_context),
@@ -49,7 +51,8 @@ public:
         random(),
         animation_timer(0),
         entity_manager(world),
-        proc_manager()
+        proc_manager(),
+        exitS(false)
     {
         LP3_ASSERT(boost::starts_with(world.screen, "Level"));
 
@@ -83,7 +86,7 @@ public:
                 break;
             case input::Key::skip_scene:
                 if (event.value) {
-                    world.exitS = "true"; sound.PlayWave("FDis.wav");
+                    this->exitS = true; sound.PlayWave("FDis.wav");
                 }
                 break;
             case input::Key::power_up:
@@ -200,11 +203,17 @@ public:
         }
 
 
+        // CharacterProcEnv env{ context, random, world.clock, camera };
+        proc_manager.update();
+
 
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             auto & s = world.Sprite[j];
             // Handle all "level" stuff here, but call update on gameproc
             // otherwise.
+            // TODO: maybe what's needed here is a different abstraction, which
+            //       could be a manager proc for each room that knows about
+            //       all the entities and can script events.
             if (s.name == "frontdoor") {
                 if (this->findQ("Kerbose") < 1) {
                     kill(s);
@@ -217,6 +226,17 @@ public:
                     proc_manager.add_process(
                         proc::create_cinema_proc(env, entity_manager, 1.1f));
                 }
+            } else if (s.name == "exit") {
+                // This logic is rotten and only works between now and when
+                // later code realizes the player is too far inside of the door
+                // and pushes them back.
+                for (int penguin = 0; penguin <= 2; penguin += 1) {
+                    if (hit_detection(s, world.Sprite[penguin * 10]) != 0
+                        && world.Sprite[penguin].name
+                        == world.player_data[penguin].playerName) {
+                        this->exitS = true;
+                    }
+                }
             } else if (s.proc) {
                 //CharacterProcEnv env{context, random, world.clock};
                 //s.proc->update(env, s, j, world);
@@ -224,8 +244,6 @@ public:
 
         }
 
-        // CharacterProcEnv env{ context, random, world.clock, camera };
-        proc_manager.update();
         //TSNOW: end of the emulated with statement that creates variable "s",
         //       along with the for loop that used the "j" variable.
         //       Holy crap, after formatting that it's 1259 lines long.
@@ -465,7 +483,7 @@ private:
         int penguin;
         (void)penguin;  //2017- is this unused?
 
-        if (world.exitS == "true" && boost::starts_with(world.screen, "Level")) {
+        if (this->exitS && boost::starts_with(world.screen, "Level")) {
             double sapple = boost::lexical_cast<double>(world.screen.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
             if (sapple > 1.49) {
@@ -959,7 +977,7 @@ private:
 
         if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }
 
-        world.exitS = "";
+        this->exitS = false;
     }
 
 
