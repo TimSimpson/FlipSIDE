@@ -21,8 +21,8 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
         }
     }
 
-    const glm::vec2 camera_pos = Camera(world.camera).ul();
-    const glm::vec2 camera_size = Camera(world.camera).size();
+    const glm::vec2 camera_pos = world.camera.ul();
+    const glm::vec2 camera_size = world.camera.size();
 
     // Do the goofy camera billboard
     if (true) { // is this EVER disabled? textures[0]) {    // if not, consider this disabled

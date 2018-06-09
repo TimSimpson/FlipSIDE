@@ -76,7 +76,6 @@ struct World {
 
     // Note from 2017: decreased from 125
 
-    CameraGuts camera_old;
     Camera camera;
 
     int cinemaCounter;

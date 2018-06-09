@@ -39,7 +39,6 @@ private:
     std::int64_t animation_timer;
     EntityManager entity_manager;
     CharacterProcManager proc_manager;
-    Camera camera;
 public:
     LegacyGame(GameContext _context,  World && world_arg)
     :   context(_context),
@@ -50,8 +49,7 @@ public:
         random(),
         animation_timer(0),
         entity_manager(world),
-        proc_manager(),
-        camera(world.camera)
+        proc_manager()
     {
         LP3_ASSERT(boost::starts_with(world.screen, "Level"));
 
@@ -211,7 +209,7 @@ public:
                 if (this->findQ("Kerbose") < 1) {
                     kill(s);
                     s.name = "exit";
-                    CharacterProcEnv env{ context, random, world.clock, camera };
+                    CharacterProcEnv env{ context, random, world.clock, world.camera };
 
                     // This will break if anything else happens, but is needed
                     // to preserve the old way things were.
@@ -783,8 +781,7 @@ private:
 
                 this->killLimit(who);
                 {
-                    Camera cam(world.camera);
-                    off_camera_kill(ws, cam);
+                    off_camera_kill(ws, world.camera);
                 }
 
 
@@ -919,7 +916,7 @@ private:
 
         this->initPlayers();
 
-        CharacterProcEnv env{ context, random, world.clock, camera };
+        CharacterProcEnv env{ context, random, world.clock, world.camera };
 
         // First 30 sprites were for player stuff (10 each)
         for (auto & pd : world.player_data) {

@@ -7,23 +7,6 @@
 
 namespace nnd3d { namespace game {
 
-struct CameraGuts
-{
-    CameraGuts();
-
-private:
-    int CameraX;
-    int CameraY;
-
-    int CameraWidth;
-    int CameraHeight;
-
-    int cameraStopX;  //this is where the cameraHALTS!
-    int cameraStopY; //this is where the cameraHALTS! for y
-
-    friend class Camera;
-};
-
 
 // ---------------------------------------------------------------------------
 // class Camera
@@ -32,43 +15,44 @@ private:
 // ---------------------------------------------------------------------------
 class Camera {
 public:
-    Camera(CameraGuts & guts);
+    Camera();
+    Camera(const Camera & other) = default;
 
     // Left most coordinate seen by the camera.
     inline int x() const {
-        return guts.CameraX;
+        return _ul.x;
     }
 
     // upper most coordinate seen by camera.
     inline int y() const {
-        return guts.CameraY;
+        return _ul.y;
     }
 
     // upper-left corner
     inline glm::ivec2 ul() const {
-        return glm::vec2{ x(), y() };
+        return _ul;
     }
 
     inline int width() const {
-        return guts.CameraWidth;
+        return _size.x;
     }
 
     inline int height() const {
-        return guts.CameraHeight;
+        return _size.y;
     }
 
     inline glm::ivec2 size() const {
-        return glm::vec2{ width(), height() };
+        return _size;
     }
 
     // right most coordinate seen by camera
     inline int x2() const {
-        return guts.CameraX + guts.CameraWidth;
+        return _ul.x + _size.x;
     }
 
     // bottom most coordinate seen by camera
     inline int y2() const {
-        return guts.CameraY + guts.CameraHeight;
+        return _ul.y + _size.y;
     }
 
     // TODO: split boundary into it's own class.
@@ -76,7 +60,7 @@ public:
     // The size before the camera stops (I'm assuming there's also an implicit
     // boundary at 0,0).
     inline glm::ivec2 boundary() const {
-        return glm::ivec2{guts.cameraStopX, guts.cameraStopY };
+        return _boundary;
     }
 
     void focus(const glm::ivec2 & center, bool enforce_boundary=true);
@@ -85,7 +69,9 @@ public:
 
     void set_size(const glm::ivec2 & new_size);
 private:
-    CameraGuts & guts;
+    glm::ivec2 _ul;
+    glm::ivec2 _size;
+    glm::ivec2 _boundary;
 };
 
 }   }
