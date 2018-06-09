@@ -74,8 +74,6 @@ struct World {
 
     Camera camera;
 
-    int cinemaCounter;
-    int cinemaMax; //how many lines of dialogue per cinema
     std::string exitS;
 
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
