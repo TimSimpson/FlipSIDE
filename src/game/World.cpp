@@ -71,6 +71,7 @@ World::World()
     LemonTime(false),
     sFactor(0),
     camera{},
+    camera2(camera),
     cinemaCounter(0),
     cinemaMax(0),
     exitS(),
@@ -114,13 +115,31 @@ World::World()
     //KeyAttack = " "
     //KeyJump = "J"
 
-    this->camera.CameraWidth = 640;  this->camera.CameraHeight = 480;
+    this->camera2.set_size({640, 480});
 
     for (int j = 0; j < 100; ++j)
     {
         this->Sprite[j].visible = false;
     }
 }
+
+World::World(const World & other)
+:   Gravity(other.Gravity),
+    clock(other.clock),
+    screen(other.screen),
+    LemonTime(other.LemonTime),
+    sFactor(other.sFactor),
+    camera(other.camera),
+    camera2(camera),  // <-- important!
+    cinemaCounter(other.cinemaCounter),
+    cinemaMax(other.cinemaMax),
+    exitS(other.exitS),
+    Sprite(other.Sprite),
+    player_data(other.player_data),
+    numberPlayers(other.numberPlayers),
+    game_state(other.game_state),
+    currentScreen(other.currentScreen)
+{}
 
 long anyKey(World & world, int zed) {
     // Returns true if the player at the given index is pressing any key.

@@ -104,8 +104,9 @@ void destroyEverything(World & world, view::View & view, Sound & sound, int how)
     }
 
     view.LoadTexture(-1, "PlainBlack.png", 25, 25);
-    world.camera.CameraX = 0;
-    world.camera.CameraY = 0;
+
+    world.camera2.focus({0, 0});
+
     //If how = 2 Then goatorg = 30: penguin = 95
 
     for (auto & s : world.Sprite) {

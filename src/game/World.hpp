@@ -60,7 +60,7 @@ public:
 struct World {
     World();
 
-    World(const World & other) = default;
+    World(const World & other);
 
     static const int FULLSCREENWIDTH;
     static const int FULLSCREENHEIGHT;
@@ -77,6 +77,7 @@ struct World {
     // Note from 2017: decreased from 125
 
     CameraGuts camera;
+    Camera camera2;
 
     int cinemaCounter;
     int cinemaMax; //how many lines of dialogue per cinema
