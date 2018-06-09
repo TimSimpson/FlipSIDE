@@ -67,8 +67,6 @@ struct World {
     double Gravity;
     double clock;
 
-    bool LemonTime; // a fun stupid cheat code that when set to true ups speed by 2.
-
     // Note from 2017: decreased from 125
 
     Camera camera;

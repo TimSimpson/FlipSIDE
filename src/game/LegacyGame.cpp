@@ -103,7 +103,10 @@ public:
                 // sound.PlayWave("SoupedUp.wav");
                 break;
             case input::Key::lemon_time:
-                world.LemonTime = true;
+                // LemonTime no longer working.
+                // it was a cheat code that made the players small, like
+                // "reduce" from Graidus, and their fireballs big.
+                // I wonder when I broke it?
                 break;
             default:
                 LP3_ASSERT(false);

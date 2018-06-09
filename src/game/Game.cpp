@@ -82,10 +82,6 @@ void Game::handle_input(const input::Event & event) {
     case input::Key::quit:
         _quit = true;
         break;
-    case input::Key::lemon_time:
-        // TODO: fix Lemon time. For now, I want to stop World from spreading.
-        // world.LemonTime = true;
-        break;
     default:
         process.get_proc()->handle_input(event);
     }
