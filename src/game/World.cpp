@@ -3,9 +3,6 @@
 
 namespace nnd3d {   namespace game {
 
-const int World::FULLSCREENWIDTH = 640;
-const int World::FULLSCREENHEIGHT = 480;
-
 namespace {
     const ActivePlayers active_players[] = {
         { { false, false, false }, 0, { -1, 0, 0 } },

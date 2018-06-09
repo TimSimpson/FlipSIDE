@@ -62,9 +62,6 @@ struct World {
 
     World(const World & other);
 
-    static const int FULLSCREENWIDTH;
-    static const int FULLSCREENHEIGHT;
-
     static constexpr int NUMSPRITES = 150;
 
     double Gravity;

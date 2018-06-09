@@ -15,9 +15,18 @@ namespace nnd3d { namespace game {
 // big static array like the old code did.
 void destroyEverything(World & world, view::View & view, Sound & sound, int how = 0);
 
+// Makes spries flicker.
 void flicker(World & world);
 
-void create_billboards(World & world, std::vector<view::Billboard> & billboards);
+// Takes the data living in "Sprites" inside of the World struct and translates
+// that into "Billboards".
+// NOTE: this is part of an attempt to get the "View" and game logic to speak
+//       in independent terms.
+//       Giving the view it's own concepts makes non game screens easier to
+//       write.
+void create_billboards(World & world,
+                       const glm::ivec2 & resolution,
+                       std::vector<view::Billboard> & billboards);
 
 void set_time_stuff(World & world);
 

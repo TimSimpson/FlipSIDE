@@ -13,11 +13,11 @@
 
 namespace nnd3d { namespace view {
 
+const glm::ivec2 View::resolution{ 640, 480 };
+
 namespace {
     constexpr int letters_max = 80 * 24;
     const glm::vec4 normColor{ 1.0f, 1.0f, 1.0f, 1.0f };
-    const glm::ivec2 res2d(game::World::FULLSCREENWIDTH,
-                           game::World::FULLSCREENHEIGHT);
 
     glm::vec2 find_texture_scale_factor(const glm::vec2 & original_size,
                                         const glm::vec2 current_size) {
@@ -224,7 +224,7 @@ void View::operator()(const glm::mat4 & previous) {
 
     // Now start calling OpenGL
     program.use();
-    auto _2d = gfx::create_2d_screen(previous, res2d);
+    auto _2d = gfx::create_2d_screen(previous, resolution);
     program.set_mvp(_2d);
 
     for (int i = 0; i <= 10; ++i) {

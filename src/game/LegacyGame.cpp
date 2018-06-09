@@ -263,7 +263,7 @@ public:
             world.Sprite[j].lastY = world.Sprite[j].y;
         }
         animate();
-        create_billboards(world, view.billboards());
+        create_billboards(world, view.resolution, view.billboards());
 
         return nullptr;
     }

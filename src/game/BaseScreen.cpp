@@ -2,10 +2,11 @@
 
 namespace nnd3d { namespace game {
 
-void create_billboards(World & world, std::vector<view::Billboard> & billboards) {
+void create_billboards(World & world,
+                       const glm::ivec2 & resolution,
+                       std::vector<view::Billboard> & billboards)
+{
     billboards.clear();
-
-    glm::vec2 res2d{ world.FULLSCREENWIDTH, world.FULLSCREENHEIGHT };
 
     // Do goofy animation stuff - maybe this should be moved
     for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
@@ -28,7 +29,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
     if (true) { // is this EVER disabled? textures[0]) {    // if not, consider this disabled
         view::Billboard b;
         b.ul = glm::vec2{ 0, 0 };
-        b.size = res2d;
+        b.size = resolution;
         b.tex_src_ul = camera_pos;
         b.tex_src_dr = camera_pos + camera_size;
         b.texture_index = 0;
@@ -69,7 +70,7 @@ void create_billboards(World & world, std::vector<view::Billboard> & billboards)
             // This is the new smart way to determine this.
             // Use ground based y cordinate to determine z order (lower they are, the
             // likelier they are to cover up something)
-            b.z = 1.0f - ((b.ul.y + b.size.y) / res2d.y);
+            b.z = 1.0f - ((b.ul.y + b.size.y) / resolution.y);
             if (b.z < 0.0003f) {
                 // Don't want anything to appear over the upper layers
                 b.z = 0.0003f;

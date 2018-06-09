@@ -13,6 +13,7 @@ namespace gfx = lp3::gfx;
 namespace game = nnd3d::game;
 
 
+
 enum class Visibility {
     normal,
     invisible,
@@ -69,6 +70,8 @@ struct StupidIndex {
 class View
 {
 public:
+    static const glm::ivec2 resolution;
+
     static constexpr int texture_count = 11;
 
     View(core::MediaManager & media, Vb & vb);
