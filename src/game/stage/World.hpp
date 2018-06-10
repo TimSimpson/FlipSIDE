@@ -12,8 +12,8 @@ namespace nnd3d { namespace game {
 // --------------------------------------------------------------------
 // World
 // --------------------------------------------------------------------
-//      Contains the state of the "world", meaning the giant mess of
-//      global variables the old code relied on.
+//      This contains all of the "things" or entities floating around
+//      this big old world of ours, called "the stage".
 // --------------------------------------------------------------------
 struct World {
     World();
@@ -26,9 +26,19 @@ struct World {
     //       and be initialized every time!
     Camera camera;
 
+
     // TODO: move this into LegacyGame -
     //       and let it initialize it every single time it's constructed! :O
+    // TODO: Actually, nope. Make this private!
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
+
+    // TODO: does this need to return an index?
+    // TODO: maybe I can create a smart reference which, when a CharacterSprite
+    //       dies, can stick around enough to tell people owning it "hey this
+    //       thing is dead." I guess the pointee would need to know about it.
+    //       It would be better than these accursed indices.
+    int find_closest_player(const CharacterSprite & enemy) const;
+
 };
 
 }   }

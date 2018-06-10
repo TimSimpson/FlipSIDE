@@ -130,8 +130,6 @@ struct CharacterSprite
     }
 };
 
-int checkProx(const int who, int numberPlayers);
-
 double getProx(CharacterSprite & who, CharacterSprite & who2);
 
 // Kills the sprite if it's off camera. Returns true if killed, false otherwise.

@@ -30,53 +30,6 @@ void make_jump(CharacterSprite & sprite, double current_time) {
 }
 
 
-
-
-
-int checkProx(World & world, const int who) {
-    //numberPlayers integer legend
-    //1 Only player 1
-    //2 Player 1 and 2
-    //3 All three Players
-    //4 Just player 2
-    //5 Just player 3
-    //6 Players 1 and 3
-    //7 Players 2 and 3
-
-    int theclosest = 0;
-    int min = 0;
-
-    min = 9999;
-    theclosest = 0;
-    for (std::size_t index = 0; index < world.Sprite.size(); ++ index) {
-        auto & player_sprite = world.Sprite[index];
-        if (player_sprite.kind != Kind::player) {
-            continue;
-        }
-
-        // abs(x2-x1)^2+abs(y2-y1)^2
-        const int buttcat = lp3::narrow<int>(
-            std::sqrt(
-                std::pow(
-                    std::abs(player_sprite.x
-                        - world.Sprite[who].x),
-                    2)
-                +
-                std::pow(
-                    std::abs(player_sprite.y
-                        - world.Sprite[who].y),
-                    2)
-            ));
-
-        if (buttcat < min) {
-            theclosest = index;
-            min = buttcat;
-        }
-    }
-
-    return theclosest;
-}
-
 ////void create_player(
 ////    PlayerData & player_data, CharacterSprite & sprite,
 ////    gsl::span<std::reference_wrapper<CharacterSprite>> & children,
@@ -474,7 +427,7 @@ public:
             }
 
             if (s.target != 0 || s.target == -1) {
-                s.target = checkProx(world, j);
+                s.target = world.find_closest_player(this->s);
                 s.seekx = s.getMiddleX();
                 s.seeky = s.getMiddleY();
             }

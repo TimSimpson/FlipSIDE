@@ -453,40 +453,6 @@ private:
         return;  // exit sub
     }
 
-    int checkProx(const int who) {
-       int theclosest = 0;
-       int min = 0;
-
-       min = 9999;
-       theclosest = 0;
-       for (int penguin = 0; penguin <= 2; ++ penguin) {
-           if (!game_state.numberPlayers.player[penguin]) {
-               continue;
-           }
-
-           // abs(x2-x1)^2+abs(y2-y1)^2
-           const int buttcat = lp3::narrow<int>(
-               std::sqrt(
-                   std::pow(
-                       std::abs(world.Sprite[penguin * 10].x
-                                   - world.Sprite[who].x),
-                       2)
-                   +
-                   std::pow(
-                       std::abs(world.Sprite[penguin * 10].y
-                                   - world.Sprite[who].y),
-                       2)
-               ));
-
-           if (buttcat < min) {
-               theclosest = penguin;
-               min = buttcat;
-           }
-       }
-
-       return theclosest * 10;
-    }
-
     gsl::owner<GameProcess *> flipGame() {
         // I think this handles switching to different rooms or levels.
         int penguin;
@@ -859,9 +825,11 @@ private:
                 }
 
                 if (ws.seekx >= 50 && ws.dir != "done") {
+                    const int target_index
+                        = world.find_closest_player(world.Sprite[who]);
                     this->shoot(who, "paulbullet",
-                                world.Sprite[checkProx(who)].x,
-                                world.Sprite[checkProx(who)].y);
+                                world.Sprite[target_index].x,
+                                world.Sprite[target_index].y);
                     ws.dir = "done";
                 }
             }
@@ -887,9 +855,11 @@ private:
                 if (ws.x < 1) { ws.x = world.camera.boundary().x; }
 
                 if (ws.miscTime < this->clock) {
+                    const int target_index
+                        = world.find_closest_player(world.Sprite[who]);
                     this->shoot(who, "bluestick",
-                                world.Sprite[checkProx(who)].x,
-                                world.Sprite[checkProx(who)].y);
+                                world.Sprite[target_index].x,
+                                world.Sprite[target_index].y);
                     ws.miscTime = this->clock + 2;
                 }
             }
