@@ -69,7 +69,8 @@ private:
 
 public:
     FireballProc(CharacterProcEnv env, PlayerData & player_data,
-                 CharacterSprite & _parent, CharacterSprite & _s)
+                 CharacterSprite & _parent, CharacterSprite & _s,
+                 glm::vec2 direction)
     :   sprite(_s) ,
         parent(_parent),
         camera(env.camera),
@@ -82,26 +83,29 @@ public:
         sprite.x = parent.x + (parent.wide / 2) - (sprite.wide / 2);
         sprite.y = parent.y + (parent.high / 2) - (sprite.high / 2);
         sprite.z = parent.z + (parent.length / 2);
-        sprite.seekx = sprite.x;
-        sprite.seeky = sprite.y;
-        if (parent.dir == "u") {
-            sprite.seeky =
-                sprite.y - (env.camera.height() * 2);
-            sprite.dir = "u";
-        } else if ( parent.dir == "d") {
-            sprite.seeky =
-                sprite.y + (2 * env.camera.height());
-            sprite.dir = "d";
+
+        if (direction.x == 0.0f && direction.y == 0.0f) {
+            if (parent.dir == "u") {
+                direction.y = -1.0f;
+                sprite.dir = "u";
+            } else if ( parent.dir == "d") {
+                direction.y = 1.0f;
+                sprite.dir = "d";
+            }
+            if (parent.dir == "l") {
+                direction.x = -1.0f;
+                sprite.dir = "l";
+            } else if (parent.dir == "r") {
+                direction.x = 1.0f;
+                sprite.dir = "r";
+            }
         }
-        if (parent.dir == "l") {
-            sprite.seekx
-                = sprite.x - (env.camera.width() * 2);
-            sprite.dir = "l";
-        } else if (parent.dir == "r") {
-            sprite.seekx
-                = sprite.x + (env.camera.width() * 2);
-            sprite.dir = "r";
-        }
+
+        sprite.x = parent.x + (parent.wide / 2) - (sprite.wide / 2);
+        sprite.y = parent.y + (parent.high / 2) - (sprite.high / 2);
+        sprite.z = parent.z + (parent.length / 2);
+        sprite.seekx = sprite.x + (direction.x * env.camera.width() * 2);
+        sprite.seeky = sprite.y + (direction.y * env.camera.height() * 2);;
 
         sprite.speed = 0; //0.00001
         sprite.name = "fireball";
@@ -321,6 +325,8 @@ protected:
     State state;
 
     KeyData key_data;
+
+    glm::vec2 direction;
 public:
     PlayerProc(CharacterProcEnv _env,
                GameState & _game_state,
@@ -338,7 +344,8 @@ public:
         coro_number_state(),
         timer(),
         state(State::normal),
-        key_data()
+        key_data(),
+        direction{0.0f, 0.0f}
     {
         create_player(env, player_data, sprite, children);
 
@@ -425,15 +432,35 @@ public:
         }
         switch(event.key) {
             case input::Key::up:
+                if (event.value != 0.0f) {
+                    direction.y = -1.0f;
+                } else if (direction.y < 0.0f) {
+                    direction.y = 0.0f;
+                }
                 this->key_data.upKey = event.value != 0.0f;
                 break;
             case input::Key::down:
+                if (event.value != 0.0f) {
+                    direction.y = 1.0f;
+                } else if (direction.y > 0.0f) {
+                    direction.y = 0.0f;
+                }
                 this->key_data.DownKEY = event.value != 0.0f;
                 break;
             case input::Key::left:
+                if (event.value != 0.0f) {
+                    direction.x = -1.0f;
+                } else if (direction.x < 0.0f) {
+                    direction.x = 0.0f;
+                }
                 this->key_data.LeftKEY = event.value != 0.0f;
                 break;
             case input::Key::right:
+                if (event.value != 0.0f) {
+                    direction.x = 1.0f;
+                } else if (direction.x > 0.0f) {
+                    direction.x = 0.0f;
+                }
                 this->key_data.RightKEY = event.value != 0.0f;
                 break;
             case input::Key::attack:
@@ -812,7 +839,7 @@ public:
             return false;
         }
         sub_processes.add_process(
-            new FireballProc(env, player_data, s, *free_sprite));
+            new FireballProc(env, player_data, s, *free_sprite, direction));
         return true;
     }
 };
