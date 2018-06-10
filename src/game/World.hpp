@@ -81,8 +81,6 @@ struct World {
     GameState game_state;
 };
 
-long anyKey(World & world, int zed);
-
 }   }
 
 #endif

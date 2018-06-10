@@ -22,12 +22,6 @@ struct PlayerData {
     bool CancelKey;
     bool JumpKey;
 
-    std::string KeyUp;
-    std::string KeyDown;
-    std::string KeyLeft;
-    std::string KeyRight;
-    std::string KeyAttack;
-    std::string KeyJump;
     std::string playerName;
     int lives;
     bool ThreeWay;

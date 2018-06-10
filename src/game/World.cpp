@@ -73,36 +73,6 @@ World::World()
     }
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
 
-    // Taken from "StartUp"
-    this->player_data[0].KeyUp = "W";
-    this->player_data[0].KeyDown = "S";
-    this->player_data[0].KeyLeft = "A";
-    this->player_data[0].KeyRight = "D";
-    this->player_data[0].KeyAttack = "F";
-    this->player_data[0].KeyJump = "G";
-
-    this->player_data[1].KeyUp = "up";
-    this->player_data[1].KeyDown = "down";
-    this->player_data[1].KeyLeft = "left";
-    this->player_data[1].KeyRight = "right";
-    this->player_data[1].KeyAttack = "O";
-    this->player_data[1].KeyJump = "P";
-
-    //KeyUp(2) = "I"
-    //KeyDown(2) = "K"
-    //KeyLeft(2) = "J"
-    //KeyRight(2) = "L"
-    //KeyAttack(2) = "Y"
-    //KeyJump(2) = "U"
-
-
-    //KeyUp = "W"
-    //KeyDown = "S"
-    //KeyLeft = "A"
-    //KeyRight = "D"
-    //KeyAttack = " "
-    //KeyJump = "J"
-
     this->camera.set_size({640, 480});
 
     for (int j = 0; j < 100; ++j)
@@ -118,12 +88,5 @@ World::World(const World & other)
     numberPlayers(other.numberPlayers),
     game_state(other.game_state)
 {}
-
-long anyKey(World & world, int zed) {
-    // Returns true if the player at the given index is pressing any key.
-    return ((world.player_data[zed].RightKEY || world.player_data[zed].LeftKEY
-        || world.player_data[zed].upKey || world.player_data[zed].DownKEY
-        || world.player_data[zed].AttackKey) ? 1 : 0);
-}
 
 }   }   // end namespace
