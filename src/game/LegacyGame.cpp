@@ -42,6 +42,7 @@ private:
     // This handles exitting to the next screen.
     bool exitS;
     std::string screen_name;
+    double gravity;
 public:
     LegacyGame(GameContext _context,  World && world_arg,
                const std::string & _screen_name)
@@ -55,7 +56,8 @@ public:
         entity_manager(world),
         proc_manager(),
         exitS(false),
-        screen_name(_screen_name)
+        screen_name(_screen_name),
+        gravity(0)
     {
         LP3_ASSERT(boost::starts_with(this->screen_name, "Level"));
 
@@ -194,7 +196,7 @@ public:
                         * ((world.clock - s.jumpTime) * 2)
                         )
                     - (
-                        world.Gravity
+                        this->gravity
                         * std::pow(((world.clock - s.jumpTime) * 2), 2)
                         );
                 //
@@ -546,7 +548,7 @@ private:
     }
 
     void goToLevel(const double which) {
-        world.Gravity = 0;
+        this->gravity = 0;
 
         if (which == 1.1 || which == 1) {
             destroyEverything(world, view, sound);
@@ -626,7 +628,7 @@ private:
             sound.LoadSound(20, "BS Death.wav", "Paul Shrink");
         }
 
-        if (world.Gravity == 0) {
+        if (this->gravity == 0) {
             // because Gravity is set to 20 in make level, we know that there
             // has been no other levels selected
             // in other words, somebody screwed up
@@ -931,7 +933,7 @@ private:
 
         this->loadLevel(levelFile); //"Level1b.cap"
 
-        world.Gravity = 20;
+        this->gravity = 20;
 
         int j = 0;
 

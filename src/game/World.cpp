@@ -62,8 +62,7 @@ const ActivePlayers & ActivePlayers::find_from_active_players(
 }
 
 World::World()
-:   Gravity(0),
-    clock(0),
+:   clock(0),
     camera(),
     Sprite(),
     player_data(),
@@ -114,8 +113,7 @@ World::World()
 }
 
 World::World(const World & other)
-:   Gravity(other.Gravity),
-    clock(other.clock),
+:   clock(other.clock),
     camera(other.camera),
     Sprite(other.Sprite),
     player_data(other.player_data),

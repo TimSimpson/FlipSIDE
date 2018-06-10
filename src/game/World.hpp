@@ -64,18 +64,20 @@ struct World {
 
     static constexpr int NUMSPRITES = 150;
 
-    double Gravity;
     double clock;
 
-    // Note from 2017: decreased from 125
-
+    // TODO: this should also live in LegacyGame-
+    //       and be initialized every time!
     Camera camera;
 
+    // TODO: move this into LegacyGame -
+    //       and let it initialize it every single time it's constructed! :O
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
 
+    // TODO: move this into `GameState`
     std::array<PlayerData, max_players> player_data;
 
-    //GAME PLAY MULTIPLE PLAYERS DATA
+    // TODO: move this into `GameState`
     ActivePlayers numberPlayers;
 
     GameState game_state;
