@@ -2,7 +2,8 @@
 #define NND3D_LEGACYGAME_HPP
 #pragma once
 
-#include "Game.hpp"
+#include "../Game.hpp"
+#include "../GameState.hpp"
 
 namespace nnd3d { namespace game {
 

@@ -7,8 +7,8 @@
 #include <lp3/core.hpp>
 #include <lp3/gfx.hpp>
 #include "Camera.hpp"
-#include "../AnimationFrame.hpp"
-#include "../Vertex.hpp"
+#include "../../AnimationFrame.hpp"
+#include "../../Vertex.hpp"
 
 namespace nnd3d { namespace game {
 

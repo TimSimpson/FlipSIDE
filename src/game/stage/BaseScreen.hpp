@@ -4,8 +4,9 @@
 #define NND3D_BASESCREEN_HPP
 #pragma once
 
-#include "Game.hpp"
-#include "../view.hpp"
+#include "World.hpp"
+#include "../Game.hpp"
+#include "../../view.hpp"
 
 namespace nnd3d { namespace game {
 

@@ -9,10 +9,10 @@
 
 #include "../CharacterSprite.hpp"
 #include "../EntityManager.hpp"
-#include "../Game.hpp"
-#include "../../Random.hpp"
-#include "../../Sound.hpp"
-#include "../../view.hpp"
+#include "../../Game.hpp"
+#include "../../../Random.hpp"
+#include "../../../Sound.hpp"
+#include "../../../view.hpp"
 
 namespace nnd3d { namespace game {
 

@@ -1,5 +1,5 @@
 #include "CharacterSprite.hpp"
-#include "Game.hpp"
+#include "../Game.hpp"
 
 namespace nnd3d { namespace game {
 

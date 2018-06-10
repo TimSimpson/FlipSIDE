@@ -5,8 +5,7 @@
 #include <array>
 #include "Camera.hpp"
 #include "CharacterSprite.hpp"
-#include "GameState.hpp"
-#include "PlayerData.hpp"
+#include "../PlayerData.hpp"
 
 namespace nnd3d { namespace game {
 

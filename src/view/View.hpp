@@ -3,14 +3,14 @@
 #pragma once
 
 #include <lp3/gfx.hpp>
-#include "../game/World.hpp"
+#include "../AnimationFrame.hpp"
 #include "../Vb.hpp"
+#include "../Vertex.hpp"
 
 namespace nnd3d { namespace view {
 
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
-namespace game = nnd3d::game;
 
 
 

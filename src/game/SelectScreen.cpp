@@ -1,5 +1,5 @@
 #include "SelectScreen.hpp"
-#include "LegacyGame.hpp"
+#include "stage.hpp"
 #include "NowLoading.hpp"
 
 namespace nnd3d { namespace game {

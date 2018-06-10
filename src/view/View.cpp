@@ -2,8 +2,6 @@
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
-#include "game/World.hpp"
-
 
 #ifdef _MSC_VER
     // The old VB code constantly was tossing ints into floats and vice-versa,
@@ -193,8 +191,9 @@ View::View(core::MediaManager & media_arg, Vb & vb_arg)
     // Then others for each other texture. Make each one the maximum size it
     // might need to be to represent all sprites on the screen, even though
     // this is wasteful.
+    const int NUMSPRITES = 150;  // 2018-06: yep this is dumb. FIX IT LATER.
     for (std::size_t i = 0; i < textures.size(); ++i) {
-        game_elements.emplace_back(game::World::NUMSPRITES * 4);
+        game_elements.emplace_back(NUMSPRITES * 4);
     }
 }
 

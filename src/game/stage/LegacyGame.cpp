@@ -8,9 +8,9 @@
 #include "procs/Enemies.hpp"
 #include "procs/PlayerProc.hpp"
 #include "EntityManager.hpp"
-#include "GameOverScreen.hpp"
-#include "NowLoading.hpp"
-#include "TitleScreen.hpp"
+#include "../GameOverScreen.hpp"
+#include "../NowLoading.hpp"
+#include "../TitleScreen.hpp"
 
 #ifdef _MSC_VER
     // Avoid the zillions implicit conversion warnings
