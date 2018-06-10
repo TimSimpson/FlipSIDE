@@ -26,7 +26,6 @@ struct World {
     //       and be initialized every time!
     Camera camera;
 
-
     // TODO: move this into LegacyGame -
     //       and let it initialize it every single time it's constructed! :O
     // TODO: Actually, nope. Make this private!
@@ -39,6 +38,11 @@ struct World {
     //       It would be better than these accursed indices.
     int find_closest_player(const CharacterSprite & enemy) const;
 
+    // Returns a list of CharacterSprites of a certain kind.
+    // TODO: seems like there should be a way to make a view only iterator
+    //       over these...
+    std::vector<std::reference_wrapper<const CharacterSprite>>
+        find_by_kind(Kind k) const;
 };
 
 }   }

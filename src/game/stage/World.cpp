@@ -65,4 +65,15 @@ int World::find_closest_player(const CharacterSprite & bad_guy) const {
     return theclosest;
 }
 
+std::vector<std::reference_wrapper<const CharacterSprite>>
+    World::find_by_kind(Kind k) const
+{
+    std::vector<std::reference_wrapper<const CharacterSprite>> result;
+    for (const auto & s : Sprite) {
+        if (s.kind == k) {
+            result.push_back(std::cref(s));
+        }
+    }
+    return result;
+}
 }   }   // end namespace

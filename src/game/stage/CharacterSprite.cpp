@@ -70,78 +70,25 @@ double getProx(CharacterSprite & who, CharacterSprite & who2) {
     // amount of pixels they are close
 }
 
-CollisionStatus hit_detection(CharacterSprite num1, CharacterSprite num2,
-    bool whatKind) {
 
-    bool con1 = false;
-    bool con2 = false;
-    bool con3 = false;
+bool touching(const CharacterSprite & num1, const CharacterSprite & num2) {
+    const bool con_x = (
+        ((num1.x + num1.wide) >= num2.x && num1.x < num2.x)
+        || ((num2.x + num2.wide) >= num1.x && num2.x < num1.x)
+    );
 
-    bool left = false;
-    bool right = false;
-    bool up = false;
-    bool down = false;
-    // did num1 touch num2 from the left of num2?
-    if ((num1.x + num1.wide) >= num2.x && num1.x < num2.x) {
-        con1 = true;
-        left = true;
-    }
-    // did num1 touch num2 from the right?
-    if ((num2.x + num2.wide) >= num1.x && num2.x < num1.x) {
-        con1 = true;
-        right = true;
-    }
+    const bool con_y = (
+        ((num1.y + num1.high) >= num2.y && num1.y < num2.y)
+        || ((num2.y + num2.high) >= num1.y && num2.y < num1.y)
+    );
 
-    // did num1 touch num2 from the North?
-    if ((num1.y + num1.high) >= num2.y && num1.y < num2.y) {
-        con2 = true;
-        up = true;
-    }
-    // did num1 touch num2 from the South?
-    if ((num2.y + num2.high) >= num1.y && num2.y < num1.y) {
-        con2 = true;
-        down = true;
-    }
+    const bool con_z = (
+        (num1.kind == Kind::unmoveable || num2.kind == Kind::unmoveable)
+        || ((num1.z + (num1.length * 1.5)) >= num2.z && num1.z < num2.z)
+        || ((num2.z + num2.length * 1.5) >= num1.z && num2.z < num1.z)
+    );
 
-    // If the Kind is unmoveable, assume it is infinitly tall and don't bother
-    // checking the Z dimension
-    if (num1.kind == Kind::unmoveable || num2.kind == Kind::unmoveable) {
-        con3 = true;
-    }
-    else
-    {
-        // do the same thing for the Z dimension. Don't bother remembering
-        // if they were above or below
-        if ((num1.z + (num1.length * 1.5)) >= num2.z && num1.z < num2.z) {
-            con3 = true;
-        }
-        if (num1.z == num2.z) { con3 = 1; }
-        //Rem- Added as of 11/27/00
-        if ((num2.z + num2.length * 1.5) >= num1.z && num2.z < num1.z) {
-            con3 = true;
-        }
-    }
-
-    // UPDATE: this is a dualistic function. Based on what kind, the old code
-    //         would determine if there had been a collision, but then throw
-    //         that away and return the following. SO I moved the code that
-    //         returns `collided` to below here, this isn't a bug.
-    //         TODO: Split this into two functions!
-    if (whatKind == true) {
-        if (left == 1 && up == 1) { return CollisionStatus::aligned_from_ul; }
-        if (left == 1 && down == 1) { return CollisionStatus::aligned_from_bl; }
-        if (right == 1 && up == 1) { return CollisionStatus::aligned_from_ur; }
-        if (right == 1 && down == 1) { return CollisionStatus::aligned_from_br; }
-        if (left == 1) { return CollisionStatus::aligned_from_left; }
-        if (right == 1) { return CollisionStatus::aligned_from_right; }
-        if (up == 1) { return CollisionStatus::aligned_from_top; }
-        if (down == 1) { return CollisionStatus::aligned_from_bottom; }
-    }
-
-    // 1 seems to mean "they hit it, who cares how"
-    if (con1 && con2 && con3) { return CollisionStatus::collided; }
-
-    return CollisionStatus::not_aligned;
+    return con_x && con_y && con_z;
 }
 
 bool off_camera_kill(CharacterSprite & sprite, Camera & camera) {

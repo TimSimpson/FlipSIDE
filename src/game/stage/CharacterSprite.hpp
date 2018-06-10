@@ -39,19 +39,6 @@ enum class Kind {
     enemy_bullet = 8
 };
 
-enum class CollisionStatus {
-    not_aligned = 0,
-    collided = 1,
-    aligned_from_left = 2,
-    aligned_from_right = 3,
-    aligned_from_top = 4,
-    aligned_from_bottom = 5,
-    aligned_from_ul = 6,
-    aligned_from_bl = 7,
-    aligned_from_ur = 8,
-    aligned_from_br = 9
-};
-
 std::istream & operator >>(std::istream & in, Kind & kind);
 
 // ----------------------------------------------------------------------------
@@ -150,8 +137,7 @@ bool off_camera_kill(CharacterSprite & sprite, Camera & camera);
 
 void kill(CharacterSprite & sprite);
 
-CollisionStatus hit_detection(CharacterSprite num1, CharacterSprite num2,
-                              bool whatKind = false);
+bool touching(const CharacterSprite & a, const CharacterSprite & b);
 
 void seek(CharacterSprite & s);
 

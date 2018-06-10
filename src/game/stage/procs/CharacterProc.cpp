@@ -404,9 +404,12 @@ public:
             if (s.mode == "") {
                 unstretch(s);
                 //TSNOW: Another funky step 10 loop.
-                for (int penguin = 0; penguin <= 2; penguin += 10) {
-                    if (hit_detection(s, world.Sprite[penguin], true)
-                            == CollisionStatus::aligned_from_bottom) {
+                //2018-06: This code makes no sense but I think it's what it
+                // used to do. The dog stops when it horizontally aligns with
+                // the player... but WHYYYYYY.
+                auto players = world.find_by_kind(Kind::player);
+                for (const auto & p : players) {
+                    if ((p.get().y + p.get().high) >= s.y && p.get().y < s.y) {
                         // 2018-06 - in my zeal to refactor, I'm probably
                         // adding a bug here. But the code already looked kind
                         // of broken. Basically it doesn't check the player
@@ -423,6 +426,7 @@ public:
                         s.time = 1;
                         //.hp = 1
                         s.reverse = true;
+                        break;
                     }
                 }
             }
