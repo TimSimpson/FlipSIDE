@@ -84,20 +84,20 @@ public:
         sprite.z = parent.z + (parent.length / 2);
         sprite.seekx = sprite.x;
         sprite.seeky = sprite.y;
-        if (player_data.upKey || parent.dir == "u") {
+        if (parent.dir == "u") {
             sprite.seeky =
                 sprite.y - (env.camera.height() * 2);
             sprite.dir = "u";
-        } else if (player_data.DownKEY || parent.dir == "d") {
+        } else if ( parent.dir == "d") {
             sprite.seeky =
                 sprite.y + (2 * env.camera.height());
             sprite.dir = "d";
         }
-        if (player_data.LeftKEY || parent.dir == "l") {
+        if (parent.dir == "l") {
             sprite.seekx
                 = sprite.x - (env.camera.width() * 2);
             sprite.dir = "l";
-        } else if (player_data.RightKEY || parent.dir == "r") {
+        } else if (parent.dir == "r") {
             sprite.seekx
                 = sprite.x + (env.camera.width() * 2);
             sprite.dir = "r";
@@ -270,7 +270,36 @@ public:
     }
 };
 
-class PlayerProc : public CharacterProc {
+struct KeyData {
+    //Keyboard key states
+    bool upKey;
+    bool DownKEY;
+    bool LeftKEY;
+    bool RightKEY;
+    bool SelectKey;
+    bool AttackKey;
+    bool AttackKeyRelease;
+    bool CancelKey;
+    bool JumpKey;
+
+    KeyData()
+    :   upKey(false),
+        DownKEY(false),
+        LeftKEY(false),
+        RightKEY(false),
+        SelectKey(false),
+        AttackKey(false),
+        AttackKeyRelease(false),
+        CancelKey(false),
+        JumpKey(false)
+    {}
+
+    bool any_key() const {
+        return RightKEY || LeftKEY || upKey || DownKEY || AttackKey;
+    }
+};
+
+class PlayerProc : public InputReceivingCharacterProc {
 protected:
     CharacterProcEnv env;
     GameState & game_state;
@@ -290,6 +319,8 @@ protected:
     };
 
     State state;
+
+    KeyData key_data;
 public:
     PlayerProc(CharacterProcEnv _env,
                GameState & _game_state,
@@ -306,7 +337,8 @@ public:
         sub_processes(),
         coro_number_state(),
         timer(),
-        state(State::normal)
+        state(State::normal),
+        key_data()
     {
         create_player(env, player_data, sprite, children);
 
@@ -387,6 +419,34 @@ public:
         return nullptr;
     }
 
+    void handle_input(const input::Event & event) override {
+        if (event.player != this->player_data.index) {
+            return;
+        }
+        switch(event.key) {
+            case input::Key::up:
+                this->key_data.upKey = event.value != 0.0f;
+                break;
+            case input::Key::down:
+                this->key_data.DownKEY = event.value != 0.0f;
+                break;
+            case input::Key::left:
+                this->key_data.LeftKEY = event.value != 0.0f;
+                break;
+            case input::Key::right:
+                this->key_data.RightKEY = event.value != 0.0f;
+                break;
+            case input::Key::attack:
+                this->key_data.AttackKey = event.value != 0.0f;
+                break;
+            case input::Key::jump:
+                this->key_data.JumpKey = event.value != 0.0f;
+                break;
+            default:
+                break;
+        }
+    }
+
     // Create a child process (think bullets)
     // TODO: take out of this base class once things settle down.
     CharacterProc * spawn(CharacterSprite &, const std::string &) override {
@@ -396,14 +456,14 @@ public:
     virtual bool spawn_weapon() = 0;
 
     void update_normal() {
-        if (player_data.upKey == true) {
+        if (key_data.upKey == true) {
             if (s.dir != "u") { s.dir = "u"; s.frame = 6; }
             s.y = s.y - fs_speed_factor;
             //s.Frame = s.Frame + 1: if s.Frame > 6 Then s.Frame = 4
             s.speed = 0; //0.00001
             if (s.y < env.camera.y()) { s.y = env.camera.y(); }
         }
-        if (player_data.DownKEY == true) {
+        if (key_data.DownKEY == true) {
             if (s.dir != "d") { s.dir = "d"; s.frame = 10; }
             s.y = s.y + fs_speed_factor;
             //s.Frame = s.Frame + 1: if s.Frame > 9 Then s.Frame = 7
@@ -412,9 +472,9 @@ public:
                 s.y = env.camera.y() + env.camera.height() - s.high;
             }
         }
-        if (player_data.LeftKEY == true) {
-            if (s.dir != "l" && player_data.upKey == false
-                && player_data.DownKEY == false) {
+        if (key_data.LeftKEY == true) {
+            if (s.dir != "l" && key_data.upKey == false
+                && key_data.DownKEY == false) {
                 s.dir = "l";
                 s.frame = 14;
             }
@@ -423,9 +483,9 @@ public:
             s.speed = 0;  //0.00001
             if (s.x < env.camera.x()) { s.x = env.camera.x(); }
         }
-        if (player_data.RightKEY == true) {
-            if (s.dir != "r" && player_data.upKey == false
-                && player_data.DownKEY == false) {
+        if (key_data.RightKEY == true) {
+            if (s.dir != "r" && key_data.upKey == false
+                && key_data.DownKEY == false) {
                 s.dir = "r";
                 s.frame = 2;
             }
@@ -441,9 +501,9 @@ public:
 
         if (s.z == 0) { s.multiJump = 0; }
 
-        if (s.name == "Nicky" && player_data.JumpKey == true
+        if (s.name == "Nicky" && key_data.JumpKey == true
             && s.multiJump < 3) {
-            player_data.JumpKey = false;
+            key_data.JumpKey = false;
             //If .z = 0 Then .multiJump = 0
             s.multiJump = s.multiJump + 1;
             s.jumpStart = s.z;
@@ -451,23 +511,23 @@ public:
         }
 
 
-        if (player_data.JumpKey == true && s.z == 0) {
+        if (key_data.JumpKey == true && s.z == 0) {
 
             s.jumpStart = s.z;
             s.jumpTime = env.current_time;
         }
 
-        if (player_data.AttackKey == true && s.miscTime < env.current_time) {
+        if (key_data.AttackKey == true && s.miscTime < env.current_time) {
             if (spawn_weapon()) {
                 s.miscTime = env.current_time + 0.25;
             }
         }
 
 
-        if (player_data.upKey == false
-            && player_data.DownKEY == false
-            && player_data.LeftKEY == false
-            && player_data.RightKEY == false) {
+        if (key_data.upKey == false
+            && key_data.DownKEY == false
+            && key_data.LeftKEY == false
+            && key_data.RightKEY == false) {
             if (s.dir == "r") { s.frame = 2; }
             if (s.dir == "l") { s.frame = 14; }
             if (s.dir == "u") { s.frame = 6; }
@@ -591,7 +651,7 @@ public:
     }
 
     void update_continue_counter() {
-        if (player_data.any_key()) {
+        if (key_data.any_key()) {
             game_state.use_continue();
             player_data.lives = 2;
             create_player(env, player_data, s, children);
@@ -915,7 +975,7 @@ public:
 
 }   // end anonymous namespace
 
-CharacterProc * create_player_proc(
+InputReceivingCharacterProc * create_player_proc(
     CharacterProcEnv env, GameState & game_state,
     PlayerData & player_data, EntityManager & e_manager, const glm::vec2 & loc)
 {

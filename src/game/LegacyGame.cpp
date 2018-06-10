@@ -44,6 +44,7 @@ private:
     std::string screen_name;
     double gravity;
     double clock;
+    std::vector<InputReceivingCharacterProc *> player_procs;
 
 public:
     LegacyGame(GameContext _context,  World && world_arg,
@@ -75,22 +76,14 @@ public:
     void handle_input(const input::Event & event) override {
         switch(event.key) {
             case input::Key::up:
-                world.player_data[event.player].upKey = event.value != 0.0f;
-                break;
             case input::Key::down:
-                world.player_data[event.player].DownKEY = event.value != 0.0f;
-                break;
             case input::Key::left:
-                world.player_data[event.player].LeftKEY = event.value != 0.0f;
-                break;
             case input::Key::right:
-                world.player_data[event.player].RightKEY = event.value != 0.0f;
-                break;
             case input::Key::attack:
-                world.player_data[event.player].AttackKey = event.value != 0.0f;
-                break;
             case input::Key::jump:
-                world.player_data[event.player].JumpKey = event.value != 0.0f;
+                if (player_procs[event.player]) {
+                    player_procs[event.player]->handle_input(event);
+                }
                 break;
             case input::Key::skip_scene:
                 if (event.value) {
@@ -955,9 +948,11 @@ private:
                 ? player_spawn_locations[pd.index]
                 : player_spawn_locations.back();
             if (pd.active) {
-                proc_manager.add_process(
+                std::unique_ptr<InputReceivingCharacterProc> player_proc(
                     proc::create_player_proc(env, world.game_state, pd,
                                              entity_manager, loc));
+                player_procs.push_back(player_proc.get());
+                proc_manager.add_process(player_proc.release());
             }
         }
         ///*for (int h = 0; h < 3; ++h) {

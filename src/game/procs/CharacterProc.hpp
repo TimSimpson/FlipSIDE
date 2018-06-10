@@ -69,6 +69,13 @@ public:
      virtual bool update() = 0;
 };
 
+
+class InputReceivingCharacterProc : public CharacterProc {
+public:
+    virtual ~InputReceivingCharacterProc() = default;
+    virtual void handle_input(const input::Event & event) = 0;
+};
+
 // void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &);
 
 // void create_player(
@@ -80,6 +87,8 @@ public:
 // class CharacterProcManager
 // ---------------------------------------------------------------------------
 //     Manages the processes.
+//     Note: unlike the sprite list, this isn't tied directly to indices or
+//     anything like that.
 // ---------------------------------------------------------------------------
 class CharacterProcManager {
 public:
@@ -97,6 +106,7 @@ public:
 
     void update();
 private:
+    // TODO: why isn't this std::unique_ptr?
     std::vector<gsl::owner<CharacterProc *>> procs;
 };
 

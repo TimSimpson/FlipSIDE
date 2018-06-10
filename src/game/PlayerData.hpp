@@ -11,17 +11,6 @@ struct PlayerData {
 
     bool active;
 
-    //Keyboard key states
-    bool upKey;
-    bool DownKEY;
-    bool LeftKEY;
-    bool RightKEY;
-    bool SelectKey;
-    bool AttackKey;
-    bool AttackKeyRelease;
-    bool CancelKey;
-    bool JumpKey;
-
     std::string playerName;
     int lives;
     bool ThreeWay;
@@ -30,8 +19,6 @@ struct PlayerData {
     std::string weapon;
 
     PlayerData();
-
-    bool any_key() const;
 };
 
 }   }

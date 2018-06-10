@@ -11,6 +11,7 @@ CharacterProc * create_cinema_proc(
     const float stage);
 
 
+
 }   }   }
 
 #endif
