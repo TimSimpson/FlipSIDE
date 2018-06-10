@@ -184,6 +184,10 @@ public:
         return y + (high / 2);
     }
 
+    inline glm::vec2 getMiddle() const {
+        return glm::vec2{ getMiddleX(), getMiddleY() };
+    }
+
     void invalidate_refs();
 
 private:

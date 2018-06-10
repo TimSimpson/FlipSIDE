@@ -43,6 +43,10 @@ struct World {
     //       over these...
     std::vector<std::reference_wrapper<const CharacterSprite>>
         find_by_kind(Kind k) const;
+
+    // Gets coordinates roughly between all of one kind of thing
+    // (this is for the camera when the kind is Player)
+    boost::optional<glm::vec2> find_middle_of_group(Kind k) const;
 };
 
 }   }

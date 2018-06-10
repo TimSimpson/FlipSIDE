@@ -125,35 +125,10 @@ public:
         this->findPlayers();
 
         if (game_state.numberPlayers.any_player_active()) {
-            int itr_start;
-            for (int i = 0; i < max_players; ++i) {
-                if (game_state.numberPlayers.player[i]) {
-                    itr_start = i;
-                    break;
-                }
+            auto focus_point = world.find_middle_of_group(Kind::player);
+            if (focus_point) {
+                world.camera.focus(*focus_point);
             }
-            LP3_ASSERT(itr_start < max_players);
-
-            double max_x, min_x;
-            max_x = min_x = world.Sprite[itr_start * 10].x
-                + (world.Sprite[itr_start * 10].wide / 2);
-            double max_y, min_y;
-            max_y = min_y = world.Sprite[itr_start * 10].y
-                + (world.Sprite[itr_start * 10].high / 2);
-
-            for (int i = itr_start + 1; i < max_players; ++i) {
-                if (game_state.numberPlayers.player[i]) {
-                    min_x = std::min(min_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
-                    max_x = std::max(max_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
-                    min_y = std::min(min_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
-                    max_y = std::max(max_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
-                }
-            }
-
-            focus_x = (min_x + max_x) / 2;
-            focus_y = (min_y + max_y) / 2;
-
-            world.camera.focus({focus_x, focus_y});
         }
 
 
