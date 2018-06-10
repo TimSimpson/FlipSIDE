@@ -3,11 +3,21 @@
 
 namespace nnd3d { namespace game {
 
-/// This is for stuff that truly needs to be global, that happens outside of
-/// room or stage loading. Hopefully it stays small.
+// ---------------------------------------------------------------------------
+// class GameState
+// ---------------------------------------------------------------------------
+//     This is for all the persistant stuff that actually needs to stay
+//     global for the course of a "game" (meaning from the time the game
+//     starts ie after the title screen till the time it goes back to the
+//     title screen).
+//     This does not count things that either change or can be reinitialized
+//     (or cached) between rooms, all of which will be managed elsewhere.
+// ---------------------------------------------------------------------------
 class GameState {
 public:
     GameState();
+
+    // TODO: Move all of the PlayerData stuff here
 
     inline int continues() const { return continue_count; }
 
