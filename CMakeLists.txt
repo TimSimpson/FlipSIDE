@@ -66,8 +66,6 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/VbFile.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/VbFile.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Vertex.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Vertex.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/view.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/view/View.hpp

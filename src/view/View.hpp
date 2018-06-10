@@ -5,14 +5,26 @@
 #include <lp3/gfx.hpp>
 #include "../AnimationFrame.hpp"
 #include "../Vb.hpp"
-#include "../Vertex.hpp"
 
 namespace nnd3d { namespace view {
 
 namespace core = lp3::core;
 namespace gfx = lp3::gfx;
 
+// Represents old TLVertex type, which was used with Direct3D
+struct Vertex
+{
+    Vertex();
 
+    float x;
+    float y;
+    float z;
+    float rhw;
+    glm::vec4 color;
+    long specular;
+    float tu;
+    float tv;
+};
 
 enum class Visibility {
     normal,

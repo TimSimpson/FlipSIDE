@@ -64,6 +64,19 @@ namespace {
     }
 }
 
+Vertex::Vertex()
+:   x(0),
+    y(0),
+    z(0),
+    rhw(0),
+    color(1.0f, 1.0f, 1.0f, 1.0f),
+    specular(0),
+    tu(0),
+    tv(0)
+{
+}
+
+
 glm::vec4 qb_color(int index) {
     // If the code picks wrong, they get translucent yellow.
     switch(index) {
