@@ -90,7 +90,7 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-// struct CharacterSprite
+// class CharacterSprite
 // ----------------------------------------------------------------------------
 //     This entity drives the whole game. In the old code, all logic was
 //     determined using if statements based on the settings of these; the
@@ -100,8 +100,9 @@ private:
 //     is being moved to. The CharacterSprite struct has a pointer to this
 //     class, but hopefully this relationship will be inverted eventually.
 // ----------------------------------------------------------------------------
-struct CharacterSprite
+class CharacterSprite
 {
+public:
      // This initializer just zeroes everything out the way it would have been
      // in Visual Basic.
      CharacterSprite();

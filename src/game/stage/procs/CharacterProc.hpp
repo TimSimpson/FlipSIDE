@@ -16,7 +16,7 @@
 
 namespace nnd3d { namespace game {
 
-struct CharacterSprite;
+class CharacterSprite;
 
 
 // ---------------------------------------------------------------------------

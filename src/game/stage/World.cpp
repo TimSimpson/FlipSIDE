@@ -35,7 +35,7 @@ const
     //6 Players 1 and 3
     //7 Players 2 and 3
 
-    int theclosest = 0;
+    std::size_t theclosest = 0;
     int min = 0;
 
     min = 9999;
