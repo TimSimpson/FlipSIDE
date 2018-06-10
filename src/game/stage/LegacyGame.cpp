@@ -240,7 +240,8 @@ public:
                 // later code realizes the player is too far inside of the door
                 // and pushes them back.
                 for (int penguin = 0; penguin <= 2; penguin += 1) {
-                    if (hit_detection(s, world.Sprite[penguin * 10]) != 0
+                    if (hit_detection(s, world.Sprite[penguin * 10])
+                            == CollisionStatus::collided
                         && world.Sprite[penguin].name
                         == game_state.player_data[penguin].playerName) {
                         this->exitS = true;

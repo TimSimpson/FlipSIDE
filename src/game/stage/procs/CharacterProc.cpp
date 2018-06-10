@@ -402,10 +402,11 @@ public:
 
         if (s.name == "tdigger") {
             if (s.mode == "") {
-                unstretch(world.Sprite[j]);
+                unstretch(s);
                 //TSNOW: Another funky step 10 loop.
                 for (int penguin = 0; penguin <= 2; penguin += 10) {
-                    if (hit_detection(s, world.Sprite[penguin], true) == 5) {
+                    if (hit_detection(s, world.Sprite[penguin], true)
+                            == CollisionStatus::aligned_from_bottom) {
                         // 2018-06 - in my zeal to refactor, I'm probably
                         // adding a bug here. But the code already looked kind
                         // of broken. Basically it doesn't check the player

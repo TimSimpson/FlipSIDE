@@ -70,94 +70,78 @@ double getProx(CharacterSprite & who, CharacterSprite & who2) {
     // amount of pixels they are close
 }
 
-long hit_detection(CharacterSprite num1, CharacterSprite num2,
+CollisionStatus hit_detection(CharacterSprite num1, CharacterSprite num2,
     bool whatKind) {
-    //TSNOW: I deleted a lot of commented code here as it was already pretty
-    //       confusing.
-    long result = 0;
 
-    int con1 = 0;
-    int con2 = 0;
-    int con3 = 0;
+    bool con1 = false;
+    bool con2 = false;
+    bool con3 = false;
 
-    int left = 0;
-    int right = 0;
-    int up = 0;
-    int down = 0;
-    //Rem-checks to see if they hit from left or right
-    con1 = 0; con2 = 0; con3 = 0;
-    con1 = 0;
-    if ((num1.x + num1.wide)
-        >= num2.x
-        && num1.x < num2.x) {
-        con1 = 1; left = 1;
+    bool left = false;
+    bool right = false;
+    bool up = false;
+    bool down = false;
+    // did num1 touch num2 from the left of num2?
+    if ((num1.x + num1.wide) >= num2.x && num1.x < num2.x) {
+        con1 = true;
+        left = true;
     }
+    // did num1 touch num2 from the right?
     if ((num2.x + num2.wide) >= num1.x && num2.x < num1.x) {
-        con1 = 1; right = 1;
+        con1 = true;
+        right = true;
     }
 
-
-    // 2017: unreferenced label:
-    // screwthis:
-
-
-    //Rem- Checks to see if they ever collide from the top to bottom (Y)
-    con2 = 0;
-
-    if ((num1.y + num1.high)
-        >= num2.y
-        && num1.y < num2.y) {
-        con2 = 1; up = 1;
+    // did num1 touch num2 from the North?
+    if ((num1.y + num1.high) >= num2.y && num1.y < num2.y) {
+        con2 = true;
+        up = true;
     }
-    //Rem- Added as of 11/27/00
-    if ((num2.y + num2.high)
-        >= num1.y
-        && num2.y < num1.y) {
-        con2 = 1; down = 1;
+    // did num1 touch num2 from the South?
+    if ((num2.y + num2.high) >= num1.y && num2.y < num1.y) {
+        con2 = true;
+        down = true;
     }
 
-    // 2017: unreferenced label:
-    // screwthis2:
+    // If the Kind is unmoveable, assume it is infinitly tall and don't bother
+    // checking the Z dimension
     if (num1.kind == Kind::unmoveable || num2.kind == Kind::unmoveable) {
-        con3 = 1;
-        goto screwthis3;
+        con3 = true;
+    }
+    else
+    {
+        // do the same thing for the Z dimension. Don't bother remembering
+        // if they were above or below
+        if ((num1.z + (num1.length * 1.5)) >= num2.z && num1.z < num2.z) {
+            con3 = true;
+        }
+        if (num1.z == num2.z) { con3 = 1; }
+        //Rem- Added as of 11/27/00
+        if ((num2.z + num2.length * 1.5) >= num1.z && num2.z < num1.z) {
+            con3 = true;
+        }
     }
 
-
-    //Rem- The THIRD dimension, Z!
-
-    //if k = j) then GoTo screwthis3
-
-    if ((num1.z + (num1.length * 1.5))
-        >= num2.z
-        && num1.z < num2.z) {
-        con3 = 1;
-    }
-    if (num1.z == num2.z) { con3 = 1; }
-    //Rem- Added as of 11/27/00
-    if ((num2.z + num2.length * 1.5)
-        >= num1.z
-        && num2.z < num1.z) {
-        con3 = 1;
-    }
-
-    //TSNOW: This if statement just printed a line.
-    //if (con3 == 1) { Print ""; } //Rem-Beep: //Label2.Caption = "From Top of " + Str$(j)
-
-screwthis3:
-    if (con1 == 1 && con2 == 1 && con3 == 1) { result = 1; }
+    // UPDATE: this is a dualistic function. Based on what kind, the old code
+    //         would determine if there had been a collision, but then throw
+    //         that away and return the following. SO I moved the code that
+    //         returns `collided` to below here, this isn't a bug.
+    //         TODO: Split this into two functions!
     if (whatKind == true) {
-        if (left == 1) { result = 2; }
-        if (right == 1) { result = 3; }
-        if (up == 1) { result = 4; }
-        if (down == 1) { result = 5; }
-        if (left == 1 && up == 1) { result = 6; }
-        if (left == 1 && down == 1) { result = 7; }
-        if (right == 1 && up == 1) { result = 8; }
-        if (right == 1 && down == 1) { result = 9; }
+        if (left == 1 && up == 1) { return CollisionStatus::aligned_from_ul; }
+        if (left == 1 && down == 1) { return CollisionStatus::aligned_from_bl; }
+        if (right == 1 && up == 1) { return CollisionStatus::aligned_from_ur; }
+        if (right == 1 && down == 1) { return CollisionStatus::aligned_from_br; }
+        if (left == 1) { return CollisionStatus::aligned_from_left; }
+        if (right == 1) { return CollisionStatus::aligned_from_right; }
+        if (up == 1) { return CollisionStatus::aligned_from_top; }
+        if (down == 1) { return CollisionStatus::aligned_from_bottom; }
     }
 
-    return result;
+    // 1 seems to mean "they hit it, who cares how"
+    if (con1 && con2 && con3) { return CollisionStatus::collided; }
+
+    return CollisionStatus::not_aligned;
 }
 
 bool off_camera_kill(CharacterSprite & sprite, Camera & camera) {
