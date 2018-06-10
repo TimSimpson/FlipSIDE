@@ -64,7 +64,7 @@ public:
     CharacterSpriteRef & operator=(const CharacterSpriteRef & other);
     CharacterSpriteRef & operator=(CharacterSpriteRef && other);
 
-    inline operator bool() const {
+    inline explicit operator bool() const {
         return cs != nullptr;
     }
 
@@ -73,6 +73,10 @@ public:
         return *cs;
     }
 
+    const CharacterSprite * operator ->() const {
+        LP3_ASSERT(cs != nullptr);
+        return cs;
+    }
     void release();
 
     void set(const CharacterSprite & cs);
@@ -188,7 +192,7 @@ private:
 };
 
 
-double getProx(CharacterSprite & who, CharacterSprite & who2);
+double getProx(const CharacterSprite & who, const CharacterSprite & who2);
 
 // Kills the sprite if it's off camera. Returns true if killed, false otherwise.
 bool off_camera_kill(CharacterSprite & sprite, Camera & camera);

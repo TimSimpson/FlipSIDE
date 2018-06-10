@@ -262,7 +262,7 @@ void CharacterSprite::invalidate_refs() {
 }
 
 
-double getProx(CharacterSprite & who, CharacterSprite & who2) {
+double getProx(const CharacterSprite & who, const CharacterSprite & who2) {
     // Finds who is closet
     return std::abs(who.getMiddleX() - who2.getMiddleX())
         + std::abs(who.getMiddleY() - who.getMiddleY());

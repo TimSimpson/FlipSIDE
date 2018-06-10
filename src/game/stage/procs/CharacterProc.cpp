@@ -430,29 +430,31 @@ public:
             }
 
             if (s.mode == "runner") {
-                if (getProx(s, world.Sprite[s.target]) > 50) {
-                    s.seekx = world.Sprite[s.target].getMiddleX();
-                }
-                if (getProx(s, world.Sprite[s.target]) < 50) {
-                    s.mph = s.mph - 1;
-                    if (s.mph < -90) {
-                        s.seekx = world.Sprite[s.target].getMiddleX();
+                if (s.target) {
+                    if (getProx(s, *(s.target)) > 50) {
+                        s.seekx = s.target->getMiddleX();
+                    }
+                    if (getProx(s, *(s.target)) < 50) {
+                        s.mph = s.mph - 1;
+                        if (s.mph < -90) {
+                            s.seekx = s.target->getMiddleX();
+                            s.mph = 10;
+                        }
+                    }
+                    s.seeky = s.target->getMiddleY();
+                    if (getProx(s, *(s.target)) < 100) {
+                        s.mph = (getProx(s, *(s.target)) / 100);
+                    }
+                    else {
                         s.mph = 10;
                     }
-                }
-                s.seeky = world.Sprite[s.target].getMiddleY();
-                if (getProx(s, world.Sprite[s.target]) < 100) {
-                    s.mph = (getProx(s, world.Sprite[s.target]) / 100);
-                }
-                else {
-                    s.mph = 10;
-                }
-                if (getProx(s, world.Sprite[s.target]) == 0) {
-                    s.seekx = world.Sprite[s.target].x;
-                    s.seeky = world.Sprite[s.target].y;
-                }
+                    if (getProx(s, *(s.target)) == 0) {
+                        s.seekx = s.target->x;
+                        s.seeky = s.target->y;
+                    }
 
-                seek(s);
+                    seek(s);
+                }
             }
 
         }

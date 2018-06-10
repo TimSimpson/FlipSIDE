@@ -825,11 +825,13 @@ private:
                 }
 
                 if (ws.seekx >= 50 && ws.dir != "done") {
-                    const int target_index
-                        = world.find_closest_player(world.Sprite[who]);
-                    this->shoot(who, "paulbullet",
-                                world.Sprite[target_index].x,
-                                world.Sprite[target_index].y);
+                    const auto target = world.find_closest_player(
+                        world.Sprite[who]);
+                    if (target) {
+                        this->shoot(who, "paulbullet",
+                                    target->x,
+                                    target->y);
+                    }
                     ws.dir = "done";
                 }
             }
@@ -855,11 +857,13 @@ private:
                 if (ws.x < 1) { ws.x = world.camera.boundary().x; }
 
                 if (ws.miscTime < this->clock) {
-                    const int target_index
+                    const auto target
                         = world.find_closest_player(world.Sprite[who]);
-                    this->shoot(who, "bluestick",
-                                world.Sprite[target_index].x,
-                                world.Sprite[target_index].y);
+                    if (target) {
+                        this->shoot(who, "bluestick",
+                                    target->x,
+                                    target->y);
+                    }
                     ws.miscTime = this->clock + 2;
                 }
             }
