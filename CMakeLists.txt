@@ -13,14 +13,6 @@ find_package(Lp3_Mix)
 find_package(Lp3_Sims)
 
 add_library(Lp3_NND3d
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/BaseScreen.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/BaseScreen.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Camera.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Camera.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/CharacterSprite.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/EntityManager.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/EntityManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/Game.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameState.hpp
@@ -29,8 +21,6 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/GameOverScreen.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/IntroStory.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/IntroStory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/LegacyGame.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/LegacyGame.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/NowLoading.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/NowLoading.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/PlayerData.hpp
@@ -39,19 +29,31 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/SelectScreen.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/TitleScreen.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/TitleScreen.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/World.cpp
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CharacterProc.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CharacterProc.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaProc.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaProc.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaType.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/CinemaType.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/Enemies.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/Enemies.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/procs/PlayerProc.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/BaseScreen.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/BaseScreen.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/Camera.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/Camera.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/CharacterSprite.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/CharacterSprite.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/EntityManager.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/EntityManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/LegacyGame.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/LegacyGame.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/World.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/World.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CharacterProc.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CharacterProc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CinemaProc.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CinemaProc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CinemaType.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CinemaType.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/Enemies.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/Enemies.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/PlayerProc.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/PlayerProc.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.cpp

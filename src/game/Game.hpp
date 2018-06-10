@@ -5,7 +5,6 @@
 #include "../Input.hpp"
 #include "../Random.hpp"
 #include "../Sound.hpp"
-#include "World.hpp"
 #include "../Vb.hpp"
 #include "../view.hpp"
 
