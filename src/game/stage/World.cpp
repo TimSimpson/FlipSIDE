@@ -23,7 +23,9 @@ World::World(const World & other)
     Sprite(other.Sprite)
 {}
 
-int World::find_closest_player(const CharacterSprite & bad_guy) const {
+CharacterSpriteRef World::find_closest_player(const CharacterSprite & bad_guy)
+const
+{
     //numberPlayers integer legend
     //1 Only player 1
     //2 Player 1 and 2
@@ -62,7 +64,9 @@ int World::find_closest_player(const CharacterSprite & bad_guy) const {
         }
     }
 
-    return theclosest;
+    CharacterSpriteRef ref;
+    ref.set(this->Sprite[theclosest]);
+    return ref;
 }
 
 std::vector<std::reference_wrapper<const CharacterSprite>>

@@ -36,7 +36,7 @@ struct World {
     //       dies, can stick around enough to tell people owning it "hey this
     //       thing is dead." I guess the pointee would need to know about it.
     //       It would be better than these accursed indices.
-    int find_closest_player(const CharacterSprite & enemy) const;
+    CharacterSpriteRef find_closest_player(const CharacterSprite & enemy) const;
 
     // Returns a list of CharacterSprites of a certain kind.
     // TODO: seems like there should be a way to make a view only iterator

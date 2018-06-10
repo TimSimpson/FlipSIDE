@@ -423,7 +423,7 @@ public:
                 }
             }
 
-            if (s.target != 0 || s.target == -1) {
+            if (s.target) {
                 s.target = world.find_closest_player(this->s);
                 s.seekx = s.getMiddleX();
                 s.seeky = s.getMiddleY();

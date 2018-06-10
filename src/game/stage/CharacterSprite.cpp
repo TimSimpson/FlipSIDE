@@ -14,18 +14,45 @@ CharacterSpriteRef::CharacterSpriteRef()
 :   cs(nullptr)
 {}
 
+CharacterSpriteRef::CharacterSpriteRef(const CharacterSpriteRef & other)
+:   cs(nullptr)
+{
+    if (other.cs) {
+        // Set this to point to the same thing. This will add another entry
+        // in the CharacterSprite's table.
+        this->set(*other.cs);
+    }
+}
+
+CharacterSpriteRef::CharacterSpriteRef(CharacterSpriteRef && other)
+:   cs(nullptr)
+{
+    steal_reference(std::move(other));
+}
+
 CharacterSpriteRef::~CharacterSpriteRef() {
     release();
 }
 
-void CharacterSpriteRef::operator=(CharacterSprite & new_cs) {
-    if (&new_cs == cs) {
-        return;
+CharacterSpriteRef & CharacterSpriteRef::operator=(
+    const CharacterSpriteRef & other)
+{
+    if (other.cs) {
+        // Set this to point to the same thing. This will add another entry
+        // in the CharacterSprite's table.
+        this->set(*other.cs);
+    } else {
+        release();
     }
-    release();
-    cs = &new_cs;
-    cs->refs.push_back(this);
+    return *this;
 }
+
+CharacterSpriteRef &  CharacterSpriteRef::operator=(CharacterSpriteRef && other)
+{
+    steal_reference(std::move(other));
+    return *this;
+}
+
 
 void CharacterSpriteRef::release() {
     if (cs) {
@@ -33,6 +60,32 @@ void CharacterSpriteRef::release() {
                        [this](const CharacterSpriteRef * r){
             return r == this;
         });
+    }
+    cs = nullptr;
+}
+
+void CharacterSpriteRef::set(const CharacterSprite & new_cs) {
+    if (&new_cs == cs) {
+        return;
+    }
+    release();
+    cs = const_cast<CharacterSprite *>(&new_cs);
+    cs->refs.push_back(this);
+}
+
+void CharacterSpriteRef::steal_reference(CharacterSpriteRef && other) {
+    release();  // even if we're pointing at the same one, we want to steal
+                // the other one's table entry.
+    if (other.cs) {
+        // Find the incoming ref in the CharacterSprite's table, and change it
+        // to this location.
+        for (auto & ptr: other.cs->refs) {
+            if (ptr == &other) {
+                ptr = this;
+            }
+        }
+        this->cs = other.cs;
+        other.cs = nullptr;
     }
 }
 
@@ -82,7 +135,7 @@ CharacterSprite::CharacterSprite()
     zOrder(0),
     drawTrue(false),
     reverse(false),
-    target(0),
+    target(),
     jumpM(0),
     proc(),
     refs()
@@ -139,11 +192,66 @@ CharacterSprite::CharacterSprite(const CharacterSprite & other)
     zOrder(other.zOrder),
     drawTrue(other.drawTrue),
     reverse(other.reverse),
-    target(other.target),
+    target(),  // make this brand new - do not copy!
     jumpM(other.jumpM),
     proc(other.proc),
     refs()  // make this brand new - do not copy!
 {
+}
+
+CharacterSprite & CharacterSprite::operator=(const CharacterSprite & other) {
+    this->x = other.x;
+    this->y = other.y;
+    this->lastX = other.lastX;
+    this->lastY = other.lastY;
+    this->z = other.z;
+    this->wide = other.wide;
+    this->high = other.high;
+    this->length = other.length;
+    this->dir = other.dir;
+    this->srcx = other.srcx;
+    this->srcy = other.srcy;
+    this->srcx2 = other.srcx2;
+    this->srcy2 = other.srcy2;
+    this->Aframe = other.Aframe;
+    this->seekx = other.seekx;
+    this->seeky = other.seeky;
+    this->speed = other.speed;
+    this->time = other.time;
+    this->mph = other.mph;
+    this->texture = other.texture;
+    this->visible = other.visible;
+    this->parent = other.parent;
+    this->frame = other.frame;
+    this->name = other.name;
+    this->hp = other.hp;
+    this->mhp = other.mhp;
+    this->jumpStart = other.jumpStart;
+    this->jumpStrength = other.jumpStrength;
+    this->jumpTime = other.jumpTime;
+    this->lastJump = other.lastJump;
+    this->multiJump = other.multiJump;
+    this->maxJump = other.maxJump;
+    this->flickerTime = other.flickerTime;
+    this->flickOn = other.flickOn;
+    this->trueVisible = other.trueVisible;
+    this->invTime = other.invTime;
+    this->mode = other.mode;
+    this->kind = other.kind;
+    this->deathType = other.deathType;
+    this->miscTime = other.miscTime;
+    this->color = other.color;
+    this->soundFile = other.soundFile;
+    this->zOrder = other.zOrder;
+    this->drawTrue = other.drawTrue;
+    this->reverse = other.reverse;
+    this->jumpM = other.jumpM;
+    this->proc = other.proc;
+
+    this->target.release();
+    this->refs.clear();
+
+    return *this;
 }
 
 void CharacterSprite::invalidate_refs() {
@@ -203,7 +311,7 @@ void kill(CharacterSprite & sprite) {
     sprite.name = "";
     sprite.trueVisible = 2;
     sprite.flickerTime = 0;
-    sprite.target = -1;
+    sprite.target.release();
     sprite.proc = nullptr;
 }
 

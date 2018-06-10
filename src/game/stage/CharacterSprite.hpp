@@ -55,12 +55,14 @@ class CharacterSprite;
 //     conditions.
 // ----------------------------------------------------------------------------
 class CharacterSpriteRef {
-
+public:
+    CharacterSpriteRef();
+    CharacterSpriteRef(const CharacterSpriteRef & other);
+    CharacterSpriteRef(CharacterSpriteRef && other);
     ~CharacterSpriteRef();
 
-    CharacterSpriteRef(const CharacterSpriteRef & other) = delete;
-
-    void operator=(CharacterSprite & cs);
+    CharacterSpriteRef & operator=(const CharacterSpriteRef & other);
+    CharacterSpriteRef & operator=(CharacterSpriteRef && other);
 
     inline operator bool() const {
         return cs != nullptr;
@@ -72,11 +74,15 @@ class CharacterSpriteRef {
     }
 
     void release();
+
+    void set(const CharacterSprite & cs);
+
 private:
-    CharacterSpriteRef();
 
     CharacterSprite * cs;
     friend class CharacterSprite;
+
+    void steal_reference(CharacterSpriteRef && other);
 };
 
 // ----------------------------------------------------------------------------
@@ -99,6 +105,8 @@ struct CharacterSprite
      ~CharacterSprite();
 
      CharacterSprite(const CharacterSprite & other);
+
+     CharacterSprite & operator=(const CharacterSprite & other);
 
      double x; //Integer
      double y; //Integer
@@ -156,7 +164,7 @@ struct CharacterSprite
      bool drawTrue; //used in the draw ordering subprogram
 
      bool reverse; //to flip bitmap or not TRUE for transposing from left to right
-     int target; // it is who they are attacking
+     CharacterSpriteRef target; // it is who they are attacking
 
      double jumpM;
 
