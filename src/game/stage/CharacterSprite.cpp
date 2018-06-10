@@ -10,6 +10,32 @@ std::istream & operator >>(std::istream & in, Kind & kind) {
     return in;
 }
 
+CharacterSpriteRef::CharacterSpriteRef()
+:   cs(nullptr)
+{}
+
+CharacterSpriteRef::~CharacterSpriteRef() {
+    release();
+}
+
+void CharacterSpriteRef::operator=(CharacterSprite & new_cs) {
+    if (&new_cs == cs) {
+        return;
+    }
+    release();
+    cs = &new_cs;
+    cs->refs.push_back(this);
+}
+
+void CharacterSpriteRef::release() {
+    if (cs) {
+        std::remove_if(cs->refs.begin(), cs->refs.end(),
+                       [this](const CharacterSpriteRef * r){
+            return r == this;
+        });
+    }
+}
+
 CharacterSprite::CharacterSprite()
 :   x(0),
     y(0),
@@ -58,8 +84,73 @@ CharacterSprite::CharacterSprite()
     reverse(false),
     target(0),
     jumpM(0),
-    proc()
+    proc(),
+    refs()
 {
+}
+
+CharacterSprite::~CharacterSprite() {
+    invalidate_refs();
+}
+
+CharacterSprite::CharacterSprite(const CharacterSprite & other)
+:   x(other.x),
+    y(other.y),
+    lastX(other.lastX),
+    lastY(other.lastY),
+    z(other.z),
+    wide(other.wide),
+    high(other.high),
+    length(other.length),
+    dir(other.dir),
+    srcx(other.srcx),
+    srcy(other.srcy),
+    srcx2(other.srcx2),
+    srcy2(other.srcy2),
+    Aframe(other.Aframe),
+    seekx(other.seekx),
+    seeky(other.seeky),
+    speed(other.speed),
+    time(other.time),
+    mph(other.mph),
+    texture(other.texture),
+    visible(other.visible),
+    parent(other.parent),
+    frame(other.frame),
+    name(other.name),
+    hp(other.hp),
+    mhp(other.mhp),
+    jumpStart(other.jumpStart),
+    jumpStrength(other.jumpStrength),
+    jumpTime(other.jumpTime),
+    lastJump(other.lastJump),
+    multiJump(other.multiJump),
+    maxJump(other.maxJump),
+    flickerTime(other.flickerTime),
+    flickOn(other.flickOn),
+    trueVisible(other.trueVisible),
+    invTime(other.invTime),
+    mode(other.mode),
+    kind(other.kind),
+    deathType(other.deathType),
+    miscTime(other.miscTime),
+    color(other.color),
+    soundFile(other.soundFile),
+    zOrder(other.zOrder),
+    drawTrue(other.drawTrue),
+    reverse(other.reverse),
+    target(other.target),
+    jumpM(other.jumpM),
+    proc(other.proc),
+    refs()  // make this brand new - do not copy!
+{
+}
+
+void CharacterSprite::invalidate_refs() {
+    for (CharacterSpriteRef * r : refs) {
+        LP3_ASSERT(r != nullptr);
+        r->cs = nullptr;
+    }
 }
 
 

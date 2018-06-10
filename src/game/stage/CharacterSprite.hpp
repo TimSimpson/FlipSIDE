@@ -41,6 +41,44 @@ enum class Kind {
 
 std::istream & operator >>(std::istream & in, Kind & kind);
 
+class CharacterSprite;
+
+// ----------------------------------------------------------------------------
+// class CharacterSpriteRef
+// ----------------------------------------------------------------------------
+//     Allows for other entities to hold onto a reference to a CharacterSprite.
+//     The reference sprite keeps track of what points to it, and when it dies,
+//     can set them all to nullptrs (obviously this is not thread safe).
+//     Additionally, this is invalidated if the CharacterSprite is copied
+//     and then deleted.
+//     In short code using these can expect to lose the references in many
+//     conditions.
+// ----------------------------------------------------------------------------
+class CharacterSpriteRef {
+
+    ~CharacterSpriteRef();
+
+    CharacterSpriteRef(const CharacterSpriteRef & other) = delete;
+
+    void operator=(CharacterSprite & cs);
+
+    inline operator bool() const {
+        return cs != nullptr;
+    }
+
+    const CharacterSprite & operator *() const {
+        LP3_ASSERT(cs != nullptr);
+        return *cs;
+    }
+
+    void release();
+private:
+    CharacterSpriteRef();
+
+    CharacterSprite * cs;
+    friend class CharacterSprite;
+};
+
 // ----------------------------------------------------------------------------
 // struct CharacterSprite
 // ----------------------------------------------------------------------------
@@ -57,6 +95,10 @@ struct CharacterSprite
      // This initializer just zeroes everything out the way it would have been
      // in Visual Basic.
      CharacterSprite();
+
+     ~CharacterSprite();
+
+     CharacterSprite(const CharacterSprite & other);
 
      double x; //Integer
      double y; //Integer
@@ -128,7 +170,15 @@ struct CharacterSprite
     inline double getMiddleY() const {
         return y + (high / 2);
     }
+
+    void invalidate_refs();
+
+private:
+    std::vector<CharacterSpriteRef *> refs;
+
+    friend class CharacterSpriteRef;
 };
+
 
 double getProx(CharacterSprite & who, CharacterSprite & who2);
 

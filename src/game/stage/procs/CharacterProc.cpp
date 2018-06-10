@@ -410,14 +410,6 @@ public:
                 auto players = world.find_by_kind(Kind::player);
                 for (const auto & p : players) {
                     if ((p.get().y + p.get().high) >= s.y && p.get().y < s.y) {
-                        // 2018-06 - in my zeal to refactor, I'm probably
-                        // adding a bug here. But the code already looked kind
-                        // of broken. Basically it doesn't check the player
-                        // name now, so if the player isn't on, this may still
-                        // evaluate as true.
-
-                        // && world.Sprite[penguin].name
-                        // == world.player_data[(penguin / 10)].playerName) {
                         s.mode = "runner";
                         s.seekx = world.camera.boundary().x;
                         //.mhp = 10
