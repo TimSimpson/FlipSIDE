@@ -49,7 +49,7 @@ int checkProx(World & world, const int who) {
     min = 9999;
     theclosest = 0;
     for (int penguin = 0; penguin <= 2; ++penguin) {
-        if (!world.numberPlayers.player[penguin]) {
+        if (!world.game_state.numberPlayers.player[penguin]) {
             continue;
         }
 
@@ -453,7 +453,7 @@ public:
                 for (int penguin = 0; penguin <= 2; penguin += 10) {
                     if (hit_detection(s, world.Sprite[penguin], true) == 5
                         && world.Sprite[penguin].name
-                        == world.player_data[(penguin / 10)].playerName) {
+                        == world.game_state.player_data[(penguin / 10)].playerName) {
                         s.mode = "runner";
                         s.seekx = world.camera.boundary().x;
                         //.mhp = 10

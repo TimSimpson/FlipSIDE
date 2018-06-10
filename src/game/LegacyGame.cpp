@@ -121,10 +121,10 @@ public:
 
         this->findPlayers();
 
-        if (world.numberPlayers.any_player_active()) {
+        if (world.game_state.numberPlayers.any_player_active()) {
             int itr_start;
             for (int i = 0; i < max_players; ++i) {
-                if (world.numberPlayers.player[i]) {
+                if (world.game_state.numberPlayers.player[i]) {
                     itr_start = i;
                     break;
                 }
@@ -139,7 +139,7 @@ public:
                 + (world.Sprite[itr_start * 10].high / 2);
 
             for (int i = itr_start + 1; i < max_players; ++i) {
-                if (world.numberPlayers.player[i]) {
+                if (world.game_state.numberPlayers.player[i]) {
                     min_x = std::min(min_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
                     max_x = std::max(max_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
                     min_y = std::min(min_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
@@ -239,7 +239,7 @@ public:
                 for (int penguin = 0; penguin <= 2; penguin += 1) {
                     if (hit_detection(s, world.Sprite[penguin * 10]) != 0
                         && world.Sprite[penguin].name
-                        == world.player_data[penguin].playerName) {
+                        == world.game_state.player_data[penguin].playerName) {
                         this->exitS = true;
                     }
                 }
@@ -355,7 +355,7 @@ private:
                 }
             }
             if (world.Sprite[k].name == "fireball") {
-                if (world.player_data[(world.Sprite[k].parent) / 10].slicer == false) {
+                if (world.game_state.player_data[(world.Sprite[k].parent) / 10].slicer == false) {
                     kill(world.Sprite[k]);
                 }
             }
@@ -457,7 +457,7 @@ private:
        min = 9999;
        theclosest = 0;
        for (int penguin = 0; penguin <= 2; ++ penguin) {
-           if (!world.numberPlayers.player[penguin]) {
+           if (!world.game_state.numberPlayers.player[penguin]) {
                continue;
            }
 
@@ -510,7 +510,8 @@ private:
             this->screen_name = "title";
         }
 
-        if (std::all_of(begin(world.player_data), end(world.player_data),
+        if (std::all_of(begin(world.game_state.player_data),
+                        end(world.game_state.player_data),
                         [](PlayerData & pd) { return !pd.active; }))
         {
             return create_gameover_screen(context);
@@ -527,11 +528,11 @@ private:
 
     void findPlayers() {
         std::array<bool, 3> active_players = {
-            world.player_data[0].active,
-            world.player_data[1].active,
-            world.player_data[2].active
+            world.game_state.player_data[0].active,
+            world.game_state.player_data[1].active,
+            world.game_state.player_data[2].active
         };
-        world.numberPlayers
+        world.game_state.numberPlayers
             = ActivePlayers::find_from_active_players(active_players);
     }
 
@@ -943,7 +944,7 @@ private:
         CharacterProcEnv env{ context, random, this->clock, world.camera };
 
         // First 30 sprites were for player stuff (10 each)
-        for (auto & pd : world.player_data) {
+        for (auto & pd : world.game_state.player_data) {
             const auto & loc = lp3::narrow<int>(player_spawn_locations.size()) > pd.index
                 ? player_spawn_locations[pd.index]
                 : player_spawn_locations.back();
@@ -1052,12 +1053,12 @@ namespace {
 
         // This duplicates code from the player select class.
         // Put this somewhere else.
-        world.numberPlayers = ActivePlayers::ap0();
-        for (auto & pd : world.player_data) {
+        world.game_state.numberPlayers = ActivePlayers::ap0();
+        for (auto & pd : world.game_state.player_data) {
             pd.lives = 3;
         }
-        world.player_data[0].active = true;
-        world.player_data[0].playerName = "Thomas";
+        world.game_state.player_data[0].active = true;
+        world.game_state.player_data[0].playerName = "Thomas";
 
         std::string screen("Level1.1");
         std::array<boost::optional<std::string>, 3> _what_is_this;

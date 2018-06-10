@@ -194,17 +194,18 @@ public:
         for (int i = 0; i < 3; ++i) {
             active[i] = boxes[i].finished;
         }
-        world.numberPlayers = ActivePlayers::find_from_active_players(active);
+        world.game_state.numberPlayers
+            = ActivePlayers::find_from_active_players(active);
 
         std::array<boost::optional<std::string>, 3> players;
 
         for (auto & box : boxes) {
             players[box.index] = box.get_player_name();
 
-            world.player_data[box.index].lives = 3;
-            world.player_data[box.index].active
+            world.game_state.player_data[box.index].lives = 3;
+            world.game_state.player_data[box.index].active
                 = box.get_player_name().is_initialized();
-            world.player_data[box.index].playerName
+            world.game_state.player_data[box.index].playerName
                 = box.get_player_name().get_value_or("");
         }
         return create_legacy_screen(context, std::move(world), players,
