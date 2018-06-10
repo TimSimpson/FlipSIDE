@@ -48,8 +48,9 @@ int checkProx(World & world, const int who) {
 
     min = 9999;
     theclosest = 0;
-    for (int penguin = 0; penguin <= 2; ++penguin) {
-        if (!world.game_state.numberPlayers.player[penguin]) {
+    for (std::size_t index = 0; index < world.Sprite.size(); ++ index) {
+        auto & player_sprite = world.Sprite[index];
+        if (player_sprite.kind != Kind::player) {
             continue;
         }
 
@@ -57,23 +58,23 @@ int checkProx(World & world, const int who) {
         const int buttcat = lp3::narrow<int>(
             std::sqrt(
                 std::pow(
-                    std::abs(world.Sprite[penguin * 10].x
+                    std::abs(player_sprite.x
                         - world.Sprite[who].x),
                     2)
                 +
                 std::pow(
-                    std::abs(world.Sprite[penguin * 10].y
+                    std::abs(player_sprite.y
                         - world.Sprite[who].y),
                     2)
             ));
 
         if (buttcat < min) {
-            theclosest = penguin;
+            theclosest = index;
             min = buttcat;
         }
     }
 
-    return theclosest * 10;
+    return theclosest;
 }
 
 ////void create_player(
@@ -451,9 +452,15 @@ public:
                 unstretch(world.Sprite[j]);
                 //TSNOW: Another funky step 10 loop.
                 for (int penguin = 0; penguin <= 2; penguin += 10) {
-                    if (hit_detection(s, world.Sprite[penguin], true) == 5
-                        && world.Sprite[penguin].name
-                        == world.game_state.player_data[(penguin / 10)].playerName) {
+                    if (hit_detection(s, world.Sprite[penguin], true) == 5) {
+                        // 2018-06 - in my zeal to refactor, I'm probably
+                        // adding a bug here. But the code already looked kind
+                        // of broken. Basically it doesn't check the player
+                        // name now, so if the player isn't on, this may still
+                        // evaluate as true.
+
+                        // && world.Sprite[penguin].name
+                        // == world.player_data[(penguin / 10)].playerName) {
                         s.mode = "runner";
                         s.seekx = world.camera.boundary().x;
                         //.mhp = 10

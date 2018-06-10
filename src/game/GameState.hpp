@@ -62,6 +62,8 @@ class GameState {
 public:
     GameState();
 
+    GameState(const GameState & other) = default;
+
     // TODO: Move all of the PlayerData stuff here
 
     inline int continues() const { return continue_count; }

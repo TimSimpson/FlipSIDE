@@ -34,6 +34,7 @@ private:
     Vb vb;
     view::View & view;
     Sound & sound;
+    GameState game_state;
     World world;
     Random random;
     std::int64_t animation_timer;
@@ -47,13 +48,15 @@ private:
     std::vector<InputReceivingCharacterProc *> player_procs;
 
 public:
-    LegacyGame(GameContext _context,  World && world_arg,
+    LegacyGame(GameContext _context,
+               GameState && game_state_arg,
                const std::string & _screen_name)
     :   context(_context),
         vb(context.media),
         view(context.view),
         sound(context.sound),
-        world(world_arg),
+        game_state(game_state_arg),
+        world(),
         random(),
         animation_timer(0),
         entity_manager(world),
@@ -121,10 +124,10 @@ public:
 
         this->findPlayers();
 
-        if (world.game_state.numberPlayers.any_player_active()) {
+        if (game_state.numberPlayers.any_player_active()) {
             int itr_start;
             for (int i = 0; i < max_players; ++i) {
-                if (world.game_state.numberPlayers.player[i]) {
+                if (game_state.numberPlayers.player[i]) {
                     itr_start = i;
                     break;
                 }
@@ -139,7 +142,7 @@ public:
                 + (world.Sprite[itr_start * 10].high / 2);
 
             for (int i = itr_start + 1; i < max_players; ++i) {
-                if (world.game_state.numberPlayers.player[i]) {
+                if (game_state.numberPlayers.player[i]) {
                     min_x = std::min(min_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
                     max_x = std::max(max_x, world.Sprite[i * 10].x + (world.Sprite[i * 10].wide / 2));
                     min_y = std::min(min_y, world.Sprite[i * 10].y + (world.Sprite[i * 10].high / 2));
@@ -239,7 +242,7 @@ public:
                 for (int penguin = 0; penguin <= 2; penguin += 1) {
                     if (hit_detection(s, world.Sprite[penguin * 10]) != 0
                         && world.Sprite[penguin].name
-                        == world.game_state.player_data[penguin].playerName) {
+                        == game_state.player_data[penguin].playerName) {
                         this->exitS = true;
                     }
                 }
@@ -355,7 +358,7 @@ private:
                 }
             }
             if (world.Sprite[k].name == "fireball") {
-                if (world.game_state.player_data[(world.Sprite[k].parent) / 10].slicer == false) {
+                if (game_state.player_data[(world.Sprite[k].parent) / 10].slicer == false) {
                     kill(world.Sprite[k]);
                 }
             }
@@ -457,7 +460,7 @@ private:
        min = 9999;
        theclosest = 0;
        for (int penguin = 0; penguin <= 2; ++ penguin) {
-           if (!world.game_state.numberPlayers.player[penguin]) {
+           if (!game_state.numberPlayers.player[penguin]) {
                continue;
            }
 
@@ -496,7 +499,8 @@ private:
                 return create_title_screen(context);
             }
             this->screen_name = str(boost::format("Level%s") % sapple);
-            return new LegacyGame(context, std::move(world), this->screen_name);
+            return new LegacyGame(
+                context, std::move(game_state), this->screen_name);
         } // End If
 
         //playWave "conzero.wav"
@@ -510,8 +514,8 @@ private:
             this->screen_name = "title";
         }
 
-        if (std::all_of(begin(world.game_state.player_data),
-                        end(world.game_state.player_data),
+        if (std::all_of(begin(game_state.player_data),
+                        end(game_state.player_data),
                         [](PlayerData & pd) { return !pd.active; }))
         {
             return create_gameover_screen(context);
@@ -528,11 +532,11 @@ private:
 
     void findPlayers() {
         std::array<bool, 3> active_players = {
-            world.game_state.player_data[0].active,
-            world.game_state.player_data[1].active,
-            world.game_state.player_data[2].active
+            game_state.player_data[0].active,
+            game_state.player_data[1].active,
+            game_state.player_data[2].active
         };
-        world.game_state.numberPlayers
+        game_state.numberPlayers
             = ActivePlayers::find_from_active_players(active_players);
     }
 
@@ -944,13 +948,13 @@ private:
         CharacterProcEnv env{ context, random, this->clock, world.camera };
 
         // First 30 sprites were for player stuff (10 each)
-        for (auto & pd : world.game_state.player_data) {
+        for (auto & pd : game_state.player_data) {
             const auto & loc = lp3::narrow<int>(player_spawn_locations.size()) > pd.index
                 ? player_spawn_locations[pd.index]
                 : player_spawn_locations.back();
             if (pd.active) {
                 std::unique_ptr<InputReceivingCharacterProc> player_proc(
-                    proc::create_player_proc(env, world.game_state, pd,
+                    proc::create_player_proc(env, game_state, pd,
                                              entity_manager, loc));
                 player_procs.push_back(player_proc.get());
                 proc_manager.add_process(player_proc.release());
@@ -1034,36 +1038,36 @@ private:
 
 gsl::owner<GameProcess *> create_legacy_screen(
     GameContext context,
-    World && world,
+    GameState && game_state,
     std::array<boost::optional<std::string>, 3>,
     const std::string & screen_name)
 {
     //TODO: Use players, somehow
     return create_now_loading_screen(
         context,
-        [world(std::move(world)), screen_name](GameContext context_2) mutable {
-        return new LegacyGame(context_2, std::move(world), screen_name);
+        [game_state(std::move(game_state)), screen_name](
+            GameContext context_2) mutable {
+        return new LegacyGame(context_2, std::move(game_state), screen_name);
     });
 
 }
 
 namespace {
     gsl::owner<GameProcess *> create_legacy_screen_2(GameContext context) {
-        World world;
-
+        GameState game_state;
         // This duplicates code from the player select class.
         // Put this somewhere else.
-        world.game_state.numberPlayers = ActivePlayers::ap0();
-        for (auto & pd : world.game_state.player_data) {
+        game_state.numberPlayers = ActivePlayers::ap0();
+        for (auto & pd : game_state.player_data) {
             pd.lives = 3;
         }
-        world.game_state.player_data[0].active = true;
-        world.game_state.player_data[0].playerName = "Thomas";
+        game_state.player_data[0].active = true;
+        game_state.player_data[0].playerName = "Thomas";
 
         std::string screen("Level1.1");
         std::array<boost::optional<std::string>, 3> _what_is_this;
         return create_legacy_screen(
-            context, std::move(world), _what_is_this, screen);
+            context, std::move(game_state), _what_is_this, screen);
     }
 
     RegisterGameProcess reg(

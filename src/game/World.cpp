@@ -5,8 +5,7 @@ namespace nnd3d {   namespace game {
 
 World::World()
 :   camera(),
-    Sprite(),
-    game_state()
+    Sprite()
 {
 
     std::fill(Sprite.begin(), Sprite.end(), CharacterSprite{});
@@ -21,8 +20,7 @@ World::World()
 
 World::World(const World & other)
 :   camera(other.camera),
-    Sprite(other.Sprite),
-    game_state(other.game_state)
+    Sprite(other.Sprite)
 {}
 
 }   }   // end namespace

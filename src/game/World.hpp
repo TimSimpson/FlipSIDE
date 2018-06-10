@@ -30,8 +30,6 @@ struct World {
     // TODO: move this into LegacyGame -
     //       and let it initialize it every single time it's constructed! :O
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
-
-    GameState game_state;
 };
 
 }   }

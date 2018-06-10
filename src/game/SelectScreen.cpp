@@ -188,13 +188,13 @@ public:
 
     gsl::owner<GameProcess *> start_game() {
         // Initialize world stuff.
-        World world;
+        GameState game_state;
 
         std::array<bool, 3> active;
         for (int i = 0; i < 3; ++i) {
             active[i] = boxes[i].finished;
         }
-        world.game_state.numberPlayers
+        game_state.numberPlayers
             = ActivePlayers::find_from_active_players(active);
 
         std::array<boost::optional<std::string>, 3> players;
@@ -202,13 +202,13 @@ public:
         for (auto & box : boxes) {
             players[box.index] = box.get_player_name();
 
-            world.game_state.player_data[box.index].lives = 3;
-            world.game_state.player_data[box.index].active
+            game_state.player_data[box.index].lives = 3;
+            game_state.player_data[box.index].active
                 = box.get_player_name().is_initialized();
-            world.game_state.player_data[box.index].playerName
+            game_state.player_data[box.index].playerName
                 = box.get_player_name().get_value_or("");
         }
-        return create_legacy_screen(context, std::move(world), players,
+        return create_legacy_screen(context, std::move(game_state), players,
                                     "Level1.1");
     }
 };  // end of GameImpl class
