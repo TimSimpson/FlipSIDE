@@ -291,11 +291,11 @@ bool touching(const CharacterSprite & num1, const CharacterSprite & num2) {
 }
 
 bool off_camera_kill(CharacterSprite & sprite, Camera & camera) {
-    if (sprite.x > camera.x() + 640 || (sprite.x + sprite.wide) < camera.x()) {
+    if (sprite.x > camera.boundary().x || (sprite.x + sprite.wide) < camera.x()) {
         kill(sprite);
         return true;
     }
-    if (sprite.y > camera.y() + 480 || (sprite.y + sprite.high) < camera.y()) {
+    if (sprite.y > camera.boundary().y || (sprite.y + sprite.high) < camera.y()) {
         kill(sprite);
         return true;
     }

@@ -142,14 +142,7 @@ public:
 
         //Rem-FLICKER-
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
-
-            if (boost::starts_with(this->screen_name, "Level")) {
-                int sopoer;
-                //TSNOW: This may be wrong- old code was:
-                //       sopoer = Val(right(left(screen, 6), 1))
-                sopoer = boost::lexical_cast<double>(this->screen_name.substr(5, 1));
-                this->levelR(sopoer, j);
-            }
+            this->levelR(j);
         }
 
         flicker(clock, world);
@@ -388,7 +381,7 @@ private:
                 world.Sprite[j].jumpTime = this->clock; //sends thing up into the air, even if (goomba is flashing
                 sound.PlaySound("spring");
                 world.Sprite[k].mode = "bounce";
-                world.Sprite[k].miscTime = this->clock + 1;
+                world.Sprite[k].miscTime = world.Sprite[k].time + 1;
                 world.Sprite[j].jumpM = world.Sprite[k].jumpM;
             }
             //OH CRAP! I NO BOUNCE
@@ -719,131 +712,73 @@ private:
     //TSNOW: This looks insane. It looks as if there was too much in PlayGame,
     //       so I made this function to get called for each level... which
     //       also over time would have grown to have been too much.
-    void levelR(const int which, const int who) {
+    void levelR(const int who) {
         int k = 0;
 
         auto & ws = world.Sprite[who]; // with sprite
 
-        //LEVEL 1****************************************************************
-        if (which == 1) {  //LEVEL 1 ****************************
+        if (ws.name == "paulrun") {
+            if (ws.mode == "") { ws.mode = "right"; }
 
-            //If .name = "bullet" Then
-
-            //End If
-            if (ws.name == "greenspring") {
-                if (ws.mode == "bounce") {
-                    ws.frame = ws.frame + 1;
-                    if (ws.frame > 5) { ws.frame = 2; }
-                    if (ws.miscTime < this->clock) { ws.mode = ""; ws.frame = 1; }
-                }
+            if (ws.mode == "right") {
+                ws.reverse = false;
+                ws.x = ws.x + fs_speed_factor;
+                ws.seekx = ws.seekx + fs_speed_factor;
+                if (ws.seekx > 100) {
+                    ws.mode = "left"; ws.seekx = 0; ws.dir = ""; }
+            }
+            if (ws.mode == "left") {
+                ws.reverse = true;
+                ws.x = ws.x - fs_speed_factor;
+                ws.seekx = ws.seekx + fs_speed_factor;
+                if (ws.seekx > 100) {
+                    ws.mode = "right"; ws.seekx = 0; ws.dir = ""; }
             }
 
-
-            if (ws.name == "clouds") {
-                ws.srcx = ws.srcx + (fs_speed_factor * 0.5);
-                ws.srcx2 = ws.srcx2 + (fs_speed_factor * 0.5);
-                ws.Aframe[1].x = ws.Aframe[1].x + 1;
-                ws.Aframe[1].x2 = ws.Aframe[1].x2 + 1;
+            if (ws.seekx >= 50 && ws.dir != "done") {
+                const auto target = world.find_closest_player(
+                    world.Sprite[who]);
+                if (target) {
+                    this->shoot(who, "paulbullet",
+                                target->x,
+                                target->y);
+                }
+                ws.dir = "done";
             }
-
-            if (ws.name == "bullet") {     ////This is a strange type of bullet that in retrospect feels more like a bubble
-                //if (ws.seekx <> -1) then
-
-                this->killLimit(who);
-                {
-                    off_camera_kill(ws, world.camera);
-                }
-
-
-                //if (ws.mode = "") then
-
-
-                while(!(
-                    (ws.seekx > world.camera.boundary().x || ws.seekx < 0)
-                        || (ws.seeky > world.camera.boundary().y || ws.seeky < 0)
-                    )) {
-                    if (ws.seekx > ws.x) {
-                        ws.seekx = ws.seekx + ((ws.seekx - ws.x));
-                    }
-                    if (ws.seekx < ws.x) {
-                    ws.seekx = ws.seekx - ((ws.x - ws.seekx));
-                    }
-
-                    if (ws.seeky > ws.y) {
-                        ws.seeky = ws.seeky + ((ws.seeky - ws.y));
-                    }
-                    if (ws.seeky < ws.y) {
-                        ws.seeky = ws.seeky - ((ws.y - ws.seeky));
-                    }
-                }
-
-                this->seeker(who);
-                ws.frame = ws.frame + 1; if (ws.frame > 1) { ws.frame = 0; }
-            }
-
-            if (ws.name == "paulrun") {
-                if (ws.mode == "") { ws.mode = "right"; }
-
-                if (ws.mode == "right") {
-                    ws.reverse = false;
-                    ws.x = ws.x + fs_speed_factor;
-                    ws.seekx = ws.seekx + fs_speed_factor;
-                    if (ws.seekx > 100) {
-                        ws.mode = "left"; ws.seekx = 0; ws.dir = ""; }
-                }
-                if (ws.mode == "left") {
-                    ws.reverse = true;
-                    ws.x = ws.x - fs_speed_factor;
-                    ws.seekx = ws.seekx + fs_speed_factor;
-                    if (ws.seekx > 100) {
-                        ws.mode = "right"; ws.seekx = 0; ws.dir = ""; }
-                }
-
-                if (ws.seekx >= 50 && ws.dir != "done") {
-                    const auto target = world.find_closest_player(
-                        world.Sprite[who]);
-                    if (target) {
-                        this->shoot(who, "paulbullet",
-                                    target->x,
-                                    target->y);
-                    }
-                    ws.dir = "done";
-                }
-            }
-
-            if (ws.name == "bluestick") {
-                k = random.next() * 2 + 1;
-                if (k == 1) { ws.x = ws.x + fs_speed_factor; }
-                if (k == 2) { ws.x = ws.x - fs_speed_factor; }
-                k = random.next() * 2 + 1;
-                if (k == 1) { ws.y = ws.y + fs_speed_factor; }
-                if (k == 2) { ws.y = ws.y - fs_speed_factor; }
-                k = random.next() * 20 + 1;
-                if (k == 1) { if (ws.z == 0) {
-                    ws.jumpStart = ws.z; ws.jumpTime = this->clock; } }
-            }
-
-            if (ws.name == "pigeonbomber") {
-                ws.z = ws.z + fs_speed_factor;
-                //ws.frame = ws.frame + 1
-                //if (ws.frame > 2) then ws.frame = 1
-
-                this->seeker(who);
-                if (ws.x < 1) { ws.x = world.camera.boundary().x; }
-
-                if (ws.miscTime < this->clock) {
-                    const auto target
-                        = world.find_closest_player(world.Sprite[who]);
-                    if (target) {
-                        this->shoot(who, "bluestick",
-                                    target->x,
-                                    target->y);
-                    }
-                    ws.miscTime = this->clock + 2;
-                }
-            }
-            return;
         }
+
+        if (ws.name == "bluestick") {
+            k = random.next() * 2 + 1;
+            if (k == 1) { ws.x = ws.x + fs_speed_factor; }
+            if (k == 2) { ws.x = ws.x - fs_speed_factor; }
+            k = random.next() * 2 + 1;
+            if (k == 1) { ws.y = ws.y + fs_speed_factor; }
+            if (k == 2) { ws.y = ws.y - fs_speed_factor; }
+            k = random.next() * 20 + 1;
+            if (k == 1) { if (ws.z == 0) {
+                ws.jumpStart = ws.z; ws.jumpTime = this->clock; } }
+        }
+
+        if (ws.name == "pigeonbomber") {
+            ws.z = ws.z + fs_speed_factor;
+            //ws.frame = ws.frame + 1
+            //if (ws.frame > 2) then ws.frame = 1
+
+			seek(ws);
+            if (ws.x < 1) { ws.x = world.camera.boundary().x; }
+
+            if (ws.miscTime < this->clock) {
+                const auto target
+                    = world.find_closest_player(world.Sprite[who]);
+                if (target) {
+                    this->shoot(who, "bluestick",
+                                target->x,
+                                target->y);
+                }
+                ws.miscTime = this->clock + 2;
+            }
+        }
+        return;
     }
 
     void loadLevel(const std::string & file) {
@@ -941,17 +876,6 @@ private:
 
         this->exitS = false;
     }
-
-
-
-    void seeker(int who) {
-        auto & s = world.Sprite[who];
-        if (s.x < s.seekx) { s.x = s.x + (s.mph * fs_speed_factor); }
-        if (s.x > s.seekx) { s.x = s.x - (s.mph * fs_speed_factor); }
-        if (s.y < s.seeky) { s.y = s.y + (s.mph * fs_speed_factor); }
-        if (s.y > s.seeky) { s.y = s.y - (s.mph * fs_speed_factor); }
-    }
-
 
     void shoot(int who, const std::string & what, int wherex, int wherey) {
         int opera;

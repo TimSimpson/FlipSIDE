@@ -232,6 +232,7 @@ public:
             spr.mode = "off";
             spr.hp = 1;
             spr.deathType = "greenspring";
+			spr.time = 0;
             spr.kind = Kind::trampoline;
             spr.jumpM = 1.5;
             spr.length = 10;
@@ -351,6 +352,53 @@ public:
         auto & random = env.random;
         int k;
 
+        // this came from levelR-
+        if (s.name == "greenspring") {
+            if (s.mode == "bounce") {
+                s.frame = s.frame + 1;
+                if (s.frame > 5) { s.frame = 2; }
+				s.time += fs_s_per_update;
+                if (s.miscTime < s.time) { s.mode = ""; s.frame = 1; }
+            }
+        }
+
+        if (s.name == "clouds") {
+            s.srcx = s.srcx + (fs_speed_factor * 0.5);
+            s.srcx2 = s.srcx2 + (fs_speed_factor * 0.5);
+            s.Aframe[1].x = s.Aframe[1].x + 1;
+            s.Aframe[1].x2 = s.Aframe[1].x2 + 1;
+        }
+
+        if (s.name == "bullet") {     ////This is a strange type of bullet that in retrospect feels more like a bubble
+            //if (ws.seekx <> -1) then
+
+            off_camera_kill(s, world.camera);
+
+            while(!(
+                (s.seekx > world.camera.boundary().x || s.seekx < 0)
+                    || (s.seeky > world.camera.boundary().y || s.seeky < 0)
+                )) {
+                if (s.seekx > s.x) {
+                    s.seekx = s.seekx + ((s.seekx - s.x));
+                }
+                if (s.seekx < s.x) {
+                s.seekx = s.seekx - ((s.x - s.seekx));
+                }
+
+                if (s.seeky > s.y) {
+                    s.seeky = s.seeky + ((s.seeky - s.y));
+                }
+                if (s.seeky < s.y) {
+                    s.seeky = s.seeky - ((s.y - s.seeky));
+                }
+            }
+
+			seek(s);
+            s.frame = s.frame + 1; if (s.frame > 1) { s.frame = 0; }
+        }
+
+
+        // end levelR stuff
         if (s.name == "goomba") {
             seek(s);
 
