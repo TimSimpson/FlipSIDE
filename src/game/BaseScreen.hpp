@@ -1,6 +1,5 @@
-// Helper functionality for screens.
-// All of this was gross stuff living in the original game.cpp that ended up
-// being used everywhere.
+// At first it seemed like this was used from multiple screens (maybe it was)
+// but now it's only being used by the LegacyGame class.
 #ifndef NND3D_BASESCREEN_HPP
 #define NND3D_BASESCREEN_HPP
 #pragma once
@@ -16,7 +15,7 @@ namespace nnd3d { namespace game {
 void destroyEverything(World & world, view::View & view, Sound & sound, int how = 0);
 
 // Makes spries flicker.
-void flicker(World & world);
+void flicker(const double & clock, World & world);
 
 // Takes the data living in "Sprites" inside of the World struct and translates
 // that into "Billboards".
@@ -27,8 +26,6 @@ void flicker(World & world);
 void create_billboards(World & world,
                        const glm::ivec2 & resolution,
                        std::vector<view::Billboard> & billboards);
-
-void set_time_stuff(World & world);
 
 }   }  // end namespace
 

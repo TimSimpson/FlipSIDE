@@ -62,8 +62,7 @@ const ActivePlayers & ActivePlayers::find_from_active_players(
 }
 
 World::World()
-:   clock(0),
-    camera(),
+:   camera(),
     Sprite(),
     player_data(),
     numberPlayers(ActivePlayers::ap0()),
@@ -113,8 +112,7 @@ World::World()
 }
 
 World::World(const World & other)
-:   clock(other.clock),
-    camera(other.camera),
+:   camera(other.camera),
     Sprite(other.Sprite),
     player_data(other.player_data),
     numberPlayers(other.numberPlayers),

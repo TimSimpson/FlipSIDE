@@ -21,6 +21,9 @@ namespace gfx = lp3::gfx;
 // speed mod which will always be 0.016
 constexpr std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 
+// Some old code used a double for a clock.
+constexpr double fs_s_per_update = 0.016f;
+
 // So the game created a speed factor that tried to make it
 // target 120fps (kind of cool my old Pentium 2 machine could do
 // that). So we multiple the number we just had by 120.

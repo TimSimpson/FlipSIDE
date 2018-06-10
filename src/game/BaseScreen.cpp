@@ -115,7 +115,7 @@ void destroyEverything(World & world, view::View & view, Sound & sound, int how)
     }
 }
 
-void flicker(World & world) {
+void flicker(const double & clock, World & world) {
     for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
         auto & s = world.Sprite[j];
 
@@ -125,7 +125,7 @@ void flicker(World & world) {
             //s.trueVisible = 0
         }
 
-        if (s.flickerTime > world.clock) {
+        if (s.flickerTime > clock) {
             if (s.trueVisible == 0) {
                 if (s.visible == false) { s.trueVisible = 2; }
                 if (s.visible == true) { s.trueVisible = 1; }
@@ -143,10 +143,5 @@ void flicker(World & world) {
     }
 }
 
-void set_time_stuff(World & world) {
-    world.clock += 0.016f;
-    // TODO: lemon time is ignored, for now
-    // used to affect sFactory, but not the clock
-}
 
 }   }

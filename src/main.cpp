@@ -191,7 +191,7 @@ int _main(core::PlatformLoop & loop) {
     //       In the old code, this ran in an endless loop which called
     //       `doEvents` and used a suspect method of calculating the percentage
     //       of a second each frame took. Here we can just use a GameClock.
-    const std::int64_t ms_per_update = 1000 / 240;  //16 ms for 60 fps
+    const std::int64_t ms_per_update = 1000 / 60;  //16 ms for 60 fps
 
     sims::GameClock clock(ms_per_update);
 

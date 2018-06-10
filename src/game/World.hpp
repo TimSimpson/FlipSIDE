@@ -64,8 +64,6 @@ struct World {
 
     static constexpr int NUMSPRITES = 150;
 
-    double clock;
-
     // TODO: this should also live in LegacyGame-
     //       and be initialized every time!
     Camera camera;

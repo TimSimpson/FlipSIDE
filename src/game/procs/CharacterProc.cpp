@@ -240,6 +240,7 @@ public:
 
         if (spr.name == "harharhar") {
             spr.flickerTime = current_time + 2;
+            spr.time = 2;  // 2018-06: using this instead of world.clock
             sound.PlayWave("harharhar.wav");
         }
 
@@ -517,7 +518,8 @@ public:
         }
 
         if (s.name == "harharhar") {
-            if (s.flickerTime < world.clock) {
+            s.time -= 0.016f;  // 2018-06: using this instead of world.clock
+            if (s.time <= 0) {
                 kill(s);
             }
         }

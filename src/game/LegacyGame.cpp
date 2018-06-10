@@ -43,6 +43,8 @@ private:
     bool exitS;
     std::string screen_name;
     double gravity;
+    double clock;
+
 public:
     LegacyGame(GameContext _context,  World && world_arg,
                const std::string & _screen_name)
@@ -57,7 +59,8 @@ public:
         proc_manager(),
         exitS(false),
         screen_name(_screen_name),
-        gravity(0)
+        gravity(0),
+        clock(0)
     {
         LP3_ASSERT(boost::starts_with(this->screen_name, "Level"));
 
@@ -116,7 +119,9 @@ public:
     }
 
     gsl::owner<GameProcess *> update() override {
-        set_time_stuff(world);
+        // The old code used a double for the clock. This maps to the
+        // current hard coded ms_per_update.
+        this->clock += fs_s_per_update;
 
         int focus_x = 0;
         int focus_y = 0;
@@ -176,7 +181,7 @@ public:
             }
         }
 
-        flicker(world);
+        flicker(clock, world);
 
 
         //Rem-------------------------------------------------------------------
@@ -193,11 +198,11 @@ public:
                 s.z = s.jumpStart
                     + (
                     (s.jumpStrength * s.jumpM)
-                        * ((world.clock - s.jumpTime) * 2)
+                        * ((this->clock - s.jumpTime) * 2)
                         )
                     - (
                         this->gravity
-                        * std::pow(((world.clock - s.jumpTime) * 2), 2)
+                        * std::pow(((this->clock - s.jumpTime) * 2), 2)
                         );
                 //
                 if (s.z < 0) { s.z = 0; s.jumpTime = 0; s.jumpM = 1; }
@@ -211,7 +216,7 @@ public:
         }
 
 
-        // CharacterProcEnv env{ context, random, world.clock, camera };
+        // CharacterProcEnv env{ context, random, this->clock, camera };
         proc_manager.update();
 
 
@@ -226,7 +231,7 @@ public:
                 if (this->findQ("Kerbose") < 1) {
                     kill(s);
                     s.name = "exit";
-                    CharacterProcEnv env{ context, random, world.clock, world.camera };
+                    CharacterProcEnv env{ context, random, this->clock, world.camera };
 
                     // This will break if anything else happens, but is needed
                     // to preserve the old way things were.
@@ -246,7 +251,7 @@ public:
                     }
                 }
             } else if (s.proc) {
-                //CharacterProcEnv env{context, random, world.clock};
+                //CharacterProcEnv env{context, random, this->clock};
                 //s.proc->update(env, s, j, world);
             }
 
@@ -318,14 +323,14 @@ private:
         auto gosub_hurtj = [this, &HolderJ, &j]() {
             HolderJ = j;
             world.Sprite[HolderJ].flickerTime
-                = world.clock + world.Sprite[HolderJ].invTime;
+                = this->clock + world.Sprite[HolderJ].invTime;
             sound.PlaySound(world.Sprite[HolderJ].soundFile);
         };
 
         auto gosub_hurtK = [this, &HolderJ, &k]() {
             HolderJ = k;
             world.Sprite[HolderJ].flickerTime
-                = world.clock + world.Sprite[HolderJ].invTime;
+                = this->clock + world.Sprite[HolderJ].invTime;
             sound.PlaySound(world.Sprite[HolderJ].soundFile);
         };
 
@@ -335,7 +340,7 @@ private:
         //Player hits an enemy
         if (world.Sprite[j].kind == Kind::player && (world.Sprite[k].kind == Kind::enemy
             || world.Sprite[k].kind == Kind::enemy_bullet)) {
-            if (world.Sprite[j].flickerTime < world.clock) {
+            if (world.Sprite[j].flickerTime < this->clock) {
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
                 sound.PlaySound(world.Sprite[j].soundFile);
                 gosub_hurtj();
@@ -349,7 +354,7 @@ private:
         if ((world.Sprite[j].kind == Kind::enemy || world.Sprite[j].kind == Kind::enemy_weak_to_jumping)
             && world.Sprite[k].kind == Kind::fireball) {
 
-            if (world.Sprite[j].flickerTime < world.clock) {
+            if (world.Sprite[j].flickerTime < this->clock) {
                 world.Sprite[j].hp = world.Sprite[j].hp - 1;
                 gosub_hurtj();
                 if (world.Sprite[j].hp <= 0) {
@@ -369,8 +374,8 @@ private:
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].lastJump > world.Sprite[j].z) {
                 world.Sprite[j].jumpStart = world.Sprite[j].z;  //sends thing up into the air
-                world.Sprite[j].jumpTime = world.clock; //sends thing up into the air, even if (goomba is flashing
-                if (world.Sprite[k].flickerTime < world.clock) {
+                world.Sprite[j].jumpTime = this->clock; //sends thing up into the air, even if (goomba is flashing
+                if (world.Sprite[k].flickerTime < this->clock) {
                     world.Sprite[k].hp = world.Sprite[k].hp - 1;
                     gosub_hurtK();
                     sound.PlaySound("spring");
@@ -385,7 +390,7 @@ private:
         //Player illigetimately touches goomba.
         if (world.Sprite[j].kind == Kind::player
             && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
-            if (world.Sprite[j].flickerTime < world.clock) {
+            if (world.Sprite[j].flickerTime < this->clock) {
                 if (world.Sprite[j].z < world.Sprite[k].length
                     || world.Sprite[j].lastJump < world.Sprite[j].z) {
                     world.Sprite[j].hp = world.Sprite[j].hp - 1;
@@ -409,10 +414,10 @@ private:
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].lastJump > world.Sprite[j].z) {
                 world.Sprite[j].jumpStart = world.Sprite[j].z; //sends thing up into the air
-                world.Sprite[j].jumpTime = world.clock; //sends thing up into the air, even if (goomba is flashing
+                world.Sprite[j].jumpTime = this->clock; //sends thing up into the air, even if (goomba is flashing
                 sound.PlaySound("spring");
                 world.Sprite[k].mode = "bounce";
-                world.Sprite[k].miscTime = world.clock + 1;
+                world.Sprite[k].miscTime = this->clock + 1;
                 world.Sprite[j].jumpM = world.Sprite[k].jumpM;
             }
             //OH CRAP! I NO BOUNCE
@@ -790,7 +795,7 @@ private:
                 if (ws.mode == "bounce") {
                     ws.frame = ws.frame + 1;
                     if (ws.frame > 5) { ws.frame = 2; }
-                    if (ws.miscTime < world.clock) { ws.mode = ""; ws.frame = 1; }
+                    if (ws.miscTime < this->clock) { ws.mode = ""; ws.frame = 1; }
                 }
             }
 
@@ -872,7 +877,7 @@ private:
                 if (k == 2) { ws.y = ws.y - fs_speed_factor; }
                 k = random.next() * 20 + 1;
                 if (k == 1) { if (ws.z == 0) {
-                    ws.jumpStart = ws.z; ws.jumpTime = world.clock; } }
+                    ws.jumpStart = ws.z; ws.jumpTime = this->clock; } }
             }
 
             if (ws.name == "pigeonbomber") {
@@ -883,11 +888,11 @@ private:
                 this->seeker(who);
                 if (ws.x < 1) { ws.x = world.camera.boundary().x; }
 
-                if (ws.miscTime < world.clock) {
+                if (ws.miscTime < this->clock) {
                     this->shoot(who, "bluestick",
                                 world.Sprite[checkProx(who)].x,
                                 world.Sprite[checkProx(who)].y);
-                    ws.miscTime = world.clock + 2;
+                    ws.miscTime = this->clock + 2;
                 }
             }
             return;
@@ -942,7 +947,7 @@ private:
 
         this->initPlayers();
 
-        CharacterProcEnv env{ context, random, world.clock, world.camera };
+        CharacterProcEnv env{ context, random, this->clock, world.camera };
 
         // First 30 sprites were for player stuff (10 each)
         for (auto & pd : world.player_data) {

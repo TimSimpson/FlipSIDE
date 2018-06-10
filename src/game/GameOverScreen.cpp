@@ -3,7 +3,6 @@
 #include <boost/lexical_cast.hpp>
 #include <lp3/sims.hpp>
 
-#include "BaseScreen.hpp"
 #include "TitleScreen.hpp"
 
 namespace nnd3d { namespace game {
