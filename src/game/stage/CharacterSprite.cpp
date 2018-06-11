@@ -339,9 +339,9 @@ void unstretch(CharacterSprite & s) {
 }
 
 void CharacterSprite::update_jump_physics(double gravity) {
+    this->lastJump = this->z;
     if (this->jump_is_active) {
         this->jumpTime += fs_s_per_update;
-        this->lastJump = this->z;
         //z=jt+(JS*T*2)-(g*t)*2^2
         if (this->jumpM == 0) { this->jumpM = 1; }
         this->z = this->jumpStart
@@ -393,6 +393,10 @@ void CharacterSprite::jump_along_with(const CharacterSprite & other) {
     this->jumpStart = other.jumpStart;
     this->jumpStrength = other.jumpStrength;
     this->jumpTime = other.jumpTime;
+}
+
+bool CharacterSprite::is_falling() const {
+    return this->lastJump > this->z;
 }
 
 }   }   // end namespace

@@ -298,7 +298,7 @@ private:
         if (world.Sprite[j].kind == Kind::player
             && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
             if (world.Sprite[j].z > world.Sprite[k].length
-                && world.Sprite[j].lastJump > world.Sprite[j].z) {
+                && world.Sprite[j].is_falling()) {
 
 				world.Sprite[j].start_bounce(
                     (world.Sprite[k].flickerTime < this->clock)
@@ -320,7 +320,7 @@ private:
             && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
             if (world.Sprite[j].flickerTime < this->clock) {
                 if (world.Sprite[j].z < world.Sprite[k].length
-                    || world.Sprite[j].lastJump < world.Sprite[j].z) {
+                    || !world.Sprite[j].is_falling()) {
                     world.Sprite[j].hp = world.Sprite[j].hp - 1;
                     gosub_hurtj();
                     if (world.Sprite[j].hp <= 0) {
@@ -340,7 +340,7 @@ private:
 
             //BOUNCE TIME!
             if (world.Sprite[j].z > world.Sprite[k].length
-                && world.Sprite[j].lastJump > world.Sprite[j].z) {
+                && world.Sprite[j].is_falling()) {
 				world.Sprite[j].start_bounce(world.Sprite[k].jumpM);
                 sound.PlaySound("spring");
                 world.Sprite[k].mode = "bounce";
@@ -348,7 +348,7 @@ private:
             }
             //OH CRAP! I NO BOUNCE
             if (world.Sprite[j].z < world.Sprite[k].length
-                || world.Sprite[j].lastJump < world.Sprite[j].z) {
+                || !world.Sprite[j].is_falling()) {
                 if (world.Sprite[j].kind == Kind::unmoveable || world.Sprite[j].kind == Kind::fireball
                     || world.Sprite[j].kind == Kind::trampoline) {
                     goto britneyDog2;
