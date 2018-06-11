@@ -279,9 +279,11 @@ bool touching(const CharacterSprite & num1, const CharacterSprite & num2) {
     );
 
     const bool con_z = (
-        (num1.kind == Kind::unmoveable || num2.kind == Kind::unmoveable)
+        num1.kind == Kind::unmoveable
+        || num2.kind == Kind::unmoveable
+        || (num1.z == num2.z)  // for objects that have no length
         || ((num1.z + (num1.length * 1.5)) >= num2.z && num1.z < num2.z)
-        || ((num2.z + num2.length * 1.5) >= num1.z && num2.z < num1.z)
+        || ((num2.z + (num2.length * 1.5)) >= num1.z && num2.z < num1.z)
     );
 
     return con_x && con_y && con_z;

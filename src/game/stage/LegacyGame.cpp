@@ -201,7 +201,7 @@ public:
                 }
                 //If Sprite(k).mover = False And Sprite(j).mover = False Then GoTo fthis2
                 //If k = 1 And j = 31 Then Stop
-                if (this->hitdetection(j, k) != 0) {
+                if (touching(world.Sprite[j], world.Sprite[k])) {
                     this->checkHit(j, k);
                 }
             fthis2:
@@ -534,84 +534,6 @@ private:
             this->screen_name = "intro story"; // this will remind them that they failed
             // Note from present day: sure, just tell yourself that kid.
         }
-    }
-
-    long hitdetection(int num1, int num2, bool whatKind=false) {
-        //TSNOW: I deleted a lot of commented code here as it was already pretty
-        //       confusing.
-        long result = 0;
-
-        int con1 = 0;
-        int con2 = 0;
-        int con3 = 0;
-
-        int left = 0;
-        int right = 0;
-        int up = 0;
-        int down = 0;
-        //Rem-checks to see if they hit from left or right
-        con1 = 0; con2 = 0; con3 = 0;
-        con1 = 0;
-        if ((world.Sprite[num1].x + world.Sprite[num1].wide)
-                >= world.Sprite[num2].x
-            && world.Sprite[num1].x < world.Sprite[num2].x) {
-            con1 = 1; left = 1;
-        }
-        if ((world.Sprite[num2].x + world.Sprite[num2].wide) >= world.Sprite[num1].x && world.Sprite[num2].x < world.Sprite[num1].x) {
-            con1 = 1; right = 1;
-        }
-
-        //Rem- Checks to see if they ever collide from the top to bottom (Y)
-        con2 = 0;
-
-        if ((world.Sprite[num1].y + world.Sprite[num1].high)
-                >= world.Sprite[num2].y
-            && world.Sprite[num1].y < world.Sprite[num2].y) {
-            con2 = 1; up = 1;
-        }
-        //Rem- Added as of 11/27/00
-        if ((world.Sprite[num2].y + world.Sprite[num2].high)
-                >= world.Sprite[num1].y
-            && world.Sprite[num2].y < world.Sprite[num1].y) {
-            con2 = 1; down = 1;
-        }
-
-        // 2017: unreferenced label:
-        // screwthis2:
-        if (world.Sprite[num1].kind == Kind::unmoveable || world.Sprite[num2].kind == Kind::unmoveable) {
-            con3 = 1;
-            goto screwthis3;
-        }
-
-        //Rem- The THIRD dimension, Z!
-
-        if ((world.Sprite[num1].z + (world.Sprite[num1].length * 1.5))
-                >= world.Sprite[num2].z
-            && world.Sprite[num1].z < world.Sprite[num2].z) {
-            con3 = 1;
-        }
-        if (world.Sprite[num1].z == world.Sprite[num2].z) { con3 = 1; }
-        //Rem- Added as of 11/27/00
-        if ((world.Sprite[num2].z + world.Sprite[num2].length * 1.5)
-                >= world.Sprite[num1].z
-            && world.Sprite[num2].z < world.Sprite[num1].z) {
-            con3 = 1;
-        }
-
-        screwthis3:
-        if (con1 == 1 && con2 == 1 && con3 == 1) { result = 1; }
-        if (whatKind == true) {
-            if (left == 1) { result = 2; }
-            if (right == 1) { result = 3; }
-            if (up == 1) { result = 4; }
-            if (down == 1) { result = 5; }
-            if (left == 1 && up == 1) { result = 6; }
-            if (left == 1 && down == 1) { result = 7; }
-            if (right == 1 && up == 1) { result = 8; }
-            if (right == 1 && down == 1) { result = 9; }
-        }
-
-        return result;
     }
 
     void killLimit(int jex) {
