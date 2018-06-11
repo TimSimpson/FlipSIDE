@@ -145,6 +145,7 @@ public:
      double hp; //hp!
      double mhp;
 
+     bool jump_is_active;
      double jumpStart;  // the Z coordinate when the jump started
      int jumpStrength;  // the intrinsic jump strength of the sprite
      double jumpTime;  // how long the jump has been happening
@@ -209,12 +210,11 @@ void seek(CharacterSprite & s);
 
 void unstretch(CharacterSprite & s);
 
-void update_jump_physics(CharacterSprite & sprite, double current_time, double gravity);
+void update_jump_physics(CharacterSprite & sprite, double gravity);
 
-void make_jump(CharacterSprite & sprite, double current_time);
+void make_jump(CharacterSprite & sprite);
 
-void start_bounce(CharacterSprite & sprite, double current_time,
-                  double jump_magnifier=1.0);
+void start_bounce(CharacterSprite & sprite, double jump_magnifier=1.0);
 
 // Sets one sprite to follow the same arc as another, by assigning most of the
 // jump vars to it. Used for Nicky's bombs originally.

@@ -116,6 +116,7 @@ CharacterSprite::CharacterSprite()
     name(""),
     hp(0),
     mhp(0),
+    jump_is_active(false),
     jumpStart(0),
     jumpStrength(0),
     jumpTime(0),
@@ -173,6 +174,7 @@ CharacterSprite::CharacterSprite(const CharacterSprite & other)
     name(other.name),
     hp(other.hp),
     mhp(other.mhp),
+    jump_is_active(false),
     jumpStart(other.jumpStart),
     jumpStrength(other.jumpStrength),
     jumpTime(other.jumpTime),
@@ -226,6 +228,7 @@ CharacterSprite & CharacterSprite::operator=(const CharacterSprite & other) {
     this->name = other.name;
     this->hp = other.hp;
     this->mhp = other.mhp;
+    this->jump_is_active = other.jump_is_active;
     this->jumpStart = other.jumpStart;
     this->jumpStrength = other.jumpStrength;
     this->jumpTime = other.jumpTime;
@@ -335,32 +338,38 @@ void unstretch(CharacterSprite & s) {
     }
 }
 
-void update_jump_physics(CharacterSprite & sprite, double current_time, double gravity) {
-    if (sprite.jumpTime != 0) {
+void update_jump_physics(CharacterSprite & sprite, double gravity) {
+    if (sprite.jump_is_active) {
+        sprite.jumpTime += fs_s_per_update;
         sprite.lastJump = sprite.z;
         //z=jt+(JS*T*2)-(g*t)*2^2
         if (sprite.jumpM == 0) { sprite.jumpM = 1; }
         sprite.z = sprite.jumpStart
             + (
             (sprite.jumpStrength * sprite.jumpM)
-                * ((current_time - sprite.jumpTime) * 2)
+                * (sprite.jumpTime * 2)
                 )
             - (
                 gravity
-                * std::pow(((current_time - sprite.jumpTime) * 2), 2)
+                * std::pow((sprite.jumpTime * 2), 2)
                 );
         //
-        if (sprite.z < 0) { sprite.z = 0; sprite.jumpTime = 0; sprite.jumpM = 1; }
+        if (sprite.z < 0) {
+            sprite.z = 0;
+            sprite.jump_is_active = false;
+            sprite.jumpM = 1;
+        }
     }
     else {
-
         //REM------------------------------------------------------
         //  THis is the added gravity that pulls them down   if the're in the ares.
-        if (sprite.z > 0) { sprite.z = sprite.z - fs_speed_factor; }
+        if (sprite.z > 0) {
+            sprite.z = sprite.z - fs_speed_factor;
+        }
     }
 }
 
-void make_jump(CharacterSprite & sprite, double current_time) {
+void make_jump(CharacterSprite & sprite) {
     if (sprite.z == 0) {
         sprite.multiJump = 0;
     }
@@ -368,13 +377,13 @@ void make_jump(CharacterSprite & sprite, double current_time) {
         return;
     }
     sprite.multiJump = sprite.multiJump + 1;
-    start_bounce(sprite, current_time);
+    start_bounce(sprite);
 }
 
-void start_bounce(CharacterSprite & sprite, double current_time,
-                  double jump_magnifier) {
+void start_bounce(CharacterSprite & sprite, double jump_magnifier) {
     sprite.jumpStart = sprite.z;
-    sprite.jumpTime = current_time;
+    sprite.jumpTime = 0;
+    sprite.jump_is_active = true;
     sprite.jumpM = jump_magnifier;
 }
 
