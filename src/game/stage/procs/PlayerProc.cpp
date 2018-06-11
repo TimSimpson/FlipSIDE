@@ -469,6 +469,13 @@ public:
             case input::Key::jump:
                 this->key_data.JumpKey = event.value != 0.0f;
                 break;
+             case input::Key::power_up:
+                this->player_data.slicer = true;
+                this->player_data.GradeUp = 2;
+                this->sprite.wide = 25;
+                this->sprite.high = 25;
+                this->env.context.sound.PlayWave("SoupedUp.wav");
+                break;
             default:
                 break;
         }

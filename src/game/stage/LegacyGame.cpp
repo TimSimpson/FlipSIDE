@@ -84,6 +84,7 @@ public:
             case input::Key::right:
             case input::Key::attack:
             case input::Key::jump:
+            case input::Key::power_up:
                 if (player_procs[event.player]) {
                     player_procs[event.player]->handle_input(event);
                 }
@@ -92,16 +93,6 @@ public:
                 if (event.value) {
                     this->exitS = true; sound.PlayWave("FDis.wav");
                 }
-                break;
-            case input::Key::power_up:
-                // Forget this for now as I remove all references to specific
-                // sprite entries.
-
-                // world.player_data[0].slicer = true;
-                // world.player_data[0].GradeUp = 2;
-                // world.Sprite[0].wide = 25;
-                // world.Sprite[0].high = 25;
-                // sound.PlayWave("SoupedUp.wav");
                 break;
             case input::Key::lemon_time:
                 // LemonTime no longer working.
