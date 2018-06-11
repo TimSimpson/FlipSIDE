@@ -646,50 +646,6 @@ private:
         return result;
     }
 
-
-    void initPlayers() {
-        /*for (k = 0; k <= 2; ++ k) {
-            if (world.player_data[k].playerName == "") { world.player_data[k].playerName = "redead"; }
-        }*/
-
-
-        //Rem****************88
-        //After killing the players above by setting the sprites (bodies) to "dead",
-        //it reincarnates them here by calling createPlayer
-        //Rem*************************************8
-
-        view.LoadTexture(0, "System.png", 336, 397);
-
-        //Rem******************************************************8
-        //          THIS PART LOADS UP WEAPONS
-        //Rem******************************************************8
-
-        /*for (int index = 0; index < 3; ++index) {
-            if (world.numberPlayers.player[index]) {
-                world.Sprite[index * 10].name = world.player_data[0].playerName;
-                for (int k = index * 10 + 1; k <= (index * 10) + 9; ++k) {
-                    world.Sprite[k].x = 60;
-                    world.Sprite[k].y = 70;
-                    world.Sprite[k].name = "fireball";
-                    if (world.player_data[index].playerName == "Thomas"
-                        || world.player_data[index].playerName == "Nick") {
-                        world.Sprite[k].name = "fireball";
-                    }
-                    if (world.player_data[index].playerName == "Nicky") {
-                        world.Sprite[k].name = "bomb";
-                    }
-                }
-            }
-        }*/
-
-        //Rem- THIS PART MAKES SPRITES DIFFERENT COLORS
-        /*if (world.Sprite[0].name == world.Sprite[10].name) {
-            world.Sprite[10].color = view::qb_color(10);
-        }*/
-
-        sound.LoadSound(15, "Spring.wav", "spring");
-    }
-
     void killLimit(int jex) {
         // Rem- Kills unruly sprites who are out of bounds
         auto & s = world.Sprite[jex];
@@ -749,7 +705,9 @@ private:
         world.camera.focus({0, 0});
         view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight);
 
-        this->initPlayers();
+        view.LoadTexture(0, "System.png", 336, 397);
+
+        sound.LoadSound(15, "Spring.wav", "spring");
 
         CharacterProcEnv env{ context, random, this->clock, world.camera };
 
