@@ -140,13 +140,7 @@ public:
         int j;
         int k;
 
-        //Rem-FLICKER-
-        for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
-            this->levelR(j);
-        }
-
         flicker(clock, world);
-
 
         //Rem-------------------------------------------------------------------
         //               THIS SECTION DOES THE JUMPING
@@ -707,20 +701,6 @@ private:
     void loadAnimation(int who, const std::string & file) {
         auto & s = world.Sprite[who];
         view.load_animation_file(s.Aframe, file);
-    }
-
-    //TSNOW: This looks insane. It looks as if there was too much in PlayGame,
-    //       so I made this function to get called for each level... which
-    //       also over time would have grown to have been too much.
-    void levelR(const int who) {
-        int k = 0;
-
-        auto & ws = world.Sprite[who]; // with sprite
-
-
-
-
-        return;
     }
 
     void loadLevel(const std::string & file) {
