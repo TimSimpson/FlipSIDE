@@ -537,12 +537,12 @@ public:
             && s.multiJump < 3) {
             key_data.JumpKey = false;
             //If .z = 0 Then .multiJump = 0
-            make_jump(s);
+            start_jump(s);
         }
 
 
         if (key_data.JumpKey == true && s.z == 0) {
-            make_jump(s);
+            start_jump(s);
         }
 
         if (key_data.AttackKey == true && s.miscTime < env.current_time) {

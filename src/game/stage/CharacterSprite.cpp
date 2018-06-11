@@ -369,7 +369,7 @@ void update_jump_physics(CharacterSprite & sprite, double gravity) {
     }
 }
 
-void make_jump(CharacterSprite & sprite) {
+void start_jump(CharacterSprite & sprite) {
     if (sprite.z == 0) {
         sprite.multiJump = 0;
     }

@@ -212,7 +212,7 @@ void unstretch(CharacterSprite & s);
 
 void update_jump_physics(CharacterSprite & sprite, double gravity);
 
-void make_jump(CharacterSprite & sprite);
+void start_jump(CharacterSprite & sprite);
 
 void start_bounce(CharacterSprite & sprite, double jump_magnifier=1.0);
 
