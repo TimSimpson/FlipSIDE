@@ -138,7 +138,7 @@ public:
         //Rem-------------------------------------------------------------------
 
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
-            update_jump_physics(world.Sprite[j], gravity);
+            world.Sprite[j].update_jump_physics(gravity);
         }
 
 
@@ -300,9 +300,9 @@ private:
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].lastJump > world.Sprite[j].z) {
 
-                start_bounce(world.Sprite[j],
-                             (world.Sprite[k].flickerTime < this->clock)
-                             ? world.Sprite[k].jumpM : 1.0);
+				world.Sprite[j].start_bounce(
+                    (world.Sprite[k].flickerTime < this->clock)
+                        ? world.Sprite[k].jumpM : 1.0);
 
                 if (world.Sprite[k].flickerTime < this->clock) {
                     world.Sprite[k].hp = world.Sprite[k].hp - 1;
@@ -341,7 +341,7 @@ private:
             //BOUNCE TIME!
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].lastJump > world.Sprite[j].z) {
-                start_bounce(world.Sprite[j], world.Sprite[k].jumpM);
+				world.Sprite[j].start_bounce(world.Sprite[k].jumpM);
                 sound.PlaySound("spring");
                 world.Sprite[k].mode = "bounce";
                 world.Sprite[k].miscTime = world.Sprite[k].time + 1;

@@ -338,61 +338,61 @@ void unstretch(CharacterSprite & s) {
     }
 }
 
-void update_jump_physics(CharacterSprite & sprite, double gravity) {
-    if (sprite.jump_is_active) {
-        sprite.jumpTime += fs_s_per_update;
-        sprite.lastJump = sprite.z;
+void CharacterSprite::update_jump_physics(double gravity) {
+    if (this->jump_is_active) {
+        this->jumpTime += fs_s_per_update;
+        this->lastJump = this->z;
         //z=jt+(JS*T*2)-(g*t)*2^2
-        if (sprite.jumpM == 0) { sprite.jumpM = 1; }
-        sprite.z = sprite.jumpStart
+        if (this->jumpM == 0) { this->jumpM = 1; }
+        this->z = this->jumpStart
             + (
-            (sprite.jumpStrength * sprite.jumpM)
-                * (sprite.jumpTime * 2)
+            (this->jumpStrength * this->jumpM)
+                * (this->jumpTime * 2)
                 )
             - (
                 gravity
-                * std::pow((sprite.jumpTime * 2), 2)
+                * std::pow((this->jumpTime * 2), 2)
                 );
         //
-        if (sprite.z < 0) {
-            sprite.z = 0;
-            sprite.jump_is_active = false;
-            sprite.jumpM = 1;
+        if (this->z < 0) {
+            this->z = 0;
+            this->jump_is_active = false;
+            this->jumpM = 1;
         }
     }
     else {
         //REM------------------------------------------------------
         //  THis is the added gravity that pulls them down   if the're in the ares.
-        if (sprite.z > 0) {
-            sprite.z = sprite.z - fs_speed_factor;
+        if (this->z > 0) {
+            this->z = this->z - fs_speed_factor;
         }
     }
 }
 
-void start_jump(CharacterSprite & sprite) {
-    if (sprite.z == 0) {
-        sprite.multiJump = 0;
+void CharacterSprite::start_jump() {
+    if (this->z == 0) {
+        this->multiJump = 0;
     }
-    if (sprite.multiJump >= sprite.maxJump) {
+    if (this->multiJump >= this->maxJump) {
         return;
     }
-    sprite.multiJump = sprite.multiJump + 1;
-    start_bounce(sprite);
+    this->multiJump = this->multiJump + 1;
+    start_bounce();
 }
 
-void start_bounce(CharacterSprite & sprite, double jump_magnifier) {
-    sprite.jumpStart = sprite.z;
-    sprite.jumpTime = 0;
-    sprite.jump_is_active = true;
-    sprite.jumpM = jump_magnifier;
+void CharacterSprite::start_bounce(double jump_magnifier) {
+    this->jumpStart = this->z;
+    this->jumpTime = 0;
+    this->jump_is_active = true;
+    this->jumpM = jump_magnifier;
 }
 
 
 
-void jump_along_with(CharacterSprite & assignee, const CharacterSprite & other) {
-    assignee.jumpStart = other.jumpStart;
-    assignee.jumpStrength = other.jumpStrength;
-    assignee.jumpTime = other.jumpTime;
+void CharacterSprite::jump_along_with(const CharacterSprite & other) {
+    this->jumpStart = other.jumpStart;
+    this->jumpStrength = other.jumpStrength;
+    this->jumpTime = other.jumpTime;
 }
 
 }   }   // end namespace

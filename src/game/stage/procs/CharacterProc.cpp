@@ -462,7 +462,7 @@ public:
             if (k == 2) { s.y = s.y - fs_speed_factor; }
             k = random.next() * 20 + 1;
             if (k == 1) { if (s.z == 0) {
-                start_jump(s); } }
+                s.start_jump(); } }
         }
 
         if (s.name == "pigeonbomber") {

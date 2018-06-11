@@ -217,7 +217,7 @@ public:
         sprite.z = parent.z; //- (Sprite(0).length);
         sprite.wide = 30 * (player_data.GradeUp + 1);
         sprite.high = 30 * (player_data.GradeUp + 1);
-        jump_along_with(sprite, parent);
+        sprite.jump_along_with(parent);
         sprite.length = 15;
         sprite.texture = parent.texture;
         sprite.visible = true;
@@ -537,12 +537,12 @@ public:
             && s.multiJump < 3) {
             key_data.JumpKey = false;
             //If .z = 0 Then .multiJump = 0
-            start_jump(s);
+            s.start_jump();
         }
 
 
         if (key_data.JumpKey == true && s.z == 0) {
-            start_jump(s);
+            s.start_jump();
         }
 
         if (key_data.AttackKey == true && s.miscTime < env.current_time) {

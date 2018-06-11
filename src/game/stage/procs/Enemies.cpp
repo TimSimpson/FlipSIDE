@@ -84,7 +84,7 @@ public:
         const auto jump = (int)(env.random.next() * 20) + 1;
         if (jump == 1) {
             if (sprite.z == 0) {
-                start_jump(sprite);
+                sprite.start_jump();
             }
         }
     }

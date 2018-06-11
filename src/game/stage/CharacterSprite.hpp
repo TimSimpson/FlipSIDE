@@ -145,10 +145,14 @@ public:
      double hp; //hp!
      double mhp;
 
+private:
      bool jump_is_active;
      double jumpStart;  // the Z coordinate when the jump started
+public:
      int jumpStrength;  // the intrinsic jump strength of the sprite
+private:
      double jumpTime;  // how long the jump has been happening
+public:
      double lastJump; // the last Z coordinate, before the latest update
      int multiJump;  // which jump multi-jumpers are currently on
      int maxJump; // max number of multi jumps
@@ -189,12 +193,22 @@ public:
         return glm::vec2{ getMiddleX(), getMiddleY() };
     }
 
-    void invalidate_refs();
+    void update_jump_physics(double gravity);
+
+    void start_jump();
+
+    void start_bounce(double jump_magnifier=1.0);
+
+    // Sets one sprite to follow the same arc as another, by assigning most of the
+    // jump vars to it. Used for Nicky's bombs originally.
+    void jump_along_with(const CharacterSprite & other);
 
 private:
     std::vector<CharacterSpriteRef *> refs;
 
     friend class CharacterSpriteRef;
+
+    void invalidate_refs();
 };
 
 double getProx(const CharacterSprite & who, const CharacterSprite & who2);
@@ -210,15 +224,6 @@ void seek(CharacterSprite & s);
 
 void unstretch(CharacterSprite & s);
 
-void update_jump_physics(CharacterSprite & sprite, double gravity);
-
-void start_jump(CharacterSprite & sprite);
-
-void start_bounce(CharacterSprite & sprite, double jump_magnifier=1.0);
-
-// Sets one sprite to follow the same arc as another, by assigning most of the
-// jump vars to it. Used for Nicky's bombs originally.
-void jump_along_with(CharacterSprite & assignee, const CharacterSprite & other);
 
 }    }
 
