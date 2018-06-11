@@ -368,9 +368,17 @@ void make_jump(CharacterSprite & sprite, double current_time) {
         return;
     }
     sprite.multiJump = sprite.multiJump + 1;
+    start_bounce(sprite, current_time);
+}
+
+void start_bounce(CharacterSprite & sprite, double current_time,
+                  double jump_magnifier) {
     sprite.jumpStart = sprite.z;
     sprite.jumpTime = current_time;
+    sprite.jumpM = jump_magnifier;
 }
+
+
 
 void jump_along_with(CharacterSprite & assignee, const CharacterSprite & other) {
     assignee.jumpStart = other.jumpStart;

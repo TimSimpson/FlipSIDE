@@ -299,13 +299,15 @@ private:
             && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].lastJump > world.Sprite[j].z) {
-                world.Sprite[j].jumpStart = world.Sprite[j].z;  //sends thing up into the air
-                world.Sprite[j].jumpTime = this->clock; //sends thing up into the air, even if (goomba is flashing
+
+                start_bounce(world.Sprite[j], this->clock,
+                             (world.Sprite[k].flickerTime < this->clock)
+                             ? world.Sprite[k].jumpM : 1.0);
+
                 if (world.Sprite[k].flickerTime < this->clock) {
                     world.Sprite[k].hp = world.Sprite[k].hp - 1;
                     gosub_hurtK();
                     sound.PlaySound("spring");
-                    world.Sprite[j].jumpM = world.Sprite[k].jumpM;
                     if (world.Sprite[k].hp <= 0) {
                         world.Sprite[k].proc->death_animation();
                     }
@@ -339,12 +341,10 @@ private:
             //BOUNCE TIME!
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].lastJump > world.Sprite[j].z) {
-                world.Sprite[j].jumpStart = world.Sprite[j].z; //sends thing up into the air
-                world.Sprite[j].jumpTime = this->clock; //sends thing up into the air, even if (goomba is flashing
+                start_bounce(world.Sprite[j], this->clock, world.Sprite[k].jumpM);
                 sound.PlaySound("spring");
                 world.Sprite[k].mode = "bounce";
                 world.Sprite[k].miscTime = world.Sprite[k].time + 1;
-                world.Sprite[j].jumpM = world.Sprite[k].jumpM;
             }
             //OH CRAP! I NO BOUNCE
             if (world.Sprite[j].z < world.Sprite[k].length
