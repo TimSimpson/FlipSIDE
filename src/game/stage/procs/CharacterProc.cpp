@@ -341,6 +341,46 @@ public:
         }
     }
 
+    void shoot(CharacterSprite & who, // This was an integer
+		       const std::string & what, int wherex, int wherey) {
+
+        // 2018-06 : the old code would search through the sprites list, find
+        //           one that looked dead, and re-initialize it as a "child"
+        //           of some parent Sprite.
+        //           I want to resurrect this, but instead have the parent's
+        //           process "own" all the potential children sprites it
+        //           might have to make the way things are laid out
+        //           more deterministic.
+        //           For now, that ain't happening!
+
+        // int opera;
+
+        // for (opera = (who + 1); opera < lp3::narrow<int>(world.Sprite.size()); ++ opera) {
+        //     if (world.Sprite[opera].name == "" || world.Sprite[opera].name == "empty" || world.Sprite[opera].name == "dead") {
+        //         // killS opera
+        //         world.Sprite[opera].name = what;
+        //         break;
+        //     }
+        // }
+
+        // if (opera >= 95) { return; }  //2017: WAT?
+
+        // world.Sprite[opera].trueVisible = 0;
+        // world.Sprite[opera].visible = true;
+        // world.Sprite[opera].flickOn = false;
+        // world.Sprite[opera].texture = world.Sprite[who].texture;
+        // world.Sprite[opera].wide = world.Sprite[who].wide;
+        // world.Sprite[opera].high = world.Sprite[who].high;
+
+        // world.Sprite[who].proc->spawn(world.Sprite[opera], what);
+        // world.Sprite[opera].zOrder = -1;
+        // world.Sprite[opera].x = world.Sprite[who].x;
+        // world.Sprite[opera].y = world.Sprite[who].y;
+        // world.Sprite[opera].z = world.Sprite[who].z;
+        // world.Sprite[opera].seekx = wherex;
+        // world.Sprite[opera].seeky = wherey;
+    }
+
     bool update() override
         //Camera & camera,
         //PlayerData * player_data,
@@ -397,6 +437,66 @@ public:
             s.frame = s.frame + 1; if (s.frame > 1) { s.frame = 0; }
         }
 
+        if (s.name == "paulrun") {
+            if (s.mode == "") { s.mode = "right"; }
+
+            if (s.mode == "right") {
+                s.reverse = false;
+                s.x = s.x + fs_speed_factor;
+                s.seekx = s.seekx + fs_speed_factor;
+                if (s.seekx > 100) {
+                    s.mode = "left"; s.seekx = 0; s.dir = ""; }
+            }
+            if (s.mode == "left") {
+                s.reverse = true;
+                s.x = s.x - fs_speed_factor;
+                s.seekx = s.seekx + fs_speed_factor;
+                if (s.seekx > 100) {
+                    s.mode = "right"; s.seekx = 0; s.dir = ""; }
+            }
+
+            if (s.seekx >= 50 && s.dir != "done") {
+                const auto target = world.find_closest_player(s);
+                if (target) {
+                    this->shoot(s, "paulbullet",
+                                target->x,
+                                target->y);
+                }
+                s.dir = "done";
+            }
+        }
+
+        if (s.name == "bluestick") {
+            k = random.next() * 2 + 1;
+            if (k == 1) { s.x = s.x + fs_speed_factor; }
+            if (k == 2) { s.x = s.x - fs_speed_factor; }
+            k = random.next() * 2 + 1;
+            if (k == 1) { s.y = s.y + fs_speed_factor; }
+            if (k == 2) { s.y = s.y - fs_speed_factor; }
+            k = random.next() * 20 + 1;
+            if (k == 1) { if (s.z == 0) {
+                s.jumpStart = s.z; s.jumpTime = this->env.current_time; } }
+        }
+
+        if (s.name == "pigeonbomber") {
+            s.z = s.z + fs_speed_factor;
+            //s.frame = s.frame + 1
+            //if (s.frame > 2) then s.frame = 1
+
+            seek(s);
+            if (s.x < 1) { s.x = world.camera.boundary().x; }
+
+            if (s.miscTime < this->env.current_time) {
+                const auto target
+                    = world.find_closest_player(s);
+                if (target) {
+                    this->shoot(s, "bluestick",
+                                target->x,
+                                target->y);
+                }
+                s.miscTime = this->env.current_time + 2;
+            }
+        }
 
         // end levelR stuff
         if (s.name == "goomba") {

@@ -717,67 +717,9 @@ private:
 
         auto & ws = world.Sprite[who]; // with sprite
 
-        if (ws.name == "paulrun") {
-            if (ws.mode == "") { ws.mode = "right"; }
 
-            if (ws.mode == "right") {
-                ws.reverse = false;
-                ws.x = ws.x + fs_speed_factor;
-                ws.seekx = ws.seekx + fs_speed_factor;
-                if (ws.seekx > 100) {
-                    ws.mode = "left"; ws.seekx = 0; ws.dir = ""; }
-            }
-            if (ws.mode == "left") {
-                ws.reverse = true;
-                ws.x = ws.x - fs_speed_factor;
-                ws.seekx = ws.seekx + fs_speed_factor;
-                if (ws.seekx > 100) {
-                    ws.mode = "right"; ws.seekx = 0; ws.dir = ""; }
-            }
 
-            if (ws.seekx >= 50 && ws.dir != "done") {
-                const auto target = world.find_closest_player(
-                    world.Sprite[who]);
-                if (target) {
-                    this->shoot(who, "paulbullet",
-                                target->x,
-                                target->y);
-                }
-                ws.dir = "done";
-            }
-        }
 
-        if (ws.name == "bluestick") {
-            k = random.next() * 2 + 1;
-            if (k == 1) { ws.x = ws.x + fs_speed_factor; }
-            if (k == 2) { ws.x = ws.x - fs_speed_factor; }
-            k = random.next() * 2 + 1;
-            if (k == 1) { ws.y = ws.y + fs_speed_factor; }
-            if (k == 2) { ws.y = ws.y - fs_speed_factor; }
-            k = random.next() * 20 + 1;
-            if (k == 1) { if (ws.z == 0) {
-                ws.jumpStart = ws.z; ws.jumpTime = this->clock; } }
-        }
-
-        if (ws.name == "pigeonbomber") {
-            ws.z = ws.z + fs_speed_factor;
-            //ws.frame = ws.frame + 1
-            //if (ws.frame > 2) then ws.frame = 1
-
-			seek(ws);
-            if (ws.x < 1) { ws.x = world.camera.boundary().x; }
-
-            if (ws.miscTime < this->clock) {
-                const auto target
-                    = world.find_closest_player(world.Sprite[who]);
-                if (target) {
-                    this->shoot(who, "bluestick",
-                                target->x,
-                                target->y);
-                }
-                ws.miscTime = this->clock + 2;
-            }
-        }
         return;
     }
 
@@ -877,34 +819,7 @@ private:
         this->exitS = false;
     }
 
-    void shoot(int who, const std::string & what, int wherex, int wherey) {
-        int opera;
 
-        for (opera = (who + 1); opera < lp3::narrow<int>(world.Sprite.size()); ++ opera) {
-            if (world.Sprite[opera].name == "" || world.Sprite[opera].name == "empty" || world.Sprite[opera].name == "dead") {
-                // killS opera
-                world.Sprite[opera].name = what;
-                break;
-            }
-        }
-
-        if (opera >= 95) { return; }  //2017: WAT?
-
-        world.Sprite[opera].trueVisible = 0;
-        world.Sprite[opera].visible = true;
-        world.Sprite[opera].flickOn = false;
-        world.Sprite[opera].texture = world.Sprite[who].texture;
-        world.Sprite[opera].wide = world.Sprite[who].wide;
-        world.Sprite[opera].high = world.Sprite[who].high;
-
-        world.Sprite[who].proc->spawn(world.Sprite[opera], what);
-        world.Sprite[opera].zOrder = -1;
-        world.Sprite[opera].x = world.Sprite[who].x;
-        world.Sprite[opera].y = world.Sprite[who].y;
-        world.Sprite[opera].z = world.Sprite[who].z;
-        world.Sprite[opera].seekx = wherex;
-        world.Sprite[opera].seeky = wherey;
-    }
 
 };  // end of GameImpl class
 
