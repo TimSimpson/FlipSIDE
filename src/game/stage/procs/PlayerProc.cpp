@@ -217,9 +217,7 @@ public:
         sprite.z = parent.z; //- (Sprite(0).length);
         sprite.wide = 30 * (player_data.GradeUp + 1);
         sprite.high = 30 * (player_data.GradeUp + 1);
-        sprite.jumpStart = parent.jumpStart;
-        sprite.jumpStrength = parent.jumpStrength;
-        sprite.jumpTime = parent.jumpTime;
+        jump_along_with(sprite, parent);
         sprite.length = 15;
         sprite.texture = parent.texture;
         sprite.visible = true;
@@ -539,16 +537,12 @@ public:
             && s.multiJump < 3) {
             key_data.JumpKey = false;
             //If .z = 0 Then .multiJump = 0
-            s.multiJump = s.multiJump + 1;
-            s.jumpStart = s.z;
-            s.jumpTime = env.current_time;
+            make_jump(s, env.current_time);
         }
 
 
         if (key_data.JumpKey == true && s.z == 0) {
-
-            s.jumpStart = s.z;
-            s.jumpTime = env.current_time;
+            make_jump(s, env.current_time);
         }
 
         if (key_data.AttackKey == true && s.miscTime < env.current_time) {
@@ -993,7 +987,7 @@ public:
         sprite.hp = 4;
         //sprite.mode = "truck";
         this->mover = true;
-        sprite.maxJump = 2;
+        sprite.maxJump = 3;
     }
 
     bool spawn_weapon() override {

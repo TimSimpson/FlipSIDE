@@ -372,4 +372,10 @@ void make_jump(CharacterSprite & sprite, double current_time) {
     sprite.jumpTime = current_time;
 }
 
+void jump_along_with(CharacterSprite & assignee, const CharacterSprite & other) {
+    assignee.jumpStart = other.jumpStart;
+    assignee.jumpStrength = other.jumpStrength;
+    assignee.jumpTime = other.jumpTime;
+}
+
 }   }   // end namespace

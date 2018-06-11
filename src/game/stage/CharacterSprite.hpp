@@ -213,6 +213,10 @@ void update_jump_physics(CharacterSprite & sprite, double current_time, double g
 
 void make_jump(CharacterSprite & sprite, double current_time);
 
+// Sets one sprite to follow the same arc as another, by assigning most of the
+// jump vars to it. Used for Nicky's bombs originally.
+void jump_along_with(CharacterSprite & assignee, const CharacterSprite & other);
+
 }    }
 
 #endif
