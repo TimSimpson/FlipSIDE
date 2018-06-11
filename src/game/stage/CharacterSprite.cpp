@@ -121,8 +121,6 @@ CharacterSprite::CharacterSprite()
     jumpStrength(0),
     jumpTime(0),
     lastJump(0),
-    multiJump(0),
-    maxJump(0),
     flickerTime(0),
     flickOn(0),
     trueVisible(0),
@@ -179,8 +177,6 @@ CharacterSprite::CharacterSprite(const CharacterSprite & other)
     jumpStrength(other.jumpStrength),
     jumpTime(other.jumpTime),
     lastJump(other.lastJump),
-    multiJump(other.multiJump),
-    maxJump(other.maxJump),
     flickerTime(other.flickerTime),
     flickOn(other.flickOn),
     trueVisible(other.trueVisible),
@@ -233,8 +229,6 @@ CharacterSprite & CharacterSprite::operator=(const CharacterSprite & other) {
     this->jumpStrength = other.jumpStrength;
     this->jumpTime = other.jumpTime;
     this->lastJump = other.lastJump;
-    this->multiJump = other.multiJump;
-    this->maxJump = other.maxJump;
     this->flickerTime = other.flickerTime;
     this->flickOn = other.flickOn;
     this->trueVisible = other.trueVisible;
@@ -370,13 +364,6 @@ void CharacterSprite::update_jump_physics(double gravity) {
 }
 
 void CharacterSprite::start_jump() {
-    if (this->z == 0) {
-        this->multiJump = 0;
-    }
-    if (this->multiJump >= this->maxJump) {
-        return;
-    }
-    this->multiJump = this->multiJump + 1;
     start_bounce();
 }
 

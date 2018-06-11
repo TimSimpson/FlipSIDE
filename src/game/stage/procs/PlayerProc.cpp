@@ -312,6 +312,7 @@ protected:
     CharacterProcManager sub_processes;
     lp3::sims::CoroutineState coro_number_state;
     std::int64_t timer;
+    int multi_jump_count;
 
     enum class State {
         normal,
@@ -341,6 +342,7 @@ public:
         sub_processes(),
         coro_number_state(),
         timer(),
+        multi_jump_count(0),
         state(State::normal),
         key_data(),
         direction{0.0f, 0.0f}
@@ -531,13 +533,18 @@ public:
         }
 
 
-        if (s.z == 0) { s.multiJump = 0; }
+        if (s.z == 0) { multi_jump_count = 0; }
 
         if (s.name == "Nicky" && key_data.JumpKey == true
-            && s.multiJump < 3) {
+            && multi_jump_count < 3) {
+
             key_data.JumpKey = false;
-            //If .z = 0 Then .multiJump = 0
-            s.start_jump();
+
+            if (multi_jump_count < 3) {
+                //If .z = 0 Then .multiJump = 0
+                s.start_jump();
+                multi_jump_count += 1;
+            }
         }
 
 
@@ -831,7 +838,6 @@ public:
         sprite.hp = 4;
         //sprite.mode = "truck";
         this->mover = true;
-        sprite.maxJump = 1;
     }
 
     bool spawn_weapon() override {
@@ -905,7 +911,6 @@ public:
         sprite.hp = 4;
         //sprite.mode = "truck";
         this->mover = true;
-        sprite.maxJump = 1;
     }
 };
 
@@ -987,7 +992,6 @@ public:
         sprite.hp = 4;
         //sprite.mode = "truck";
         this->mover = true;
-        sprite.maxJump = 3;
     }
 
     bool spawn_weapon() override {

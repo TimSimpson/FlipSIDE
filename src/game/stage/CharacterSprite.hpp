@@ -156,9 +156,6 @@ private:
      double jumpTime;  // how long the jump has been happening
      double lastJump; // the last Z coordinate, before the latest update
 public:
-     int multiJump;  // which jump multi-jumpers are currently on
-     int maxJump; // max number of multi jumps
-
      double flickerTime; //Lets them flicker until then
      bool flickOn;
      int trueVisible;
