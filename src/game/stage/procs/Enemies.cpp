@@ -84,8 +84,7 @@ public:
         const auto jump = (int)(env.random.next() * 20) + 1;
         if (jump == 1) {
             if (sprite.z == 0) {
-                sprite.jumpStart = lp3::narrow<int>(sprite.z);
-                sprite.jumpTime = env.current_time;
+                make_jump(sprite, env.current_time);
             }
         }
     }

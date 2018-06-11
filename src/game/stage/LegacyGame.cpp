@@ -138,30 +138,7 @@ public:
         //Rem-------------------------------------------------------------------
 
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
-            auto & s = world.Sprite[j];
-
-            if (s.jumpTime != 0) {
-                s.lastJump = s.z;
-                //z=jt+(JS*T*2)-(g*t)*2^2
-                if (s.jumpM == 0) { s.jumpM = 1; }
-                s.z = s.jumpStart
-                    + (
-                    (s.jumpStrength * s.jumpM)
-                        * ((this->clock - s.jumpTime) * 2)
-                        )
-                    - (
-                        this->gravity
-                        * std::pow(((this->clock - s.jumpTime) * 2), 2)
-                        );
-                //
-                if (s.z < 0) { s.z = 0; s.jumpTime = 0; s.jumpM = 1; }
-            }
-            else {
-
-                //REM------------------------------------------------------
-                //  THis is the added gravity that pulls them down   if the're in the ares.
-                if (s.z > 0) { s.z = s.z - fs_speed_factor; }
-            }
+            update_jump_physics(world.Sprite[j], clock, gravity);
         }
 
 

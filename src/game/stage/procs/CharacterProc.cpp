@@ -17,19 +17,6 @@ namespace {
 }
 
 
-void make_jump(CharacterSprite & sprite, double current_time) {
-    if (sprite.z == 0) {
-        sprite.multiJump = 0;
-    }
-    if (sprite.multiJump >= sprite.maxJump) {
-        return;
-    }
-    sprite.multiJump = sprite.multiJump + 1;
-    sprite.jumpStart = sprite.z;
-    sprite.jumpTime = current_time;
-}
-
-
 ////void create_player(
 ////    PlayerData & player_data, CharacterSprite & sprite,
 ////    gsl::span<std::reference_wrapper<CharacterSprite>> & children,
@@ -475,7 +462,7 @@ public:
             if (k == 2) { s.y = s.y - fs_speed_factor; }
             k = random.next() * 20 + 1;
             if (k == 1) { if (s.z == 0) {
-                s.jumpStart = s.z; s.jumpTime = this->env.current_time; } }
+                make_jump(s, this->env.current_time); } }
         }
 
         if (s.name == "pigeonbomber") {

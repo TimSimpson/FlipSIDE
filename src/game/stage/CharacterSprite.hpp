@@ -145,12 +145,12 @@ public:
      double hp; //hp!
      double mhp;
 
-     int jumpStart;  //These are for jumping
-     int jumpStrength;
-     double jumpTime;
-     int lastJump;
-     int multiJump;
-     int maxJump; //max # of jumps
+     double jumpStart;  // the Z coordinate when the jump started
+     int jumpStrength;  // the intrinsic jump strength of the sprite
+     double jumpTime;  // how long the jump has been happening
+     double lastJump; // the last Z coordinate, before the latest update
+     int multiJump;  // which jump multi-jumpers are currently on
+     int maxJump; // max number of multi jumps
 
      double flickerTime; //Lets them flicker until then
      bool flickOn;
@@ -171,7 +171,7 @@ public:
      bool reverse; //to flip bitmap or not TRUE for transposing from left to right
      CharacterSpriteRef target; // it is who they are attacking
 
-     double jumpM;
+     double jumpM;  // per-jump value, adds to jump strength (spring uses this)
 
      // Behavior of this sprite.
      CharacterProc * proc;
@@ -196,7 +196,6 @@ private:
     friend class CharacterSpriteRef;
 };
 
-
 double getProx(const CharacterSprite & who, const CharacterSprite & who2);
 
 // Kills the sprite if it's off camera. Returns true if killed, false otherwise.
@@ -209,6 +208,10 @@ bool touching(const CharacterSprite & a, const CharacterSprite & b);
 void seek(CharacterSprite & s);
 
 void unstretch(CharacterSprite & s);
+
+void update_jump_physics(CharacterSprite & sprite, double current_time, double gravity);
+
+void make_jump(CharacterSprite & sprite, double current_time);
 
 }    }
 

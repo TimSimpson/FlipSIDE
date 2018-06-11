@@ -335,4 +335,41 @@ void unstretch(CharacterSprite & s) {
     }
 }
 
+void update_jump_physics(CharacterSprite & sprite, double current_time, double gravity) {
+    if (sprite.jumpTime != 0) {
+        sprite.lastJump = sprite.z;
+        //z=jt+(JS*T*2)-(g*t)*2^2
+        if (sprite.jumpM == 0) { sprite.jumpM = 1; }
+        sprite.z = sprite.jumpStart
+            + (
+            (sprite.jumpStrength * sprite.jumpM)
+                * ((current_time - sprite.jumpTime) * 2)
+                )
+            - (
+                gravity
+                * std::pow(((current_time - sprite.jumpTime) * 2), 2)
+                );
+        //
+        if (sprite.z < 0) { sprite.z = 0; sprite.jumpTime = 0; sprite.jumpM = 1; }
+    }
+    else {
+
+        //REM------------------------------------------------------
+        //  THis is the added gravity that pulls them down   if the're in the ares.
+        if (sprite.z > 0) { sprite.z = sprite.z - fs_speed_factor; }
+    }
+}
+
+void make_jump(CharacterSprite & sprite, double current_time) {
+    if (sprite.z == 0) {
+        sprite.multiJump = 0;
+    }
+    if (sprite.multiJump >= sprite.maxJump) {
+        return;
+    }
+    sprite.multiJump = sprite.multiJump + 1;
+    sprite.jumpStart = sprite.z;
+    sprite.jumpTime = current_time;
+}
+
 }   }   // end namespace
