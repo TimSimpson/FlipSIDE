@@ -194,9 +194,7 @@ public:
 
     void update_jump_physics(double gravity);
 
-    void start_jump();
-
-    void start_bounce(double jump_magnifier=1.0);
+    void start_jump(double jump_magnifier=1.0);
 
     // Sets one sprite to follow the same arc as another, by assigning most of the
     // jump vars to it. Used for Nicky's bombs originally.

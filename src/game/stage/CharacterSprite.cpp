@@ -363,11 +363,7 @@ void CharacterSprite::update_jump_physics(double gravity) {
     }
 }
 
-void CharacterSprite::start_jump() {
-    start_bounce();
-}
-
-void CharacterSprite::start_bounce(double jump_magnifier) {
+void CharacterSprite::start_jump(double jump_magnifier) {
     this->jumpStart = this->z;
     this->jumpTime = 0;
     this->jump_is_active = true;
