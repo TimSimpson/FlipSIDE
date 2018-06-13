@@ -89,33 +89,41 @@ private:
     void steal_reference(CharacterSpriteRef && other);
 };
 
-class JumpEngine {
+// ----------------------------------------------------------------------------
+// class JumpRoutine
+// ----------------------------------------------------------------------------
+//     Handles all the logic for making a character jump. Has it's own timer
+//     and must be called each frame.
+// ----------------------------------------------------------------------------
+class JumpRoutine {
 public:
-    JumpEngine();
+    JumpRoutine();
+	
+	// If true, this Sprite can jump on things in some contexts without
+	// damage.
+	inline bool is_falling() const {
+		return falling;
+	}
 
-    double update_jump_physics(const double z, const double gravity);
+	// Sets one sprite to follow the same arc as another, by assigning most of the
+	// jump vars to it. Used for Nicky's bombs originally.
+	void jump_along_with(const JumpRoutine & other);
 
-    void start_jump(double starting_z, double jump_magnifier=1.0);
+	// Start a jump. Pass in the beginning Z coordinates and, optionally, a 
+	// jump magnifier.
+	void start(double starting_z, double jump_magnifier = 1.0);
 
-    // Sets one sprite to follow the same arc as another, by assigning most of the
-    // jump vars to it. Used for Nicky's bombs originally.
-    void jump_along_with(const JumpEngine & other);
-
-    // If true, this Sprite can jump on things in some contexts without
-    // damage.
-    inline bool is_falling() const {
-        return falling;
-    }
+	// Call this once per frame. The Z coordinate is passed in and returned.
+    double update(const double z, const double gravity);        
 private:
     bool falling;
     bool jump_is_active;
-    double jumpStart;  // the Z coordinate when the jump started
-    // int jumpStrength;  // the intrinsic jump strength of the sprite
-    double jump_magnifier;
-    double jumpTime;  // how long the jump has been happening
-    double lastJump; // the last Z coordinate, before the latest update
-
+    double starting_z;  // the Z coordinate when the jump started
+    double jump_magnifier;  // arbitrarily magnifies the jump
+    double timer;  // how long the jump has been happening
+    double last_z; // the last Z coordinate, before the latest update
 };
+
 // ----------------------------------------------------------------------------
 // class CharacterSprite
 // ----------------------------------------------------------------------------
@@ -172,9 +180,9 @@ public:
      double hp; //hp!
      double mhp;
 
-     int jumpStrength;  // the intrinsic jump strength of the sprite
+     int jump_strength;  // the intrinsic jump strength of the sprite
 
-     JumpEngine jump_engine;
+     JumpRoutine jump_engine;
 
      double flickerTime; //Lets them flicker until then
      bool flickOn;
@@ -195,7 +203,7 @@ public:
      bool reverse; //to flip bitmap or not TRUE for transposing from left to right
      CharacterSpriteRef target; // it is who they are attacking
 
-     double jumpM;  // per-jump value, adds to jump strength (spring uses this)
+     double bounce_factor;  // per-jump value, adds to jump strength (spring uses this)
 
      // Behavior of this sprite.
      CharacterProc * proc;

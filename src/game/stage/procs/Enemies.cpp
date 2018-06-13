@@ -35,7 +35,7 @@ public:
         sprite.invTime = 1;
         sprite.hp = 3;
         sprite.soundFile = "Kerbose Ouch";
-        sprite.jumpStrength = 25;
+        sprite.jump_strength = 25;
         sprite.proc = this;
         const int kerbose_skin = (int) (env.random.next() * 2.0 + 1);
         if (kerbose_skin == 1) {

@@ -828,7 +828,7 @@ public:
         sprite.visible = true;
         sprite.length = 20;
         sprite.z = 0;
-        sprite.jumpStrength = 75;
+        sprite.jump_strength = 75;
         sprite.kind = Kind::player;
         sprite.frame = 5;
         sprite.dir = "u";
@@ -901,7 +901,7 @@ public:
         sprite.visible = true;
         sprite.length = 20;
         sprite.z = 0;
-        sprite.jumpStrength = 75;
+        sprite.jump_strength = 75;
         sprite.kind = Kind::player;
         sprite.frame = 5;
         sprite.dir = "u";
@@ -982,7 +982,7 @@ public:
         sprite.visible = true;
         sprite.length = 20;
         sprite.z = 0;
-        sprite.jumpStrength = 50;
+        sprite.jump_strength = 50;
         sprite.kind = Kind::player;
         sprite.frame = 5;
         sprite.dir = "u";

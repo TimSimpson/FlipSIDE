@@ -302,7 +302,7 @@ private:
 
 				world.Sprite[j].start_jump(
                     (world.Sprite[k].flickerTime < this->clock)
-                        ? world.Sprite[k].jumpM : 1.0);
+                        ? world.Sprite[k].bounce_factor : 1.0);
 
                 if (world.Sprite[k].flickerTime < this->clock) {
                     world.Sprite[k].hp = world.Sprite[k].hp - 1;
@@ -341,7 +341,7 @@ private:
             //BOUNCE TIME!
             if (world.Sprite[j].z > world.Sprite[k].length
                 && world.Sprite[j].is_falling()) {
-				world.Sprite[j].start_jump(world.Sprite[k].jumpM);
+				world.Sprite[j].start_jump(world.Sprite[k].bounce_factor);
                 sound.PlaySound("spring");
                 world.Sprite[k].mode = "bounce";
                 world.Sprite[k].miscTime = world.Sprite[k].time + 1;

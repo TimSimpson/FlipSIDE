@@ -221,7 +221,7 @@ public:
             spr.deathType = "greenspring";
 			spr.time = 0;
             spr.kind = Kind::trampoline;
-            spr.jumpM = 1.5;
+            spr.bounce_factor = 1.5;
             spr.length = 10;
             spr.wide = spr.wide * 2;
             spr.high = spr.high * 2;
