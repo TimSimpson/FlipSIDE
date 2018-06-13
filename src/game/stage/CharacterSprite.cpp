@@ -116,11 +116,12 @@ CharacterSprite::CharacterSprite()
     name(""),
     hp(0),
     mhp(0),
-    jump_is_active(false),
-    jumpStart(0),
+    // jump_is_active(false),
+    // jumpStart(0),
     jumpStrength(0),
-    jumpTime(0),
-    lastJump(0),
+    // jumpTime(0),
+    // lastJump(0),
+    jump_engine(),
     flickerTime(0),
     flickOn(0),
     trueVisible(0),
@@ -172,11 +173,12 @@ CharacterSprite::CharacterSprite(const CharacterSprite & other)
     name(other.name),
     hp(other.hp),
     mhp(other.mhp),
-    jump_is_active(false),
-    jumpStart(other.jumpStart),
+    // jump_is_active(false),
+    // jumpStart(other.jumpStart),
     jumpStrength(other.jumpStrength),
-    jumpTime(other.jumpTime),
-    lastJump(other.lastJump),
+    // jumpTime(other.jumpTime),
+    // lastJump(other.lastJump),
+    jump_engine(),
     flickerTime(other.flickerTime),
     flickOn(other.flickOn),
     trueVisible(other.trueVisible),
@@ -224,11 +226,12 @@ CharacterSprite & CharacterSprite::operator=(const CharacterSprite & other) {
     this->name = other.name;
     this->hp = other.hp;
     this->mhp = other.mhp;
-    this->jump_is_active = other.jump_is_active;
-    this->jumpStart = other.jumpStart;
+    // this->jump_is_active = other.jump_is_active;
+    // this->jumpStart = other.jumpStart;
     this->jumpStrength = other.jumpStrength;
-    this->jumpTime = other.jumpTime;
-    this->lastJump = other.lastJump;
+    // this->jumpTime = other.jumpTime;
+    // this->lastJump = other.lastJump;
+    this->jump_engine = other.jump_engine;
     this->flickerTime = other.flickerTime;
     this->flickOn = other.flickOn;
     this->trueVisible = other.trueVisible;
@@ -335,14 +338,59 @@ void unstretch(CharacterSprite & s) {
 }
 
 void CharacterSprite::update_jump_physics(double gravity) {
-    this->lastJump = this->z;
+    this->z = this->jump_engine.update_jump_physics(this->z, gravity);
+}
+
+void CharacterSprite::start_jump(double jump_magnifier) {
+    if (jump_magnifier == 0) {
+        jump_magnifier = 1;
+    }
+    this->jump_engine.start_jump(this->z, this->jumpStrength * jump_magnifier);
+}
+
+void CharacterSprite::jump_along_with(const CharacterSprite & other) {
+    this->jump_engine.jump_along_with(other.jump_engine);
+}
+
+bool CharacterSprite::is_falling() const {
+    return this->jump_engine.is_falling();
+}
+
+JumpEngine::JumpEngine()
+:   falling(false),
+    jump_is_active(false),
+    jumpStart(0),
+    jump_magnifier(1.0),
+    jumpTime(0),
+    lastJump(0)
+{
+}
+
+void JumpEngine::jump_along_with(const JumpEngine & other) {
+    this->jumpStart = other.jumpStart;
+    this->jump_magnifier = other.jump_magnifier;
+    this->jumpTime = other.jumpTime;
+}
+
+void JumpEngine::start_jump(double starting_z, double jump_magnifier) {
+    this->jumpStart = starting_z;
+    this->lastJump = this->jumpStart;
+    this->jumpTime = 0;
+    this->jump_is_active = true;
+    this->jump_magnifier = jump_magnifier;
+}
+
+double JumpEngine::update_jump_physics(const double z, const double gravity) {
+    const auto last_z = this->lastJump;
+
+    double next_z = z;
+
     if (this->jump_is_active) {
         this->jumpTime += fs_s_per_update;
-        //z=jt+(JS*T*2)-(g*t)*2^2
-        if (this->jumpM == 0) { this->jumpM = 1; }
-        this->z = this->jumpStart
+
+        next_z = this->jumpStart
             + (
-            (this->jumpStrength * this->jumpM)
+            this->jump_magnifier
                 * (this->jumpTime * 2)
                 )
             - (
@@ -350,38 +398,22 @@ void CharacterSprite::update_jump_physics(double gravity) {
                 * std::pow((this->jumpTime * 2), 2)
                 );
         //
-        if (this->z < 0) {
-            this->z = 0;
+        if (next_z < 0) {
+            next_z = 0;
             this->jump_is_active = false;
-            this->jumpM = 1;
         }
     }
     else {
         //REM------------------------------------------------------
         //  THis is the added gravity that pulls them down   if the're in the ares.
-        if (this->z > 0) {
-            this->z = this->z - fs_speed_factor;
+        if (next_z > 0) {
+            next_z = next_z - fs_speed_factor;
         }
     }
-}
 
-void CharacterSprite::start_jump(double jump_magnifier) {
-    this->jumpStart = this->z;
-    this->jumpTime = 0;
-    this->jump_is_active = true;
-    this->jumpM = jump_magnifier;
-}
-
-
-
-void CharacterSprite::jump_along_with(const CharacterSprite & other) {
-    this->jumpStart = other.jumpStart;
-    this->jumpStrength = other.jumpStrength;
-    this->jumpTime = other.jumpTime;
-}
-
-bool CharacterSprite::is_falling() const {
-    return this->lastJump > this->z;
+    this->falling = this->lastJump > next_z;
+    this->lastJump = next_z;
+    return next_z;
 }
 
 }   }   // end namespace

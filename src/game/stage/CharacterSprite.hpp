@@ -89,6 +89,33 @@ private:
     void steal_reference(CharacterSpriteRef && other);
 };
 
+class JumpEngine {
+public:
+    JumpEngine();
+
+    double update_jump_physics(const double z, const double gravity);
+
+    void start_jump(double starting_z, double jump_magnifier=1.0);
+
+    // Sets one sprite to follow the same arc as another, by assigning most of the
+    // jump vars to it. Used for Nicky's bombs originally.
+    void jump_along_with(const JumpEngine & other);
+
+    // If true, this Sprite can jump on things in some contexts without
+    // damage.
+    inline bool is_falling() const {
+        return falling;
+    }
+private:
+    bool falling;
+    bool jump_is_active;
+    double jumpStart;  // the Z coordinate when the jump started
+    // int jumpStrength;  // the intrinsic jump strength of the sprite
+    double jump_magnifier;
+    double jumpTime;  // how long the jump has been happening
+    double lastJump; // the last Z coordinate, before the latest update
+
+};
 // ----------------------------------------------------------------------------
 // class CharacterSprite
 // ----------------------------------------------------------------------------
@@ -145,17 +172,10 @@ public:
      double hp; //hp!
      double mhp;
 
-// TODO: Make most of this jump stuff private.
-//       The "multiJump" and "maxJump" stuff should be part of the player proc.
-private:
-     bool jump_is_active;
-     double jumpStart;  // the Z coordinate when the jump started
-public:
      int jumpStrength;  // the intrinsic jump strength of the sprite
-private:
-     double jumpTime;  // how long the jump has been happening
-     double lastJump; // the last Z coordinate, before the latest update
-public:
+
+     JumpEngine jump_engine;
+
      double flickerTime; //Lets them flicker until then
      bool flickOn;
      int trueVisible;
