@@ -8,6 +8,7 @@
 #include "procs/Enemies.hpp"
 #include "procs/PlayerProc.hpp"
 #include "EntityManager.hpp"
+#include "Level.hpp"
 #include "../GameOverScreen.hpp"
 #include "../NowLoading.hpp"
 #include "../TitleScreen.hpp"
@@ -405,12 +406,38 @@ private:
 
         if (stopMusic == true) { sound.PlayBgm(""); }
 
+        // this->loadLevel(levelFile); //"Level1b.cap"
 
-        this->loadLevel(levelFile); //"Level1b.cap"
+        FSLevelFile level_data = load_fs_level(vb, levelFile);
+
+        // Load textures
+        for (const auto & texture : level_data.textures) {
+            view.LoadTexture(texture.index, texture.name,
+                             texture.size.x, texture.size.y);
+        }
+        // Load sprites
+        int oki = 40; // old skool index
+        for (const auto & sprite: level_data.sprites) {
+            CharacterSprite & s = world.Sprite[oki];
+            s.name = sprite.name;
+            s.x = sprite.position.x;
+            s.y = sprite.position.y;
+            s.z = sprite.position.z;
+            s.srcx = sprite.src_ul.x;
+            s.srcy = sprite.src_ul.y;
+            s.srcx2 = sprite.src_br.x;
+            s.srcy2 = sprite.src_br.y;
+            s.wide = sprite.size.x;
+            s.high = sprite.size.y;
+            s.length = sprite.size.z;
+            s.texture = sprite.texture.value;
+            s.visible = sprite.visible;
+            s.kind = sprite.kind;
+            s.zOrder = sprite.z_order;
+            oki += 1;
+        }
 
         this->gravity = 20;
-
-        int j = 0;
 
         world.camera.focus({0, 0});
         view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight);
@@ -434,11 +461,6 @@ private:
                 proc_manager.add_process(player_proc.release());
             }
         }
-        ///*for (int h = 0; h < 3; ++h) {
-        //  proc_manager.add_process(
-        //      legacy_add_process(env, world, entity_manager, h*10,
-        //                         world.Sprite[h*10], world.Sprite[h*10].name));
-        //}*/
 
         // old school sprites 30-40 reserved for cinematics:
         proc_manager.add_process(
@@ -447,7 +469,7 @@ private:
         entity_manager.skip_to(40);
 
         // old school sprites >=40 for things loaded out of the level
-        for (j = 40; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
+        for (int j = 40; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             // First, try to create a new style proc:
             auto * proc =
                 proc::create_enemy_proc(env, entity_manager, world.Sprite[j].name);

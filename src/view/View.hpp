@@ -74,6 +74,7 @@ glm::vec4 qb_color(int index);
 // This has an assertion that the index is in bounds. Also using it in the
 // method signatures lets me see what has yet to be updated.
 struct StupidIndex {
+    StupidIndex();
     StupidIndex(int);
     int value;
 };

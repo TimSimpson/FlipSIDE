@@ -41,6 +41,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/EntityManager.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/LegacyGame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/LegacyGame.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/Level.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/Level.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/World.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/World.cpp
 

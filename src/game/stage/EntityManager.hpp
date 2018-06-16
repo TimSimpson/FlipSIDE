@@ -12,6 +12,9 @@ namespace nnd3d { namespace game {
 // ----------------------------------------------------------------------------
 //     Holds all the Sprites and offers semi-opaqure access to them.
 //     (This replaces World1).
+//     The goal is to change `CharacterSprite` into a class that represents
+//     a physical entity, and then put most of the special logic into the
+//     process class.
 // ----------------------------------------------------------------------------
 class EntityManager {
 public:

@@ -178,6 +178,10 @@ void Billboard::set_visibility(Visibility value) {
     }
 }
 
+StupidIndex::StupidIndex()
+:   value(-1)
+{}
+
 StupidIndex::StupidIndex(int _value)
 :   value(_value)
 {
