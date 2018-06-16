@@ -3,6 +3,7 @@
 #pragma once
 
 #include "World.hpp"
+#include "../../Sound.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -28,6 +29,17 @@ public:
     // This is an even crappier hack! If I don't have it the cinematic at the
     // end of room one can't work.
     void go_back(int old_index);
+
+    // Runs collision detection, calls back to handlers if things are touching
+    // TODO: Having to pass sound and clock in here is ridiculous.
+    //       This should change so that:
+    //          1. whether or not to do anything when two objects touch each
+    //             other is determined entirely by the "kind" property;
+    //             each object would have a list for what kinds it needs to
+    //             be notified about.
+    //          2. The processes that are called back should handle playing
+    //             sounds, flickering, etc.
+    void run_collision_detection(Sound & sound, const double clock);
 private:
     int s_index;
     World & world;
