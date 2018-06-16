@@ -414,12 +414,6 @@ private:
             return create_gameover_screen(context);
         }
 
-        //if (world.Sprite[0].name == "dead"
-        //    && world.Sprite[10].name == "dead"
-        //    && world.Sprite[20].name == "dead") {
-        //  return create_gameover_screen(context);
-        //}
-
         return nullptr;
     }
 
@@ -531,19 +525,6 @@ private:
             this->screen_name = "intro story"; // this will remind them that they failed
             // Note from present day: sure, just tell yourself that kid.
         }
-    }
-
-    void killLimit(int jex) {
-        // Rem- Kills unruly sprites who are out of bounds
-        auto & s = world.Sprite[jex];
-        if (s.x > world.camera.boundary().x || s.x < -10) { kill(s); }
-
-        if (s.y > world.camera.boundary().x || s.y < -10) { kill(s); }
-    }
-
-    void loadAnimation(int who, const std::string & file) {
-        auto & s = world.Sprite[who];
-        view.load_animation_file(s.Aframe, file);
     }
 
     void loadLevel(const std::string & file) {
