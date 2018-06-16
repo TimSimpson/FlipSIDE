@@ -199,7 +199,7 @@ public:
                 //If Sprite(k).mover = False And Sprite(j).mover = False Then GoTo fthis2
                 //If k = 1 And j = 31 Then Stop
                 if (touching(world.Sprite[j], world.Sprite[k])) {
-                    this->checkHit(j, k);
+                    this->checkHit(world.Sprite[j], world.Sprite[k]);
                 }
             fthis2:
                 EMPTY_LABEL_HACK
@@ -239,89 +239,87 @@ private:
         }
     }
 
-    void checkHit(int j, int k) {
-        _checkHit(j, k);
-        _checkHit(k, j);
-        return;  // exit sub
+    void checkHit(CharacterSprite & sprite_j, CharacterSprite & sprite_k) {
+        _checkHit(sprite_j, sprite_k);
+        _checkHit(sprite_k, sprite_j);
+        return;
     }
 
-    void _checkHit(const int j, const int k) {
-        auto gosub_hurtj = [this, &j]() {
-            const int HolderJ = j;
-            world.Sprite[HolderJ].flickerTime
-                = this->clock + world.Sprite[HolderJ].invTime;
-            sound.PlaySound(world.Sprite[HolderJ].soundFile);
+    void _checkHit(CharacterSprite & sprite_j, CharacterSprite & sprite_k) {
+        auto gosub_hurtj = [this, &sprite_j]() {
+            sprite_j.flickerTime
+                = this->clock + sprite_j.invTime;
+            sound.PlaySound(sprite_j.soundFile);
         };
 
-        auto gosub_hurtK = [this, &k]() {
-            const int HolderJ = k;
-            world.Sprite[HolderJ].flickerTime
-                = this->clock + world.Sprite[HolderJ].invTime;
-            sound.PlaySound(world.Sprite[HolderJ].soundFile);
+        auto gosub_hurtK = [this, &sprite_k]() {
+            sprite_k.flickerTime
+                = this->clock + sprite_k.invTime;
+            sound.PlaySound(sprite_k.soundFile);
         };
 
         //Player hits an enemy
-        if (world.Sprite[j].kind == Kind::player && (world.Sprite[k].kind == Kind::enemy
-            || world.Sprite[k].kind == Kind::enemy_bullet)) {
-            if (world.Sprite[j].flickerTime < this->clock) {
-                world.Sprite[j].hp = world.Sprite[j].hp - 1;
-                sound.PlaySound(world.Sprite[j].soundFile);
+        if (sprite_j.kind == Kind::player && (sprite_k.kind == Kind::enemy
+            || sprite_k.kind == Kind::enemy_bullet)) {
+            if (sprite_j.flickerTime < this->clock) {
+                sprite_j.hp = sprite_j.hp - 1;
+                sound.PlaySound(sprite_j.soundFile);
                 gosub_hurtj();
-                if (world.Sprite[j].hp <= 0) {
-                    world.Sprite[j].proc->death_animation();
+                if (sprite_j.hp <= 0) {
+                    sprite_j.proc->death_animation();
                 }
             }
         }
 
         //Enemy hit by a fireball
-        if ((world.Sprite[j].kind == Kind::enemy || world.Sprite[j].kind == Kind::enemy_weak_to_jumping)
-            && world.Sprite[k].kind == Kind::fireball) {
+        if ((sprite_j.kind == Kind::enemy || sprite_j.kind == Kind::enemy_weak_to_jumping)
+            && sprite_k.kind == Kind::fireball) {
 
-            if (world.Sprite[j].flickerTime < this->clock) {
-                world.Sprite[j].hp = world.Sprite[j].hp - 1;
+            if (sprite_j.flickerTime < this->clock) {
+                sprite_j.hp = sprite_j.hp - 1;
                 gosub_hurtj();
-                if (world.Sprite[j].hp <= 0) {
-                    world.Sprite[j].proc->death_animation();
+                if (sprite_j.hp <= 0) {
+                    sprite_j.proc->death_animation();
                 }
             }
-            if (world.Sprite[k].name == "fireball") {
-                if (game_state.player_data[(world.Sprite[k].parent) / 10].slicer == false) {
-                    kill(world.Sprite[k]);
+            if (sprite_k.name == "fireball") {
+                if (game_state.player_data[(sprite_k.parent) / 10].slicer == false) {
+                    kill(sprite_k);
                 }
             }
         }
 
         //Player steps on a goomba type thing
-        if (world.Sprite[j].kind == Kind::player
-            && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
-            if (world.Sprite[j].z > world.Sprite[k].length
-                && world.Sprite[j].is_falling()) {
+        if (sprite_j.kind == Kind::player
+            && (sprite_k.kind == Kind::goomba_thing || sprite_k.kind == Kind::enemy_weak_to_jumping)) {
+            if (sprite_j.z > sprite_k.length
+                && sprite_j.is_falling()) {
 
-				world.Sprite[j].start_jump(
-                    (world.Sprite[k].flickerTime < this->clock)
-                        ? world.Sprite[k].bounce_factor : 1.0);
+				sprite_j.start_jump(
+                    (sprite_k.flickerTime < this->clock)
+                        ? sprite_k.bounce_factor : 1.0);
 
-                if (world.Sprite[k].flickerTime < this->clock) {
-                    world.Sprite[k].hp = world.Sprite[k].hp - 1;
+                if (sprite_k.flickerTime < this->clock) {
+                    sprite_k.hp = sprite_k.hp - 1;
                     gosub_hurtK();
                     sound.PlaySound("spring");
-                    if (world.Sprite[k].hp <= 0) {
-                        world.Sprite[k].proc->death_animation();
+                    if (sprite_k.hp <= 0) {
+                        sprite_k.proc->death_animation();
                     }
                 }
             }
         }
 
         //Player illigetimately touches goomba.
-        if (world.Sprite[j].kind == Kind::player
-            && (world.Sprite[k].kind == Kind::goomba_thing || world.Sprite[k].kind == Kind::enemy_weak_to_jumping)) {
-            if (world.Sprite[j].flickerTime < this->clock) {
-                if (world.Sprite[j].z < world.Sprite[k].length
-                    || !world.Sprite[j].is_falling()) {
-                    world.Sprite[j].hp = world.Sprite[j].hp - 1;
+        if (sprite_j.kind == Kind::player
+            && (sprite_k.kind == Kind::goomba_thing || sprite_k.kind == Kind::enemy_weak_to_jumping)) {
+            if (sprite_j.flickerTime < this->clock) {
+                if (sprite_j.z < sprite_k.length
+                    || !sprite_j.is_falling()) {
+                    sprite_j.hp = sprite_j.hp - 1;
                     gosub_hurtj();
-                    if (world.Sprite[j].hp <= 0) {
-                        world.Sprite[j].proc->death_animation();
+                    if (sprite_j.hp <= 0) {
+                        sprite_j.proc->death_animation();
                     }
                 }
             }
@@ -329,29 +327,29 @@ private:
 
 
         //Player jumps on bouncy object
-        if (world.Sprite[k].kind == Kind::trampoline) {
+        if (sprite_k.kind == Kind::trampoline) {
 
-            if (world.Sprite[j].kind == Kind::fireball || world.Sprite[j].kind == Kind::enemy_bullet) {
+            if (sprite_j.kind == Kind::fireball || sprite_j.kind == Kind::enemy_bullet) {
                 goto overalready;
             }
 
             //BOUNCE TIME!
-            if (world.Sprite[j].z > world.Sprite[k].length
-                && world.Sprite[j].is_falling()) {
-				world.Sprite[j].start_jump(world.Sprite[k].bounce_factor);
+            if (sprite_j.z > sprite_k.length
+                && sprite_j.is_falling()) {
+				sprite_j.start_jump(sprite_k.bounce_factor);
                 sound.PlaySound("spring");
-                world.Sprite[k].mode = "bounce";
-                world.Sprite[k].miscTime = world.Sprite[k].time + 1;
+                sprite_k.mode = "bounce";
+                sprite_k.miscTime = sprite_k.time + 1;
             }
             //OH CRAP! I NO BOUNCE
-            if (world.Sprite[j].z < world.Sprite[k].length
-                || !world.Sprite[j].is_falling()) {
-                if (world.Sprite[j].kind == Kind::unmoveable || world.Sprite[j].kind == Kind::fireball
-                    || world.Sprite[j].kind == Kind::trampoline) {
+            if (sprite_j.z < sprite_k.length
+                || !sprite_j.is_falling()) {
+                if (sprite_j.kind == Kind::unmoveable || sprite_j.kind == Kind::fireball
+                    || sprite_j.kind == Kind::trampoline) {
                     goto britneyDog2;
                 }
-                world.Sprite[j].x = world.Sprite[j].lastX;
-                world.Sprite[j].y = world.Sprite[j].lastY;
+                sprite_j.x = sprite_j.lastX;
+                sprite_j.y = sprite_j.lastY;
         britneyDog2:
                 EMPTY_LABEL_HACK
             }
@@ -360,14 +358,14 @@ private:
         }
 
 
-        if (world.Sprite[j].kind == Kind::unmoveable) {
-            if (world.Sprite[k].kind == Kind::unmoveable || world.Sprite[k].kind == Kind::fireball
-                || world.Sprite[k].kind == Kind::trampoline || world.Sprite[k].kind == Kind::enemy_bullet) {
+        if (sprite_j.kind == Kind::unmoveable) {
+            if (sprite_k.kind == Kind::unmoveable || sprite_k.kind == Kind::fireball
+                || sprite_k.kind == Kind::trampoline || sprite_k.kind == Kind::enemy_bullet) {
                 goto britneyDog;
             }
 
-            world.Sprite[k].x = world.Sprite[k].lastX;
-            world.Sprite[k].y = world.Sprite[k].lastY;
+            sprite_k.x = sprite_k.lastX;
+            sprite_k.y = sprite_k.lastY;
         britneyDog:
             EMPTY_LABEL_HACK
         }
