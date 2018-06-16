@@ -240,25 +240,25 @@ private:
     }
 
     void checkHit(int j, int k) {
-                bool redo = false;
-        int HolderJ = 0;
+        _checkHit(j, k);
+        _checkHit(k, j);
+        return;  // exit sub
+    }
 
-        auto gosub_hurtj = [this, &HolderJ, &j]() {
-            HolderJ = j;
+    void _checkHit(const int j, const int k) {
+        auto gosub_hurtj = [this, &j]() {
+            const int HolderJ = j;
             world.Sprite[HolderJ].flickerTime
                 = this->clock + world.Sprite[HolderJ].invTime;
             sound.PlaySound(world.Sprite[HolderJ].soundFile);
         };
 
-        auto gosub_hurtK = [this, &HolderJ, &k]() {
-            HolderJ = k;
+        auto gosub_hurtK = [this, &k]() {
+            const int HolderJ = k;
             world.Sprite[HolderJ].flickerTime
                 = this->clock + world.Sprite[HolderJ].invTime;
             sound.PlaySound(world.Sprite[HolderJ].soundFile);
         };
-
-    redo2:
-        //If k = 1 And j = 31 Then Stop
 
         //Player hits an enemy
         if (world.Sprite[j].kind == Kind::player && (world.Sprite[k].kind == Kind::enemy
@@ -371,13 +371,6 @@ private:
         britneyDog:
             EMPTY_LABEL_HACK
         }
-
-        if (redo == false) {
-            redo = true; HolderJ = j; j = k; k = HolderJ; goto redo2;
-        }
-        if (redo == true) { HolderJ = j; j = k; k = HolderJ; }
-
-        return;  // exit sub
     }
 
     gsl::owner<GameProcess *> flipGame() {
