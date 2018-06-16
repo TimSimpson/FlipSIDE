@@ -328,8 +328,8 @@ public:
         }
     }
 
-    void shoot(CharacterSprite & who, // This was an integer
-		       const std::string & what, int wherex, int wherey) {
+    void shoot(CharacterSprite &, // who, // argument was an integer
+		       const std::string &, int, int) { //  what, int wherex, int wherey) {
 
         // 2018-06 : the old code would search through the sprites list, find
         //           one that looked dead, and re-initialize it as a "child"

@@ -11,7 +11,7 @@ void create_billboards(World & world,
     // Do goofy animation stuff - maybe this should be moved
     for (std::size_t j = 0; j < world.Sprite.size(); ++j) {
         auto & s = world.Sprite[j];
-		if (s.frame < 0 || s.frame >= s.Aframe.size()) {
+		if (s.frame < 0 || s.frame >= lp3::narrow<int>(s.Aframe.size())) {
 			LP3_LOG_WARNING("Sprite %i frame was %s (max is 19)",
 				            j, s.frame);
 			continue;

@@ -110,9 +110,6 @@ public:
         // current hard coded ms_per_update.
         this->clock += fs_s_per_update;
 
-        int focus_x = 0;
-        int focus_y = 0;
-
         this->findPlayers();
 
         if (game_state.numberPlayers.any_player_active()) {

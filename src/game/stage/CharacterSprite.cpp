@@ -372,16 +372,15 @@ void JumpRoutine::jump_along_with(const JumpRoutine & other) {
     this->timer = other.timer;
 }
 
-void JumpRoutine::start(double starting_z, double jump_magnifier) {
-    this->starting_z = starting_z;
+void JumpRoutine::start(double starting_z_arg, double jump_magnifier_arg) {
+    this->starting_z = starting_z_arg;
     this->last_z = this->starting_z;
     this->timer = 0;
     this->jump_is_active = true;
-    this->jump_magnifier = jump_magnifier;
+    this->jump_magnifier = jump_magnifier_arg;
 }
 
 double JumpRoutine::update(const double z, const double gravity) {
-    const auto last_z = this->last_z;
 
     double next_z = z;
 
