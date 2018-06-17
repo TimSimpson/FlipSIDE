@@ -228,6 +228,7 @@ private:
         int penguin;
         (void)penguin;  //2017- is this unused?
 
+        LP3_LOG_DEBUG("screen_name=%s", this->screen_name);
         if (this->exitS && boost::starts_with(this->screen_name, "Level")) {
             double sapple = boost::lexical_cast<double>(this->screen_name.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
@@ -281,7 +282,11 @@ private:
     }
 
     void goToLevel(const double which) {
-        this->gravity = 0;
+        // 2018-06 - this part is problematic and I want to make sure it's only
+        //           called once per LegacyGame instance.
+        LP3_ASSERT(this->gravity == 0);
+
+        destroyEverything(world, view, sound, 2);
 
         if (which == 1.1 || which == 1) {
             destroyEverything(world, view, sound);
@@ -296,7 +301,7 @@ private:
                             "Lv1bg.bmp",
 #endif
                             10, 10,
-                            true, true,
+                            true,
                             std::vector<glm::vec2>{
                                 { 50, 220}
                             });
@@ -314,7 +319,7 @@ private:
         if (which == 1.2) {
             this->MakeLevel(1.2f, "Level1.ogg", "level1b.cap", "Lv1bg2.png",
                             100, 100,
-                            true, true,
+                            true,
                 std::vector<glm::vec2>{
                     { 1122, 1650 }
             });
@@ -329,7 +334,7 @@ private:
         if (which == 1.3) {
             this->MakeLevel(1.3f, "Level1.ogg", "level1c.cap", "lv1bg3.png",
                             10, 10,
-                            false, false,
+                            false,
                 std::vector<glm::vec2>{
                     { 242, 2000 },
                     { 42, 300 },
@@ -349,7 +354,7 @@ private:
         if (which == 1.4) {
             this->MakeLevel(1.4f, "Level1.ogg", "level1d.cap", "level1birdstreet.png",
                             98, 480,
-                false, false, std::vector<glm::vec2>{
+                false, std::vector<glm::vec2>{
                     { 42, 300 }
             });
 
@@ -368,28 +373,8 @@ private:
             this->screen_name = "intro story"; // this will remind them that they failed
             // Note from present day: sure, just tell yourself that kid.
         }
-    }
 
-    void loadLevel(const std::string & file) {
-        int j = 0;
-        std::array<std::string, 10> texFile;
-        std::array<int, 10> texwide;
-        std::array<int, 10> texhigh;
-        {
-            auto f = vb.OpenForInput(file);
-            for (j = 0; j <= 9; ++ j) {
-                if (j > 3 || j < 1) {
-                    f.input(texFile[j], texwide[j], texhigh[j]);
-                    view.LoadTexture(j, texFile[j], texwide[j], texhigh[j]);
-                }
-            }
-            for (j = 40; j <= 100; ++j) {
-                auto & s = world.Sprite[j];
-                f.input(s.name, s.x, s.y, s.z, s.srcx, s.srcy, s.srcx2,
-                        s.srcy2, s.wide, s.high, s.length, s.texture, s.visible,
-                        s.kind, s.zOrder);
-            }
-        }
+        this->exitS = false;
     }
 
     void MakeLevel(const float stage,
@@ -397,38 +382,64 @@ private:
         const std::string & levelBgFile, const int lvlBgWidth,
         const int lvlBgHeight,
         const bool stopMusic,
-        const bool,  // loadScreen
         std::vector<glm::vec2> player_spawn_locations) {
+        auto result = make_level(context, world, random, game_state, clock, entity_manager, proc_manager, stage, player_spawn_locations, lvlBgMusic, levelFile, levelBgFile, lvlBgWidth, lvlBgHeight, stopMusic);
+        this->gravity = result.gravity;
+        this->player_procs = result.player_procs;
+    }
 
-        destroyEverything(world, view, sound, 2);
+    struct NewLevelInfo {
+        double gravity;
+        std::vector<InputReceivingCharacterProc *> player_procs;
+    };
+
+    static NewLevelInfo make_level(
+            GameContext & context,
+            World & world,  // with more work, this can go away
+            Random & random,  // used just for CharacterProcEnv
+            GameState & game_state,
+            const double & clock,  // dito
+            EntityManager & entity_manager,
+            CharacterProcManager & proc_manager,
+            const float stage,
+            std::vector<glm::vec2> player_spawn_locations,
+            const std::string & lvlBgMusic, const std::string & levelFile,
+            const std::string & levelBgFile, const int lvlBgWidth,
+            const int lvlBgHeight,
+            const bool stopMusic)
+    {
+        NewLevelInfo result;
+        result.gravity = 20;
+
+
 
         world.camera.set_size({640, 480});
 
-        if (stopMusic == true) { sound.PlayBgm(""); }
+        if (stopMusic == true) { context.sound.PlayBgm(""); }
 
         // this->loadLevel(levelFile); //"Level1b.cap"
 
+        Vb vb(context.media);
         FSLevelFile level_data = load_fs_level(vb, levelFile);
 
         // Load textures
         for (const auto & texture : level_data.textures) {
-            view.LoadTexture(texture.index, texture.name,
+            context.view.LoadTexture(texture.index, texture.name,
                              texture.size.x, texture.size.y);
         }
 
 
-        this->gravity = 20;
-
         world.camera.focus({0, 0});
-        view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight);
+        context.view.LoadTexture(-1, levelBgFile, lvlBgWidth, lvlBgHeight);
 
-        view.LoadTexture(0, "System.png", 336, 397);
+        context.view.LoadTexture(0, "System.png", 336, 397);
 
-        sound.LoadSound(15, "Spring.wav", "spring");
+        context.sound.LoadSound(15, "Spring.wav", "spring");
 
-        CharacterProcEnv env{ context, random, this->clock, world.camera };
 
-        // First 30 sprites were for player stuff (10 each)
+        CharacterProcEnv env{ context, random, clock, world.camera };
+
+         // First 30 sprites were for player stuff (10 each)
         for (auto & pd : game_state.player_data) {
             const auto & loc = lp3::narrow<int>(player_spawn_locations.size()) > pd.index
                 ? player_spawn_locations[pd.index]
@@ -437,7 +448,7 @@ private:
                 std::unique_ptr<InputReceivingCharacterProc> player_proc(
                     proc::create_player_proc(env, game_state, pd,
                                              entity_manager, loc));
-                player_procs.push_back(player_proc.get());
+                result.player_procs.push_back(player_proc.get());
                 proc_manager.add_process(player_proc.release());
             }
         }
@@ -497,9 +508,9 @@ private:
             }
         }
 
-        if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }
+        if (stopMusic == true) { context.sound.PlayBgm(lvlBgMusic); }
 
-        this->exitS = false;
+        return result;
     }
 
 

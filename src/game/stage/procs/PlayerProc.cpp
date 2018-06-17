@@ -332,7 +332,7 @@ public:
                PlayerData & _player_data,
                EntityManager & e_manager,
                const std::string & name,
-        const glm::vec2 & loc)
+               const glm::vec2 & loc)
     :   env(_env),
         game_state(_game_state),
         player_data(_player_data),
