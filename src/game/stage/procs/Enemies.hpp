@@ -9,7 +9,8 @@ namespace nnd3d { namespace game { namespace proc {
 CharacterProc * create_enemy_proc(
     CharacterProcEnv env, EntityManager & e_manager,
     const std::string & name,
-    const glm::dvec3 & position);
+    const glm::dvec3 & position,
+    const int texture_index);
 
 
 }   }   }

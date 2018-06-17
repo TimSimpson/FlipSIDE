@@ -18,7 +18,8 @@ private:
 
 public:
     Kerbose(CharacterProcEnv _env, EntityManager & e_manager,
-            const glm::dvec3 & position)
+            const glm::dvec3 & position,
+            const int texture_index)
     :   env(_env),
         mover(true),
         sprite(e_manager.grab_sprite()),
@@ -27,6 +28,7 @@ public:
     {
         sprite.name = "Kerbose";
         sprite.set_position(position);
+        sprite.texture = texture_index;
         sprite.wide = 21;
         sprite.high = 19;
         sprite.visible = true;
@@ -131,10 +133,11 @@ CharacterProc * create_enemy_proc(
     CharacterProcEnv env,
     EntityManager & e_manager,
     const std::string & name,
-    const glm::dvec3 & position)
+    const glm::dvec3 & position,
+    const int texture_index)
 {
     if (name == "Kerbose" || name == "Kirbose") {
-        return new Kerbose(env, e_manager, position);
+        return new Kerbose(env, e_manager, position, texture_index);
     }
     return nullptr;
 }
