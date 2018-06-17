@@ -415,27 +415,7 @@ private:
             view.LoadTexture(texture.index, texture.name,
                              texture.size.x, texture.size.y);
         }
-        // Load sprites
-        int oki = 40; // old skool index
-        for (const auto & sprite: level_data.sprites) {
-            CharacterSprite & s = world.Sprite[oki];
-            s.name = sprite.name;
-            s.x = sprite.position.x;
-            s.y = sprite.position.y;
-            s.z = sprite.position.z;
-            s.srcx = sprite.src_ul.x;
-            s.srcy = sprite.src_ul.y;
-            s.srcx2 = sprite.src_br.x;
-            s.srcy2 = sprite.src_br.y;
-            s.wide = sprite.size.x;
-            s.high = sprite.size.y;
-            s.length = sprite.size.z;
-            s.texture = sprite.texture.value;
-            s.visible = sprite.visible;
-            s.kind = sprite.kind;
-            s.zOrder = sprite.z_order;
-            oki += 1;
-        }
+
 
         this->gravity = 20;
 
@@ -470,18 +450,48 @@ private:
 
         // old school sprites >=40 for things loaded out of the level
         for (int j = 40; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
-            // First, try to create a new style proc:
-            auto * proc =
-                proc::create_enemy_proc(env, entity_manager, world.Sprite[j].name);
-            // If that fails, use the old nasty proc stuff
-            if (!proc) {
-                proc = legacy_add_process(
-                    env, world, entity_manager, j,
-                    world.Sprite[j], world.Sprite[j].name);
-                entity_manager.grab_sprite(); // make sure the manager doesn't
-                                              // use this next sprite.
+            CharacterSprite & s = world.Sprite[j];
+            if (lp3::narrow<int>(level_data.sprites.size()) > (j - 40)) {
+                const auto & sprite_level_data = level_data.sprites[j - 40];
+                LP3_LOG_DEBUG("j=%d", j);
+                LP3_LOG_DEBUG("name=%s", sprite_level_data.name);
+                s.name = sprite_level_data.name;
+                s.x = sprite_level_data.position.x;
+                s.y = sprite_level_data.position.y;
+                s.z = sprite_level_data.position.z;
+                s.srcx = sprite_level_data.src_ul.x;
+                s.srcy = sprite_level_data.src_ul.y;
+                s.srcx2 = sprite_level_data.src_br.x;
+                s.srcy2 = sprite_level_data.src_br.y;
+                s.wide = sprite_level_data.size.x;
+                s.high = sprite_level_data.size.y;
+                s.length = sprite_level_data.size.z;
+                s.texture = sprite_level_data.texture.value;
+                s.visible = sprite_level_data.visible;
+                s.kind = sprite_level_data.kind;
+                s.zOrder = sprite_level_data.z_order;
+
+                // First, try to create a new style proc:
+                auto * proc =
+                    proc::create_enemy_proc(
+                        env,
+                        entity_manager,
+                        sprite_level_data.name,
+                        sprite_level_data.position);
+                // If that fails, use the old nasty proc stuff
+                if (!proc) {
+                    proc = legacy_add_process(
+                        env,
+                        world,
+                        entity_manager,
+                        j,
+                        world.Sprite[j],
+                        world.Sprite[j].name);
+                    entity_manager.grab_sprite(); // make sure the manager doesn't
+                                                  // use this next sprite.
+                }
+                proc_manager.add_process(proc);
             }
-            proc_manager.add_process(proc);
         }
 
         if (stopMusic == true) { sound.PlayBgm(lvlBgMusic); }

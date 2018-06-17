@@ -98,7 +98,7 @@ private:
 class JumpRoutine {
 public:
     JumpRoutine();
-	
+
 	// If true, this Sprite can jump on things in some contexts without
 	// damage.
 	inline bool is_falling() const {
@@ -109,12 +109,12 @@ public:
 	// jump vars to it. Used for Nicky's bombs originally.
 	void jump_along_with(const JumpRoutine & other);
 
-	// Start a jump. Pass in the beginning Z coordinates and, optionally, a 
+	// Start a jump. Pass in the beginning Z coordinates and, optionally, a
 	// jump magnifier.
 	void start(double starting_z, double jump_magnifier = 1.0);
 
 	// Call this once per frame. The Z coordinate is passed in and returned.
-    double update(const double z, const double gravity);        
+    double update(const double z, const double gravity);
 private:
     bool falling;
     bool jump_is_active;
@@ -218,6 +218,16 @@ public:
 
     inline glm::vec2 getMiddle() const {
         return glm::vec2{ getMiddleX(), getMiddleY() };
+    }
+
+    inline glm::dvec3 get_position() const {
+        return { this->x, this->y, this->z };
+    }
+
+    void set_position(const glm::dvec3 & position) {
+        this->x = position.x;
+        this->y = position.y;
+        this->z = position.z;
     }
 
     void update_jump_physics(double gravity);

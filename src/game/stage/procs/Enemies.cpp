@@ -17,7 +17,8 @@ private:
     lp3::sims::CoroutineState state;
 
 public:
-    Kerbose(CharacterProcEnv _env, EntityManager & e_manager)
+    Kerbose(CharacterProcEnv _env, EntityManager & e_manager,
+            const glm::dvec3 & position)
     :   env(_env),
         mover(true),
         sprite(e_manager.grab_sprite()),
@@ -25,6 +26,7 @@ public:
         state()
     {
         sprite.name = "Kerbose";
+        sprite.set_position(position);
         sprite.wide = 21;
         sprite.high = 19;
         sprite.visible = true;
@@ -128,10 +130,11 @@ public:
 CharacterProc * create_enemy_proc(
     CharacterProcEnv env,
     EntityManager & e_manager,
-    const std::string & name)
+    const std::string & name,
+    const glm::dvec3 & position)
 {
     if (name == "Kerbose" || name == "Kirbose") {
-        return new Kerbose(env, e_manager);
+        return new Kerbose(env, e_manager, position);
     }
     return nullptr;
 }
