@@ -282,6 +282,27 @@ private:
     }
 
     void goToLevel(const double which) {
+        // TODO:
+        //      ok, after mucking with this code for a bit here's my idea.
+        //      Change the actual special level loading logic to do this:
+        //
+        //      Create a magical process- this can load sound, change the
+        //      textures, do anything else crazy. But it gets added as a
+        //      typical process that's run with everything else. This opens
+        //      the door in the first room.
+        //
+        //      Second: either return a list of sprites thats from level data,
+        //      or make a function that does all that crap callable. Currently
+        //      such a function is make_level, but you have to send it the
+        //      entire universe. Hopefully in the future this can be scaled
+        //      back.
+        //
+        //      If I had a callable to load that stuff, I might want one to
+        //      load players too. At this point I'm feeling like this - maybe
+        //      - could be a subclass sandbox.
+        //
+
+
         // 2018-06 - this part is problematic and I want to make sure it's only
         //           called once per LegacyGame instance.
         LP3_ASSERT(this->gravity == 0);
