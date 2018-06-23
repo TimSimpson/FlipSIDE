@@ -228,7 +228,6 @@ private:
         int penguin;
         (void)penguin;  //2017- is this unused?
 
-        LP3_LOG_DEBUG("screen_name=%s", this->screen_name);
         if (this->exitS && boost::starts_with(this->screen_name, "Level")) {
             double sapple = boost::lexical_cast<double>(this->screen_name.substr(5));
             sapple = sapple + 0.1; // WTF, right? It's in the original code though...
@@ -478,13 +477,15 @@ private:
         proc_manager.add_process(
             proc::create_cinema_proc(env, entity_manager, stage));
 
-        entity_manager.skip_to(40);
+        const int arby_offset = 40;
 
-        // old school sprites >=40 for things loaded out of the level
-        for (int j = 40; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
+        entity_manager.skip_to(arby_offset);
+
+        // old school sprites >=arby_offset for things loaded out of the level
+        for (int j = arby_offset; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             CharacterSprite & s = world.Sprite[j];
-            if (lp3::narrow<int>(level_data.sprites.size()) > (j - 40)) {
-                const auto & sprite_level_data = level_data.sprites[j - 40];
+            if (lp3::narrow<int>(level_data.sprites.size()) > (j - arby_offset)) {
+                const auto & sprite_level_data = level_data.sprites[j - arby_offset];
 
                 auto set_sprite_values = [&]() {
                     s.name = sprite_level_data.name;
@@ -519,9 +520,8 @@ private:
                         env,
                         world,
                         entity_manager,
-                        j,
-                        world.Sprite[j],
-                        world.Sprite[j].name);
+                        s,
+                        s.name);
                     entity_manager.grab_sprite(); // make sure the manager doesn't
                                                   // use this next sprite.
                 }

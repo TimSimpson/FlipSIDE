@@ -65,16 +65,14 @@ class LegacyProc : public CharacterProc {
 private:
     CharacterProcEnv env;
     CharacterSprite & s;
-    int j;
     bool mover;
     World & world;
 
 public:
-     LegacyProc(CharacterProcEnv & _env, CharacterSprite & _s, int _j,
+     LegacyProc(CharacterProcEnv & _env, CharacterSprite & _s,
                 World & world_arg, const std::string & name)
      :  env(_env),
         s(_s),
-        j(_j),
         mover(false),
         world(world_arg)
      {
@@ -620,17 +618,6 @@ public:
 
         if (s.name == "dead") {
             //Stop
-            if ((j / 10) == 0) {
-                s.x = world.camera.x() + 10;
-            }
-            if ((j / 10) == 1) {
-                s.x = world.camera.x() + 250;
-                s.color = view::qb_color(10);
-            }
-            if ((j / 10) == 2) {
-                s.x = world.camera.x() + 450;
-                s.color = view::qb_color(14);
-            }
             s.y = world.camera.y() + 10;
             s.frame = 0;
             s.visible = false;
@@ -713,11 +700,11 @@ void CharacterProcManager::update() {
 
 gsl::owner<CharacterProc *> legacy_add_process(
     CharacterProcEnv & env, World & world, EntityManager &,
-    int j, CharacterSprite & s, const std::string & name)
+    CharacterSprite & s, const std::string & name)
 {
     // TODO: in the future, use the names here, or something, but for
     //       now, use the indexes to figure out if it's a player
-    return new LegacyProc(env, s, j, world, name);
+    return new LegacyProc(env, s, world, name);
 }
 
 }   }

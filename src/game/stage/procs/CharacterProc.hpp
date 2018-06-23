@@ -116,7 +116,7 @@ private:
 // ---------------------------------------------------------------------------
 gsl::owner<CharacterProc *> legacy_add_process(
     CharacterProcEnv & env, World & world, EntityManager & em,
-    int j, CharacterSprite & s, const std::string & name);
+    CharacterSprite & s, const std::string & name);
 
 }    }
 
