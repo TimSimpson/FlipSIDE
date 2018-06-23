@@ -17,6 +17,25 @@
 namespace nnd3d { namespace game {
 
 class CharacterSprite;
+class CharacterProc;
+class CharacterProcInterop;
+class CharacterProcManager;
+
+// ---------------------------------------------------------------------------
+// class CharacterProcInterop
+// ---------------------------------------------------------------------------
+//     This is a subset of functionality from CharacterProcManager that
+//     allows the procs themselves to do things like launch other processes.
+// ---------------------------------------------------------------------------
+class CharacterProcInterop {
+public:
+    CharacterProcInterop(CharacterProcManager & manager);
+
+    // Creates a new process.
+    void spawn(gsl::owner<CharacterProc *> process);
+private:
+    CharacterProcManager & manager;
+};
 
 
 // ---------------------------------------------------------------------------
@@ -29,6 +48,7 @@ struct CharacterProcEnv {
     Random & random;
     const double & current_time;
     Camera & camera;
+    CharacterProcInterop processes;
 };
 
 ////void create_player(PlayerData & player_data, CharacterSprite & sprite,
@@ -53,6 +73,7 @@ public:
      virtual void animate(std::int64_t) {
      }
 
+     // This should be changed to something that register a hit was detected.
      virtual void death_animation() {
          throw std::logic_error("The method or operation is not implemented.");
      }

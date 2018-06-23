@@ -154,7 +154,11 @@ public:
                 if (this->findQ("Kerbose") < 1) {
                     kill(s);
                     s.name = "exit";
-                    CharacterProcEnv env{ context, random, this->clock, world.camera };
+                    CharacterProcEnv env{ context, random,
+                        this->clock,
+                        world.camera,
+                        CharacterProcInterop(proc_manager)
+                    };
 
                     // This will break if anything else happens, but is needed
                     // to preserve the old way things were.
@@ -457,7 +461,13 @@ private:
         context.sound.LoadSound(15, "Spring.wav", "spring");
 
 
-        CharacterProcEnv env{ context, random, clock, world.camera };
+        CharacterProcEnv env{
+            context,
+            random,
+            clock,
+            world.camera,
+            CharacterProcInterop(proc_manager)
+        };
 
          // First 30 sprites were for player stuff (10 each)
         for (auto & pd : game_state.player_data) {

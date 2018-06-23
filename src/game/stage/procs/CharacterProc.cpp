@@ -637,6 +637,14 @@ void CharacterProcManager::update() {
     }
 }
 
+CharacterProcInterop::CharacterProcInterop(CharacterProcManager & manager_arg)
+:   manager(manager_arg)
+{}
+
+void CharacterProcInterop::spawn(gsl::owner<CharacterProc *> process) {
+    manager.add_process(process);
+}
+
 
 gsl::owner<CharacterProc *> legacy_add_process(
     CharacterProcEnv & env, World & world, EntityManager & entity_manager,
