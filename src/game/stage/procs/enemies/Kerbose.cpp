@@ -16,7 +16,7 @@ private:
     lp3::sims::CoroutineState state;
 
 public:
-    Kerbose(CharacterProcEnv _env, EntityManager & e_manager,
+    Kerbose(CharacterProcEnv _env, EntityManagerCO & e_manager,
             const glm::dvec3 & position,
             const int texture_index)
     :   env(_env),
@@ -128,7 +128,7 @@ public:
 
 CharacterProc * create_kerbose_proc(
     CharacterProcEnv env,
-    EntityManager & e_manager,
+    EntityManagerCO & e_manager,
     const glm::dvec3 & position,
     const int texture_index)
 {

@@ -139,24 +139,31 @@ namespace {
 }
 
 
-EntityManager::EntityManager(World & world_arg)
+EntityManager::EntityManager(CharacterSprite & sprite)
 :   s_index(0),
-    world(world_arg)
-{}
+    sprites(gsl::make_span(&(sprite), 1))
+{
+}
+
+EntityManager::EntityManager(gsl::span<CharacterSprite> sprites_arg)
+:   s_index(0),
+    sprites(sprites_arg)
+{
+}
 
 CharacterSprite & EntityManager::grab_sprite() {
-    LP3_ASSERT(lp3::narrow<std::size_t>(s_index) < world.Sprite.size());
+    LP3_ASSERT(s_index < sprites.size());
     auto old_index = s_index;
     s_index += 1;
-    return world.Sprite[old_index];
+    return sprites[old_index];
 }
 
 gsl::span<CharacterSprite> EntityManager::grab_sprites(int count) {
     LP3_ASSERT(count > 0);
-    LP3_ASSERT(lp3::narrow<std::size_t>(s_index + count) < world.Sprite.size());
+    LP3_ASSERT(s_index + count < sprites.size());
     auto old_index = s_index;
     s_index += count;
-    return gsl::make_span(&(world.Sprite[old_index]), count);
+    return gsl::make_span(&(sprites[old_index]), count);
 }
 
 void EntityManager::skip_to(int new_index) {
@@ -169,24 +176,28 @@ void EntityManager::go_back(int new_index) {
 }
 
 void EntityManager::run_collision_detection(Sound & sound, const double clock) {
-    for (int j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++ j) {
+    for (int j = 0; j < lp3::narrow<int>(sprites.size()); ++ j) {
         //If Sprite(j).mover = True Then
-        for (int k = j + 1; k < lp3::narrow<int>(world.Sprite.size()); ++k) {
-            if (world.Sprite[j].kind == Kind::neutral) { goto fthis2; }
-            if (world.Sprite[k].kind == world.Sprite[j].kind
-                || world.Sprite[k].kind == Kind::neutral) {
+        for (int k = j + 1; k < lp3::narrow<int>(sprites.size()); ++k) {
+            if (sprites[j].kind == Kind::neutral) { goto fthis2; }
+            if (sprites[k].kind == sprites[j].kind
+                || sprites[k].kind == Kind::neutral) {
                 goto fthis2;
             }
             //If Sprite(k).mover = False And Sprite(j).mover = False Then GoTo fthis2
             //If k = 1 And j = 31 Then Stop
-            if (touching(world.Sprite[j], world.Sprite[k])) {
-                on_collision(sound, clock, world.Sprite[j], world.Sprite[k]);
-                on_collision(sound, clock, world.Sprite[k], world.Sprite[j]);
+            if (touching(sprites[j], sprites[k])) {
+                on_collision(sound, clock, sprites[j], sprites[k]);
+                on_collision(sound, clock, sprites[k], sprites[j]);
             }
         fthis2:
             EMPTY_LABEL_HACK
         }
     }
 }
+
+EntityManagerCO::EntityManagerCO(EntityManager & manager_arg)
+:   manager(manager_arg)
+{}
 
 }   }

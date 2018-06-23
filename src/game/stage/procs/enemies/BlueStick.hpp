@@ -7,7 +7,7 @@
 namespace nnd3d { namespace game { namespace proc {
 
 CharacterProc * create_bluestick_proc(
-    CharacterProcEnv env, EntityManager & e_manager,
+    CharacterProcEnv env, EntityManagerCO e_manager,
     const glm::dvec3 & position,
     const int texture_index);
 

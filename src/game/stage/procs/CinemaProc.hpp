@@ -7,7 +7,7 @@
 namespace nnd3d { namespace game { namespace proc {
 
 CharacterProc * create_cinema_proc(
-    CharacterProcEnv env, EntityManager & e_manager,
+    CharacterProcEnv env, EntityManagerCO e_manager,
     const float stage);
 
 

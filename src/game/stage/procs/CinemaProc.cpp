@@ -95,7 +95,7 @@ private:
     lp3::sims::CoroutineState state;
 
 public:
-    FaceRadio(CharacterProcEnv _env, EntityManager & e_manager,
+    FaceRadio(CharacterProcEnv _env, EntityManagerCO e_manager,
               const std::string & texture_file,
               const std::string & animation_file,
               const std::vector<CinemaType> & _cinema)
@@ -242,7 +242,7 @@ private:
     lp3::sims::CoroutineState state;
 
 public:
-    ClockAndFaceCinematic(CharacterProcEnv _env, EntityManager & e_manager,
+    ClockAndFaceCinematic(CharacterProcEnv _env, EntityManagerCO e_manager,
                           const std::string & texture_file,
                           const std::string & animation_file,
                           const std::vector<CinemaType> & _cinema)
@@ -263,7 +263,7 @@ public:
 
 
 CharacterProc * create_cinema_proc(
-    CharacterProcEnv env, EntityManager & e_manager,
+    CharacterProcEnv env, EntityManagerCO e_manager,
     const float stage)
 {
     if (1.0 == stage || 1.1 == stage) {

@@ -2,13 +2,14 @@
 #include <lp3/sims.hpp>
 #include "enemies/BlueStick.hpp"
 #include "enemies/Kerbose.hpp"
+#include "enemies/PaulRunner.hpp"
 
 namespace nnd3d { namespace game { namespace proc {
 
 
 CharacterProc * create_enemy_proc(
     CharacterProcEnv env,
-    EntityManager & e_manager,
+    EntityManagerCO & e_manager,
     const std::string & name,
     const glm::dvec3 & position,
     const int texture_index)
@@ -18,6 +19,9 @@ CharacterProc * create_enemy_proc(
     }
     if (name == "bluestick") {
         return create_bluestick_proc(env, e_manager, position, texture_index);
+    }
+    if (name == "paulrun") {
+        return create_paulrunner_proc(env, e_manager, position, texture_index);
     }
     return nullptr;
 }

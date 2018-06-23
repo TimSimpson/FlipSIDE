@@ -40,6 +40,7 @@ private:
     Random random;
     std::int64_t animation_timer;
     EntityManager entity_manager;
+    EntityManagerCO entity_manager_co;
     CharacterProcManager proc_manager;
     // This handles exitting to the next screen.
     bool exitS;
@@ -60,7 +61,8 @@ public:
         world(),
         random(),
         animation_timer(0),
-        entity_manager(world),
+        entity_manager(world.Sprite),
+        entity_manager_co(entity_manager),
         proc_manager(),
         exitS(false),
         screen_name(_screen_name),
@@ -143,6 +145,7 @@ public:
         proc_manager.update();
 
 
+
         for (j = 0; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             auto & s = world.Sprite[j];
             // Handle all "level" stuff here, but call update on gameproc
@@ -164,7 +167,8 @@ public:
                     // to preserve the old way things were.
                     entity_manager.go_back(30);
                     proc_manager.add_process(
-                        proc::create_cinema_proc(env, entity_manager, 1.1f));
+                        proc::create_cinema_proc(
+                            env, entity_manager_co, 1.1f));
                 }
             } else if (s.name == "exit") {
                 // This logic is rotten and only works between now and when
@@ -432,6 +436,8 @@ private:
             const int lvlBgHeight,
             const bool stopMusic)
     {
+        EntityManagerCO entity_manager_co(entity_manager);
+
         NewLevelInfo result;
         result.gravity = 20;
 
@@ -477,7 +483,7 @@ private:
             if (pd.active) {
                 std::unique_ptr<InputReceivingCharacterProc> player_proc(
                     proc::create_player_proc(env, game_state, pd,
-                                             entity_manager, loc));
+                                             entity_manager_co, loc));
                 result.player_procs.push_back(player_proc.get());
                 proc_manager.add_process(player_proc.release());
             }
@@ -485,7 +491,7 @@ private:
 
         // old school sprites 30-40 reserved for cinematics:
         proc_manager.add_process(
-            proc::create_cinema_proc(env, entity_manager, stage));
+            proc::create_cinema_proc(env, entity_manager_co, stage));
 
         const int arby_offset = 40;
 
@@ -496,11 +502,15 @@ private:
             if (lp3::narrow<int>(level_data.sprites.size()) > (j - arby_offset)) {
                 const auto & sprite_level_data = level_data.sprites[j - arby_offset];
 
+                if (sprite_level_data.name == "paulrun") {
+                    LP3_LOG_INFO(
+                        "Paul width=%d height=%d", sprite_level_data.size.x, sprite_level_data.size.y);
+                }
                 // First, try to create a new style proc:
                 auto * proc =
                     proc::create_enemy_proc(
                         env,
-                        entity_manager,
+                        entity_manager_co,
                         sprite_level_data.name,
                         sprite_level_data.position,
                         sprite_level_data.texture.value);
@@ -509,7 +519,7 @@ private:
                     proc = legacy_add_process(
                         env,
                         world,
-                        entity_manager,
+                        entity_manager_co,
                         sprite_level_data.name,
                         sprite_level_data);
                 }

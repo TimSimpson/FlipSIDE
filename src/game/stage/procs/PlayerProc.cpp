@@ -330,7 +330,7 @@ public:
     PlayerProc(CharacterProcEnv _env,
                GameState & _game_state,
                PlayerData & _player_data,
-               EntityManager & e_manager,
+               EntityManagerCO & e_manager,
                const std::string & name,
                const glm::vec2 & loc)
     :   env(_env),
@@ -768,7 +768,7 @@ public:
     ThomasProc(CharacterProcEnv _env,
         GameState & _game_state,
         PlayerData & _player_data,
-        EntityManager & e_manager,
+        EntityManagerCO & e_manager,
         const glm::vec2 & loc)
     :   PlayerProc(_env, _game_state, _player_data, e_manager, "Thomas", loc),
         mover(false)
@@ -853,7 +853,7 @@ public:
     NickProc(CharacterProcEnv _env,
         GameState & _game_state,
         PlayerData & _player_data,
-        EntityManager & e_manager,
+        EntityManagerCO & e_manager,
         const glm::vec2 & loc)
     :   ThomasProc(_env, _game_state, _player_data, e_manager, loc),
         mover(false)
@@ -915,7 +915,7 @@ public:
     NickyProc(CharacterProcEnv _env,
         GameState & _game_state,
         PlayerData & _player_data,
-        EntityManager & e_manager,
+        EntityManagerCO & e_manager,
         const glm::vec2 & loc)
     :   PlayerProc(_env, _game_state, _player_data, e_manager, "Nicky", loc),
         mover(false)
@@ -1003,7 +1003,7 @@ public:
 
 InputReceivingCharacterProc * create_player_proc(
     CharacterProcEnv env, GameState & game_state,
-    PlayerData & player_data, EntityManager & e_manager, const glm::vec2 & loc)
+    PlayerData & player_data, EntityManagerCO & e_manager, const glm::vec2 & loc)
 {
     if (player_data.playerName == "Thomas") {
         return new ThomasProc(env, game_state, player_data, e_manager, loc);

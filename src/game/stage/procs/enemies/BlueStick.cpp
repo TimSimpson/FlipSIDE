@@ -12,7 +12,7 @@ private:
     bool dying;
 
 public:
-    BlueStick(CharacterProcEnv _env, EntityManager & e_manager,
+    BlueStick(CharacterProcEnv _env, EntityManagerCO e_manager,
             const glm::dvec3 & position,
             const int texture_index)
     :   env(_env),
@@ -104,7 +104,7 @@ public:
 
 CharacterProc * create_bluestick_proc(
     CharacterProcEnv env,
-    EntityManager & e_manager,
+    EntityManagerCO e_manager,
     const glm::dvec3 & position,
     const int texture_index)
 {

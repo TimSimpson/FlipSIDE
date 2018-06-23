@@ -21,6 +21,9 @@ class CharacterProc;
 class CharacterProcInterop;
 class CharacterProcManager;
 
+
+
+
 // ---------------------------------------------------------------------------
 // class CharacterProcInterop
 // ---------------------------------------------------------------------------

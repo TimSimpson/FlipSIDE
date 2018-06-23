@@ -45,8 +45,7 @@ public:
          //      something similar, move this to view, and call it outside of
          //      the logic loop.
 
-         if (s.name == "goomba" || s.name == "Kerbose"
-             || s.name == "paulrun" || s.name == "pigeonbomber") {
+         if (s.name == "goomba" || s.name == "pigeonbomber") {
              s.frame = s.frame + 1;
              if (s.frame > 2) { s.frame = 1; }
          }
@@ -96,19 +95,6 @@ public:
         if (spr.name == "clouds") {
             spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
         }
-
-
-        if (spr.name == "paulrun") {
-            view.load_animation_file(spr.Aframe, "paulrun.ani");
-            spr.hp = 1;
-            spr.kind = Kind::enemy_weak_to_jumping;
-            spr.deathType = "gotmilkbs";
-            spr.invTime = 1;
-            spr.hp = 2;
-            spr.soundFile = "Paul Ouch";
-            spr.length = 20;
-        }
-
 
         if (spr.name == "paulbullet") {
             view.load_animation_file(spr.Aframe, "paulbullet.ani");
@@ -379,47 +365,6 @@ public:
             s.frame = s.frame + 1; if (s.frame > 1) { s.frame = 0; }
         }
 
-        if (s.name == "paulrun") {
-            if (s.mode == "") { s.mode = "right"; }
-
-            if (s.mode == "right") {
-                s.reverse = false;
-                s.x = s.x + fs_speed_factor;
-                s.seekx = s.seekx + fs_speed_factor;
-                if (s.seekx > 100) {
-                    s.mode = "left"; s.seekx = 0; s.dir = ""; }
-            }
-            if (s.mode == "left") {
-                s.reverse = true;
-                s.x = s.x - fs_speed_factor;
-                s.seekx = s.seekx + fs_speed_factor;
-                if (s.seekx > 100) {
-                    s.mode = "right"; s.seekx = 0; s.dir = ""; }
-            }
-
-            if (s.seekx >= 50 && s.dir != "done") {
-                const auto target = world.find_closest_player(s);
-                if (target) {
-                    this->shoot(s, "paulbullet",
-                                target->x,
-                                target->y);
-                }
-                s.dir = "done";
-            }
-        }
-
-        // if (s.name == "bluestick") {
-        //     k = random.next() * 2 + 1;
-        //     if (k == 1) { s.x = s.x + fs_speed_factor; }
-        //     if (k == 2) { s.x = s.x - fs_speed_factor; }
-        //     k = random.next() * 2 + 1;
-        //     if (k == 1) { s.y = s.y + fs_speed_factor; }
-        //     if (k == 2) { s.y = s.y - fs_speed_factor; }
-        //     k = random.next() * 20 + 1;
-        //     if (k == 1) { if (s.z == 0) {
-        //         s.start_jump(); } }
-        // }
-
         if (s.name == "pigeonbomber") {
             s.z = s.z + fs_speed_factor;
             //s.frame = s.frame + 1
@@ -592,7 +537,7 @@ public:
 
 
 gsl::owner<CharacterProc *> legacy_add_process(
-    CharacterProcEnv & env, World & world, EntityManager & entity_manager,
+    CharacterProcEnv & env, World & world, EntityManagerCO & entity_manager,
     const std::string & name,
     const SpriteLevelData & lvl_data)
 {

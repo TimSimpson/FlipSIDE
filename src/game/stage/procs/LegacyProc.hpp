@@ -10,7 +10,7 @@ namespace nnd3d { namespace game {
 // A factory function that makes processes.
 // ---------------------------------------------------------------------------
 gsl::owner<CharacterProc *> legacy_add_process(
-    CharacterProcEnv & env, World & world, EntityManager & em,
+    CharacterProcEnv & env, World & world, EntityManagerCO & em,
     const std::string & name,
     const SpriteLevelData & lvl_data);
 

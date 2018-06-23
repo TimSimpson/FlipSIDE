@@ -18,7 +18,10 @@ namespace nnd3d { namespace game {
 // ----------------------------------------------------------------------------
 class EntityManager {
 public:
-    EntityManager(World & world);
+
+    EntityManager(CharacterSprite & sprite);
+
+    EntityManager(gsl::span<CharacterSprite> sprites_arg);
 
     CharacterSprite & grab_sprite();
 
@@ -45,9 +48,29 @@ public:
     void run_collision_detection(Sound & sound, const double clock);
 private:
     int s_index;
-    World & world;
+    gsl::span<CharacterSprite> sprites;
 }; /// >
 
+
+// ---------------------------------------------------------------------------
+// class EntityManagerCO
+// ---------------------------------------------------------------------------
+//     This is a view of the entity manager that only allows creates.
+// ---------------------------------------------------------------------------
+class EntityManagerCO {
+public:
+    EntityManagerCO(EntityManager & manager);
+
+    inline CharacterSprite & grab_sprite() {
+        return manager.grab_sprite();
+    }
+
+    inline gsl::span<CharacterSprite> grab_sprites(int count) {
+        return manager.grab_sprites(count);
+    }
+private:
+    EntityManager & manager;
+};
 }   }
 
 #endif
