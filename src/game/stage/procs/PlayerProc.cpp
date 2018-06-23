@@ -389,7 +389,7 @@ public:
 
     virtual void _initialize() = 0;
 
-    void initialize() override {
+    void initialize() {
         state = State::normal;
 
         //view::View & view = env.context.view;
@@ -479,12 +479,6 @@ public:
             default:
                 break;
         }
-    }
-
-    // Create a child process (think bullets)
-    // TODO: take out of this base class once things settle down.
-    CharacterProc * spawn(CharacterSprite &, const std::string &) override {
-        return nullptr;
     }
 
     virtual bool spawn_weapon() = 0;

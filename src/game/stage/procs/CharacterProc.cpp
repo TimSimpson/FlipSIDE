@@ -78,7 +78,7 @@ public:
         initialize();
     }
 
-    void initialize() override {
+    void initialize() {
         view::View & view = env.context.view;
         Sound & sound = env.context.sound;
         const double current_time = env.current_time;
@@ -588,24 +588,7 @@ public:
         return true;
     }
 
-    // Create a child process (think bullets)
-    CharacterProc * spawn(CharacterSprite & sprite,
-                          const std::string & name) override {
-        // For now, just return the same class as it doesn't matter.
-        //child = this;
-        sprite.proc = this; // child;
-        sprite.name = name;
-        sprite.proc->initialize();
-        return this;
-    }
 };
-
-//void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &) {
-//  // TODO: Pass the name in rather than relying on the name variable.
-//  s.proc = load_process(s.name);
-//  s.proc->initialize(env, s);
-//}
-
 
 CharacterProcManager::CharacterProcManager()
 :   procs()

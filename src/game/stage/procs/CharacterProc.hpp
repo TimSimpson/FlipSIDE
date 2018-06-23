@@ -57,15 +57,6 @@ public:
          throw std::logic_error("The method or operation is not implemented.");
      }
 
-     virtual void initialize() {
-         throw std::logic_error("The method or operation is not implemented.");
-     }
-
-     // Create a child process (think bullets)
-     virtual CharacterProc * spawn(CharacterSprite &, const std::string &) {
-         throw std::logic_error("The method or operation is not implemented.");
-     }
-
      virtual bool update() = 0;
 };
 
