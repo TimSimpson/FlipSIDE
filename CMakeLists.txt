@@ -56,6 +56,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/Enemies.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/PlayerProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/PlayerProc.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/Kerbose.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/Kerbose.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.cpp
