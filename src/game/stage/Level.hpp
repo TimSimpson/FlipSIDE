@@ -16,17 +16,7 @@ struct FSLevelFile {
         glm::ivec2 size;
     };
 
-    struct Sprite {
-        std::string name;
-        glm::dvec3 position;
-        glm::ivec2 src_ul;
-        glm::ivec2 src_br;
-        glm::dvec3 size;
-        view::StupidIndex texture;
-        bool visible;
-        Kind kind;
-        int z_order;
-    };
+    using Sprite = SpriteLevelData;
 
     std::vector<TextureInfo> textures;
     std::vector<Sprite> sprites;

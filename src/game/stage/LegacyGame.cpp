@@ -483,27 +483,8 @@ private:
 
         // old school sprites >=arby_offset for things loaded out of the level
         for (int j = arby_offset; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
-            CharacterSprite & s = world.Sprite[j];
             if (lp3::narrow<int>(level_data.sprites.size()) > (j - arby_offset)) {
                 const auto & sprite_level_data = level_data.sprites[j - arby_offset];
-
-                auto set_sprite_values = [&]() {
-                    s.name = sprite_level_data.name;
-                    s.x = sprite_level_data.position.x;
-                    s.y = sprite_level_data.position.y;
-                    s.z = sprite_level_data.position.z;
-                    s.srcx = sprite_level_data.src_ul.x;
-                    s.srcy = sprite_level_data.src_ul.y;
-                    s.srcx2 = sprite_level_data.src_br.x;
-                    s.srcy2 = sprite_level_data.src_br.y;
-                    s.wide = sprite_level_data.size.x;
-                    s.high = sprite_level_data.size.y;
-                    s.length = sprite_level_data.size.z;
-                    s.texture = sprite_level_data.texture.value;
-                    s.visible = sprite_level_data.visible;
-                    s.kind = sprite_level_data.kind;
-                    s.zOrder = sprite_level_data.z_order;
-                };
 
                 // First, try to create a new style proc:
                 auto * proc =
@@ -515,15 +496,12 @@ private:
                         sprite_level_data.texture.value);
                 // If that fails, use the old nasty proc stuff
                 if (!proc) {
-                    set_sprite_values();
                     proc = legacy_add_process(
                         env,
                         world,
                         entity_manager,
-                        s,
-                        s.name);
-                    entity_manager.grab_sprite(); // make sure the manager doesn't
-                                                  // use this next sprite.
+                        sprite_level_data.name,
+                        sprite_level_data);
                 }
                 proc_manager.add_process(proc);
             }

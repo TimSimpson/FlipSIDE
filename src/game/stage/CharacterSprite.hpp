@@ -8,6 +8,7 @@
 #include <lp3/gfx.hpp>
 #include "Camera.hpp"
 #include "../../AnimationFrame.hpp"
+#include "../../view.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -40,6 +41,19 @@ enum class Kind {
 };
 
 std::istream & operator >>(std::istream & in, Kind & kind);
+
+
+struct SpriteLevelData {
+    std::string name;
+    glm::dvec3 position;
+    glm::ivec2 src_ul;
+    glm::ivec2 src_br;
+    glm::dvec3 size;
+    view::StupidIndex texture;
+    bool visible;
+    Kind kind;
+    int z_order;
+};
 
 class CharacterSprite;
 

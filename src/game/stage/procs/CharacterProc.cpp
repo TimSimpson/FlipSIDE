@@ -17,49 +17,6 @@ namespace {
 }
 
 
-////void create_player(
-////    PlayerData & player_data, CharacterSprite & sprite,
-////    gsl::span<std::reference_wrapper<CharacterSprite>> & children,
-////    CharacterProcEnv & env)
-////{
-////    LP3_ASSERT(children.size() == 9);
-////
-////    if (player_data.playerName == "Thomas") {
-////        player_data.weapon = "fireball";
-////        env.context.view.load_animation_file(sprite.Aframe, "Thomas.ani");
-////        env.context.view.LoadTexture(player_data.sprite_index + 1, "Flip1.png", 254, 254);
-////        sprite.texture = player_data.sprite_index + 1;
-////        for (CharacterSprite & child : children) {
-////            env.view.load_animation_file(child.Aframe, "Fireball.ani");
-////        }
-////    }
-////
-////    if (player_data.playerName == "Nick") {
-////        player_data.weapon = "fireball";
-////        env.view.load_animation_file(sprite.Aframe, "nick.ani");
-////        env.view.LoadTexture(player_data.sprite_index + 1, "joel.png", 254, 258);
-////        sprite.texture = player_data.sprite_index + 1;
-////        for (CharacterSprite & child : children) {
-////            env.view.load_animation_file(child.Aframe, "icespike.ani");
-////        }
-////    }
-////
-////    if (player_data.playerName == "Nicky") {
-////        player_data.weapon = "bomb";
-////        env.view.load_animation_file(sprite.Aframe, "nicky.ani");
-////        env.view.LoadTexture(player_data.sprite_index + 1, "LilNicky.png", 84, 148);
-////        sprite.texture = player_data.sprite_index + 1;
-////        for (CharacterSprite & child : children) {
-////            env.view.load_animation_file(child.Aframe, "bomb.ani");
-////        }
-////    }
-////
-////    for (CharacterSprite & child : children) {
-////        child.name = "";
-////        child.zOrder = -90;
-////    }
-////}
-
 // For starters, all the old code is just shoved in here.
 class LegacyProc : public CharacterProc {
 private:
@@ -699,9 +656,27 @@ void CharacterProcManager::update() {
 
 
 gsl::owner<CharacterProc *> legacy_add_process(
-    CharacterProcEnv & env, World & world, EntityManager &,
-    CharacterSprite & s, const std::string & name)
+    CharacterProcEnv & env, World & world, EntityManager & entity_manager,
+    const std::string & name,
+    const SpriteLevelData & lvl_data)
 {
+    CharacterSprite & s = entity_manager.grab_sprite();
+    s.name = lvl_data.name;
+    s.x = lvl_data.position.x;
+    s.y = lvl_data.position.y;
+    s.z = lvl_data.position.z;
+    s.srcx = lvl_data.src_ul.x;
+    s.srcy = lvl_data.src_ul.y;
+    s.srcx2 = lvl_data.src_br.x;
+    s.srcy2 = lvl_data.src_br.y;
+    s.wide = lvl_data.size.x;
+    s.high = lvl_data.size.y;
+    s.length = lvl_data.size.z;
+    s.texture = lvl_data.texture.value;
+    s.visible = lvl_data.visible;
+    s.kind = lvl_data.kind;
+    s.zOrder = lvl_data.z_order;
+
     // TODO: in the future, use the names here, or something, but for
     //       now, use the indexes to figure out if it's a player
     return new LegacyProc(env, s, world, name);
