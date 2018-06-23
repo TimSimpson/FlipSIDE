@@ -1,64 +1,55 @@
-#include "Kerbose.hpp"
+#include "BlueStick.hpp"
 #include <lp3/sims.hpp>
 
 namespace nnd3d { namespace game { namespace proc {
 
 
-class Kerbose : public CharacterProc {
+class BlueStick : public CharacterProc {
 private:
     CharacterProcEnv env;
     CharacterSprite & sprite;
-    bool dying;
-    enum class Skin {
-        Kerbose,
-        Putulo
-    } skin;
     lp3::sims::CoroutineState state;
+    bool dying;
 
 public:
-    Kerbose(CharacterProcEnv _env, EntityManager & e_manager,
+    BlueStick(CharacterProcEnv _env, EntityManager & e_manager,
             const glm::dvec3 & position,
             const int texture_index)
     :   env(_env),
         sprite(e_manager.grab_sprite()),
-        dying(false),
-        state()
+        state(),
+        dying(false)
     {
-        sprite.name = "Kerbose";
+        sprite.name = "bluestick";
         sprite.set_position(position);
         sprite.texture = texture_index;
-        sprite.wide = 21;
-        sprite.high = 19;
-        sprite.visible = true;
-        sprite.frame = 1;
+        sprite.hp = 1;
         sprite.kind = Kind::enemy_weak_to_jumping;
+        sprite.wide = 10;
+        sprite.high = 17;
         sprite.length = 10;
-        sprite.deathType = "Kerbose Death";
-        sprite.invTime = 1;
-        sprite.hp = 3;
-
-        sprite.soundFile = "Kerbose Ouch";
-        sprite.jump_strength = 25;
+        sprite.Aframe[1].set(1, 173, 10, 190);
+        sprite.Aframe[2].set(13, 173, 23, 190);
+        sprite.Aframe[3].set(23, 174, 33, 190);
+        sprite.deathType = "bs death";
+        sprite.soundFile = "Stick Ouch";
+        env.context.sound.PlaySound("Stick Awaken");
+        sprite.frame = 1;
+        unstretch(sprite);
         sprite.proc = this;
-        const int kerbose_skin = (int) (env.random.next() * 2.0 + 1);
-        if (kerbose_skin == 1) {
-            skin = Skin::Kerbose;
-            env.context.view.load_animation_file(sprite.Aframe, "Kerbose.ani");
-        } else {
-            skin = Skin::Putulo;
-            env.context.view.load_animation_file(sprite.Aframe, "Putulo.ani");
-            sprite.soundFile = "putulohurt";
-            sprite.deathType = "putuloDeath";
-        }
+    }
+
+    ~BlueStick()
+    {
+        sprite.proc = nullptr;
     }
 
     void animate(std::int64_t) override {
-        if (dying) {
-            return;
+        ++ sprite.frame;
+        if (sprite.frame > 2) {
+            sprite.frame = 1;
         }
-        sprite.frame = sprite.frame + 1;
-        if (sprite.frame > 2) { sprite.frame = 1; }
-     }
+    }
 
     void death_animation() override {
         sprite.visible = true;
@@ -67,11 +58,8 @@ public:
         sprite.frame = 3;
 
         sprite.miscTime = env.current_time + 3;
-        if (skin == Skin::Kerbose) {
-            env.context.sound.PlaySound("Kerbose Die");
-        } else if (skin == Skin::Putulo) {
-            env.context.sound.PlaySound("putulodie");
-        }
+
+        env.context.sound.PlaySound("stick die");
         sprite.name = "";
         dying = true;
     }
@@ -98,22 +86,10 @@ public:
                 LP3_YIELD(true);
             }
 
-            sprite.visible = true;
-
-            sprite.kind = Kind::neutral;
-            sprite.frame = 3;
-
-            sprite.miscTime = env.current_time + 3;
-            if (skin == Skin::Kerbose) {
-                env.context.sound.PlaySound("Kerbose Die");
-            }
-            else if (skin == Skin::Putulo) {
-                env.context.sound.PlaySound("putulodie");
-            }
-
             while (sprite.miscTime >= env.current_time) {
                 LP3_YIELD(true);
             }
+
             sprite.visible = false;
             sprite.trueVisible = 2;
             sprite.flickerTime = env.current_time + 1;
@@ -126,13 +102,13 @@ public:
     }
 };
 
-CharacterProc * create_kerbose_proc(
+CharacterProc * create_bluestick_proc(
     CharacterProcEnv env,
     EntityManager & e_manager,
     const glm::dvec3 & position,
     const int texture_index)
 {
-    return new Kerbose(env, e_manager, position, texture_index);
+    return new BlueStick(env, e_manager, position, texture_index);
 }
 
 }   }   }

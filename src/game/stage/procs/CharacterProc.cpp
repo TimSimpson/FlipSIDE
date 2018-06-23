@@ -66,10 +66,10 @@ public:
              }
          }
 
-         if (s.name == "bluestick") {
-             s.frame = s.frame + 1;
-             if (s.frame > 2) { s.frame = 1; }
-         }
+         // if (s.name == "bluestick") {
+         //     s.frame = s.frame + 1;
+         //     if (s.frame > 2) { s.frame = 1; }
+         // }
     }
 
 
@@ -183,22 +183,22 @@ public:
         }
 
 
-        if (spr.name == "bluestick") {
-            spr.hp = 1;
-            spr.kind = Kind::enemy_weak_to_jumping;
-            spr.wide = 10;
-            spr.high = 17;
-            spr.length = 10;
-            spr.Aframe[1].set(1, 173, 10, 190);
-            spr.Aframe[2].set(13, 173, 23, 190);
-            spr.Aframe[3].set(23, 174, 33, 190);
-            spr.deathType = "bs death";
-            spr.soundFile = "Stick Ouch";
-            //spr.name = "Kerbose"
-            sound.PlaySound("Stick Awaken");
-            spr.frame = 1;
-            unstretch(spr);
-        }
+        // if (spr.name == "bluestick") {
+        //     spr.hp = 1;
+        //     spr.kind = Kind::enemy_weak_to_jumping;
+        //     spr.wide = 10;
+        //     spr.high = 17;
+        //     spr.length = 10;
+        //     spr.Aframe[1].set(1, 173, 10, 190);
+        //     spr.Aframe[2].set(13, 173, 23, 190);
+        //     spr.Aframe[3].set(23, 174, 33, 190);
+        //     spr.deathType = "bs death";
+        //     spr.soundFile = "Stick Ouch";
+        //     //spr.name = "Kerbose"
+        //     sound.PlaySound("Stick Awaken");
+        //     spr.frame = 1;
+        //     unstretch(spr);
+        // }
 
         if (spr.name == "fireball") {
             spr.wide = 40;
@@ -408,17 +408,17 @@ public:
             }
         }
 
-        if (s.name == "bluestick") {
-            k = random.next() * 2 + 1;
-            if (k == 1) { s.x = s.x + fs_speed_factor; }
-            if (k == 2) { s.x = s.x - fs_speed_factor; }
-            k = random.next() * 2 + 1;
-            if (k == 1) { s.y = s.y + fs_speed_factor; }
-            if (k == 2) { s.y = s.y - fs_speed_factor; }
-            k = random.next() * 20 + 1;
-            if (k == 1) { if (s.z == 0) {
-                s.start_jump(); } }
-        }
+        // if (s.name == "bluestick") {
+        //     k = random.next() * 2 + 1;
+        //     if (k == 1) { s.x = s.x + fs_speed_factor; }
+        //     if (k == 2) { s.x = s.x - fs_speed_factor; }
+        //     k = random.next() * 2 + 1;
+        //     if (k == 1) { s.y = s.y + fs_speed_factor; }
+        //     if (k == 2) { s.y = s.y - fs_speed_factor; }
+        //     k = random.next() * 20 + 1;
+        //     if (k == 1) { if (s.z == 0) {
+        //         s.start_jump(); } }
+        // }
 
         if (s.name == "pigeonbomber") {
             s.z = s.z + fs_speed_factor;
