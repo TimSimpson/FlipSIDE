@@ -1,5 +1,5 @@
 #include "EntityManager.hpp"
-#include "procs/CharacterProc.hpp"
+#include "CharacterProc.hpp"
 #include "../../Sound.hpp"
 
 // TODO: Remove gotos!

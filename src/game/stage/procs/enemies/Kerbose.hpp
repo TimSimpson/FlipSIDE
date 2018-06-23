@@ -1,7 +1,7 @@
 #ifndef NND3D_GAME_PROCS_ENEMIES_KERBOSE_HPP
 #define NND3D_GAME_PROCS_ENEMIES_KERBOSE_HPP
 
-#include "../CharacterProc.hpp"
+#include "../../CharacterProc.hpp"
 #include "../../EntityManager.hpp"
 
 namespace nnd3d { namespace game { namespace proc {

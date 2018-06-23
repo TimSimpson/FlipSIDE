@@ -3,9 +3,9 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include "BaseScreen.hpp"
-#include "procs/CharacterProc.hpp"
 #include "procs/CinemaProc.hpp"
 #include "procs/Enemies.hpp"
+#include "procs/LegacyProc.hpp"
 #include "procs/PlayerProc.hpp"
 #include "EntityManager.hpp"
 #include "Level.hpp"

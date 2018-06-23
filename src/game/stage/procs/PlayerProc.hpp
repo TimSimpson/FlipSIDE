@@ -1,8 +1,8 @@
 #ifndef NND3D_GAME_PROCS_PLAYERPROC_HPP
 #define NND3D_GAME_PROCS_PLAYERPROC_HPP
 
-#include "CharacterProc.hpp"
 #include "../../GameState.hpp"
+#include "../CharacterProc.hpp"
 #include "../EntityManager.hpp"
 
 // void load_process(CharacterProcEnv env, CharacterSprite & s, const std::string &);

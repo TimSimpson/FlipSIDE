@@ -7,12 +7,12 @@
 #define NND3D_CHARACTERPROC_HPP
 #pragma once
 
-#include "../CharacterSprite.hpp"
-#include "../EntityManager.hpp"
-#include "../../Game.hpp"
-#include "../../../Random.hpp"
-#include "../../../Sound.hpp"
-#include "../../../view.hpp"
+#include "CharacterSprite.hpp"
+#include "EntityManager.hpp"
+#include "../Game.hpp"
+#include "../../Random.hpp"
+#include "../../Sound.hpp"
+#include "../../view.hpp"
 
 namespace nnd3d { namespace game {
 
@@ -121,15 +121,6 @@ private:
     // TODO: why isn't this std::unique_ptr?
     std::vector<gsl::owner<CharacterProc *>> procs;
 };
-
-
-// ---------------------------------------------------------------------------
-// A factory function that makes processes.
-// ---------------------------------------------------------------------------
-gsl::owner<CharacterProc *> legacy_add_process(
-    CharacterProcEnv & env, World & world, EntityManager & em,
-    const std::string & name,
-    const SpriteLevelData & lvl_data);
 
 }    }
 
