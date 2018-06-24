@@ -11,6 +11,7 @@ CharacterProc * create_character_proc(
     CharacterProcEnv env, EntityManagerCO & e_manager,
     const std::string & name,
     const glm::dvec3 & position,
+    const glm::dvec3 & size,
     const int texture_index);
 
 

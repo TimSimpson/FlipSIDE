@@ -72,6 +72,9 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/RedBullet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/TrashDigger.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/TrashDigger.cpp
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/terrain/Clouds.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/terrain/Clouds.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/terrain/GreenSpring.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/terrain/GreenSpring.cpp
 

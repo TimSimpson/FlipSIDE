@@ -513,6 +513,7 @@ private:
                         entity_manager_co,
                         sprite_level_data.name,
                         sprite_level_data.position,
+                        sprite_level_data.size,
                         sprite_level_data.texture.value);
                 // If that fails, use the old nasty proc stuff
                 if (!proc) {

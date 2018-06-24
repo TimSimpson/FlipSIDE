@@ -58,9 +58,9 @@ public:
 
         //this makes all the sprites do their thing based on their name
 
-        if (spr.name == "clouds") {
-            spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
-        }
+        // if (spr.name == "clouds") {
+        //     spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
+        // }
 
    //      if (spr.name == "greenspring") {
    //          view.load_animation_file(spr.Aframe, "greenspring.ani");
@@ -102,12 +102,12 @@ public:
     //         }
     //     }
 
-        if (s.name == "clouds") {
-            s.srcx = s.srcx + (fs_speed_factor * 0.5);
-            s.srcx2 = s.srcx2 + (fs_speed_factor * 0.5);
-            s.Aframe[1].x = s.Aframe[1].x + 1;
-            s.Aframe[1].x2 = s.Aframe[1].x2 + 1;
-        }
+        // if (s.name == "clouds") {
+        //     s.srcx = s.srcx + (fs_speed_factor * 0.5);
+        //     s.srcx2 = s.srcx2 + (fs_speed_factor * 0.5);
+        //     s.Aframe[1].x = s.Aframe[1].x + 1;
+        //     s.Aframe[1].x2 = s.Aframe[1].x2 + 1;
+        // }
 
         return true;
     }

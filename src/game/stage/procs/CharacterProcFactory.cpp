@@ -6,6 +6,7 @@
 #include "enemies/PaulRunner.hpp"
 #include "enemies/PidgeonBomber.hpp"
 #include "enemies/TrashDigger.hpp"
+#include "terrain/Clouds.hpp"
 #include "terrain/GreenSpring.hpp"
 
 namespace nnd3d { namespace game { namespace proc {
@@ -16,6 +17,7 @@ CharacterProc * create_character_proc(
     EntityManagerCO & e_manager,
     const std::string & name,
     const glm::dvec3 & position,
+    const glm::dvec3 & size,
     const int texture_index)
 {
     if (name == "arby" || name == "goomba") {
@@ -36,8 +38,13 @@ CharacterProc * create_character_proc(
     if (name == "tdigger") {
         return create_trashdigger_proc(env, e_manager, position, texture_index);
     }
+
     if (name == "greenspring") {
         return create_greenspring_proc(env, e_manager, position, texture_index);
+    }
+    if (name == "clouds") {
+        return create_clouds_proc(
+            env, e_manager, position, size, texture_index);
     }
     return nullptr;
 }
