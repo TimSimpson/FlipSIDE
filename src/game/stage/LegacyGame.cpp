@@ -5,7 +5,6 @@
 #include "BaseScreen.hpp"
 #include "procs/CharacterProcFactory.hpp"
 #include "procs/CinemaProc.hpp"
-#include "procs/LegacyProc.hpp"
 #include "procs/PlayerProc.hpp"
 #include "EntityManager.hpp"
 #include "Level.hpp"
@@ -500,29 +499,41 @@ private:
         // old school sprites >=arby_offset for things loaded out of the level
         for (int j = arby_offset; j < lp3::narrow<int>(world.Sprite.size()); ++j) {
             if (lp3::narrow<int>(level_data.sprites.size()) > (j - arby_offset)) {
-                const auto & sprite_level_data = level_data.sprites[j - arby_offset];
+                const auto & lvl_data = level_data.sprites[j - arby_offset];
 
-                if (sprite_level_data.name == "paulrun") {
+                if (lvl_data.name == "paulrun") {
                     LP3_LOG_INFO(
-                        "Paul width=%d height=%d", sprite_level_data.size.x, sprite_level_data.size.y);
+                        "Paul width=%d height=%d", lvl_data.size.x, lvl_data.size.y);
                 }
                 // First, try to create a new style proc:
                 auto * proc =
                     proc::create_character_proc(
                         env,
                         entity_manager_co,
-                        sprite_level_data.name,
-                        sprite_level_data.position,
-                        sprite_level_data.size,
-                        sprite_level_data.texture.value);
+                        lvl_data.name,
+                        lvl_data.position,
+                        lvl_data.size,
+                        lvl_data.texture.value);
                 // If that fails, use the old nasty proc stuff
                 if (!proc) {
-                    proc = legacy_add_process(
-                        env,
-                        world,
-                        entity_manager_co,
-                        sprite_level_data.name,
-                        sprite_level_data);
+                    // otherwise, this is just a bit of terrain
+                    CharacterSprite & s = entity_manager.grab_sprite();
+                    s.name = lvl_data.name;
+                    s.proc = nullptr;
+                    s.x = lvl_data.position.x;
+                    s.y = lvl_data.position.y;
+                    s.z = lvl_data.position.z;
+                    s.srcx = lvl_data.src_ul.x;
+                    s.srcy = lvl_data.src_ul.y;
+                    s.srcx2 = lvl_data.src_br.x;
+                    s.srcy2 = lvl_data.src_br.y;
+                    s.wide = lvl_data.size.x;
+                    s.high = lvl_data.size.y;
+                    s.length = lvl_data.size.z;
+                    s.texture = lvl_data.texture.value;
+                    s.visible = lvl_data.visible;
+                    s.kind = lvl_data.kind;
+                    s.zOrder = lvl_data.z_order;
                 }
                 proc_manager.add_process(proc);
             }
