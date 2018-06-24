@@ -64,6 +64,9 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/Kerbose.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/PaulRunner.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/PaulRunner.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/TrashDigger.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/TrashDigger.cpp
+
 
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.hpp

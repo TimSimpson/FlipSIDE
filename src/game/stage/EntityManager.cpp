@@ -151,6 +151,67 @@ EntityManager::EntityManager(gsl::span<CharacterSprite> sprites_arg)
 {
 }
 
+
+CharacterSpriteRef EntityManager::find_closest_player(const CharacterSprite & bad_guy)
+const
+{
+    //numberPlayers integer legend
+    //1 Only player 1
+    //2 Player 1 and 2
+    //3 All three Players
+    //4 Just player 2
+    //5 Just player 3
+    //6 Players 1 and 3
+    //7 Players 2 and 3
+
+    std::size_t theclosest = 0;
+    int min = 0;
+
+    min = 9999;
+    theclosest = 0;
+    for (int index = 0; index < sprites.size(); ++ index) {
+        auto & player_sprite = this->sprites[index];
+        if (player_sprite.kind != Kind::player) {
+            continue;
+        }
+
+        // abs(x2-x1)^2+abs(y2-y1)^2
+        const int buttcat = lp3::narrow<int>(
+            std::sqrt(
+                std::pow(
+                    std::abs(player_sprite.x - bad_guy.x),
+                    2)
+                +
+                std::pow(
+                    std::abs(player_sprite.y - bad_guy.y),
+                    2)
+            ));
+
+        if (buttcat < min) {
+            theclosest = index;
+            min = buttcat;
+        }
+    }
+
+    CharacterSpriteRef ref;
+    ref.set(this->sprites[theclosest]);
+    return ref;
+}
+
+std::vector<std::reference_wrapper<const CharacterSprite>>
+    EntityManager::find_by_kind(Kind k) const
+{
+    std::vector<std::reference_wrapper<const CharacterSprite>> result;
+    for (const auto & s : this->sprites) {
+        if (s.kind == k) {
+            result.push_back(std::cref(s));
+        }
+    }
+    return result;
+}
+
+
+
 CharacterSprite & EntityManager::grab_sprite() {
     LP3_ASSERT(s_index < sprites.size());
     auto old_index = s_index;

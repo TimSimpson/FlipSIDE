@@ -23,6 +23,19 @@ public:
 
     EntityManager(gsl::span<CharacterSprite> sprites_arg);
 
+    // TODO: does this need to return an index?
+    // TODO: maybe I can create a smart reference which, when a CharacterSprite
+    //       dies, can stick around enough to tell people owning it "hey this
+    //       thing is dead." I guess the pointee would need to know about it.
+    //       It would be better than these accursed indices.
+    CharacterSpriteRef find_closest_player(const CharacterSprite & enemy) const;
+
+    // Returns a list of CharacterSprites of a certain kind.
+    // TODO: seems like there should be a way to make a view only iterator
+    //       over these...
+    std::vector<std::reference_wrapper<const CharacterSprite>>
+        find_by_kind(Kind k) const;
+
     CharacterSprite & grab_sprite();
 
     // Returns some number of sprites.
@@ -60,6 +73,17 @@ private:
 class EntityManagerCO {
 public:
     EntityManagerCO(EntityManager & manager);
+
+    inline CharacterSpriteRef find_closest_player(
+            const CharacterSprite & enemy) const
+    {
+        return manager.find_closest_player(enemy);
+    }
+
+    inline std::vector<std::reference_wrapper<const CharacterSprite>>
+        find_by_kind(Kind k) const {
+        return manager.find_by_kind(k);
+    }
 
     inline CharacterSprite & grab_sprite() {
         return manager.grab_sprite();

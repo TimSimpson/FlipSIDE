@@ -21,14 +21,17 @@ namespace {
 class LegacyProc : public CharacterProc {
 private:
     CharacterProcEnv env;
+    EntityManagerCO entity_manager;
     CharacterSprite & s;
     bool mover;
     World & world;
 
 public:
-     LegacyProc(CharacterProcEnv & _env, CharacterSprite & _s,
+     LegacyProc(CharacterProcEnv & _env, EntityManagerCO & entity_manager_arg,
+                CharacterSprite & _s,
                 World & world_arg, const std::string & name)
      :  env(_env),
+        entity_manager(entity_manager_arg),
         s(_s),
         mover(false),
         world(world_arg)
@@ -55,19 +58,14 @@ public:
              if (s.frame > 2) { s.frame = 1; }
          }
 
-         if (s.name == "tdigger") {
-             s.frame = s.frame + 1;
-             if (s.mode == "") {
-                 if (s.frame > 5) { s.frame = 4; }
-             }
-             if (s.mode == "runner") {
-                 if (s.frame > 2) { s.frame = 1; }
-             }
-         }
-
-         // if (s.name == "bluestick") {
+         // if (s.name == "tdigger") {
          //     s.frame = s.frame + 1;
-         //     if (s.frame > 2) { s.frame = 1; }
+         //     if (s.mode == "") {
+         //         if (s.frame > 5) { s.frame = 4; }
+         //     }
+         //     if (s.mode == "runner") {
+         //         if (s.frame > 2) { s.frame = 1; }
+         //     }
          // }
     }
 
@@ -86,12 +84,6 @@ public:
 
         //this makes all the sprites do their thing based on their name
 
-
-        if (spr.name == "tdigger") {
-            view.load_animation_file(spr.Aframe, "tDigger.ani");
-            spr.hp = 1;
-        }
-
         if (spr.name == "clouds") {
             spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
         }
@@ -109,27 +101,27 @@ public:
         }
 
 
-        if (spr.name == "bs death") {
-            spr.visible = true;
-            this->mover = false;
-            spr.kind = Kind::neutral;
-            spr.frame = 3;
-            spr.miscTime = current_time + 3;
-            sound.PlaySound("stick die");
-            spr.name = "Kerbose Death";
-        }
+        // if (spr.name == "bs death") {
+        //     spr.visible = true;
+        //     this->mover = false;
+        //     spr.kind = Kind::neutral;
+        //     spr.frame = 3;
+        //     spr.miscTime = current_time + 3;
+        //     sound.PlaySound("stick die");
+        //     spr.name = "Kerbose Death";
+        // }
 
 
-        if (spr.name == "harharhar") {
-            spr.flickerTime = current_time + 2;
-            spr.time = 2;  // 2018-06: using this instead of world.clock
-            sound.PlayWave("harharhar.wav");
-        }
+        // if (spr.name == "harharhar") {
+        //     spr.flickerTime = current_time + 2;
+        //     spr.time = 2;  // 2018-06: using this instead of world.clock
+        //     sound.PlayWave("harharhar.wav");
+        // }
 
-        if (spr.name == "expand") {
-            sound.PlayWave("WhaWhee.wav");
-            spr.reverse = false;
-        }
+        // if (spr.name == "expand") {
+        //     sound.PlayWave("WhaWhee.wav");
+        //     spr.reverse = false;
+        // }
 
         if (spr.name == "cinema") {
             spr.visible = false;
@@ -167,24 +159,6 @@ public:
             spr.wide = spr.wide * 2;
             spr.high = spr.high * 2;
         }
-
-
-        // if (spr.name == "bluestick") {
-        //     spr.hp = 1;
-        //     spr.kind = Kind::enemy_weak_to_jumping;
-        //     spr.wide = 10;
-        //     spr.high = 17;
-        //     spr.length = 10;
-        //     spr.Aframe[1].set(1, 173, 10, 190);
-        //     spr.Aframe[2].set(13, 173, 23, 190);
-        //     spr.Aframe[3].set(23, 174, 33, 190);
-        //     spr.deathType = "bs death";
-        //     spr.soundFile = "Stick Ouch";
-        //     //spr.name = "Kerbose"
-        //     sound.PlaySound("Stick Awaken");
-        //     spr.frame = 1;
-        //     unstretch(spr);
-        // }
 
         if (spr.name == "fireball") {
             spr.wide = 40;
@@ -375,7 +349,7 @@ public:
 
             if (s.miscTime < this->env.current_time) {
                 const auto target
-                    = world.find_closest_player(s);
+                    = entity_manager.find_closest_player(s);
                 if (target) {
                     this->shoot(s, "bluestick",
                                 target->x,
@@ -436,80 +410,80 @@ public:
         }
 
         if (s.name == "tdigger") {
-            if (s.mode == "") {
-                unstretch(s);
-                //TSNOW: Another funky step 10 loop.
-                //2018-06: This code makes no sense but I think it's what it
-                // used to do. The dog stops when it horizontally aligns with
-                // the player... but WHYYYYYY.
-                auto players = world.find_by_kind(Kind::player);
-                for (const auto & p : players) {
-                    if ((p.get().y + p.get().high) >= s.y && p.get().y < s.y) {
-                        s.mode = "runner";
-                        s.seekx = world.camera.boundary().x;
-                        //.mhp = 10
-                        s.kind = Kind::enemy;
-                        s.deathType = "expand";
-                        s.time = 1;
-                        //.hp = 1
-                        s.reverse = true;
-                        break;
-                    }
-                }
-            }
+            // if (s.mode == "") {
+            //     unstretch(s);
+            //     //TSNOW: Another funky step 10 loop.
+            //     //2018-06: This code makes no sense but I think it's what it
+            //     // used to do. The dog stops when it horizontally aligns with
+            //     // the player... but WHYYYYYY.
+            //     auto players = world.find_by_kind(Kind::player);
+            //     for (const auto & p : players) {
+            //         if ((p.get().y + p.get().high) >= s.y && p.get().y < s.y) {
+            //             s.mode = "runner";
+            //             s.seekx = world.camera.boundary().x;
+            //             //.mhp = 10
+            //             s.kind = Kind::enemy;
+            //             s.deathType = "expand";
+            //             s.time = 1;
+            //             //.hp = 1
+            //             s.reverse = true;
+            //             break;
+            //         }
+            //     }
+            // }
 
-            if (!s.target) {
-                s.target = world.find_closest_player(this->s);
-                s.seekx = s.getMiddleX();
-                s.seeky = s.getMiddleY();
-            }
+            // if (!s.target) {
+            //     s.target = world.find_closest_player(this->s);
+            //     s.seekx = s.getMiddleX();
+            //     s.seeky = s.getMiddleY();
+            // }
 
-            if (s.mode == "runner") {
-                if (s.target) {
-                    if (getProx(s, *(s.target)) > 50) {
-                        s.seekx = s.target->getMiddleX();
-                    }
-                    if (getProx(s, *(s.target)) < 50) {
-                        s.mph = s.mph - 1;
-                        if (s.mph < -90) {
-                            s.seekx = s.target->getMiddleX();
-                            s.mph = 10;
-                        }
-                    }
-                    s.seeky = s.target->getMiddleY();
-                    if (getProx(s, *(s.target)) < 100) {
-                        s.mph = (getProx(s, *(s.target)) / 100);
-                    }
-                    else {
-                        s.mph = 10;
-                    }
-                    if (getProx(s, *(s.target)) == 0) {
-                        s.seekx = s.target->x;
-                        s.seeky = s.target->y;
-                    }
+            // if (s.mode == "runner") {
+            //     if (s.target) {
+            //         if (getProx(s, *(s.target)) > 50) {
+            //             s.seekx = s.target->getMiddleX();
+            //         }
+            //         if (getProx(s, *(s.target)) < 50) {
+            //             s.mph = s.mph - 1;
+            //             if (s.mph < -90) {
+            //                 s.seekx = s.target->getMiddleX();
+            //                 s.mph = 10;
+            //             }
+            //         }
+            //         s.seeky = s.target->getMiddleY();
+            //         if (getProx(s, *(s.target)) < 100) {
+            //             s.mph = (getProx(s, *(s.target)) / 100);
+            //         }
+            //         else {
+            //             s.mph = 10;
+            //         }
+            //         if (getProx(s, *(s.target)) == 0) {
+            //             s.seekx = s.target->x;
+            //             s.seeky = s.target->y;
+            //         }
 
-                    seek(s);
-                }
-            }
+            //         seek(s);
+            //     }
+            // }
 
         }
 
 
-        if (s.name == "expand") {
-            s.kind = Kind::neutral;
-            //if (s.mode = "runner") then
-            s.frame = 3;
-            s.time += (0.01 * fs_speed_factor);
-            s.wide = s.wide + (fs_speed_factor);
-            s.x = s.x - (fs_speed_factor / 2);
-            s.high = s.high + (fs_speed_factor);
-            s.y = s.y - (fs_speed_factor / 2);
-            if (s.time > 2) {
-                s.name = "harharhar";
-                initialize();
-                // load_process(env, s, s.name); //: killS j
-            }
-        }
+        // if (s.name == "expand") {
+        //     s.kind = Kind::neutral;
+        //     //if (s.mode = "runner") then
+        //     s.frame = 3;
+        //     s.time += (0.01 * fs_speed_factor);
+        //     s.wide = s.wide + (fs_speed_factor);
+        //     s.x = s.x - (fs_speed_factor / 2);
+        //     s.high = s.high + (fs_speed_factor);
+        //     s.y = s.y - (fs_speed_factor / 2);
+        //     if (s.time > 2) {
+        //         s.name = "harharhar";
+        //         initialize();
+        //         // load_process(env, s, s.name); //: killS j
+        //     }
+        // }
 
         if (s.name == "harharhar") {
             s.time -= 0.016f;  // 2018-06: using this instead of world.clock
@@ -560,7 +534,7 @@ gsl::owner<CharacterProc *> legacy_add_process(
 
     // TODO: in the future, use the names here, or something, but for
     //       now, use the indexes to figure out if it's a player
-    return new LegacyProc(env, s, world, name);
+    return new LegacyProc(env, entity_manager, s, world, name);
 }
 
 }   }

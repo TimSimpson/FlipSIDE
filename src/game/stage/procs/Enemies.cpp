@@ -3,6 +3,7 @@
 #include "enemies/BlueStick.hpp"
 #include "enemies/Kerbose.hpp"
 #include "enemies/PaulRunner.hpp"
+#include "enemies/TrashDigger.hpp"
 
 namespace nnd3d { namespace game { namespace proc {
 
@@ -22,6 +23,9 @@ CharacterProc * create_enemy_proc(
     }
     if (name == "paulrun") {
         return create_paulrunner_proc(env, e_manager, position, texture_index);
+    }
+    if (name == "tdigger") {
+        return create_trashdigger_proc(env, e_manager, position, texture_index);
     }
     return nullptr;
 }

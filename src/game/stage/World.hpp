@@ -31,18 +31,18 @@ struct World {
     // TODO: Actually, nope. Make this private!
     std::array<CharacterSprite, NUMSPRITES + 1> Sprite;
 
-    // TODO: does this need to return an index?
-    // TODO: maybe I can create a smart reference which, when a CharacterSprite
-    //       dies, can stick around enough to tell people owning it "hey this
-    //       thing is dead." I guess the pointee would need to know about it.
-    //       It would be better than these accursed indices.
-    CharacterSpriteRef find_closest_player(const CharacterSprite & enemy) const;
+    // // TODO: does this need to return an index?
+    // // TODO: maybe I can create a smart reference which, when a CharacterSprite
+    // //       dies, can stick around enough to tell people owning it "hey this
+    // //       thing is dead." I guess the pointee would need to know about it.
+    // //       It would be better than these accursed indices.
+    // CharacterSpriteRef find_closest_player(const CharacterSprite & enemy) const;
 
-    // Returns a list of CharacterSprites of a certain kind.
-    // TODO: seems like there should be a way to make a view only iterator
-    //       over these...
-    std::vector<std::reference_wrapper<const CharacterSprite>>
-        find_by_kind(Kind k) const;
+    // // Returns a list of CharacterSprites of a certain kind.
+    // // TODO: seems like there should be a way to make a view only iterator
+    // //       over these...
+    // std::vector<std::reference_wrapper<const CharacterSprite>>
+    //     find_by_kind(Kind k) const;
 
     // Gets coordinates roughly between all of one kind of thing
     // (this is for the camera when the kind is Player)
