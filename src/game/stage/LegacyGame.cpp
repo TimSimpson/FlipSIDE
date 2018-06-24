@@ -337,7 +337,7 @@ private:
             world.camera.set_boundary({1010, 905 + 480});
 
             sound.LoadSound(16, "goomba.wav", "dying explosion");
-            sound.LoadSound(17, "GoombaOuch.wav", "Goomba Ouch");
+            sound.LoadSound(17, "GoombaOuch.wav", "Arby Ouch");
             sound.LoadSound(18, "KerboDie.wav", "Kerbose Die");
             sound.LoadSound(19, "KerbHurt.wav", "Kerbose Ouch");
             sound.LoadSound(20, "PutuloHurt.wav", "putulohurt");

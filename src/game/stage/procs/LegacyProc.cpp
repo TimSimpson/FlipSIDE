@@ -43,20 +43,8 @@ public:
 
      ~LegacyProc() override = default;
 
-     void animate(std::int64_t) override {
-         //TODO: animation_timer was set to fire every 200ms- basically do
-         //      something similar, move this to view, and call it outside of
-         //      the logic loop.
+    void animate(std::int64_t) override {
 
-         if (s.name == "goomba" || s.name == "pigeonbomber") {
-             s.frame = s.frame + 1;
-             if (s.frame > 2) { s.frame = 1; }
-         }
-
-         // if (s.name == "pigeon") {
-         //     s.frame = s.frame + 1;
-         //     if (s.frame > 2) { s.frame = 1; }
-         // }
     }
 
 
@@ -67,8 +55,6 @@ public:
 
     void initialize() {
         view::View & view = env.context.view;
-        Sound & sound = env.context.sound;
-        const double current_time = env.current_time;
 
         auto & spr = this->s;
 
@@ -77,22 +63,6 @@ public:
         if (spr.name == "clouds") {
             spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
         }
-
-        if (spr.name == "Dying Explosion") {
-            //StopSound which
-            //LoadSound which, "goombaspr.wav"
-            spr.flickerTime = current_time + 10;
-            spr.seekx = spr.wide * 3;
-            spr.mph = 2;
-            spr.kind = Kind::neutral;
-            //sound.PlaySound(which);
-            sound.PlaySound("dying explosion");
-        }
-
-        // if (spr.name == "gotmilkbs") {
-        //     sound.PlaySound("Paul Shrink");
-        //     spr.name = "bluestick";
-        // }
 
         if (spr.name == "greenspring") {
             view.load_animation_file(spr.Aframe, "greenspring.ani");
@@ -120,115 +90,9 @@ public:
             spr.invTime = 1;
         }
 
-        // if (spr.name == "falling") {
-        //     spr.kind = Kind::neutral;
-        //     //spr.high = -30 //-1 * spr.high
-        // }
-
-        if (spr.name == "pigeon") {
-            spr.visible = true;
-            spr.seekx = spr.x;
-            spr.seeky = spr.y;
-            spr.wide = 40;
-            spr.high = 30;
-            spr.hp = 1;
-            spr.z = 80;
-            spr.length = 30;
-            spr.frame = 1;
-            spr.deathType = "falling";
-            spr.kind = Kind::enemy_weak_to_jumping;
-        }
-
-        // if (spr.name == "pigeonbomber") {
-        //     view.load_animation_file(spr.Aframe, "pigeon.ani");
-        //     spr.visible = true;
-        //     spr.seekx = -10;
-        //     spr.seeky = spr.y;
-        //     spr.wide = 40;
-        //     spr.high = 30;
-        //     spr.hp = 1;
-        //     spr.z = 80;
-        //     spr.length = 30;
-        //     spr.frame = 1;
-        //     spr.deathType = "falling";
-        //     spr.kind = Kind::enemy_weak_to_jumping;
-        // }
-
-        if (spr.name == "goomba") {
-            spr.seekx = spr.x;
-            spr.seeky = spr.y;
-            spr.wide = 80;
-            spr.high = 80;
-            spr.length = 40;
-            spr.texture = 6;
-            spr.frame = 1;
-            spr.mph = 1;
-            spr.hp = 5;
-            spr.speed = 0.25;
-            spr.visible = true;
-            spr.kind = Kind::goomba_thing;
-            spr.invTime = 1;
-            spr.deathType = "Dying Explosion";
-            spr.soundFile = "Goomba Ouch";
-            //LoadSound which, spr.soundFile
-            this->mover = true;
-        }
-
-        if (spr.name == "bullet") {
-            // spr.kind = Kind::enemy_bullet;
-        }
     }
 
-    void shoot(CharacterSprite &, // who, // argument was an integer
-		       const std::string &, int, int) { //  what, int wherex, int wherey) {
-
-        // 2018-06 : the old code would search through the sprites list, find
-        //           one that looked dead, and re-initialize it as a "child"
-        //           of some parent Sprite.
-        //           I want to resurrect this, but instead have the parent's
-        //           process "own" all the potential children sprites it
-        //           might have to make the way things are laid out
-        //           more deterministic.
-        //           For now, that ain't happening!
-
-        // int opera;
-
-        // for (opera = (who + 1); opera < lp3::narrow<int>(world.Sprite.size()); ++ opera) {
-        //     if (world.Sprite[opera].name == "" || world.Sprite[opera].name == "empty" || world.Sprite[opera].name == "dead") {
-        //         // killS opera
-        //         world.Sprite[opera].name = what;
-        //         break;
-        //     }
-        // }
-
-        // if (opera >= 95) { return; }  //2017: WAT?
-
-        // world.Sprite[opera].trueVisible = 0;
-        // world.Sprite[opera].visible = true;
-        // world.Sprite[opera].flickOn = false;
-        // world.Sprite[opera].texture = world.Sprite[who].texture;
-        // world.Sprite[opera].wide = world.Sprite[who].wide;
-        // world.Sprite[opera].high = world.Sprite[who].high;
-
-        // world.Sprite[who].proc->spawn(world.Sprite[opera], what);
-        // world.Sprite[opera].zOrder = -1;
-        // world.Sprite[opera].x = world.Sprite[who].x;
-        // world.Sprite[opera].y = world.Sprite[who].y;
-        // world.Sprite[opera].z = world.Sprite[who].z;
-        // world.Sprite[opera].seekx = wherex;
-        // world.Sprite[opera].seeky = wherey;
-    }
-
-    bool update() override
-        //Camera & camera,
-        //PlayerData * player_data,
-        //gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
-    //  gsl::span<std::reference_wrapper<CharacterSprite>> & children) override
-    {
-        //auto & view = env.context.view;
-        //auto & sound = env.context.sound;
-        auto & random = env.random;
-        int k;
+    bool update() override {
 
         // this came from levelR-
         if (s.name == "greenspring") {
@@ -247,75 +111,6 @@ public:
             s.Aframe[1].x2 = s.Aframe[1].x2 + 1;
         }
 
-        // if (s.name == "pigeonbomber") {
-        //     s.z = s.z + fs_speed_factor;
-        //     //s.frame = s.frame + 1
-        //     //if (s.frame > 2) then s.frame = 1
-
-        //     seek(s);
-        //     if (s.x < 1) { s.x = world.camera.boundary().x; }
-
-        //     if (s.miscTime < this->env.current_time) {
-        //         const auto target
-        //             = entity_manager.find_closest_player(s);
-        //         if (target) {
-        //             this->shoot(s, "bluestick",
-        //                         target->x,
-        //                         target->y);
-        //         }
-        //         s.miscTime = this->env.current_time + 2;
-        //     }
-        // }
-
-        // end levelR stuff
-        if (s.name == "goomba") {
-            seek(s);
-
-            if (s.x == s.seekx && s.y == s.seeky) {
-                k = (int)(random.next() * 4) + 1;
-                s.seekx = s.x;
-                s.seeky = s.y;
-                if (k == 1) { s.seekx = s.x + 25; }
-                if (k == 2) { s.seekx = s.x - 25; }
-                if (k == 3) { s.seeky = s.y + 25; }
-                if (k == 4) { s.seeky = s.y - 25; }
-                if ((s.seekx + s.wide) > 640) { s.seekx = 640 - s.wide; }
-                if (s.seekx < 1) { s.seekx = 0; }
-                if ((s.seeky + s.high) > 480) { s.seeky = 480 - s.high; }
-                if (s.seeky < 1) { s.seeky = 0; }
-            }
-        }
-
-        // if (s.name == "falling") {
-        //     //.flickerTime = clock + 1
-        //     s.z = s.z - fs_speed_factor;
-        //     if (s.z < 1) {
-        //         s.z = 1;
-        //         s.name = "deceased";
-        //         s.visible = false;
-        //         s.trueVisible = 2;
-        //         s.flickerTime = 0;
-        //     }
-        //     s.frame = s.frame + 1;
-        //     if (s.frame > 4) { s.frame = 3; }
-        // }
-
-        if (s.name == "Dying Explosion") {
-            if (s.wide < s.seekx) {
-                s.wide = s.wide + s.mph;
-                s.x = s.x - (s.mph * 0.5 * fs_speed_factor);
-                s.high = s.high + s.mph;
-                s.y = s.y - (s.mph * 0.5 * fs_speed_factor);
-            }
-            if (s.wide >= s.seekx) {
-                s.high = s.high - s.mph;
-                s.y = s.y + (s.mph * 0.5 * fs_speed_factor);
-                if (s.high < 1) {
-                    s.name = "deceased";
-                    s.visible = false;
-                }
-            }
-        }
 
         if (s.name == "dead") {
             //Stop

@@ -1,5 +1,6 @@
 #include "CinemaProc.hpp"
 #include <lp3/sims.hpp>
+#include "enemies/Arby.hpp"
 #include "enemies/BlueStick.hpp"
 #include "enemies/Kerbose.hpp"
 #include "enemies/PaulRunner.hpp"
@@ -16,6 +17,9 @@ CharacterProc * create_enemy_proc(
     const glm::dvec3 & position,
     const int texture_index)
 {
+    if (name == "arby" || name == "goomba") {
+        return create_arby_proc(env, e_manager, position, texture_index);
+    }
     if (name == "Kerbose" || name == "Kirbose") {
         return create_kerbose_proc(env, e_manager, position, texture_index);
     }
