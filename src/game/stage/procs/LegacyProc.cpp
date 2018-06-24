@@ -54,8 +54,6 @@ public:
     }
 
     void initialize() {
-        view::View & view = env.context.view;
-
         auto & spr = this->s;
 
         //this makes all the sprites do their thing based on their name
@@ -64,19 +62,19 @@ public:
             spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
         }
 
-        if (spr.name == "greenspring") {
-            view.load_animation_file(spr.Aframe, "greenspring.ani");
-            spr.frame = 1;
-            spr.mode = "off";
-            spr.hp = 1;
-            spr.deathType = "greenspring";
-			spr.time = 0;
-            spr.kind = Kind::trampoline;
-            spr.bounce_factor = 1.5;
-            spr.length = 10;
-            spr.wide = spr.wide * 2;
-            spr.high = spr.high * 2;
-        }
+   //      if (spr.name == "greenspring") {
+   //          view.load_animation_file(spr.Aframe, "greenspring.ani");
+   //          spr.frame = 1;
+   //          spr.mode = "off";
+   //          spr.hp = 1;
+   //          spr.deathType = "greenspring";
+			// spr.time = 0;
+   //          spr.kind = Kind::trampoline;
+   //          spr.bounce_factor = 1.5;
+   //          spr.length = 10;
+   //          spr.wide = spr.wide * 2;
+   //          spr.high = spr.high * 2;
+   //      }
 
         if (spr.name == "Deadly Rat") {
             spr.wide = 50;
@@ -95,14 +93,14 @@ public:
     bool update() override {
 
         // this came from levelR-
-        if (s.name == "greenspring") {
-            if (s.mode == "bounce") {
-                s.frame = s.frame + 1;
-                if (s.frame > 5) { s.frame = 2; }
-				s.time += fs_s_per_update;
-                if (s.miscTime < s.time) { s.mode = ""; s.frame = 1; }
-            }
-        }
+    //     if (s.name == "greenspring") {
+    //         if (s.mode == "bounce") {
+    //             s.frame = s.frame + 1;
+    //             if (s.frame > 5) { s.frame = 2; }
+				// s.time += fs_s_per_update;
+    //             if (s.miscTime < s.time) { s.mode = ""; s.frame = 1; }
+    //         }
+    //     }
 
         if (s.name == "clouds") {
             s.srcx = s.srcx + (fs_speed_factor * 0.5);
@@ -111,19 +109,6 @@ public:
             s.Aframe[1].x2 = s.Aframe[1].x2 + 1;
         }
 
-
-        if (s.name == "dead") {
-            //Stop
-            s.y = world.camera.y() + 10;
-            s.frame = 0;
-            s.visible = false;
-            s.srcx = 2;
-            s.srcy = 363;
-            s.srcx2 = 96;
-            s.srcy2 = 379;
-            s.texture = 0;
-            s.visible = true;
-        }
         return true;
     }
 

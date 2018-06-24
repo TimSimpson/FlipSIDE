@@ -54,8 +54,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CinemaProc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CinemaType.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CinemaType.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/Enemies.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/Enemies.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CharacterProcFactory.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/CharacterProcFactory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/PlayerProc.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/PlayerProc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/Arby.hpp
@@ -72,8 +72,8 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/RedBullet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/TrashDigger.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/enemies/TrashDigger.cpp
-
-
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/terrain/GreenSpring.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game/stage/procs/terrain/GreenSpring.cpp
 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/AnimationFrame.cpp

@@ -3,8 +3,8 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include "BaseScreen.hpp"
+#include "procs/CharacterProcFactory.hpp"
 #include "procs/CinemaProc.hpp"
-#include "procs/Enemies.hpp"
 #include "procs/LegacyProc.hpp"
 #include "procs/PlayerProc.hpp"
 #include "EntityManager.hpp"
@@ -508,7 +508,7 @@ private:
                 }
                 // First, try to create a new style proc:
                 auto * proc =
-                    proc::create_enemy_proc(
+                    proc::create_character_proc(
                         env,
                         entity_manager_co,
                         sprite_level_data.name,

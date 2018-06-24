@@ -1,5 +1,5 @@
-#ifndef NND3D_GAME_PROCS_ENEMIESPROC_HPP
-#define NND3D_GAME_PROCS_ENEMIESPROC_HPP
+#ifndef NND3D_GAME_PROCS_CHARACTERPROCFACTORY_HPP
+#define NND3D_GAME_PROCS_CHARACTERPROCFACTORY_HPP
 #pragma once
 
 #include "../CharacterProc.hpp"
@@ -7,7 +7,7 @@
 
 namespace nnd3d { namespace game { namespace proc {
 
-CharacterProc * create_enemy_proc(
+CharacterProc * create_character_proc(
     CharacterProcEnv env, EntityManagerCO & e_manager,
     const std::string & name,
     const glm::dvec3 & position,

@@ -1,4 +1,4 @@
-#include "CinemaProc.hpp"
+#include "CharacterProcFactory.hpp"
 #include <lp3/sims.hpp>
 #include "enemies/Arby.hpp"
 #include "enemies/BlueStick.hpp"
@@ -6,11 +6,12 @@
 #include "enemies/PaulRunner.hpp"
 #include "enemies/PidgeonBomber.hpp"
 #include "enemies/TrashDigger.hpp"
+#include "terrain/GreenSpring.hpp"
 
 namespace nnd3d { namespace game { namespace proc {
 
 
-CharacterProc * create_enemy_proc(
+CharacterProc * create_character_proc(
     CharacterProcEnv env,
     EntityManagerCO & e_manager,
     const std::string & name,
@@ -34,6 +35,9 @@ CharacterProc * create_enemy_proc(
     }
     if (name == "tdigger") {
         return create_trashdigger_proc(env, e_manager, position, texture_index);
+    }
+    if (name == "greenspring") {
+        return create_greenspring_proc(env, e_manager, position, texture_index);
     }
     return nullptr;
 }
