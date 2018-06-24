@@ -79,15 +79,15 @@ public:
         }
 
         if (spr.name == "paulbullet") {
-            view.load_animation_file(spr.Aframe, "paulbullet.ani");
-            spr.hp = 999;
-            spr.kind = Kind::enemy;
-            spr.deathType = "Kerbose";
-            spr.invTime = 0;
-            spr.wide = 10;
-            spr.high = 10;
-            spr.name = "bullet";
-            spr.mph = 2;
+            // view.load_animation_file(spr.Aframe, "paulbullet.ani");
+            // spr.hp = 999;
+            // spr.kind = Kind::enemy;
+            // spr.deathType = "Kerbose";
+            // spr.invTime = 0;
+            // spr.wide = 10;
+            // spr.high = 10;
+            // spr.name = "bullet";
+            // spr.mph = 2;
         }
 
 
@@ -151,10 +151,10 @@ public:
             sound.PlaySound("dying explosion");
         }
 
-        if (spr.name == "gotmilkbs") {
-            sound.PlaySound("Paul Shrink");
-            spr.name = "bluestick";
-        }
+        // if (spr.name == "gotmilkbs") {
+        //     sound.PlaySound("Paul Shrink");
+        //     spr.name = "bluestick";
+        // }
 
         if (spr.name == "greenspring") {
             view.load_animation_file(spr.Aframe, "greenspring.ani");
@@ -249,7 +249,7 @@ public:
         }
 
         if (spr.name == "bullet") {
-            spr.kind = Kind::enemy_bullet;
+            // spr.kind = Kind::enemy_bullet;
         }
     }
 
@@ -324,29 +324,29 @@ public:
         if (s.name == "bullet") {     ////This is a strange type of bullet that in retrospect feels more like a bubble
             //if (ws.seekx <> -1) then
 
-            off_camera_kill(s, world.camera);
+   //          off_camera_kill(s, world.camera);
 
-            while(!(
-                (s.seekx > world.camera.boundary().x || s.seekx < 0)
-                    || (s.seeky > world.camera.boundary().y || s.seeky < 0)
-                )) {
-                if (s.seekx > s.x) {
-                    s.seekx = s.seekx + ((s.seekx - s.x));
-                }
-                if (s.seekx < s.x) {
-                s.seekx = s.seekx - ((s.x - s.seekx));
-                }
+   //          while(!(
+   //              (s.seekx > world.camera.boundary().x || s.seekx < 0)
+   //                  || (s.seeky > world.camera.boundary().y || s.seeky < 0)
+   //              )) {
+   //              if (s.seekx > s.x) {
+   //                  s.seekx = s.seekx + ((s.seekx - s.x));
+   //              }
+   //              if (s.seekx < s.x) {
+   //              s.seekx = s.seekx - ((s.x - s.seekx));
+   //              }
 
-                if (s.seeky > s.y) {
-                    s.seeky = s.seeky + ((s.seeky - s.y));
-                }
-                if (s.seeky < s.y) {
-                    s.seeky = s.seeky - ((s.y - s.seeky));
-                }
-            }
+   //              if (s.seeky > s.y) {
+   //                  s.seeky = s.seeky + ((s.seeky - s.y));
+   //              }
+   //              if (s.seeky < s.y) {
+   //                  s.seeky = s.seeky - ((s.y - s.seeky));
+   //              }
+   //          }
 
-			seek(s);
-            s.frame = s.frame + 1; if (s.frame > 1) { s.frame = 0; }
+			// seek(s);
+   //          s.frame = s.frame + 1; if (s.frame > 1) { s.frame = 0; }
         }
 
         if (s.name == "pigeonbomber") {

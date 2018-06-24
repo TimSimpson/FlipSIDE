@@ -238,10 +238,15 @@ public:
         return { this->x, this->y, this->z };
     }
 
-    void set_position(const glm::dvec3 & position) {
+    inline void set_position(const glm::dvec3 & position) {
         this->x = position.x;
         this->y = position.y;
         this->z = position.z;
+    }
+
+    inline void set_seek(const glm::dvec3 & seek_location) {
+        this->seekx = seek_location.x;
+        this->seeky = seek_location.y;
     }
 
     void update_jump_physics(double gravity);

@@ -2,6 +2,7 @@
 #include <lp3/sims.hpp>
 
 #include "BlueStick.hpp"
+#include "RedBullet.hpp"
 
 namespace nnd3d { namespace game { namespace proc {
 
@@ -9,7 +10,9 @@ namespace nnd3d { namespace game { namespace proc {
 class PaulRunner : public CharacterProc {
 private:
     CharacterProcEnv env;
+    EntityManagerCO e_manager;
     CharacterSprite & sprite;
+    CharacterSprite & bullet_sprite;
     const int texture_index;
     bool dying;
     enum class Skin {
@@ -20,11 +23,13 @@ private:
 
 public:
     PaulRunner(CharacterProcEnv _env,
-               EntityManagerCO e_manager,
+               EntityManagerCO e_manager_arg,
                const glm::dvec3 & position,
                const int texture_index_arg)
     :   env(_env),
+        e_manager(e_manager_arg),
         sprite(e_manager.grab_sprite()),
+        bullet_sprite(e_manager.grab_sprite()),
         texture_index(texture_index_arg),
         dying(false),
         state()
@@ -57,18 +62,6 @@ public:
      }
 
     void death_animation() override {
-        // sprite.visible = true;
-
-        // sprite.kind = Kind::neutral;
-        // sprite.frame = 3;
-
-        // sprite.miscTime = env.current_time + 3;
-        // if (skin == Skin::PaulRunner) {
-        //     env.context.sound.PlaySound("PaulRunner Die");
-        // } else if (skin == Skin::Putulo) {
-        //     env.context.sound.PlaySound("putulodie");
-        // }
-        // sprite.name = "";
         dying = true;
         env.context.sound.PlaySound("Paul Shrink");
     }
@@ -95,25 +88,37 @@ public:
     }
 
     bool update() override {
-        // LP3_LOG_INFO("paul (%d, %d), (%d, %d), %s, %d, %d, frame=(%d, %d)-(%d, %d)", sprite.x, sprite.y, sprite.wide, sprite.high, sprite.visible ? "TRUE": "false", sprite.texture, sprite.zOrder,
-        //     sprite.srcx, sprite.srcy, sprite.srcx2, sprite.srcy2);
-
         if (dying) {
-            EntityManager e_manager(sprite);
+            EntityManager e_manager2(sprite);
             // change to blue stick
             env.processes.spawn(
                 create_bluestick_proc(
                     env,
-                    EntityManagerCO{e_manager},
+                    EntityManagerCO{e_manager2},
                     sprite.get_position(),
                     texture_index)
             );
             return false;
         } else {
             move();
-            LP3_LOG_INFO("paul2 %d, %d, %d, %d, %s", sprite.x, sprite.y, sprite.wide, sprite.high, sprite.visible);
-
-            if (sprite.seekx >= 50 && sprite.dir != "done") {
+            if (bullet_sprite.proc == nullptr &&
+                sprite.seekx >= 50 && sprite.dir != "done")
+            {
+                const auto target = e_manager.find_closest_player(sprite);
+                if (target) {
+                    EntityManager e_manager2(bullet_sprite);
+                    // change to blue stick
+                    env.processes.spawn(
+                        create_redbullet_proc(
+                            env,
+                            EntityManagerCO{e_manager2},
+                            sprite.get_position(),
+                            target->get_position(),
+                            texture_index)
+                    );
+                    LP3_LOG_INFO("launching bullet at %d, %d", target->get_position().x, target->get_position().y);
+                    sprite.dir = "done";
+                }
                 // TODO: ADD THIS BACK!
                 // const auto target = world.find_closest_player(s);
                 // if (target) {

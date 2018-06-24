@@ -136,14 +136,8 @@ void flicker(const double & clock, World & world) {
                 if (s.visible == true) { s.trueVisible = 1; }
             }
 
-            if (s.flickOn == true) { s.visible = false; }
-            if (s.flickOn == false) { s.visible = true; }
-            if (s.flickOn == true) {
-                s.flickOn = false;
-            }
-            else {
-                s.flickOn = true;
-            }
+            s.visible = !s.flickOn;
+            s.flickOn = !s.flickOn;
         }
     }
 }
