@@ -70,6 +70,7 @@ public:
         // }
         // sprite.name = "";
         dying = true;
+        env.context.sound.PlaySound("Paul Shrink");
     }
 
     void move() {

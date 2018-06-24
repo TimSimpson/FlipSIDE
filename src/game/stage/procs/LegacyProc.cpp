@@ -57,16 +57,6 @@ public:
              s.frame = s.frame + 1;
              if (s.frame > 2) { s.frame = 1; }
          }
-
-         // if (s.name == "tdigger") {
-         //     s.frame = s.frame + 1;
-         //     if (s.mode == "") {
-         //         if (s.frame > 5) { s.frame = 4; }
-         //     }
-         //     if (s.mode == "runner") {
-         //         if (s.frame > 2) { s.frame = 1; }
-         //     }
-         // }
     }
 
 
@@ -100,6 +90,26 @@ public:
             spr.mph = 2;
         }
 
+
+        // if (spr.name == "bs death") {
+        //     spr.visible = true;
+        //     this->mover = false;
+        //     spr.kind = Kind::neutral;
+        //     spr.frame = 3;
+        //     spr.miscTime = current_time + 3;
+        //     sound.PlaySound("stick die");
+        //     spr.name = "Kerbose Death";
+        // }
+
+
+        // if (spr.name == "harharhar") {
+        //     spr.flickerTime = current_time + 2;
+        //     spr.time = 2;  // 2018-06: using this instead of world.clock
+        //     sound.PlayWave("harharhar.wav");
+        // }
+
+        // if (spr.name == "expand") {
+        //     sound.PlayWave("WhaWhee.wav");
 
         // if (spr.name == "bs death") {
         //     spr.visible = true;

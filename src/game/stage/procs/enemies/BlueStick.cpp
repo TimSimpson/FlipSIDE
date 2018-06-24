@@ -45,9 +45,10 @@ public:
     }
 
     void animate(std::int64_t) override {
-        ++ sprite.frame;
-        if (sprite.frame > 2) {
-            sprite.frame = 1;
+        if (dying) {
+            sprite.frame = 3;
+        } else {
+            sprite.frame = sprite.frame == 2 ? 1 : 2;
         }
     }
 
