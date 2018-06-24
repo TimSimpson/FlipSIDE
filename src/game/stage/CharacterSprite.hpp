@@ -238,6 +238,10 @@ public:
         return { this->x, this->y, this->z };
     }
 
+    inline glm::dvec3 get_size() const {
+        return { this->wide, this->high, this->length };
+    }
+
     inline void set_position(const glm::dvec3 & position) {
         this->x = position.x;
         this->y = position.y;
@@ -247,6 +251,12 @@ public:
     inline void set_seek(const glm::dvec3 & seek_location) {
         this->seekx = seek_location.x;
         this->seeky = seek_location.y;
+    }
+
+    inline void set_size(const glm::dvec3 & size) {
+        this->wide = size.x;
+        this->high = size.y;
+        this->length = size.z;
     }
 
     void update_jump_physics(double gravity);
