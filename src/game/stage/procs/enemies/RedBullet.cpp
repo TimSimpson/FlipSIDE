@@ -69,8 +69,6 @@ public:
     }
 
     bool update() override {
-        LP3_LOG_INFO("[ %d ] bullet pos %d, %d, size=%d, %d vis=%s, tex=%d, (%d, %d - %d, %d) trueVisible=%d, flickOn=%s, name=%s", dumb_index, sprite.x, sprite.y, sprite.wide, sprite.high, sprite.visible ? "true" : "false", sprite.texture, sprite.srcx, sprite.srcy, sprite.srcx2, sprite.srcy2, sprite.trueVisible, sprite.flickOn, sprite.name);
-        sprite.visible = true;
         if (off_camera_kill(sprite, env.camera)) {
             LP3_LOG_INFO("[ %d ] bullet killed due to off-camera", dumb_index);
             return false;

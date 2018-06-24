@@ -1,5 +1,6 @@
 #ifndef NND3D_GAME_PROCS_ENEMIES_TRASHDIGGER_HPP
 #define NND3D_GAME_PROCS_ENEMIES_TRASHDIGGER_HPP
+#pragma once
 
 #include "../../CharacterProc.hpp"
 #include "../../EntityManager.hpp"

@@ -37,6 +37,7 @@ public:
         sprite.frame = 1;
         unstretch(sprite);
         sprite.proc = this;
+        sprite.visible = true;
     }
 
     ~BlueStick()

@@ -1,5 +1,6 @@
 #ifndef NND3D_GAME_GAMESTATE_HPP
 #define NND3D_GAME_GAMESTATE_HPP
+#pragma once
 
 #include <algorithm>
 #include <array>

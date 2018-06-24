@@ -53,10 +53,10 @@ public:
              if (s.frame > 2) { s.frame = 1; }
          }
 
-         if (s.name == "pigeon") {
-             s.frame = s.frame + 1;
-             if (s.frame > 2) { s.frame = 1; }
-         }
+         // if (s.name == "pigeon") {
+         //     s.frame = s.frame + 1;
+         //     if (s.frame > 2) { s.frame = 1; }
+         // }
     }
 
 
@@ -76,68 +76,6 @@ public:
 
         if (spr.name == "clouds") {
             spr.Aframe[1].set(spr.srcx, spr.srcy, spr.srcx2, spr.srcy2);
-        }
-
-        if (spr.name == "paulbullet") {
-            // view.load_animation_file(spr.Aframe, "paulbullet.ani");
-            // spr.hp = 999;
-            // spr.kind = Kind::enemy;
-            // spr.deathType = "Kerbose";
-            // spr.invTime = 0;
-            // spr.wide = 10;
-            // spr.high = 10;
-            // spr.name = "bullet";
-            // spr.mph = 2;
-        }
-
-
-        // if (spr.name == "bs death") {
-        //     spr.visible = true;
-        //     this->mover = false;
-        //     spr.kind = Kind::neutral;
-        //     spr.frame = 3;
-        //     spr.miscTime = current_time + 3;
-        //     sound.PlaySound("stick die");
-        //     spr.name = "Kerbose Death";
-        // }
-
-
-        // if (spr.name == "harharhar") {
-        //     spr.flickerTime = current_time + 2;
-        //     spr.time = 2;  // 2018-06: using this instead of world.clock
-        //     sound.PlayWave("harharhar.wav");
-        // }
-
-        // if (spr.name == "expand") {
-        //     sound.PlayWave("WhaWhee.wav");
-
-        // if (spr.name == "bs death") {
-        //     spr.visible = true;
-        //     this->mover = false;
-        //     spr.kind = Kind::neutral;
-        //     spr.frame = 3;
-        //     spr.miscTime = current_time + 3;
-        //     sound.PlaySound("stick die");
-        //     spr.name = "Kerbose Death";
-        // }
-
-
-        // if (spr.name == "harharhar") {
-        //     spr.flickerTime = current_time + 2;
-        //     spr.time = 2;  // 2018-06: using this instead of world.clock
-        //     sound.PlayWave("harharhar.wav");
-        // }
-
-        // if (spr.name == "expand") {
-        //     sound.PlayWave("WhaWhee.wav");
-        //     spr.reverse = false;
-        // }
-
-        if (spr.name == "cinema") {
-            spr.visible = false;
-            spr.frame = 8;
-            unstretch(spr);
-            spr.mode = "";
         }
 
         if (spr.name == "Dying Explosion") {
@@ -170,18 +108,6 @@ public:
             spr.high = spr.high * 2;
         }
 
-        if (spr.name == "fireball") {
-            spr.wide = 40;
-            spr.high = 50;
-            spr.visible = false;
-            spr.texture = 1;
-            spr.frame = 1;
-            spr.name = "";
-            spr.zOrder = -99;
-        }
-
-
-
         if (spr.name == "Deadly Rat") {
             spr.wide = 50;
             spr.high = 50;
@@ -194,10 +120,10 @@ public:
             spr.invTime = 1;
         }
 
-        if (spr.name == "falling") {
-            spr.kind = Kind::neutral;
-            //spr.high = -30 //-1 * spr.high
-        }
+        // if (spr.name == "falling") {
+        //     spr.kind = Kind::neutral;
+        //     //spr.high = -30 //-1 * spr.high
+        // }
 
         if (spr.name == "pigeon") {
             spr.visible = true;
@@ -213,20 +139,20 @@ public:
             spr.kind = Kind::enemy_weak_to_jumping;
         }
 
-        if (spr.name == "pigeonbomber") {
-            view.load_animation_file(spr.Aframe, "pigeon.ani");
-            spr.visible = true;
-            spr.seekx = -10;
-            spr.seeky = spr.y;
-            spr.wide = 40;
-            spr.high = 30;
-            spr.hp = 1;
-            spr.z = 80;
-            spr.length = 30;
-            spr.frame = 1;
-            spr.deathType = "falling";
-            spr.kind = Kind::enemy_weak_to_jumping;
-        }
+        // if (spr.name == "pigeonbomber") {
+        //     view.load_animation_file(spr.Aframe, "pigeon.ani");
+        //     spr.visible = true;
+        //     spr.seekx = -10;
+        //     spr.seeky = spr.y;
+        //     spr.wide = 40;
+        //     spr.high = 30;
+        //     spr.hp = 1;
+        //     spr.z = 80;
+        //     spr.length = 30;
+        //     spr.frame = 1;
+        //     spr.deathType = "falling";
+        //     spr.kind = Kind::enemy_weak_to_jumping;
+        // }
 
         if (spr.name == "goomba") {
             spr.seekx = spr.x;
@@ -321,53 +247,25 @@ public:
             s.Aframe[1].x2 = s.Aframe[1].x2 + 1;
         }
 
-        if (s.name == "bullet") {     ////This is a strange type of bullet that in retrospect feels more like a bubble
-            //if (ws.seekx <> -1) then
+        // if (s.name == "pigeonbomber") {
+        //     s.z = s.z + fs_speed_factor;
+        //     //s.frame = s.frame + 1
+        //     //if (s.frame > 2) then s.frame = 1
 
-   //          off_camera_kill(s, world.camera);
+        //     seek(s);
+        //     if (s.x < 1) { s.x = world.camera.boundary().x; }
 
-   //          while(!(
-   //              (s.seekx > world.camera.boundary().x || s.seekx < 0)
-   //                  || (s.seeky > world.camera.boundary().y || s.seeky < 0)
-   //              )) {
-   //              if (s.seekx > s.x) {
-   //                  s.seekx = s.seekx + ((s.seekx - s.x));
-   //              }
-   //              if (s.seekx < s.x) {
-   //              s.seekx = s.seekx - ((s.x - s.seekx));
-   //              }
-
-   //              if (s.seeky > s.y) {
-   //                  s.seeky = s.seeky + ((s.seeky - s.y));
-   //              }
-   //              if (s.seeky < s.y) {
-   //                  s.seeky = s.seeky - ((s.y - s.seeky));
-   //              }
-   //          }
-
-			// seek(s);
-   //          s.frame = s.frame + 1; if (s.frame > 1) { s.frame = 0; }
-        }
-
-        if (s.name == "pigeonbomber") {
-            s.z = s.z + fs_speed_factor;
-            //s.frame = s.frame + 1
-            //if (s.frame > 2) then s.frame = 1
-
-            seek(s);
-            if (s.x < 1) { s.x = world.camera.boundary().x; }
-
-            if (s.miscTime < this->env.current_time) {
-                const auto target
-                    = entity_manager.find_closest_player(s);
-                if (target) {
-                    this->shoot(s, "bluestick",
-                                target->x,
-                                target->y);
-                }
-                s.miscTime = this->env.current_time + 2;
-            }
-        }
+        //     if (s.miscTime < this->env.current_time) {
+        //         const auto target
+        //             = entity_manager.find_closest_player(s);
+        //         if (target) {
+        //             this->shoot(s, "bluestick",
+        //                         target->x,
+        //                         target->y);
+        //         }
+        //         s.miscTime = this->env.current_time + 2;
+        //     }
+        // }
 
         // end levelR stuff
         if (s.name == "goomba") {
@@ -388,19 +286,19 @@ public:
             }
         }
 
-        if (s.name == "falling") {
-            //.flickerTime = clock + 1
-            s.z = s.z - fs_speed_factor;
-            if (s.z < 1) {
-                s.z = 1;
-                s.name = "deceased";
-                s.visible = false;
-                s.trueVisible = 2;
-                s.flickerTime = 0;
-            }
-            s.frame = s.frame + 1;
-            if (s.frame > 4) { s.frame = 3; }
-        }
+        // if (s.name == "falling") {
+        //     //.flickerTime = clock + 1
+        //     s.z = s.z - fs_speed_factor;
+        //     if (s.z < 1) {
+        //         s.z = 1;
+        //         s.name = "deceased";
+        //         s.visible = false;
+        //         s.trueVisible = 2;
+        //         s.flickerTime = 0;
+        //     }
+        //     s.frame = s.frame + 1;
+        //     if (s.frame > 4) { s.frame = 3; }
+        // }
 
         if (s.name == "Dying Explosion") {
             if (s.wide < s.seekx) {
@@ -416,89 +314,6 @@ public:
                     s.name = "deceased";
                     s.visible = false;
                 }
-            }
-        }
-
-        if (s.name == "tdigger") {
-            // if (s.mode == "") {
-            //     unstretch(s);
-            //     //TSNOW: Another funky step 10 loop.
-            //     //2018-06: This code makes no sense but I think it's what it
-            //     // used to do. The dog stops when it horizontally aligns with
-            //     // the player... but WHYYYYYY.
-            //     auto players = world.find_by_kind(Kind::player);
-            //     for (const auto & p : players) {
-            //         if ((p.get().y + p.get().high) >= s.y && p.get().y < s.y) {
-            //             s.mode = "runner";
-            //             s.seekx = world.camera.boundary().x;
-            //             //.mhp = 10
-            //             s.kind = Kind::enemy;
-            //             s.deathType = "expand";
-            //             s.time = 1;
-            //             //.hp = 1
-            //             s.reverse = true;
-            //             break;
-            //         }
-            //     }
-            // }
-
-            // if (!s.target) {
-            //     s.target = world.find_closest_player(this->s);
-            //     s.seekx = s.getMiddleX();
-            //     s.seeky = s.getMiddleY();
-            // }
-
-            // if (s.mode == "runner") {
-            //     if (s.target) {
-            //         if (getProx(s, *(s.target)) > 50) {
-            //             s.seekx = s.target->getMiddleX();
-            //         }
-            //         if (getProx(s, *(s.target)) < 50) {
-            //             s.mph = s.mph - 1;
-            //             if (s.mph < -90) {
-            //                 s.seekx = s.target->getMiddleX();
-            //                 s.mph = 10;
-            //             }
-            //         }
-            //         s.seeky = s.target->getMiddleY();
-            //         if (getProx(s, *(s.target)) < 100) {
-            //             s.mph = (getProx(s, *(s.target)) / 100);
-            //         }
-            //         else {
-            //             s.mph = 10;
-            //         }
-            //         if (getProx(s, *(s.target)) == 0) {
-            //             s.seekx = s.target->x;
-            //             s.seeky = s.target->y;
-            //         }
-
-            //         seek(s);
-            //     }
-            // }
-
-        }
-
-
-        // if (s.name == "expand") {
-        //     s.kind = Kind::neutral;
-        //     //if (s.mode = "runner") then
-        //     s.frame = 3;
-        //     s.time += (0.01 * fs_speed_factor);
-        //     s.wide = s.wide + (fs_speed_factor);
-        //     s.x = s.x - (fs_speed_factor / 2);
-        //     s.high = s.high + (fs_speed_factor);
-        //     s.y = s.y - (fs_speed_factor / 2);
-        //     if (s.time > 2) {
-        //         s.name = "harharhar";
-        //         initialize();
-        //         // load_process(env, s, s.name); //: killS j
-        //     }
-        // }
-
-        if (s.name == "harharhar") {
-            s.time -= 0.016f;  // 2018-06: using this instead of world.clock
-            if (s.time <= 0) {
-                kill(s);
             }
         }
 

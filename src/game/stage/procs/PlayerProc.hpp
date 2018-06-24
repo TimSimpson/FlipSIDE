@@ -1,5 +1,6 @@
 #ifndef NND3D_GAME_PROCS_PLAYERPROC_HPP
 #define NND3D_GAME_PROCS_PLAYERPROC_HPP
+#pragma once
 
 #include "../../GameState.hpp"
 #include "../CharacterProc.hpp"

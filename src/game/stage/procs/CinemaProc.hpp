@@ -1,5 +1,6 @@
 #ifndef NND3D_GAME_PROCS_CINEMAPROC_HPP
 #define NND3D_GAME_PROCS_CINEMAPROC_HPP
+#pragma once
 
 #include "../CharacterProc.hpp"
 #include "../EntityManager.hpp"

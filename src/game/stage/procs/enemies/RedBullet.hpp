@@ -1,5 +1,6 @@
 #ifndef NND3D_GAME_PROCS_ENEMIES_REDBULLET_HPP
 #define NND3D_GAME_PROCS_ENEMIES_REDBULLET_HPP
+#pragma once
 
 #include "../../CharacterProc.hpp"
 #include "../../EntityManager.hpp"
