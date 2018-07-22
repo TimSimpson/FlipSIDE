@@ -5,7 +5,7 @@
 namespace nnd3d { namespace game { namespace proc {
 
 namespace {
-    void centerSprite(CharacterSprite & s, Camera & camera) {
+    void centerSprite(CharacterSprite & s, const Camera & camera) {
         // Aims the camera on the given sprite.
         s.x = (camera.x() + (camera.width() / 2)) - (s.wide / 2);
         s.y = (camera.y() + (camera.height() / 2)) - (s.high / 2);
@@ -14,7 +14,7 @@ namespace {
 
 class ClockAnimation : public CharacterProc {
 private:
-    Camera & camera;
+    const Camera & camera;
     lp3::sims::CoroutineState state;
     CharacterSprite & s2;
     std::int64_t time;

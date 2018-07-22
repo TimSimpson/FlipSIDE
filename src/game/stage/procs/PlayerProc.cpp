@@ -64,7 +64,7 @@ class FireballProc : public CharacterProc {
 private:
     CharacterSprite & sprite;
     CharacterSprite & parent;
-    Camera & camera;
+    const Camera & camera;
     std::int64_t life_left;
 
 public:

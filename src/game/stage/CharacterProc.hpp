@@ -50,7 +50,7 @@ struct CharacterProcEnv {
     GameContext context;
     Random & random;
     const double & current_time;
-    Camera & camera;
+    const Camera & camera;
     CharacterProcInterop processes;
 };
 
