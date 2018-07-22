@@ -57,7 +57,7 @@ public:
     void handle_input(const input::Event &) override {
     }
 
-    gsl::owner<GameProcess *> update() override {
+    std::unique_ptr<GameProcess> update() override {
         LP3_COROUTINE_BEGIN(coro_state);
         while (wait_time > 0) {
             wait_time -= 16;
@@ -83,9 +83,9 @@ public:
 };  // end of GameImpl class
 
 
-gsl::owner<GameProcess *> create_gameover_screen(GameContext context)
+std::unique_ptr<GameProcess> create_gameover_screen(GameContext context)
 {
-    return new GameOverScreen(context);
+    return std::make_unique<GameOverScreen>(context);
 }
 
 namespace {

@@ -107,7 +107,7 @@ public:
         }
     }
 
-    gsl::owner<GameProcess *> update() override {
+    std::unique_ptr<GameProcess> update() override {
         // The old code used a double for the clock. This maps to the
         // current hard coded ms_per_update.
         this->clock += fs_s_per_update;
@@ -198,7 +198,7 @@ public:
 
         entity_manager.run_collision_detection(sound, this->clock);
 
-        gsl::owner<GameProcess *> result = this->flipGame();
+        std::unique_ptr<GameProcess> result = this->flipGame();
         if (result) {
             return result;
         }
@@ -230,7 +230,7 @@ private:
         }
     }
 
-    gsl::owner<GameProcess *> flipGame() {
+    std::unique_ptr<GameProcess> flipGame() {
         // I think this handles switching to different rooms or levels.
         int penguin;
         (void)penguin;  //2017- is this unused?
@@ -242,7 +242,7 @@ private:
                 return create_title_screen(context);
             }
             this->screen_name = str(boost::format("Level%s") % sapple);
-            return new LegacyGame(
+            return std::make_unique<LegacyGame>(
                 context, std::move(game_state), this->screen_name);
         } // End If
 
@@ -549,7 +549,7 @@ private:
 };  // end of GameImpl class
 
 
-gsl::owner<GameProcess *> create_legacy_screen(
+std::unique_ptr<GameProcess> create_legacy_screen(
     GameContext context,
     GameState && game_state,
     std::array<boost::optional<std::string>, 3>,
@@ -560,13 +560,14 @@ gsl::owner<GameProcess *> create_legacy_screen(
         context,
         [game_state(std::move(game_state)), screen_name](
             GameContext context_2) mutable {
-        return new LegacyGame(context_2, std::move(game_state), screen_name);
+        return std::make_unique<LegacyGame>(
+            context_2, std::move(game_state), screen_name);
     });
 
 }
 
 namespace {
-    gsl::owner<GameProcess *> create_legacy_screen_2(GameContext context) {
+    std::unique_ptr<GameProcess> create_legacy_screen_2(GameContext context) {
         GameState game_state;
         // This duplicates code from the player select class.
         // Put this somewhere else.

@@ -47,7 +47,7 @@ public:
 
     #define WAIT(ms) while(time < ms) { LP3_YIELD(nullptr); }
 
-    gsl::owner<GameProcess *> update() override {
+    std::unique_ptr<GameProcess> update() override {
         for (int i = 0; i <= 2; ++i) {
             if (this->keys_pressed[i]) {
                 return create_select_screen(context, keys_pressed);
@@ -167,8 +167,8 @@ public:
 };  // end of GameImpl class
 
 
-GameProcess * create_title_screen(GameContext context) {
-    return new TitleScreenImpl(context);
+std::unique_ptr<GameProcess> create_title_screen(GameContext context) {
+    return std::make_unique<TitleScreenImpl>(context);
 }
 
 namespace {

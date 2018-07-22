@@ -8,9 +8,9 @@
 namespace nnd3d { namespace game {
 
 
-GameProcess * create_now_loading_screen(
+std::unique_ptr<GameProcess> create_now_loading_screen(
     GameContext context,
-    std::function<GameProcess *(GameContext context)> next_proc);
+    std::function<std::unique_ptr<GameProcess> (GameContext context)> next_proc);
 
 
 

@@ -7,7 +7,7 @@
 namespace nnd3d { namespace game {
 
 
-GameProcess * create_title_screen(GameContext context);
+std::unique_ptr<GameProcess> create_title_screen(GameContext context);
 
 }   }  // end namespace
 

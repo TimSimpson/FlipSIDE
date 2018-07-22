@@ -7,7 +7,7 @@
 namespace nnd3d { namespace game {
 
 
-gsl::owner<GameProcess *> create_gameover_screen(GameContext context);
+std::unique_ptr<GameProcess> create_gameover_screen(GameContext context);
 
 }   }  // end namespace
 

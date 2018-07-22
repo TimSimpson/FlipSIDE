@@ -28,16 +28,16 @@ GameProcessSpace::GameProcessSpace()
 GameProcessSpace::~GameProcessSpace() {
 }
 
-void GameProcessSpace::exec(gsl::owner<GameProcess *> new_proc) {
+void GameProcessSpace::exec(std::unique_ptr<GameProcess> && new_proc) {
     LP3_ASSERT(new_proc);
-    proc.reset(new_proc);
+    proc.reset(new_proc.release());
 }
 
 
 RegisterGameProcess::RegisterGameProcess(
     const char * const name,
     const char * const desc,
-    gsl::owner<GameProcess *>(*create)(GameContext context))
+    std::unique_ptr<GameProcess>(*create)(GameContext context))
 {
     GameProcessEntry entry{ name, desc, create };
     procs.get()[std::string(name)] = entry;
@@ -95,7 +95,7 @@ bool Game::quit() const {
 void Game::update() {
     auto result = process.get_proc()->update();
     if (result) {
-        process.exec(result);
+        process.exec(std::move(result));
     }
 }
 

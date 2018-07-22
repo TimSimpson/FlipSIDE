@@ -7,7 +7,7 @@
 namespace nnd3d { namespace game {
 
 
-GameProcess * create_intro_story_screen(GameContext context);
+std::unique_ptr<GameProcess> create_intro_story_screen(GameContext context);
 
 }   }  // end namespace
 

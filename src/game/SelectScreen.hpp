@@ -7,8 +7,8 @@
 namespace nnd3d { namespace game {
 
 
-GameProcess * create_select_screen(GameContext context,
-                                   std::array<bool, 3> keys_pressed);
+std::unique_ptr<GameProcess> create_select_screen(
+    GameContext context, std::array<bool, 3> keys_pressed);
 
 }   }  // end namespace
 

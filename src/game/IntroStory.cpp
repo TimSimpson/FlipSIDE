@@ -120,7 +120,7 @@ public:
                 LP3_YIELD(nullptr);    \
             }
 
-    gsl::owner<GameProcess *> update() override {
+    std::unique_ptr<GameProcess> update() override {
         for (int i = 0; i <= 2; ++i) {
             if (this->keys_pressed[i]) {
                 return create_select_screen(context, keys_pressed);
@@ -279,12 +279,12 @@ public:
 };  // end of GameImpl class
 
 
-GameProcess * create_intro_story_screen(GameContext context) {
-    return new IntroStoryScreen(context);
+std::unique_ptr<GameProcess> create_intro_story_screen(GameContext context) {
+    return std::make_unique<IntroStoryScreen>(context);
 }
 
 namespace {
-    RegisterGameProcess _reg{"intro", "The opening cinematic", 
+    RegisterGameProcess _reg{"intro", "The opening cinematic",
                              create_intro_story_screen };
 }
 

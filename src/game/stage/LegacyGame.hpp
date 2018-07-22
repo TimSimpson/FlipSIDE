@@ -18,7 +18,7 @@ namespace nnd3d { namespace game {
 //          * handling state transitions in and out of the game process,
 //            such as when there's a game over.
 // ----------------------------------------------------------------------------
-gsl::owner<GameProcess *> create_legacy_screen(
+std::unique_ptr<GameProcess> create_legacy_screen(
         GameContext context, GameState && game_state,
         std::array<boost::optional<std::string>, 3> players,
         const std::string & screen_name);

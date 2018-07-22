@@ -37,7 +37,7 @@ public:
 
     ~GameProcessSpace();
 
-    void exec(gsl::owner<GameProcess *> proc);
+    void exec(std::unique_ptr<GameProcess> && proc);
 
     inline GameProcess * get_proc() {
         return proc.get();
@@ -60,7 +60,7 @@ public:
     // If this returns nullptr, the process continues.
     // If a new process is returned, this process is deleted and the new
     // process is used.
-    virtual gsl::owner<GameProcess *> update() = 0;
+    virtual std::unique_ptr<GameProcess> update() = 0;
 };
 
 
@@ -77,13 +77,13 @@ class RegisterGameProcess {
 public:
     RegisterGameProcess(const char * const name,
                         const char * const desc,
-                        gsl::owner<GameProcess *>(*create)(GameContext context));
+                        std::unique_ptr<GameProcess>(*create)(GameContext context));
 };
 
 struct GameProcessEntry {
     const char * name;
     const char * desc;
-    gsl::owner<GameProcess *>(*create)(GameContext context);
+    std::unique_ptr<GameProcess>(*create)(GameContext context);
 };
 
 std::vector<GameProcessEntry> get_all_game_processes();

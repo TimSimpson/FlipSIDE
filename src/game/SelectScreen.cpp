@@ -177,7 +177,7 @@ public:
         }
     }
 
-    gsl::owner<GameProcess *> update() override {
+    std::unique_ptr<GameProcess> update() override {
         for (auto & box : boxes) {
             if (box.activated() && !box.finished) {
                 return nullptr;
@@ -186,7 +186,7 @@ public:
         return start_game();
     }
 
-    gsl::owner<GameProcess *> start_game() {
+    std::unique_ptr<GameProcess> start_game() {
         // Initialize world stuff.
         GameState game_state;
 
@@ -214,24 +214,24 @@ public:
 };  // end of GameImpl class
 
 
-gsl::owner<GameProcess *> create_select_screen(
+std::unique_ptr<GameProcess> create_select_screen(
     GameContext context, std::array<bool, 3> keys_pressed)
 {
     return create_now_loading_screen(
         context,
         [keys_pressed](GameContext context_2) {
-            return new SelectScreen(context_2, keys_pressed);
+            return std::make_unique<SelectScreen>(context_2, keys_pressed);
     });
 }
 
 namespace {
-    gsl::owner<GameProcess *> create_select_screen_2(GameContext context) {
+    std::unique_ptr<GameProcess> create_select_screen_2(GameContext context) {
         return create_now_loading_screen(
             context,
             [](GameContext context_2) {
             std::array<bool, 3> keys_pressed{};
             keys_pressed[0] = true;
-                return new SelectScreen(context_2, keys_pressed);
+                return std::make_unique<SelectScreen>(context_2, keys_pressed);
         });
     }
 
