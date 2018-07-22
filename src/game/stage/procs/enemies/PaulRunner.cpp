@@ -69,6 +69,7 @@ public:
     void move() {
         LP3_COROUTINE_BEGIN(state)
             while(true) {
+                sprite.reverse = false;
                 sprite.seekx = 0;
                 sprite.dir = "";
                 while (sprite.seekx <= 100) {
@@ -76,6 +77,7 @@ public:
                     sprite.seekx = sprite.seekx + fs_speed_factor;
                     LP3_YIELD();
                 }
+                sprite.reverse = true;
                 sprite.seekx = 0;
                 sprite.dir = "";
                 while (sprite.seekx <= 100) {
