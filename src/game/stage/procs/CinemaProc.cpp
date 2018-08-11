@@ -221,7 +221,7 @@ public:
                 if (s.seeky == 3) {
                     s.seeky = 1;
                 }
-                s.frame = s.seeky;
+                s.frame = lp3::narrow<int>(s.seeky);
             }
             LP3_YIELD(true);
         }

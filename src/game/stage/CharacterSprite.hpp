@@ -169,7 +169,7 @@ public:
      double z;  //2017: Changed to double to prevent some bugs
      double wide; //Integer 'width and height
      double high; //Integer
-     int length;
+     double length;
      std::string dir;
 
      int srcx;
@@ -178,8 +178,8 @@ public:
      int srcy2;
 
      std::array<view::AnimationFrame, 20> Aframe;
-     int seekx;
-     int seeky;
+     double seekx;
+     double seeky;
      double speed;  //this is tricky.  Every time this amount of seconds pass, its little routine is updated.
      double time; // this marks the time until the sprite can do its thing again.
      int mph; //refers to how many pixels the thing can haul

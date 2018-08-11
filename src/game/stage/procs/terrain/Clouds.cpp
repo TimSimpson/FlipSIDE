@@ -36,7 +36,7 @@ public:
         // I don't want to pass in the sources and break encapsulation
         // so for now just set it to this.
 
-        sprite.Aframe[1].set(0, 0, size.x, size.y);
+        sprite.Aframe[1].set(0, 0, lp3::narrow<int>(size.x), lp3::narrow<int>(size.y));
         sprite.frame = 1;
     }
 
@@ -52,8 +52,8 @@ public:
     }
 
     bool update() override {
-        sprite.srcx = sprite.srcx + (fs_speed_factor * 0.5);
-        sprite.srcx2 = sprite.srcx2 + (fs_speed_factor * 0.5);
+        sprite.srcx = lp3::narrow<int>(sprite.srcx + (fs_speed_factor * 0.5));
+        sprite.srcx2 = lp3::narrow<int>(sprite.srcx2 + (fs_speed_factor * 0.5));
         sprite.Aframe[1].x = sprite.Aframe[1].x + 1;
         sprite.Aframe[1].x2 = sprite.Aframe[1].x2 + 1;
         return true;

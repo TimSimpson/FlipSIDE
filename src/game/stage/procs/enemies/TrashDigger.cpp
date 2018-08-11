@@ -118,7 +118,7 @@ public:
                         }
                         sprite.seeky = sprite.target->getMiddleY();
                         if (getProx(sprite, *(sprite.target)) < 100) {
-                            sprite.mph = (getProx(sprite, *(sprite.target)) / 100);
+                            sprite.mph = lp3::narrow<int>(getProx(sprite, *(sprite.target)) / 100);
                         }
                         else {
                             sprite.mph = 10;
