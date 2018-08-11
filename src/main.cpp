@@ -195,7 +195,7 @@ int _main(core::PlatformLoop & loop) {
 
     sims::GameClock clock(ms_per_update);
 
-    auto run_game = [&game, &input, &sound, &ms_per_update](std::int64_t) {
+    auto run_game = [&game, &input, &sound](std::int64_t) {
         // Garbage collect sound to avoid out of channel problems.
         sound.garbage_collect();
 

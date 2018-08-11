@@ -132,7 +132,7 @@ std::vector<Event> ModernInputProvider::retrieve_events(std::int64_t) {
         memory[i] = c.remember();
     }
 
-    return std::move(events);
+    return events;
 }
 
 

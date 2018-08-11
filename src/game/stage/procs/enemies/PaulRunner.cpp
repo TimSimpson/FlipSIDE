@@ -15,10 +15,6 @@ private:
     CharacterSprite & bullet_sprite;
     const int texture_index;
     bool dying;
-    enum class Skin {
-        PaulRunner,
-        Putulo
-    } skin;
     lp3::sims::CoroutineState state;
 
 public:

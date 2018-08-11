@@ -81,6 +81,7 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Random.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Random.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Vb.hpp
@@ -92,12 +93,6 @@ add_library(Lp3_NND3d
     ${CMAKE_CURRENT_SOURCE_DIR}/src/view/View.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/view/View.cpp
 )
-
-if ("${CMAKE_SYSTEM_NAME}" MATCHES "Emscripten")
-    target_sources(Lp3_NND3d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/SoundEms.cpp)
-else()
-    target_sources(Lp3_NND3d PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/Sound.cpp)
-endif()
 
 target_include_directories(Lp3_NND3d
     PUBLIC

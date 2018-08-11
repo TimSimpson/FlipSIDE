@@ -13,10 +13,6 @@ private:
     CharacterSprite & sprite;
     const int texture_index;
     bool dying;
-    enum class Skin {
-        TrashDigger,
-        Putulo
-    } skin;
     lp3::sims::CoroutineState move_coro;
     lp3::sims::CoroutineState dying_coro;
 
