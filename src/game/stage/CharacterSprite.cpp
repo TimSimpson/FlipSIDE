@@ -56,10 +56,13 @@ CharacterSpriteRef &  CharacterSpriteRef::operator=(CharacterSpriteRef && other)
 
 void CharacterSpriteRef::release() {
     if (cs) {
-        std::remove_if(cs->refs.begin(), cs->refs.end(),
-                       [this](const CharacterSpriteRef * r){
-            return r == this;
-        });
+		cs->refs.erase(
+			std::remove_if(cs->refs.begin(), cs->refs.end(),
+						   [this](const CharacterSpriteRef * r){
+				return r == this;
+			}),
+			cs->refs.end()
+		);
     }
     cs = nullptr;
 }
